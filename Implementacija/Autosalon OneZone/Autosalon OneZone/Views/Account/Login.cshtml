@@ -1,0 +1,76 @@
+﻿
+@model Autosalon_OneZone.Models.ViewModels.LoginViewModel 
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+@{
+    ViewData["Title"] = "Prijava"; // Naslov stranice
+    Layout = "~/Views/Shared/_Layout.cshtml"; // Koristimo Vas Layout
+}
+
+@section Head {
+    @* Linkujemo CSS fajl specifičan za ovu stranicu *@
+    <link rel="stylesheet" href="~/css/login.css" />
+    @* NAPOMENA: Proverite da li Vas _Layout.cshtml vec linkuje globalni kod.css.
+                 Ako linkuje, stilovi iz login.css ce se ucitati posle kod.css i imati prednost. *@
+}
+
+@* NAPOMENA: Header i Footer ako su zajednicki idu u Layout. Ako treba samo ovde, dodajte ih. *@
+
+<div class="login-container"> @* Glavni kontejner za formu - koristi klasu login-container iz login.css *@
+    <div class="form-container"> @* Kontejner oko forme (beli boks) - koristi klasu form-container iz login.css *@
+
+        <h2>Prijava</h2> @* Naslov forme *@
+
+        @* --- DODATO: Prikazuje sažetak svih grešaka validacije i greške iz SignInManagera --- *@
+        @* Greške će se prikazati ovde ako ModelState sadrzi greške, stilizovane klasom .text-danger *@
+        <div asp-validation-summary="All" class="text-danger"></div>
+        @* ----------------------------------------------------------------------------------- *@
+
+        <form asp-controller="Account" asp-action="Login" method="post">
+            @* --- PROMENJENO: Input polja koriste asp-for Tag Helper-e --- *@
+            @* Omogucava zadrzavanje unetih vrednosti i pravilnu validaciju *@
+
+            <div class="form-group">
+                @* <label asp-for="Email"></label> *@
+                <input asp-for="Email" type="email" class="form-control" placeholder="E-mail" required />
+                <span asp-validation-for="Email" class="text-danger"></span> @* Opciono: prikazuje gresku samo za ovo polje *@
+            </div>
+
+            <div class="form-group">
+                @* <label asp-for="Password"></label> *@
+                <input asp-for="Password" type="password" class="form-control" placeholder="Lozinka" required />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <div class="form-group remember-me"> @* Klasa za "Zapamti me" checkbox * @
+                <label>
+                    @* --- PROMENJENO: Checkbox koristi asp-for --- *@
+                    <input asp-for="RememberMe" type="checkbox" />
+                    @* ------------------------------------------ *@
+                    Zapamti me
+                </label>
+                 <span asp-validation-for="RememberMe" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                @* Dugme za slanje forme - koristi klasu login-button iz login.css *@
+                <button type="submit" class="login-button">Prijavi me</button>
+            </div>
+
+            <div class="register-link"> @* Klasa za link "Nemate nalog?" - stilizovana u login.css *@
+                Nemate nalog? <a href="/Account/Register">Registrujte se</a>
+            </div>
+
+            <div class="forgot-password"> @* Klasa za link "Zaboravili ste lozinku?" - stilizovana u login.css *@
+                 @* Proverite da li ova putanja /Identity/Account/ForgotPassword postoji u vasem projektu (standardno za Identity Razor Pages) *@
+                <a href="/Identity/Account/ForgotPassword">Zaboravili ste lozinku?</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@* Sekcija za skripte, uključujući validacione skripte *@
+@* --- DODATO: Neophodno za klijentsku validaciju --- *@
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+@* --------------------------------------------------------- *@

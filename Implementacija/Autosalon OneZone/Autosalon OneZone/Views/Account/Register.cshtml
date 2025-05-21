@@ -1,0 +1,64 @@
+﻿@model Autosalon_OneZone.Models.ViewModels.RegisterViewModel
+@{
+    ViewData["Title"] = "Registracija";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+@section Head {
+    <link rel="stylesheet" href="~/css/register.css" />
+}
+
+<header>
+    <h1>Registracija</h1>
+</header>
+
+<div class="register-container">
+    <div class="form-container">
+        <div class="form-content">
+            <h2>Kreirajte Nalog</h2>
+
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <form asp-controller="Account" asp-action="Register" method="post">
+                <div class="form-group">
+                    <input asp-for="Ime" type="text" class="form-control" placeholder="Ime" required />
+                    <span asp-validation-for="Ime" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <input asp-for="Prezime" type="text" class="form-control" placeholder="Prezime" required />
+                    <span asp-validation-for="Prezime" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <input asp-for="Email" type="email" class="form-control" placeholder="Email adresa" required />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <input asp-for="Password" type="password" class="form-control" placeholder="Šifra" required />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Potvrdite šifru" required />
+                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="register-button">Registruj se</button>
+                </div>
+
+                <div class="login-link">
+                    Već imate nalog? <a href="/Account/Login">Prijavite se</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

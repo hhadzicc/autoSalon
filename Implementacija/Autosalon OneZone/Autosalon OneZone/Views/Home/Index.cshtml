@@ -1,8 +1,33 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+	ViewData["Title"] = "Početna Stranica";
 }
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+<header>
+	<h1>Dobrodošli u naš autosalon!</h1>
+</header>
+<section class="support-section">
+	<h2>Brza Podrška</h2>
+	<p>Imate hitno pitanje? Koristite našu opciju koja je dostupna 24/7. Naš tim je tu da vam odmah pomogne!</p>
+	<a href="mailto:autosalon@autosalon.com?subject=Pitanje o vozilu&amp;body=Unesite vaše pitanje ovdje." class="cta-button">Pošaljite poruku</a>
+</section>
+<section class="container mt-5">
+    <div class="row">
+        <div class="col-md-6 text-center pe-4 border-end">
+            <h2>Pronađite Vozilo Iz Snova!</h2>
+            <p>U autosalonu AutoZone ponosimo se velikim izborom vozila, od luksuznih automobila do porodičnih vozila, sa specijalnim popustima i akcijama. Bilo da ste u potrazi za vozilom koje će zadovoljiti vaše svakodnevne potrebe ili želite luksuzno vozilo koje pruža vrhunski doživljaj vožnje, kod nas ćete pronaći upravo ono što tražite.</p>
+        </div>
+        <div class="col-md-6 text-center ps-4">
+            <h2>Zašto Izabrati Nas?</h2>
+            <ul class="list-unstyled">
+                <li class="text-nowrap mb-2"><strong>Veliki izbor vozila:</strong> Najnoviji modeli, od standardnih automobila do luksuznih modela.</li>
+                <li class="text-nowrap mb-2"><strong>Pristupačne cijene:</strong> Povoljne cijene i opcije za plaćanje na rate.</li>
+                <li class="text-nowrap mb-2"><strong>Brza i laka kupovina:</strong> Jednostavan proces od pregleda do kupovine vozila.</li>
+                <li class="text-nowrap mb-2"><strong>Podrška 24/7:</strong> Naš tim je uvijek tu da vam pomogne i odgovori na sva pitanja.</li>
+            </ul>
+        </div>
+    </div>
+</section>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+
+@section Scripts {
+}

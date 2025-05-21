@@ -1,0 +1,189 @@
+﻿@* Views/Home/Kontakt.cshtml - improved validation *@
+@model Autosalon_OneZone.ViewModels.KontaktViewModel
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+@{
+    ViewData["Title"] = "Kontaktirajte podršku";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Head {
+    <link rel="stylesheet" href="~/css/support.css" />
+    <style>
+        .contact-form {
+            margin-bottom: 20px;
+        }
+
+            .contact-form input,
+            .contact-form textarea {
+                width: 100%;
+                padding: 10px;
+                margin-bottom: 15px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+            }
+
+            .contact-form label {
+                display: block;
+                margin-bottom: 5px;
+                font-weight: bold;
+            }
+
+            .contact-form button {
+                padding: 10px 20px;
+                background-color: #007bff;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+
+                .contact-form button:hover {
+                    background-color: #0069d9;
+                }
+
+        .validation-message {
+            color: red;
+            font-size: 0.8em;
+            margin-top: -10px;
+            margin-bottom: 10px;
+        }
+
+        .field-validation-error {
+            color: #dc3545;
+            font-size: 0.875em;
+        }
+
+        .input-validation-error {
+            border-color: #dc3545;
+        }
+    </style>
+}
+
+<div class="container">
+    <div class="contact-container">
+        <h2>Kontaktirajte našu podršku</h2>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                @TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        <div class="contact-form">
+            @if (User.Identity.IsAuthenticated)
+            {
+                <form asp-controller="Home" asp-action="Kontakt" method="post" id="contact-form">
+                    @Html.AntiForgeryToken()
+
+                    <div class="form-group mb-3">
+                        <label asp-for="Naslov">Naslov:</label>
+                        <input asp-for="Naslov" class="form-control" placeholder="Unesite naslov" />
+                        <span asp-validation-for="Naslov" class="field-validation-error"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="Sadrzaj">Poruka:</label>
+                        <textarea asp-for="Sadrzaj" class="form-control" rows="5" placeholder="Napišite vašu poruku"></textarea>
+                        <span asp-validation-for="Sadrzaj" class="field-validation-error"></span>
+                    </div>
+
+                    <button type="submit" id="send-message" class="btn btn-primary">Pošaljite poruku</button>
+                </form>
+            }
+            else
+            {
+                <div class="info-message">
+                    <p>
+                        Za slanje poruke direktno preko sajta, potrebno je da budete prijavljeni.
+                        Možete se <a href="/Account/Login">prijaviti ovdje</a> ili koristiti
+                        <button id="email-link" type="button" class="btn btn-primary" style="text-decoration: none;">Direktan email kontakt</button>
+
+                    </p>
+                </div>
+
+                <form id="email-form" style="display:none">
+                    <div class="form-group mb-3">
+                        <label for="email-subject">Naslov:</label>
+                        <input type="text" id="email-subject" class="form-control" placeholder="Unesite naslov" />
+                        <div class="field-validation-error" id="email-subject-error"></div>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="email-body">Poruka:</label>
+                        <textarea id="email-body" class="form-control" rows="5" placeholder="Napišite vašu poruku"></textarea>
+                        <div class="field-validation-error" id="email-body-error"></div>
+                    </div>
+
+                    <button type="button" id="open-email-client" class="btn btn-primary">Otvorite email klijent</button>
+                    <button type="button" id="cancel-email" class="btn btn-secondary">Odustani</button>
+                </form>
+            }
+        </div>
+
+        <div class="info-message">
+            <p>Naša podrška će vas kontaktirati što je prije moguće. Hvala na strpljenju!</p>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            // For authenticated users - client-side validation is handled by jQuery Validate
+
+            // For unauthenticated users - email form
+            $("#email-link").click(function() {
+                $("#email-form").show();
+                $(this).hide();
+            });
+
+            $("#cancel-email").click(function() {
+                $("#email-form").hide();
+                $("#email-link").show();
+                $("#email-subject-error").text("");
+                $("#email-body-error").text("");
+            });
+
+            $("#open-email-client").click(function() {
+                let isValid = true;
+
+                // Validate email subject
+                if ($("#email-subject").val().trim() === "") {
+                    $("#email-subject-error").text("Naslov je obavezan");
+                    isValid = false;
+                } else {
+                    $("#email-subject-error").text("");
+                }
+
+                // Validate email body
+                if ($("#email-body").val().trim() === "") {
+                    $("#email-body-error").text("Poruka je obavezna");
+                    isValid = false;
+                } else {
+                    $("#email-body-error").text("");
+                }
+
+                if (!isValid) {
+                    return;
+                }
+
+                var subject = encodeURIComponent($("#email-subject").val());
+                var body = encodeURIComponent($("#email-body").val());
+                window.location.href = "mailto:autosalon@autosalon.com?subject=" + subject + "&body=" + body;
+            });
+        });
+    </script>
+}

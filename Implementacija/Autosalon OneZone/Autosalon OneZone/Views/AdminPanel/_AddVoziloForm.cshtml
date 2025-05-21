@@ -1,0 +1,316 @@
+﻿@* Fajl: Views/AdminPanel/_AddVoziloForm.cshtml *@
+@model Autosalon_OneZone.ViewModels.Admin.AddVoziloViewModel
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+@* Dodajemo Anti-forgery token radi sigurnosti *@
+@Html.AntiForgeryToken()
+
+<form id="add-edit-vozilo-form" asp-controller="AdminPanel" asp-action="SaveVozilo" method="post" enctype="multipart/form-data">
+    @* VoziloID - Skriveno polje, koristi se za Edit scenarij (bit će 0 za Add) *@
+    <input type="hidden" asp-for="VoziloID" />
+
+    <div class="form-group mb-3">
+        <label asp-for="Marka">Marka</label>
+        <input asp-for="Marka" class="form-control" required />
+        <span asp-validation-for="Marka" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Model">Model</label>
+        <input asp-for="Model" class="form-control" required />
+        <span asp-validation-for="Model" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Godiste">Godište</label>
+        <input asp-for="Godiste" class="form-control" type="number" min="1900" max="2025" required />
+        <span asp-validation-for="Godiste" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Gorivo">Gorivo</label>
+        <select asp-for="Gorivo" class="form-control" required>
+            <option value="">-- Odaberite vrstu goriva --</option>
+            <option value="Benzin">Benzin</option>
+            <option value="Dizel">Dizel</option>
+            <option value="Plin">Plin</option>
+            <option value="Elektro">Elektro</option>
+            <option value="Hibrid">Hibrid</option>
+        </select>
+        <span asp-validation-for="Gorivo" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Kubikaza">Kubikaža</label>
+        <input asp-for="Kubikaza" class="form-control" type="number" min="0.1" step="0.1" required />
+        <span asp-validation-for="Kubikaza" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Boja">Boja</label>
+        <input asp-for="Boja" class="form-control" pattern="[a-zA-ZčćžšđČĆŽŠĐ\s-]+" required />
+        <span asp-validation-for="Boja" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Kilometraza">Kilometraža</label>
+        <input asp-for="Kilometraza" class="form-control" type="number" min="0" step="1" required />
+        <span asp-validation-for="Kilometraza" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Cijena">Cijena</label>
+        <input asp-for="Cijena" class="form-control" type="number" min="0.01" step="0.01" required />
+        <span asp-validation-for="Cijena" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Slika">Slika</label>
+            @if (Model.VoziloID == 0)
+{
+        <input asp-for="Slika" class="form-control" type="file" accept="image/*" required />
+}
+else
+{
+        <input asp-for="Slika" class="form-control" type="file" accept="image/*" />
+}
+
+        <small class="form-text text-muted">Dozvoljeni formati: jpg, jpeg, png, gif, bmp</small>
+        <span asp-validation-for="Slika" class="text-danger"></span>
+
+        @if (Model is Autosalon_OneZone.ViewModels.Admin.EditVoziloViewModel editVm && !string.IsNullOrEmpty(editVm.PostojecaSlikaPath))
+    {
+        <div class="mt-2">
+            <img src="~/images/vozila/@editVm.PostojecaSlikaPath" alt="Trenutna slika" style="max-width: 200px; max-height: 150px;" />
+            <input type="hidden" name="PostojecaSlikaPath" value="@editVm.PostojecaSlikaPath" />
+        </div>
+    }
+    </div>
+
+
+    <div class="form-group mb-3">
+        <label asp-for="Opis">Opis</label>
+        <textarea asp-for="Opis" class="form-control" rows="4" required></textarea>
+        <span asp-validation-for="Opis" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mt-3">
+        <button type="submit" class="btn btn-primary">@(Model.VoziloID > 0 ? "Sačuvaj izmjene" : "Dodaj Vozilo")</button>
+        <button type="button" id="cancel-add-vozilo" class="btn btn-secondary">Otkaži</button>
+    </div>
+</form>
+
+<script>
+    $(document).ready(function() {
+        console.log("Form script loaded");
+
+        // Uklanjamo prethodne handlere
+        $(document).off('submit', '#add-edit-vozilo-form');
+        $(document).off('click', '.edit-vozilo-button');
+        $(document).off('click', '#add-vozilo-button');
+/*
+$(document).off('click', '#add-vozilo-button');
+$(document).off('click', '#vozilo-search-button');
+searchInput.off('keypress');
+$(document).off('click', '#cancel-add-vozilo');
+$(document).off('click', '.delete-vozilo-button');
+*/
+        // Inicijalizacija klijentske validacije
+        $("#add-edit-vozilo-form").validate({
+            errorElement: "span",
+            errorClass: "text-danger",
+            highlight: function(element, errorClass, validClass) {
+                $(element).addClass("is-invalid").removeClass("is-valid");
+            },
+            unhighlight: function(element, errorClass, validClass) {
+                $(element).addClass("is-valid").removeClass("is-invalid");
+            },
+            rules: {
+                Marka: {
+                    required: true,
+                    maxlength: 100
+                },
+                Model: {
+                    required: true,
+                    maxlength: 100
+                },
+                Godiste: {
+                    required: true,
+                    min: 1900,
+                    max: 2025,
+                    digits: true
+                },
+                Gorivo: "required",
+                Kubikaza: {
+                    required: true,
+                    min: 1,
+                    number: true
+                },
+                Boja: {
+                    required: true,
+                    maxlength: 50,
+                    pattern: /^[a-zA-ZčćžšđČĆŽŠĐ\s-]+$/
+                },
+                Kilometraza: {
+                    required: true,
+                    min: 0,
+                    number: true
+                },
+                Cijena: {
+                    required: true,
+                    min: 0.01,
+                    number: true
+                },
+                Slika: {
+                    required: @(Model.VoziloID == 0 ? "true" : "function() { return !$('#ZadrzatiPostojecuSliku').is(':checked'); }")
+                },
+                Opis: {
+                    required: true,
+                    maxlength: 2000
+                }
+            },
+            messages: {
+                Marka: {
+                    required: "Marka ne smije biti prazna",
+                    maxlength: "Marka ne može biti duža od 100 karaktera"
+                },
+                Model: {
+                    required: "Model ne smije biti prazan",
+                    maxlength: "Model ne može biti duži od 100 karaktera"
+                },
+                Godiste: {
+                    required: "Godište je obavezno",
+                    min: "Godište mora biti najmanje 1900",
+                    max: "Godište ne može biti veće od 2025",
+                    digits: "Godište mora biti cijeli broj"
+                },
+                Gorivo: "Gorivo je obavezno",
+                Kubikaza: {
+                    required: "Kubikaža je obavezna",
+                    min: "Kubikaža mora biti pozitivan broj",
+                    number: "Kubikaža mora biti broj"
+                },
+                Boja: {
+                    required: "Boja ne smije biti prazna",
+                    maxlength: "Boja ne može biti duža od 50 karaktera",
+                    pattern: "Boja može sadržavati samo slova"
+                },
+                Kilometraza: {
+                    required: "Kilometraža je obavezna",
+                    min: "Kilometraža ne može biti negativna",
+                    number: "Kilometraža mora biti broj"
+                },
+                Cijena: {
+                    required: "Cijena je obavezna",
+                    min: "Cijena mora biti veća od nule",
+                    number: "Cijena mora biti broj"
+                },
+                Slika: {
+                    required: @(Model.VoziloID == 0 ? "true" : "false")
+                },
+                Opis: {
+                    required: "Opis ne smije biti prazan",
+                    maxlength: "Opis ne može biti duži od 2000 karaktera"
+                }
+            }
+        });
+
+        // Validacija tipa fajla za sliku
+        $("input[type=file]").change(function() {
+            var fileInput = $(this)[0];
+            if(fileInput.files.length > 0) {
+                var file = fileInput.files[0];
+                var allowedExtensions = /(\.jpg|\.jpeg|\.png|\.gif|\.bmp)$/i;
+
+                if(!allowedExtensions.exec(file.name)) {
+                    alert('Dozvoljena su samo sljedeća proširenja fajlova: .jpg, .jpeg, .png, .gif, .bmp');
+                    $(this).val('');
+                    return false;
+                }
+
+                // Provjera veličine fajla (opciono, npr. max 5MB)
+                if(file.size > 5 * 1024 * 1024) {
+                    alert('Veličina slike ne smije prelaziti 5MB.');
+                    $(this).val('');
+                    return false;
+                }
+            }
+        });
+
+        // AJAX submit forme
+        $(document).on('submit', '#add-edit-vozilo-form', function (e) {
+            e.preventDefault();
+
+            // Prvo provjerava validaciju forme
+            if(!$(this).valid()) {
+                return false;
+            }
+
+            console.log("Form submitted");
+
+            // Logiranje podataka forme za debugging
+            var formData = new FormData(this);
+            console.log("FormData created");
+            for (var pair of formData.entries()) {
+                console.log(pair[0] + ': ' + pair[1]);
+            }
+
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    console.log("Success:", data);
+                    $('#add-vozilo-form-container').hide();
+                    $('#add-vozilo-form-placeholder').empty();
+                    if (typeof loadSection === 'function') {
+                        loadSection('Vozila');
+                    }
+                    alert('Vozilo uspješno ' + (@Model.VoziloID > 0 ? 'izmijenjeno' : 'dodano') + '!');
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error('AJAX Error:', textStatus, errorThrown);
+                    console.error('Response:', jqXHR.responseText);
+
+                    var errorMessage = 'Greška prilikom spremanja vozila.';
+
+                    if (jqXHR.status === 400 && jqXHR.responseJSON && jqXHR.responseJSON.errors) {
+                        errorMessage += '\nValidacijske greške:';
+                        $.each(jqXHR.responseJSON.errors, function(key, value) {
+                            if (Array.isArray(value)) {
+                                errorMessage += '\n - ' + key + ': ' + value.join(', ');
+
+                                // Update the validation error message in the form
+                                var fieldErrorSpan = $('span[data-valmsg-for="' + key + '"]');
+                                if (fieldErrorSpan.length) {
+                                    fieldErrorSpan.text(value.join(', ')).show();
+                                }
+                            } else {
+                                errorMessage += '\n - ' + key + ': ' + value;
+
+                                // Update the validation error message in the form
+                                var fieldErrorSpan = $('span[data-valmsg-for="' + key + '"]');
+                                if (fieldErrorSpan.length) {
+                                    fieldErrorSpan.text(value).show();
+                                }
+                            }
+                        });
+                    } else if (jqXHR.responseText) {
+                        errorMessage += '\nDetalji: ' + jqXHR.responseText;
+                    } else {
+                        errorMessage += '\nStatus: ' + jqXHR.status + ', Tekst statusa: ' + textStatus + ', Greška: ' + errorThrown;
+                    }
+
+                    alert(errorMessage);
+                }
+            });
+        });
+
+        // Handler za otkazivanje
+        $(document).on('click', '#cancel-add-vozilo', function () {
+            $('#add-vozilo-form-container').hide();
+            $('#add-vozilo-form-placeholder').empty();
+        });
+    });
+</script>

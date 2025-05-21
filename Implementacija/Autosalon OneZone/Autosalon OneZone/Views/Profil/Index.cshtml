@@ -1,0 +1,54 @@
+﻿@model Autosalon_OneZone.Models.ViewModels.ProfileViewModel
+@{
+    ViewData["Title"] = "Profil Korisnika";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+@section Head {
+    <link rel="stylesheet" href="~/css/profile.css" />
+}
+
+<header>
+    <h1>Profil Korisnika</h1>
+</header>
+
+<div class="container">
+    <div class="profile-container">
+        <div class="profile-header">
+            <h2>@Model.ImePrezime</h2>
+            <p>@Model.Role</p>
+        </div>
+
+        <div class="profile-info">
+            <p><strong>Ime i Prezime:</strong> @Model.ImePrezime</p>
+            <p><strong>Email:</strong> @Model.Email</p>
+            <p><strong>Korisničko ime:</strong> @Model.UserName</p>
+        </div>
+
+        <div class="button-container">
+            <button class="edit-button" onclick="location.href='/Profil/Edit'">Edit Profile</button>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="reviews-section">
+        <h3>Recenzije</h3>
+
+        @if (Model.Recenzije != null && Model.Recenzije.Any())
+        {
+            @foreach (var recenzija in Model.Recenzije)
+            {
+                <div class="review-item">
+                    <h4>Vozilo: @recenzija.VoziloNaziv</h4>
+                    <p class="rating">Ocena: @recenzija.Ocena/5</p>
+                    <p>@recenzija.Tekst</p>
+                </div>
+            }
+        }
+        else
+        {
+            <p class="no-reviews">Nema recenzija za prikaz.</p>
+        }
+    </div>
+</div>

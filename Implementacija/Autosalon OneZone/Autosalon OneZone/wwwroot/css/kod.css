@@ -1,0 +1,496 @@
+﻿/* Učitavanje Google fonta */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+/* Koristi Roboto font za ceo sajt */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+/* Navigacija */
+.nav-bar {
+    background-color: #333;
+    color: white;
+    padding: 15px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 20px;
+    padding-right: 20px;
+    font-size: 20px;
+}
+
+    /* Logo */
+    .nav-bar .logo a {
+        color: white;
+        text-decoration: none;
+        font-size: 30px;
+        font-weight: bold;
+    }
+
+/* Search bar na sredini - CENTRIRANO */
+.search-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1;
+}
+
+    .search-bar input {
+        padding: 10px;
+        font-size: 16px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        width: 300px;
+    }
+
+    .search-bar button {
+        padding: 10px 20px;
+        background-color: #3498db;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+        .search-bar button:hover {
+            background-color: #2980b9;
+        }
+
+/* Linkovi na desnoj strani */
+.nav-bar .nav-links {
+    display: flex;
+    gap: 20px;
+}
+
+    .nav-bar .nav-links a {
+        color: white;
+        text-decoration: none;
+        padding: 15px 25px;
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+        .nav-bar .nav-links a:hover {
+            background-color: #444;
+            border-radius: 5px;
+        }
+
+/* Header sekcija */
+header {
+    background-color: #2f2f2f;
+    color: white;
+    padding: 30px 0;
+    text-align: center;
+}
+
+    header h1 {
+        font-size: 36px;
+    }
+
+/* Brza podrška sekcija */
+.support-section {
+    padding: 50px 20px;
+    text-align: center;
+    background-color: #fafafa;
+}
+
+    .support-section h2 {
+        font-size: 28px;
+    }
+
+    .support-section p {
+        font-size: 18px;
+        margin-bottom: 20px;
+    }
+
+/* Linkovi */
+.cta-button {
+    display: inline-block;
+    padding: 12px 25px;
+    background-color: #3498db;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: 0.3s;
+}
+
+    .cta-button:hover {
+        background-color: #2980b9;
+    }
+
+/* Forme i kontejneri */
+.container {
+    display: flex;
+    justify-content: center;
+    padding: 50px 20px;
+}
+
+    .container .section {
+        width: 45%;
+        padding: 0 20px;
+        text-align: center;
+    }
+
+        .container .section:not(:last-child) {
+            border-right: 2px solid #ccc;
+        }
+
+/* Footer stilovi */
+footer {
+    background-color: #2f2f2f;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+
+    footer p {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    footer a {
+        color: white;
+        text-decoration: none;
+        margin: 0 10px;
+    }
+
+    /* Footer copyright */
+    footer .container {
+        padding: 10px 0;
+        margin-top: 10px;
+    }
+
+
+.admin-button {
+    margin-left: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.btn-upravljanje {
+    background-color: #007bff;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 5px;
+    text-decoration: none;
+}
+
+    .btn-upravljanje:hover {
+        background-color: #0056b3;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropbtn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 200px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.dropdown:hover .dropbtn {
+    background-color: #3e8e41;
+}
+
+/* Stilizacija za linkove prijava/registracija */
+.auth-link {
+    padding: 8px 15px;
+    margin-left: 10px;
+    border-radius: 4px;
+    background-color: #4CAF50;
+    color: white;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.auth-link:hover {
+    background-color: #3e8e41;
+}
+
+
+
+
+
+
+.nav-bar .nav-links form {
+    display: inline-block;
+}
+
+.nav-bar .nav-links form a {
+    padding: 15px 25px;
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.nav-bar .nav-links form a:hover {
+    background-color: #444;
+    border-radius: 5px;
+}
+
+
+
+
+
+.spacer {
+    flex-grow: 1;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/*OVO ISPOD object ZA ALPAGE*/
+
+/* Fajl: wwwroot/css/kod.css ili wwwroot/css/admin.css */
+
+/* Stilovi za glavni kontejner admin panela */
+.admin-panel-container {
+    display: flex; /* Omogućava layout sa sidebarom i sadržajem */
+    margin-top: 20px; /* Razmak od navigacione trake */
+    /* Možda ćete htjeti dodati padding po potrebi */
+}
+
+/* Stilovi za interni sidebar (lijevi meni unutar admin panela) */
+.admin-sidebar-internal {
+    width: 200px; /* Širina sidebar-a */
+    background-color: #f8f9fa; /* Svjetlija pozadina */
+    padding: 20px;
+    /* Visina: Može biti 'auto' da se prilagodi sadržaju, ili fiksna/min-height */
+    /* height: calc(100vh - 100px); */ /* Primjer: puna visina ekrana minus visina navbara */
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    flex-shrink: 0; /* Spriječava smanjivanje sidebar-a */
+}
+
+    .admin-sidebar-internal h2 {
+        margin-top: 0;
+        margin-bottom: 20px;
+        font-size: 1.2em;
+    }
+
+    .admin-sidebar-internal ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .admin-sidebar-internal li {
+        margin-bottom: 5px; /* Manji razmak između stavki menija */
+    }
+
+    .admin-sidebar-internal a {
+        text-decoration: none;
+        color: #333;
+        font-weight: normal; /* Standardna težina fonta */
+        display: block;
+        padding: 10px 15px; /* Padding unutar linka */
+        border-radius: 4px;
+        transition: background-color 0.2s ease;
+    }
+
+        .admin-sidebar-internal a:hover {
+            background-color: #e9ecef; /* Boja pozadine na hover */
+            color: #000;
+        }
+
+        /* Stil za aktivnu stavku menija */
+        .admin-sidebar-internal a.active {
+            background-color: #007bff; /* Plava pozadina za aktivnu stavku */
+            color: white; /* Bijeli tekst */
+            font-weight: bold;
+        }
+
+
+/* Stilovi za interni kontejner sadržaja (desno od menija) */
+.admin-content-internal {
+    flex-grow: 1; /* Zauzima sav preostali prostor */
+    padding: 20px;
+    /* Dodajte pozadinsku boju ako želite */
+    /* background-color: #fff; */
+}
+
+/* Stilovi za kontrole na vrhu sekcija (dugmad, pretraga) */
+.admin-section-controls {
+    margin-bottom: 20px;
+    /* Može koristiti flexbox ili grid za poravnanje elemenata */
+    display: flex;
+    gap: 10px; /* Razmak između elemenata */
+    align-items: center; /* Vertikalno poravnanje */
+}
+
+    .admin-section-controls input[type="text"] {
+        flex-grow: 1; /* Polje za pretragu zauzima dostupan prostor */
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+/* Stilovi za tabele u admin panelu */
+.admin-content-internal table {
+    width: 100%; /* Tabela zauzima punu širinu kontejnera */
+    border-collapse: collapse; /* Uklanja duple ivice */
+    margin-top: 15px;
+}
+
+.admin-content-internal th,
+.admin-content-internal td {
+    border: 1px solid #ddd; /* Ivice ćelija */
+    padding: 10px;
+    text-align: left;
+}
+
+.admin-content-internal th {
+    background-color: #f2f2f2; /* Boja pozadine zaglavlja */
+    font-weight: bold;
+}
+
+/* Stilovi za parne i neparne redove (opciono) */
+.admin-content-internal tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+/* Stilovi za formu za dodavanje/izmjenu */
+#add-vozilo-form-container,
+#add-profil-form-container {
+    border: 1px solid #ccc;
+    padding: 20px;
+    margin-bottom: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+}
+
+/* Stilovi za grupe polja u formi (ako ne koristite Bootstrap .form-group) */
+/*
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group input[type="password"],
+.form-group input[type="email"],
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box; // Uključuje padding i border u širinu
+}
+
+.form-group .text-danger {
+    color: red;
+    font-size: 0.9em;
+}
+*/
+
+/* Stilovi za dugmad u formi */
+#add-vozilo-form button,
+#add-profil-form button {
+    padding: 10px 15px;
+    margin-right: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+    #add-vozilo-form button[type="submit"],
+    #add-profil-form button[type="submit"] {
+        background-color: #28a745; /* Zelena boja (Bootstrap success) */
+        color: white;
+    }
+
+#add-vozilo-form #cancel-add-vozilo,
+#add-profil-form #cancel-add-profil {
+    background-color: #6c757d; /* Siva boja (Bootstrap secondary) */
+    color: white;
+}
+
+/* Stilovi za ikone (ako koristite Bootstrap Icons) */
+.bi-trash {
+    /* Osnovni stilovi ako je potrebno */
+    margin-right: 5px; /* Razmak između ikone i teksta dugmeta */
+}
+
+/* Stilovi za mailto link dugme */
+.btn-mail-reply {
+    display: inline-block; /* Prikazuje kao inline element ali sa box modelom */
+    padding: 5px 10px;
+    background-color: #007bff; /* Plava boja (Bootstrap primary) */
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    margin-right: 5px;
+    font-size: 0.9em;
+}
+
+    .btn-mail-reply:hover {
+        background-color: #0056b3;
+        color: white;
+        text-decoration: none;
+    }

@@ -1,0 +1,16 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\Autosalon OneZone",
+    "\\Autosalon OneZone\\Views",
+    "\\Autosalon OneZone\\Views\\Account",
+    "\\Autosalon OneZone\\Views\\AdminPanel",
+    "\\Autosalon OneZone\\wwwroot",
+    "\\Autosalon OneZone\\wwwroot\\lib",
+    "\\Autosalon OneZone\\wwwroot\\lib\\bootstrap",
+    "\\Autosalon OneZone\\wwwroot\\lib\\bootstrap\\dist",
+    "\\Autosalon OneZone\\wwwroot\\lib\\bootstrap\\dist\\css"
+  ],
+  "SelectedNode": "\\Autosalon OneZone\\Views\\AdminPanel\\_AddProfilForm.cshtml",
+  "PreviewInSolutionExplorer": false
+}

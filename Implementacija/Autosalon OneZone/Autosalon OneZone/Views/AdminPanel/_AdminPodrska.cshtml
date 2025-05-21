@@ -1,0 +1,259 @@
+﻿@* _AdminPodrska.cshtml *@
+@model Autosalon_OneZone.ViewModels.Admin.PodrskaListViewModel
+@using Autosalon_OneZone.Models
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+<h3>Pregled Upita za Podršku</h3>
+
+<div class="admin-section-controls">
+    <input type="text" id="podrska-search-input" placeholder="Pretraži (email, naslov, sadržaj)..." value="@Model.SearchQuery" />
+    <button id="podrska-search-button" class="btn btn-secondary">Pretraži</button>
+</div>
+
+@* Modal for displaying full message text *@
+<div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="messageModalLabel">Sadržaj upita</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="messageModalBody">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="podrska-list-container">
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Datum</th>
+                <th>Email Korisnika</th>
+                <th>Naslov Upita</th>
+                <th>Poruka</th>
+                <th>Status</th>
+                <th>Akcije</th>
+            </tr>
+        </thead>
+        <tbody id="podrska-table-body">
+            <tr>
+                <td colspan="6">Učitavanje upita...</td>
+            </tr>
+        </tbody>
+    </table>
+    <div id="pagination-controls"></div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        // Remove any existing event handlers to prevent duplicates
+        $(document).off('click', '.delete-podrska-button');
+        $(document).off('click', '.status-option');
+        $(document).off('click', '.message-text');
+        $('#podrska-search-button').off('click');
+        $('#podrska-search-input').off('keypress');
+        $('.page-link').off('click');
+
+        const podrskaTableBody = $('#podrska-table-body');
+        const searchInput = $('#podrska-search-input');
+        const searchButton = $('#podrska-search-button');
+
+        function formatDateTime(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) return '';
+
+            return date.toLocaleString('bs-BA', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function getStatusBadge(status) {
+            let badgeClass = '';
+            switch (status) {
+                case 'Poslat': badgeClass = 'bg-info'; break;
+                case 'UObradi': badgeClass = 'bg-warning'; break;
+                case 'Odgovoren': badgeClass = 'bg-success'; break;
+                case 'Zatvoren': badgeClass = 'bg-secondary'; break;
+                default: badgeClass = 'bg-light';
+            }
+
+            let displayStatus = status === 'UObradi' ? 'U obradi' : status;
+            return `<span class="badge ${badgeClass}">${displayStatus}</span>`;
+        }
+
+        function createStatusDropdown(upitId, currentStatus) {
+            return `
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Status
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item status-option ${currentStatus === 'Poslat' ? 'active' : ''}" href="#" data-status="Poslat" data-upit-id="${upitId}">Poslat</a></li>
+                        <li><a class="dropdown-item status-option ${currentStatus === 'UObradi' ? 'active' : ''}" href="#" data-status="UObradi" data-upit-id="${upitId}">U obradi</a></li>
+                        <li><a class="dropdown-item status-option ${currentStatus === 'Odgovoren' ? 'active' : ''}" href="#" data-status="Odgovoren" data-upit-id="${upitId}">Odgovoren</a></li>
+                        <li><a class="dropdown-item status-option ${currentStatus === 'Zatvoren' ? 'active' : ''}" href="#" data-status="Zatvoren" data-upit-id="${upitId}">Zatvoren</a></li>
+                    </ul>
+                </div>
+            `;
+        }
+
+        function loadUpitiList(searchQuery = '', page = 1) {
+            console.log("Loading support ticket list...");
+            podrskaTableBody.html('<tr><td colspan="6">Učitavanje upita...</td></tr>');
+
+            $.get('@Url.Action("GetPodrskaJson", "AdminPanel")', { searchQuery, page }, function (data) {
+                podrskaTableBody.empty();
+
+                if (data?.upiti?.length > 0) {
+                    data.upiti.forEach(upit => {
+                        const truncatedText = (upit.sadrzaj || '').length > 100
+                            ? (upit.sadrzaj || '').substring(0, 100) + '...'
+                            : upit.sadrzaj || '';
+
+                        const row = `
+                            <tr>
+                                <td>${formatDateTime(upit.datumUpita)}</td>
+                                <td>${upit.korisnikEmail || 'N/A'}</td>
+                                <td>${upit.naslov || ''}</td>
+                                <td>
+                                    <span class="message-text cursor-pointer" style="cursor: pointer;"
+                                          data-full-text="${encodeURIComponent(upit.sadrzaj || '')}"
+                                          title="Kliknite za prikaz cijelog teksta">
+                                        ${truncatedText}
+                                    </span>
+                                </td>
+                                <td>${getStatusBadge(upit.status)}</td>
+                                <td class="action-buttons">
+                                    <a href="mailto:${upit.korisnikEmail}?subject=Odgovor na Vaš upit: ${encodeURIComponent(upit.naslov || '')}&body=Poštovani ${encodeURIComponent(upit.korisnikIme || '')},\n\nHvala na Vašem upitu.\n\n"
+                                       class="btn btn-info btn-sm me-1">
+                                       <i class="bi bi-reply"></i> Odgovori
+                                    </a>
+                                    <button class="delete-podrska-button btn btn-danger btn-sm me-1" data-id="${upit.upitID}">
+                                       <i class="bi bi-trash"></i> Obriši
+                                    </button>
+                                    ${createStatusDropdown(upit.upitID, upit.status)}
+                                </td>
+                            </tr>
+                        `;
+                        podrskaTableBody.append(row);
+                    });
+
+                    if (data.totalPages > 1) {
+                        setupPagination(data.currentPage, data.totalPages, searchQuery);
+                    } else {
+                        $('#pagination-controls').empty();
+                    }
+                } else {
+                    podrskaTableBody.html('<tr><td colspan="6">Nema dostupnih upita za podršku.</td></tr>');
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                console.error('Error loading support tickets:', errorThrown);
+                podrskaTableBody.html('<tr><td colspan="6"><div class="alert alert-danger">Greška prilikom učitavanja upita: ' + (jqXHR.responseText || errorThrown) + '</div></td></tr>');
+            });
+        }
+
+        // Handle showing full message text
+        $(document).on('click', '.message-text', function() {
+            const fullText = decodeURIComponent($(this).data('full-text'));
+            $('#messageModalBody').text(fullText);
+            const modal = new bootstrap.Modal(document.getElementById('messageModal'));
+            modal.show();
+        });
+
+        // Handle status change
+        $(document).on('click', '.status-option', function(e) {
+            e.preventDefault();
+            const status = $(this).data('status');
+            const upitId = $(this).data('upit-id');
+
+            $.ajax({
+                url: '@Url.Action("UpdatePodrskaStatus", "AdminPanel")',
+                method: 'POST',
+                data: { id: upitId, status: status },
+                headers: {
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                },
+                success: function(response) {
+                    if (response.successMessage) {
+                        alert(response.successMessage);
+                    }
+                    loadUpitiList(searchInput.val()); // Refresh the list
+                },
+                error: function(jqXHR) {
+                    alert('Došlo je do greške prilikom promjene statusa.');
+                    console.error('Error changing status:', jqXHR.responseText);
+                }
+            });
+        });
+
+        // Handle delete
+        $(document).on('click', '.delete-podrska-button', function() {
+            if (confirm('Da li ste sigurni da želite obrisati ovaj upit?')) {
+                const upitId = $(this).data('id');
+
+                $.ajax({
+                    url: '@Url.Action("DeletePodrska", "AdminPanel")',
+                    method: 'POST',
+                    data: { id: upitId },
+                    headers: {
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function(response) {
+                        if (response.successMessage) {
+                            alert(response.successMessage);
+                        }
+                        loadUpitiList(searchInput.val()); // Refresh the list
+                    },
+                    error: function(jqXHR) {
+                        alert('Došlo je do greške prilikom brisanja upita.');
+                        console.error('Error deleting inquiry:', jqXHR.responseText);
+                    }
+                });
+            }
+        });
+
+        // Search functionality
+        searchButton.on('click', function() {
+            loadUpitiList(searchInput.val());
+        });
+
+        searchInput.on('keypress', function(e) {
+            if (e.which === 13) {
+                e.preventDefault();
+                searchButton.click();
+            }
+        });
+
+        // Initial load
+        loadUpitiList('@Model.SearchQuery');
+    });
+</script>
+
+<style>
+    .message-text {
+        color: #007bff;
+    }
+
+        .message-text:hover {
+            text-decoration: underline;
+            color: #0056b3;
+        }
+
+    .dropdown-item.active {
+        background-color: #e9ecef;
+        color: #212529;
+    }
+
+    .action-buttons .dropdown {
+        display: inline-block;
+    }
+
+    .me-1 {
+        margin-right: 0.25rem !important;
+    }
+</style>

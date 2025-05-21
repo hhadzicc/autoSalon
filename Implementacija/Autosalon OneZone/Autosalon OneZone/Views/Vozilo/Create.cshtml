@@ -1,0 +1,99 @@
+﻿@* Fajl: Views/Vozilo/Create.cshtml *@
+@model Autosalon_OneZone.Models.Vozilo
+
+@{
+    ViewData["Title"] = "Dodaj Novo Vozilo"; // Naslov stranice
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<h4>Vozilo</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        @* Forma šalje podatke na POST akciju "Create" u "Vozilo" kontroleru *@
+        <form asp-controller="Vozilo" asp-action="Create" method="post">
+            @* Prikazuje sve greške validacije (model i propertiji) *@
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div> @* "ModelOnly" prikazuje samo greške na nivou modela *@
+
+            @* Primeri polja forme za unos podataka o vozilu *@
+
+            <div class="form-group">
+                <label asp-for="Marka" class="control-label"></label> @* Labela za Marku *@
+                <input asp-for="Marka" class="form-control" /> @* Input polje za Marku *@
+                <span asp-validation-for="Marka" class="text-danger"></span> @* Prikazuje greške validacije za Marku *@
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Model" class="control-label"></label>
+                <input asp-for="Model" class="form-control" />
+                <span asp-validation-for="Model" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Godiste" class="control-label"></label>
+                <input asp-for="Godiste" class="form-control" />
+                <span asp-validation-for="Godiste" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Gorivo" class="control-label"></label>
+                @* Primer Dropdown liste za Enum TipGoriva *@
+                <select asp-for="Gorivo" class="form-control" asp-items="Html.GetEnumSelectList<Autosalon_OneZone.Models.TipGoriva>()"></select> @* <--- Korišćenje EnumSelectListHelpera *@
+                <span asp-validation-for="Gorivo" class="text-danger"></span>
+            </div>
+
+             <div class="form-group">
+                <label asp-for="Kubikaza" class="control-label"></label>
+                <input asp-for="Kubikaza" class="form-control" />
+                <span asp-validation-for="Kubikaza" class="text-danger"></span>
+            </div>
+
+             <div class="form-group">
+                <label asp-for="Boja" class="control-label"></label>
+                <input asp-for="Boja" class="form-control" />
+                <span asp-validation-for="Boja" class="text-danger"></span>
+            </div>
+
+             <div class="form-group">
+                <label asp-for="Kilometraza" class="control-label"></label>
+                <input asp-for="Kilometraza" class="form-control" />
+                <span asp-validation-for="Kilometraza" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Cijena" class="control-label"></label>
+                <input asp-for="Cijena" class="form-control" /> @* Možda tip="number" za bolji UI *//
+                <span asp-validation-for="Cijena" class="text-danger"></span>
+            </div>
+
+             <div class="form-group">
+                <label asp-for="Slika" class="control-label"></label>
+                <input asp-for="Slika" class="form-control" /> @* Za upload fajlova, biće potrebna drugačija implementacija i ViewModel *//
+                <span asp-validation-for="Slika" class="text-danger"></span>
+            </div>
+
+             <div class="form-group">
+                <label asp-for="Opis" class="control-label"></label>
+                <textarea asp-for="Opis" class="form-control"></textarea> @* Koristite textarea za duži tekst *//
+                <span asp-validation-for="Opis" class="text-danger"></span>
+            </div>
+
+
+            @* Dugme za slanje forme *@
+            <div class="form-group">
+                <input type="submit" value="Kreiraj" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    @* Link nazad na listu vozila *@
+    <a asp-controller="Vozilo" asp-action="Index">Nazad na Listu</a>
+</div>
+
+@section Scripts {
+    @* Uključuje standardne skripte za klijentsku validaciju (potrebno za forme) *@
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

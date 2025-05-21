@@ -1,0 +1,185 @@
+﻿@* Fajl: Views/AdminPanel/_AdminRecenzije.cshtml - IZMIJENJENO za dinamičko učitavanje *@
+@model Autosalon_OneZone.ViewModels.Admin.RecenzijaListViewModel
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+@* Preporuka: Uklonite CSS linkove iz parcijalnih viewa i stavite ih u glavni _CustomLayout.cshtml *@
+@* <link href="~/css/admin-specific.css" rel="stylesheet" /> *@
+@* <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"> *@
+
+<h3>Pregled Recenzija</h3>
+
+@* Polja za filtriranje i pretragu *@
+<div class="admin-section-controls">
+    @* Polja za filtriranje po korisniku ili vozilu *@
+    <input type="text" id="recenzija-user-filter" placeholder="Filtriraj po korisniku..." value="@Model.KorisnikFilter" />
+    <input type="text" id="recenzija-vozilo-filter" placeholder="Filtriraj po vozilu..." value="@Model.VoziloFilter" />
+    @* Polje za pretragu po tekstu recenzije *@
+    <input type="text" id="recenzija-text-search" placeholder="Pretraži po tekstu..." value="@Model.SearchQuery" />
+    @* Dugme za primjenu filtera/pretrage *@
+    <button id="recenzija-filter-search-button" class="btn btn-secondary">Primijeni Filter/Pretragu</button>
+    @* Opcionalno: dugme za reset filtera/pretrage *@
+    @* <button id="recenzija-reset-button" class="btn btn-secondary">Reset</button> *@
+</div>
+
+
+<div id="recenzije-list-container"> @* Dodan kontejner za listu recenzija *@
+    @* Tabela za prikaz recenzija *@
+    <table class="table table-striped table-hover"> @* Dodane Bootstrap klase za stil *@
+        <thead>
+            <tr>
+                @* Headeri kolona *@
+                <th>Korisnik</th>
+                <th>Vozilo</th>
+                <th>Ocjena</th>
+                <th>Komentar</th>
+                <th>Datum</th>
+                <th>Akcije</th>
+            </tr>
+        </thead>
+        <tbody id="recenzija-table-body">
+            @* Ovdje će se dinamički učitavati redovi tabele putem JavaScripta *@
+            <tr>
+                <td colspan="6">Učitavanje recenzija...</td> @* Početni placeholder *@
+            </tr>
+        </tbody>
+    </table>
+    @* Placeholder za paginaciju *@
+    <div id="pagination-controls">
+        @* Paginacija će se renderovati ovdje, ili dinamički kreirati/ažurirati JS-om *@
+    </div>
+</div>
+
+@* SKRIPT BLOK ZA OVU SEKCIJU *@
+<script>
+    $(document).ready(function () {
+        console.log("_AdminRecenzije.cshtml script loaded and ready.");
+
+        const recenzijaTableBody = $('#recenzija-table-body');
+        const userFilterInput = $('#recenzija-user-filter');
+        const voziloFilterInput = $('#recenzija-vozilo-filter');
+        const textSearchInput = $('#recenzija-text-search');
+        const filterSearchButton = $('#recenzija-filter-search-button');
+
+        // Funkcija za formatiranje datuma u dd.MM.yyyy formatu (JavaScript ekvivalent ToShortDateString())
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) return ''; // Provjera ispravnosti datuma
+
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0'); // Mjeseci su 0-indeksirani
+            const year = date.getFullYear();
+
+            return `${day}.${month}.${year}`;
+        }
+
+        // Funkcija za učitavanje liste recenzija putem AJAX-a sa trenutnim filterima i pretragom
+        function loadRecenzijeList(params = {}) {
+            console.log("Loading review list with params:", params);
+            recenzijaTableBody.html('<tr><td colspan="6">Učitavanje recenzija...</td></tr>'); // Prikazi poruku o učitavanju
+
+            // URL endpoint koji vraća JSON podatke o recenzijama
+            // MORATE IMPLEMENTIRATI GetRecenzijeJson akciju u AdminPanelControlleru KOJA VRAĆA JSON!
+            const url = '@Url.Action("GetRecenzijeJson", "AdminPanel")';
+
+            $.get(url, params, function (data) {
+                console.log("Reviews data received:", data);
+                recenzijaTableBody.empty(); // Isprazni postojeće redove
+
+                if (data && data.recenzije && data.recenzije.length > 0) {
+                    // Iteriraj kroz primljene podatke i dodaj redove u tabelu
+                    $.each(data.recenzije, function (index, recenzija) {
+                         // Pretpostavljamo da JSON objekat 'recenzija' ima svojstva:
+                         // recenzijaID, korisnikUserName, voziloMarka (ili voziloNaziv), ocjena, komentar, datumRecenzije (string)
+                        const row = `
+                            <tr>
+                                <td>${recenzija.korisnikUserName || 'Nepoznat'}</td> @* Prilagodite pristupu username-u *@
+                                <td>${recenzija.voziloMarka || recenzija.voziloNaziv || 'Nepoznato vozilo'}</td> @* Prilagodite pristupu nazivu vozila *@
+                                <td>${recenzija.ocjena || ''}</td>
+                                @* Opcionalno: Skratite komentar ako je predugačak *@
+                                <td>${(recenzija.komentar || '').substring(0, 150) + ((recenzija.komentar || '').length > 150 ? '...' : '')}</td>
+                                <td>${formatDate(recenzija.datumRecenzije)}</td> @* Formatiranje datuma na klijentskoj strani *@
+                                <td>
+                                    @* Dugme za brisanje *@
+                                    <button class="delete-recenzija-button btn btn-danger btn-sm" data-id="${recenzija.recenzijaID}"><i class="bi bi-trash"></i> Obriši</button>
+                                </td>
+                            </tr>
+                        `;
+                        recenzijaTableBody.append(row);
+                    });
+
+                    // Ovdje možete dodati logiku za renderovanje paginacije
+                } else {
+                    recenzijaTableBody.html('<tr><td colspan="6">Nema dostupnih recenzija.</td></tr>');
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                console.error('Error loading reviews:', textStatus, errorThrown, jqXHR.responseText);
+                 recenzijaTableBody.html('<tr><td colspan="6"><div class="alert alert-danger">Greška prilikom učitavanja recenzija: ' + (jqXHR.responseText || errorThrown) + '</div></td></tr>');
+            });
+        }
+
+        // Funkcija za prikupljanje trenutnih parametara filtera/pretrage
+        function getCurrentFilterParams() {
+            return {
+                searchQuery: textSearchInput.val(),
+                korisnikFilter: userFilterInput.val(),
+                voziloFilter: voziloFilterInput.val()
+                // Dodajte page, sortOrder, etc. ako ih koristite
+            };
+        }
+
+
+        // Učitaj listu recenzija kada se parcijalni view učita
+        // Koristi inicijalne filtere iz View Modela ako postoje
+        loadRecenzijeList(getCurrentFilterParams());
+
+
+        // Handle-anje klika na dugme "Primijeni Filter/Pretragu"
+        filterSearchButton.on('click', function () {
+            // konzola.log("Kliknuto primijeni filter/pretragu za recenzije"); // Debugging
+            loadRecenzijeList(getCurrentFilterParams()); // Pozovi funkciju za učitavanje sa trenutnim filterima
+        });
+
+         // Opcionalno: Pretraga/Filtriranje na pritisak Enter tastera u bilo kojem input polju filtera/pretrage
+         $('.admin-section-controls input[type="text"]').keypress(function(e) {
+             if(e.which == 13) {
+                 e.preventDefault();
+                 filterSearchButton.click(); // Simulate button click
+             }
+         });
+
+
+        // Handle-anje klika na dugme "Obriši" (Delegacija događaja)
+        $(document).on('click', '.delete-recenzija-button', function () {
+            var recenzijaId = $(this).data('id'); // Dobijanje ID-a recenzije iz data atributa
+            // konzola.log("Kliknuto obriši recenziju dugme za ID:", recenzijaId); // Debugging
+
+            if (confirm('Da li ste sigurni da želite obrisati ovu recenziju?')) {
+                $.ajax({
+                    url: '@Url.Action("DeleteRecenzija", "AdminPanel")', // Endpoint za brisanje
+                    method: 'POST', // Koristite POST za brisanje
+                    data: { id: recenzijaId }, // Pošaljite ID recenzije
+                    headers: { // Dodajte Anti-forgery token
+                         'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function (response) {
+                        console.log("Delete successful:", response);
+                        alert('Recenzija uspješno obrisana.');
+                        // Osvježite SAMO listu recenzija sa trenutnim filterima
+                        loadRecenzijeList(getCurrentFilterParams());
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.error('Error deleting review:', errorThrown, textStatus, jqXHR.responseText);
+                        alert('Došlo je do greške prilikom brisanja recenzije.');
+                    }
+                });
+            }
+        });
+
+        // Dodajte handle-ere za klikove na dugmad za paginaciju ako ih implementirate
+
+    }); // Kraj document.ready
+</script>
+
+@* Potrebne klijentske skripte ako imate dinamičke forme ili klijentsku validaciju u ovoj sekciji *@
+@* <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script> *@
+@* <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script> *@

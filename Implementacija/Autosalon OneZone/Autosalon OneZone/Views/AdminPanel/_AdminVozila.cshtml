@@ -1,0 +1,255 @@
+﻿@* Fajl: Views/AdminPanel/_AdminVozila.cshtml - IZMIJENJENO za dinamičko učitavanje i formatiranje *@
+@model Autosalon_OneZone.ViewModels.Admin.VoziloListViewModel
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+@* Link na CSS (ako nije globalno linkovan i specifičan je za ovaj parcijalni view) *@
+@* Uvjerite se da se CSS ne učitava duplikatno ako je već u _CustomLayout *@
+@* <link href="~/css/admin-specific.css" rel="stylesheet" /> *@
+
+<h3>Pregled Vozila</h3>
+
+@* Forma/Link za dodavanje novog vozila i pretraga *@
+<div class="admin-section-controls">
+    <button id="add-vozilo-button" class="btn btn-primary">Dodaj Novo Vozilo</button>
+    <input type="text" id="vozilo-search-input" placeholder="Pretraži po nazivu..." value="@Model.SearchQuery" />
+    <button id="vozilo-search-button" class="btn btn-secondary">Pretraži</button>
+    @* Ovdje mozete dodati dugmad/select-ove za sortiranje i paginaciju ako zelite *@
+</div>
+
+@* Forma za dodavanje/izmjenu vozila (početno skrivena) *@
+<div id="add-vozilo-form-container" style="display: none;">
+    <h4 id="add-edit-form-title">Dodaj Novo Vozilo</h4> @* Element za naslov forme *@
+    <div id="add-vozilo-form-placeholder">
+        @* Forma će se učitati ovdje putem AJAX-a (_AddVoziloForm.cshtml) *@
+    </div>
+</div>
+
+@* Lista vozila - Samo struktura tabele *@
+<div id="vozila-list-container">
+    <table class="table table-striped table-hover"> @* Dodane Bootstrap klase za stil *@
+        <thead>
+            <tr>
+                @* Prilagodite headere prema svojstvima koja prikazujete iz Vozilo entiteta/View Modela *@
+                <th>Naziv</th>
+                <th>Godište</th>
+                <th>Gorivo</th>
+                <th>Kilometraža</th>
+                <th>Cijena</th>
+                <th>Akcije</th> @* Kolona za dugmad *@
+            </tr>
+        </thead>
+        <tbody id="vozila-table-body">
+            @* Ovdje će se dinamički učitavati redovi tabele putem JavaScripta *@
+            <tr>
+                <td colspan="6">Učitavanje vozila...</td> @* Početni placeholder *@
+            </tr>
+        </tbody>
+    </table>
+    @* Ovdje bi išao placeholder za paginaciju dugmad/informacije *@
+    <div id="pagination-controls">
+        @* Paginacija će se renderovati ovdje, ili dinamički kreirati/ažurirati JS-om *@
+    </div>
+</div>
+
+
+@* Skripte specifične za _AdminVozila parcijalni View *@
+<script>
+    $(document).ready(function () {
+        console.log("_AdminVozila.cshtml script loaded and ready.");
+
+        // Remove previous event handlers to prevent multiple executions
+       // $(document).off('click', '#add-vozilo-button');
+        //$(document).off('click', '#vozilo-search-button');
+        //searchInput.off('keypress');
+        $(document).off('click', '.edit-vozilo-button');
+        //$(document).off('click', '#cancel-add-vozilo');
+        $(document).off('submit', '#add-edit-vozilo-form');
+        //$(document).off('click', '.delete-vozilo-button');
+
+        const vozilaTableBody = $('#vozila-table-body');
+        const searchInput = $('#vozilo-search-input');
+        const searchButton = $('#vozilo-search-button');
+        const addFormContainer = $('#add-vozilo-form-container');
+        const addFormPlaceholder = $('#add-vozilo-form-placeholder');
+        const addFormTitle = $('#add-edit-form-title');
+
+        // Funkcija za učitavanje liste vozila putem AJAX-a
+        function loadVozilaList(searchQuery = '', page = 1, sortOrder = '') {
+            console.log("Loading vozilo list...");
+            vozilaTableBody.html('<tr><td colspan="6">Učitavanje vozila...</td></tr>'); // Prikazi poruku o učitavanju
+
+            // URL endpoint koji vraća JSON podatke o vozilima
+            // MORATE IMATI IMPLEMENTIRANU GetVozilaJson akciju u AdminPanelControlleru KOJA VRAĆA JSON!
+            const url = '@Url.Action("GetVozilaJson", "AdminPanel")';
+
+            $.get(url, { searchQuery: searchQuery, page: page, sortOrder: sortOrder }, function (data) {
+                console.log("Vozila data received:", data);
+                vozilaTableBody.empty(); // Isprazni postojeće redove
+
+                if (data && data.vozila && data.vozila.length > 0) {
+                    // Iteriraj kroz primljene podatke i dodaj redove u tabelu
+                    $.each(data.vozila, function (index, vozilo) {
+                         // Prikazujemo svojstva koja postoje u Vozilo entitetu i View modelu
+                        const row = `
+                            <tr>
+                                <td>${vozilo.naziv || ''}</td>
+                                <td>${vozilo.godiste || ''}</td>
+                                <td>${vozilo.gorivo || ''}</td>
+                                <td>${vozilo.kilometraza || ''}</td>
+                                @* --- PROMJENA: Formatiranje Cijene bez .ToString("C") --- *@
+                                @* Prikazuje cijenu sa 2 decimale, bez simbola valute *@
+                                <td>${vozilo.cijena ? vozilo.cijena.toFixed(2) : ''}</td>
+                                @* ---------------------------------------------------- *@
+                                <td>
+                                    <button class="edit-vozilo-button btn btn-info btn-sm" data-id="${vozilo.voziloID}"><i class="bi bi-pencil-square"></i> Izmijeni</button>
+                                    <button class="delete-vozilo-button btn btn-danger btn-sm" data-id="${vozilo.voziloID}"><i class="bi bi-trash"></i> Obriši</button>
+                                </td>
+                            </tr>
+                        `;
+                        vozilaTableBody.append(row);
+                    });
+
+                    // Ovdje možete dodati logiku za renderovanje paginacije
+                } else {
+                    vozilaTableBody.html('<tr><td colspan="6">Nema dostupnih vozila.</td></tr>');
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                console.error('Error loading vozila list:', textStatus, errorThrown, jqXHR.responseText);
+                 vozilaTableBody.html('<tr><td colspan="6"><div class="alert alert-danger">Greška prilikom učitavanja vozila: ' + (jqXHR.responseText || errorThrown) + '</div></td></tr>');
+            });
+        }
+
+        // Učitaj listu vozila kada se parcijalni view učita
+        loadVozilaList(searchInput.val() || '@Model.SearchQuery');
+
+        // Handle-anje klika na dugme "Pretraži"
+        searchButton.on('click', function () {
+            const searchQuery = searchInput.val();
+            loadVozilaList(searchQuery); // Učitaj listu sa novim parametrom pretrage
+        });
+
+         // Opcionalno: Pretraga na pritisak Enter tastera u input polju
+         searchInput.keypress(function(e) {
+             if(e.which == 13) { // Keycode for Enter
+                 e.preventDefault(); // Spriječi default submit forme
+                 searchButton.click(); // Simulate button click
+             }
+         });
+
+        // Handle-anje klika na dugme "Dodaj Novo Vozilo"
+        $('#add-vozilo-button').on('click', function () {
+            addFormTitle.text('Dodaj Novo Vozilo');
+             $.get('@Url.Action("GetAddVoziloForm", "AdminPanel")', function(data) {
+                 addFormPlaceholder.html(data);
+                 addFormContainer.show();
+                 var form = addFormPlaceholder.find('form');
+                 form.removeData('validator');
+                 form.removeData('unobtrusiveValidation');
+                 $.validator.unobtrusive.parse(form);
+             }).fail(function(jqXHR, textStatus, errorThrown) {
+                 console.error('Error loading add form:', errorThrown);
+                 addFormPlaceholder.html('<div class="alert alert-danger">Greška prilikom učitavanja forme za dodavanje.</div>');
+                 addFormContainer.show();
+             });
+        });
+
+        // Handle-anje klika na dugme "Izmijeni" (Delegacija događaja)
+        $(document).on('click', '.edit-vozilo-button', function () {
+             var voziloId = $(this).data('id');
+             addFormTitle.text('Izmijeni Vozilo');
+             // MORATE IMATI IMPLEMENTIRANU GetEditVoziloForm akciju!
+             $.get('@Url.Action("GetEditVoziloForm", "AdminPanel")', { id: voziloId }, function(data) {
+                 addFormPlaceholder.html(data);
+                 addFormContainer.show();
+                 var form = addFormPlaceholder.find('form');
+                 form.removeData('validator');
+                 form.removeData('unobtrusiveValidation');
+                 $.validator.unobtrusive.parse(form);
+             }).fail(function(jqXHR, textStatus, errorThrown) {
+                 console.error('Error loading edit form:', errorThrown);
+                 addFormPlaceholder.html('<div class="alert alert-danger">Greška prilikom učitavanja forme za izmjenu.</div>');
+                 addFormContainer.show();
+             });
+        });
+
+
+        // Handle-anje klika na dugme "Otkaži" unutar forme (Delegacija događaja)
+        $(document).on('click', '#cancel-add-vozilo', function () {
+             addFormContainer.hide();
+             addFormPlaceholder.empty();
+        });
+
+        // Handle-anje submit-a forme za dodavanje/izmjenu vozila (Delegacija događaja)
+        $(document).on('submit', '#add-edit-vozilo-form', function (e) {
+             e.preventDefault();
+             console.log("Form submitted via AJAX");
+
+             var form = $(this);
+             var url = form.attr('action');
+             var method = form.attr('method');
+             var formData = new FormData(this);
+
+             if (!form.valid()) {
+                 console.log("Client validation failed.");
+                 return;
+             }
+
+             $.ajax({
+                  url: url,
+                  method: method,
+                  data: formData,
+                  processData: false,
+                  contentType: false,
+                  success: function (response) {
+                      console.log("Save successful:", response);
+                      addFormContainer.hide();
+                      addFormPlaceholder.empty();
+                      // Osvježite SAMO listu vozila
+                      loadVozilaList(searchInput.val());
+                      alert('Vozilo uspješno sačuvano!');
+                  },
+                  error: function (jqXHR, textStatus, errorThrown) {
+                      console.error('AJAX Error:', textStatus, errorThrown, jqXHR.responseText);
+                      if (jqXHR.status === 400 && jqXHR.responseJSON) {
+                           console.log("Validation errors:", jqXHR.responseJSON);
+                           alert('Greška prilikom spremanja. Provjerite unesene podatke.');
+                      } else {
+                          alert('Došlo je do greške prilikom spremanja vozila.\nSlika je obavezna');
+                      }
+                  }
+             });
+        });
+
+        // Prvo skini sve prethodne event handlere za klik na dugme za brisanje
+        $(document).off('click', '.delete-vozilo-button');
+        // Handle-anje klika na dugme "Obriši" (Delegacija događaja)
+        $(document).on('click', '.delete-vozilo-button', function () {
+            var voziloId = $(this).data('id');
+
+            if (confirm('Da li ste sigurni da želite obrisati ovo vozilo?')) {
+                $.ajax({
+                    url: '@Url.Action("DeleteVozilo", "AdminPanel")',
+                    method: 'POST',
+                    data: { id: voziloId },
+                    success: function (response) {
+                        console.log("Delete successful:", response);
+                        alert('Vozilo uspješno obrisano.');
+                        // Osvježite SAMO listu vozila
+                        loadVozilaList(searchInput.val());
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.error('Error deleting vozilo:', errorThrown, jqXHR.responseText);
+                        alert('Došlo je do greške prilikom brisanja vozila.');
+                    }
+                });
+            }
+        });
+
+        // Dodajte handle-ere za klikove na dugmad za paginaciju ako ih implementirate
+
+    }); // Kraj $(document).ready
+</script>
+
+@* Potrebno za klijentsku validaciju AJAX učitanih formi ako koristite jQuery Unobtrusive Validation *@
+@* Uključite ove skripte globalno u vaš _CustomLayout.cshtml ili ih učitajte ovdje *@
+@* <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script> *@
+@* <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script> *@

@@ -1,0 +1,132 @@
+﻿<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+@using System.Linq; 
+@model Autosalon_OneZone.Models.ViewModels.CartViewModel
+
+@{
+    ViewData["Title"] = "Korpa";
+    Layout = "~/Views/Shared/_Layout.cshtml"; // Koristite Layout koji Vam odgovara
+}
+
+@section Head {
+    <link rel="stylesheet" href="~/css/cart.css" /> @* Link na CSS za ovaj View *@
+}
+
+<div class="top-bar">
+    <a href="/Vozilo">Nazad na listu vozila</a> @* Link nazad na listu vozila *@
+</div>
+
+<div class="header">
+    <h2>Vaša korpa</h2>
+    @* Selekt za sortiranje - zahteva JavaScript i/ili server-side logiku za punu funkcionalnost *@
+    <select class="sort-select" id="sortOptions">
+        <option value="cijena">Sortiraj po cijeni</option>
+        <option value="godiste">Sortiraj po godištu</option>
+    </select>
+</div>
+
+<div class="container">
+    <div class="cart-list">
+        @* Proverava da li Model nije null, da li lista VozilaUKorpi nije null i da li lista sadrži bilo koji element (.Any()) *@
+        @if (Model != null && Model.VozilaUKorpi != null && Model.VozilaUKorpi.Any())
+        {
+            @* Ako korpa nije prazna, iteriraj kroz svako vozilo u korpi *@
+            @foreach (var vozilo in Model.VozilaUKorpi)
+            {
+                @* Prikaz informacija o pojedinačnom vozilu u korpi *@
+                <div class="cart-item">
+                    <img src="@vozilo.SlikaUrl" alt="@vozilo.Naziv"> @* Slika vozila *@
+                    <div class="details">
+                        <h4>@vozilo.Naziv</h4> @* Naziv vozila *@
+                        <p>Godište: @vozilo.Godiste | Gorivo: @vozilo.Gorivo</p> @* Godište i gorivo *@
+                        <p>Cijena: <strong>€@vozilo.Cijena.ToString("N0")</strong></p> @* Cena formatirana bez decimala *@
+                    </div>
+                    @* Forma za uklanjanje stavke iz korpe *@
+                    @* Cilja UkloniIzKorpe akciju u Korpa kontroleru (POST) *@
+                    <form asp-controller="Korpa" asp-action="UkloniIzKorpe" method="post">
+                        @* Skriveno polje sa ID-om vozila koje se uklanja *@
+                        <input type="hidden" name="voziloId" value="@vozilo.Id" />
+                        @* Dugme za submit forme (uklanjanje)*@
+                        <button type="submit" class="remove-button">Ukloni</button>
+                    </form>
+                </div>
+            }
+            @* Prikaz ukupne cene korpe *@
+            <div class="total-price">Ukupno: €@Model.UkupnaCijena.ToString("N0")</div>
+            @* Link ka stranici za naplatu (Checkout akcija u Korpa kontroleru) *@
+            <a href="/Korpa/Checkout" class="checkout-button">Checkout</a>
+        }
+        else
+        {
+            @* Prikazuje se ako je korpa prazna *@
+            <div class="empty-cart">
+                <p>Vaša korpa je prazna.</p>
+                @* Link nazad na stranicu sa vozilima *@
+                <a href="/Vozilo" class="back-to-shop">Pogledaj dostupna vozila</a>
+            </div>
+        }
+    </div>
+
+    @* Sekcija za kalkulator kredita (trenutno sa osnovnom JS logikom) *@
+    <div class="credit-calculator">
+        <h3>Kalkulator kredita</h3>
+        <div class="input-group">
+            <label for="loan-amount">Visina kredita (€)</label>
+            <input type="number" id="loan-amount" placeholder="Unesite visinu kredita">
+        </div>
+        <div class="input-group">
+            <label for="loan-period">Broj rata</label>
+            <select id="loan-period">
+                <option value="12">12 mjeseci</option>
+                <option value="24">24 mjeseca</option>
+                <option value="36">36 mjeseci</option>
+                <option value="48">48 mjeseci</option>
+                <option value="60">60 mjeseci</option>
+            </select>
+        </div>
+        <button id="calculateBtn">Izračunaj</button>
+        <div class="result" id="loan-result">Mjesecna rata: €0</div>
+    </div>
+</div>
+
+@section Scripts {
+    @* Sekcija za JavaScript skripte specifične za ovaj View *@
+    @* Uverite se da je jQuery uključen u vašem Layoutu, jer ova skripta zavisi od jQuery-a *@
+    <script>
+        $(document).ready(function() {
+            // Logika za kalkulator kredita
+            $("#calculateBtn").click(function() {
+                var loanAmount = parseFloat($("#loan-amount").val());
+                var loanPeriod = parseInt($("#loan-period").val());
+
+                if (isNaN(loanAmount) || loanAmount <= 0) {
+                    alert("Unesite validnu visinu kredita");
+                    return;
+                }
+
+                // Jednostavna kalkulacija sa fiksnom kamatnom stopom (prilagodi po potrebi)
+                var interestRate = 0.05; // 5% godišnja kamatna stopa
+                var monthlyRate = interestRate / 12; // Mesečna kamatna stopa
+                // Formula za izračunavanje mesečne rate kredita (Anuitet)
+                var monthlyPayment = loanAmount * (monthlyRate * Math.pow(1 + monthlyRate, loanPeriod)) /
+                                     (Math.pow(1 + monthlyRate, loanPeriod) - 1);
+
+                // Prikaz rezultata
+                $("#loan-result").text("Mjesečna rata: €" + monthlyPayment.toFixed(2));
+            });
+
+            // Sortiranje vozila - Klijentska JS implementacija bi samo promenila redosled na strani.
+            // Za trajno sortiranje i filtriranje, potrebna je server-side logika.
+            $("#sortOptions").change(function() {
+                // Trenutno nema implementiranu logiku sortiranja ovde.
+                // Za implementaciju, možeš:
+                // 1. Preusmeriti na istu stranicu sa parametrom za sortiranje (/Korpa?sortBy=cijena) i obraditi u kontroleru.
+                // 2. Koristiti AJAX da dohvatiš sortirane podatke sa servera i ažuriraš listu dinamički.
+                alert("Sortiranje na strani klijenta nije implementirano. Potrebna je server-side logika za potpuno sortiranje.");
+            });
+        });
+    </script>
+
+     @* Opciono: Uključi validacione skripte ako forma koristi Data Annotations (ova forma za uklanjanje ne koristi)* @
+     @* @{await Html.RenderPartialAsync("_ValidationScriptsPartial");} *@
+}

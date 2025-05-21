@@ -1,0 +1,202 @@
+﻿@model Autosalon_OneZone.Models.ViewModels.EditProfileViewModel
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+@{
+    ViewData["Title"] = "Uredi Profil";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Head {
+    <link rel="stylesheet" href="~/css/editprofile.css" />
+    <style>
+        .modal-dialog {
+            max-width: 500px;
+        }
+
+        .password-form .form-group {
+            margin-bottom: 15px;
+        }
+
+        .password-error {
+            color: #dc3545;
+            font-size: 80%;
+            margin-top: 0.25rem;
+        }
+    </style>
+}
+
+<div class="container">
+    <div class="form-container">
+        <h2>Uredi Profil</h2>
+
+        <div asp-validation-summary="All" class="text-danger"></div>
+        <form asp-controller="Profil" asp-action="Edit" method="post">
+
+            <div class="form-group">
+                <label asp-for="Ime"></label>
+                <input asp-for="Ime" type="text" class="form-control" placeholder="Ime" required />
+                <span asp-validation-for="Ime" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Prezime"></label>
+                <input asp-for="Prezime" type="text" class="form-control" placeholder="Prezime" required />
+                <span asp-validation-for="Prezime" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Email"></label>
+                <input asp-for="Email" type="email" class="form-control" placeholder="Email adresa" required />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="UserName"></label>
+                <input asp-for="UserName" type="text" class="form-control" placeholder="Korisničko ime" required />
+                <span asp-validation-for="UserName" class="text-danger"></span>
+            </div>
+
+            <div class="d-flex justify-content-center gap-3 mt-4">
+                <a asp-controller="Profil" asp-action="Index" class="btn btn-secondary">Nazad na profil</a>
+                <button type="submit" class="btn btn-primary">Sačuvaj</button>
+                <button type="button" class="btn btn-warning" id="change-password-btn">Promijeni lozinku</button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<!-- Password Change Modal -->
+<div class="modal fade" id="passwordChangeModal" tabindex="-1" aria-labelledby="passwordChangeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="passwordChangeModalLabel">Promjena lozinke</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="change-password-form" class="password-form">
+                    <div id="password-errors" class="text-danger"></div>
+
+                    <div class="form-group">
+                        <label for="currentPassword">Trenutna lozinka</label>
+                        <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>
+                        <div class="password-error" id="currentPassword-error"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="newPassword">Nova lozinka</label>
+                        <input type="password" class="form-control" id="newPassword" name="newPassword" required>
+                        <div class="password-error" id="newPassword-error"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmPassword">Potvrdite novu lozinku</label>
+                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                        <div class="password-error" id="confirmPassword-error"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Odustani</button>
+                <button type="button" class="btn btn-primary" id="submit-password-change">Postavi novu lozinku</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        $(document).ready(function() {
+            // Open password change modal
+            $("#change-password-btn").click(function() {
+                // Clear form data and errors
+                $("#change-password-form")[0].reset();
+                $("#password-errors").html("");
+                $(".password-error").html("");
+
+                // Show modal
+                const passwordModal = new bootstrap.Modal(document.getElementById('passwordChangeModal'));
+                passwordModal.show();
+            });
+
+            // Submit password change
+            $("#submit-password-change").click(function() {
+                // Validate form
+                let isValid = true;
+
+                // Check current password
+                if ($("#currentPassword").val() === "") {
+                    $("#currentPassword-error").text("Trenutna lozinka je obavezna");
+                    isValid = false;
+                } else {
+                    $("#currentPassword-error").text("");
+                }
+
+                // Check new password
+                if ($("#newPassword").val() === "") {
+                    $("#newPassword-error").text("Nova lozinka je obavezna");
+                    isValid = false;
+                } else if ($("#newPassword").val().length < 6) {
+                    $("#newPassword-error").text("Lozinka mora biti najmanje 6 karaktera");
+                    isValid = false;
+                } else {
+                    $("#newPassword-error").text("");
+                }
+
+                // Check confirm password
+                if ($("#confirmPassword").val() === "") {
+                    $("#confirmPassword-error").text("Potvrda lozinke je obavezna");
+                    isValid = false;
+                } else if ($("#confirmPassword").val() !== $("#newPassword").val()) {
+                    $("#confirmPassword-error").text("Lozinke se ne podudaraju");
+                    isValid = false;
+                } else {
+                    $("#confirmPassword-error").text("");
+                }
+
+                if (!isValid) {
+                    return;
+                }
+
+                // Submit form via AJAX
+                $.ajax({
+                    url: "@Url.Action("ChangePassword", "Profil")",
+                    type: "POST",
+                    data: {
+                        currentPassword: $("#currentPassword").val(),
+                        newPassword: $("#newPassword").val(),
+                        confirmPassword: $("#confirmPassword").val(),
+                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function(response) {
+                        bootstrap.Modal.getInstance(document.getElementById('passwordChangeModal')).hide();
+                        alert("Lozinka je uspješno promijenjena!");
+                    },
+                    error: function(xhr) {
+                        if (xhr.responseJSON && xhr.responseJSON.errors) {
+                            // Display validation errors
+                            $("#password-errors").html("");
+                            const errors = xhr.responseJSON.errors;
+
+                            let errorHtml = "";
+                            Object.keys(errors).forEach(function(key) {
+                                errors[key].forEach(function(error) {
+                                    errorHtml += `<div>${error}</div>`;
+                                });
+                            });
+
+                            $("#password-errors").html(errorHtml);
+                        } else {
+                            // Display general error
+                            $("#password-errors").html("<div>Došlo je do greške. Pokušajte ponovo.</div>");
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+}

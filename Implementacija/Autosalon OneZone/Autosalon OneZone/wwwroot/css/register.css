@@ -1,0 +1,105 @@
+﻿/* Register.css - Stilovi za stranicu registracije */
+
+/* Add header styling */
+header {
+    background-color: #2f2f2f;
+    color: white;
+    padding: 30px 0;
+    text-align: center;
+    margin: 0;
+}
+
+    header h1 {
+        font-size: 36px;
+        margin: 0;
+    }
+
+.register-container {
+    display: flex;
+    justify-content: center;
+    padding: 50px 20px;
+    background-color: #f4f4f4;
+    margin: 0;
+}
+
+.form-container {
+    background-color: white;
+    width: 90%;
+    max-width: 600px;
+    padding: 30px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+.form-content {
+    width: 100%;
+}
+
+.form-container h2 {
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 25px;
+    color: #333;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-container input {
+    width: 100%;
+    padding: 12px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: border 0.3s;
+}
+
+    .form-container input:focus {
+        border-color: #3498db;
+        outline: none;
+        box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+    }
+
+.register-button {
+    width: 100%;
+    padding: 15px;
+    background-color: #e74c3c;
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-weight: 500;
+    margin-top: 10px;
+}
+
+    .register-button:hover {
+        background-color: #c0392b;
+    }
+
+.login-link {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 15px;
+}
+
+    .login-link a {
+        color: #3498db;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+/* Responzivnost za manje ekrane */
+@media (max-width: 768px) {
+    .form-container {
+        width: 95%;
+        padding: 20px;
+    }
+}

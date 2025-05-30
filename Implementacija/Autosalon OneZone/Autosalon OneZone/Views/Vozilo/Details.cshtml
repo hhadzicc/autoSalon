@@ -1,0 +1,596 @@
+﻿@model Autosalon_OneZone.Models.Vozilo
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css" />
+@{
+    ViewData["Title"] = $"{Model.Marka} {Model.Model}";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    
+
+    <div class="row">
+        <!-- Lijeva strana - Detalji vozila -->
+        <div class="col-lg-8 mb-4">
+            <div class="card">
+                <!-- Slika vozila -->
+                <div class="text-center p-3">
+                    @if (!string.IsNullOrEmpty(Model.Slika))
+                    {
+                        <img src="~/images/vozila/@Model.Slika" class="img-fluid rounded" style="max-height: 400px; object-fit: contain;" alt="@Model.Marka @Model.Model">
+                    }
+                    else
+                    {
+                        <img src="~/img/no-image.png" class="img-fluid rounded" style="max-height: 400px; object-fit: contain;" alt="Nema slike">
+                    }
+                </div>
+
+                <!-- Osnovni podaci o vozilu -->
+                <div class="card-body">
+                    <h2 class="card-title">@Model.Marka @Model.Model</h2>
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3 class="text-success">€@Model.Cijena.Value.ToString("N0")</h3>
+                        <div>
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <form asp-controller="Korpa" asp-action="DodajUKorpu" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@Model.VoziloID" />
+                                    <button type="submit" class="btn btn-success">Dodaj u korpu</button>
+                                </form>
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#paymentModal">Kupi odmah</button>
+
+                            }
+                            else
+                            {
+                                <a href="@Url.Action("Login", "Account", new { returnUrl = Context.Request.Path })" class="btn btn-success">
+                                    Prijavite se za kupovinu
+                                </a>
+                            }
+                        </div>
+                    </div>
+
+
+                    <h4>Specifikacije</h4>
+                    <table class="table table-striped">
+                        <tbody>
+                            <tr>
+                                <th>Godište:</th>
+                                <td>@Model.Godiste</td>
+                            </tr>
+                            <tr>
+                                <th>Gorivo:</th>
+                                <td>@Model.Gorivo</td>
+                            </tr>
+                            <tr>
+                                <th>Boja:</th>
+                                <td>@Model.Boja</td>
+                            </tr>
+                            <tr>
+                                <th>Kubikaža:</th>
+                                <td>@Model.Kubikaza</td>
+                            </tr>
+                            <tr>
+                                <th>Kilometraža:</th>
+                                <td>@Model.Kilometraza km</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Opis vozila -->
+                    <h4>Opis</h4>
+                    <p class="card-text">@(Model.Opis ?? "Nema dostupnog opisa za ovo vozilo.")</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Desna strana - Kalkulator rata -->
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">Kalkulator kredita</h4>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="loan-amount" class="form-label">Visina kredita (€)</label>
+                        <input type="number" class="form-control" id="loan-amount" value="@Model.Cijena">
+                    </div>
+                    <div class="mb-3">
+                        <label for="loan-period" class="form-label">Broj rata</label>
+                        <select class="form-select" id="loan-period">
+                            <option value="12">12 mjeseci</option>
+                            <option value="24">24 mjeseca</option>
+                            <option value="36" selected>36 mjeseci</option>
+                            <option value="48">48 mjeseci</option>
+                            <option value="60">60 mjeseci</option>
+                            <option value="72">72 mjeseca</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="interest-rate" class="form-label">Kamatna stopa (%)</label>
+                        <input type="number" class="form-control" id="interest-rate" value="5.0" step="0.1" min="0">
+                    </div>
+                    <button id="calculateBtn" class="btn btn-primary w-100">Izračunaj</button>
+
+                    <div class="mt-4 p-3 bg-light rounded">
+                        <h5>Rezultat kalkulacije</h5>
+                        <div id="loan-result" class="fw-bold fs-4 text-center text-success">€0</div>
+                        <p class="text-center text-muted mb-0 mt-2">mjesečna rata</p>
+                    </div>
+
+                    <div class="mt-3">
+                        <small class="text-muted">
+                            * Kalkulator je informativnog karaktera i ne predstavlja ponudu za kredit.
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sekcija za recenzije -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3 class="mb-4" style="padding-left: 25px;">Recenzije korisnika</h3>
+
+
+            @if (Model.Recenzije != null && Model.Recenzije.Any())
+            {
+                <div class="reviews-container">
+                    @foreach (var recenzija in Model.Recenzije)
+                    {
+                        <div class="card mb-3">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h5 class="mb-0">@recenzija.Korisnik.Ime @recenzija.Korisnik.Prezime</h5>
+                                </div>
+                                <div>
+                                    <span class="me-2">Ocjena: </span>
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        <i class="bi @(i <= recenzija.Ocjena ? "bi-star-fill text-warning" : "bi-star")"></i>
+                                    }
+                                    <span class="ms-2 text-muted small">@recenzija.DatumRecenzije.ToString("dd.MM.yyyy")</span>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                @{
+                                    var komentarText = recenzija.Komentar ?? "";
+                                    var skraceniKomentar = komentarText;
+                                    bool isDugacak = komentarText.Length > 100;
+                                    if (isDugacak)
+                                    {
+                                        skraceniKomentar = komentarText.Substring(0, 100) + "...";
+                                    }
+                                }
+                                <a href="#" class="view-komentar-recenzije" data-komentar="@System.Net.WebUtility.HtmlEncode(komentarText)">
+                                    <p class="card-text @(isDugacak ? "truncated-text" : "")">@skraceniKomentar</p>
+                                </a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info">
+                    <p>Trenutno nema recenzija za ovo vozilo.</p>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <p>Kupite ovo vozilo da biste mogli dodati recenziju!</p>
+                    }
+                    else
+                    {
+                        <p>Prijavite se da biste mogli kupiti i recenzirati ovo vozilo!</p>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Modal za prikaz cijelog komentara recenzije -->
+<div class="modal fade" id="komentarRecenzijeModal" tabindex="-1" aria-labelledby="komentarRecenzijeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="komentarRecenzijeModalLabel">Komentar recenzije</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="komentarRecenzijeModalText"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zatvori</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Podaci za kreditnu karticu -->
+<!-- Modal za unos podataka kartice - NOVA VERZIJA -->
+<div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="paymentModalLabel">Podaci za plaćanje - @Model.Marka @Model.Model</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Ukupna cijena -->
+                <div class="alert alert-info mb-4">
+                    <strong>Ukupno za plaćanje:</strong> €@Model.Cijena.Value.ToString("N0")
+                </div>
+
+                <!-- Forma za plaćanje -->
+                <form id="paymentForm" asp-controller="Korpa" asp-action="IzvrsiPlacanje" method="post" novalidate>
+                    @Html.AntiForgeryToken()
+                    <!-- Skrivena polja za podatke vozila -->
+                    <input type="hidden" name="VoziloID" value="@Model.VoziloID" />
+                    <input type="hidden" name="Cijena" value="@Model.Cijena" />
+
+                    <!-- Ime i prezime -->
+                    <div class="form-group mb-3">
+                        <label for="imeVlasnika" class="form-label">Ime i prezime vlasnika kartice <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="imeVlasnika" name="ImeVlasnika"
+                               required maxlength="100" autocomplete="off">
+                        <div class="error-message text-danger mt-1" id="imeVlasnikaError"></div>
+                    </div>
+
+                    <!-- Broj kartice -->
+                    <div class="form-group mb-3">
+                        <label for="brojKartice" class="form-label">Broj kartice <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="brojKartice" name="BrojKartice"
+                               required placeholder="XXXX XXXX XXXX XXXX" autocomplete="off">
+                        <div class="error-message text-danger mt-1" id="brojKarticeError"></div>
+                    </div>
+
+                    <!-- Datum isteka i CVV -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="datumIsteka" class="form-label">Datum isteka <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="datumIsteka" name="DatumIsteka"
+                                       required placeholder="MM/YY" autocomplete="off">
+                                <div class="error-message text-danger mt-1" id="datumIstekaError"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="cvv" class="form-label">CVV kod <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="cvv" name="Cvv"
+                                       required placeholder="XXX" autocomplete="off">
+                                <div class="error-message text-danger mt-1" id="cvvError"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Potvrda kupovine -->
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary" id="submitPayment">
+                            Potvrdi kupovinu
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Izvršava se pri učitavanju stranice
+        $(document).ready(function() {
+            // Kalkulator kredita - postojeći JS
+            updateCalculation();
+
+            $("#calculateBtn").click(function() {
+                updateCalculation();
+            });
+
+            $("#loan-amount, #loan-period, #interest-rate").on('change input', function() {
+                updateCalculation();
+            });
+
+            function updateCalculation() {
+                var loanAmount = parseFloat($("#loan-amount").val());
+                var loanPeriod = parseInt($("#loan-period").val());
+                var interestRate = parseFloat($("#interest-rate").val());
+
+                if (isNaN(loanAmount) || loanAmount <= 0 ||
+                    isNaN(loanPeriod) || loanPeriod <= 0 ||
+                    isNaN(interestRate) || interestRate < 0) {
+                    $("#loan-result").text("€0");
+                    return;
+                }
+
+                // Pretvorba godišnje kamatne stope u mjesečnu (u decimalnom obliku)
+                var monthlyRate = (interestRate / 100) / 12;
+
+                // Formula za izračunavanje mjesečne rate (PMT)
+                var monthlyPayment = loanAmount * monthlyRate * Math.pow(1 + monthlyRate, loanPeriod) /
+                                    (Math.pow(1 + monthlyRate, loanPeriod) - 1);
+
+                $("#loan-result").text("€" + monthlyPayment.toFixed(2));
+            }
+
+            // NOVA VALIDACIJA ZA FORMU PLAĆANJA
+            setupPaymentFormValidation();
+
+            // Klik na komentar recenzije - prikazuje modal s punim tekstom
+            $(".view-komentar-recenzije").on("click", function(e) {
+                e.preventDefault();
+                const komentar = $(this).data("komentar");
+                $("#komentarRecenzijeModalText").text(decodeURIComponent(komentar));
+                $("#komentarRecenzijeModal").modal("show");
+            });
+        });
+
+        // Funkcija koja inicijalizira validaciju forme
+        function setupPaymentFormValidation() {
+            // Inicijalno čišćenje eventualnih grešaka
+            clearAllErrors();
+
+            // Resetiraj formu kada se modal otvori
+            $('#paymentModal').on('show.bs.modal', function() {
+                resetPaymentForm();
+            });
+
+            // Ime vlasnika - dozvoli samo slova i razmake
+            $("#imeVlasnika").on('input', function() {
+                var value = $(this).val();
+                var filteredValue = value.replace(/[^A-Za-z ]/g, ''); // Samo slova i razmaci
+
+                if (value !== filteredValue) {
+                    $(this).val(filteredValue);
+                }
+
+                clearError('imeVlasnika');
+            });
+
+            // Broj kartice - formatiraj i dozvoli samo brojeve
+            $("#brojKartice").on('input', function() {
+                var value = $(this).val().replace(/\D/g, '');
+
+                if (value.length > 16) {
+                    value = value.substring(0, 16);
+                }
+
+                var formattedValue = '';
+                for (var i = 0; i < value.length; i++) {
+                    if (i > 0 && i % 4 === 0) {
+                        formattedValue += ' ';
+                    }
+                    formattedValue += value[i];
+                }
+
+                $(this).val(formattedValue);
+                clearError('brojKartice');
+            });
+
+            // Datum isteka - formatiraj MM/YY
+            $("#datumIsteka").on('input', function() {
+                var value = $(this).val().replace(/\D/g, '');
+
+                if (value.length > 4) {
+                    value = value.substring(0, 4);
+                }
+
+                if (value.length > 2) {
+                    value = value.substring(0, 2) + '/' + value.substring(2);
+                }
+
+                $(this).val(value);
+                clearError('datumIsteka');
+            });
+
+            // CVV kod - dozvoli samo brojeve i max 3 cifre
+            $("#cvv").on('input', function() {
+                var value = $(this).val().replace(/\D/g, '');
+
+                if (value.length > 3) {
+                    value = value.substring(0, 3);
+                }
+
+                $(this).val(value);
+                clearError('cvv');
+            });
+
+            // Validacija forme pri slanju
+            $("#paymentForm").on('submit', function(e) {
+                e.preventDefault();
+
+                // Očisti sve prethodne greške
+                clearAllErrors();
+
+                // Pratimo ima li grešaka
+                var isValid = true;
+
+                // Validacija imena i prezimena
+                var imePrezime = $("#imeVlasnika").val().trim();
+                if (!imePrezime) {
+                    showError('imeVlasnika', 'Ime i prezime su obavezni.');
+                    isValid = false;
+                } else if (!imePrezime.includes(' ')) {
+                    showError('imeVlasnika', 'Unesite ime i prezime (mora sadržavati razmak).');
+                    isValid = false;
+                } else if (imePrezime.length < 5) {
+                    showError('imeVlasnika', 'Ime i prezime moraju sadržavati najmanje 5 karaktera.');
+                    isValid = false;
+                }
+
+                // Validacija broja kartice
+                var brojKartice = $("#brojKartice").val().replace(/\s+/g, '');
+                if (!brojKartice) {
+                    showError('brojKartice', 'Broj kartice je obavezan.');
+                    isValid = false;
+                } else if (brojKartice.length !== 16) {
+                    showError('brojKartice', 'Broj kartice mora sadržavati tačno 16 cifara.');
+                    isValid = false;
+                }
+
+                // Validacija datuma isteka
+                var datumIsteka = $("#datumIsteka").val().trim();
+                if (!datumIsteka) {
+                    showError('datumIsteka', 'Datum isteka je obavezan.');
+                    isValid = false;
+                } else {
+                    var parts = datumIsteka.split('/');
+                    if (parts.length !== 2 || !/^(0[1-9]|1[0-2])$/.test(parts[0]) || !/^\d{2}$/.test(parts[1])) {
+                        showError('datumIsteka', 'Neispravan format (MM/YY).');
+                        isValid = false;
+                    } else {
+                        var month = parseInt(parts[0]);
+                        var year = parseInt("20" + parts[1]);
+                        var now = new Date();
+                        var currentYear = now.getFullYear();
+                        var currentMonth = now.getMonth() + 1;
+
+                        if (year < currentYear || (year === currentYear && month < currentMonth)) {
+                            showError('datumIsteka', 'Kartica je istekla.');
+                            isValid = false;
+                        }
+                    }
+                }
+
+                // Validacija CVV koda
+                var cvv = $("#cvv").val().trim();
+                if (!cvv) {
+                    showError('cvv', 'CVV kod je obavezan.');
+                    isValid = false;
+                } else if (cvv.length !== 3) {
+                    showError('cvv', 'CVV kod mora sadržavati tačno 3 cifre.');
+                    isValid = false;
+                }
+
+                // Ako je forma validna, pošalji je
+                if (isValid) {
+                    // Prikaži loader i onemogući dugme
+                    $("#submitPayment").prop("disabled", true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Obrađivanje...');
+
+                    // Pošalji formu
+                    this.submit();
+                } else {
+                    // Fokusiraj prvo polje s greškom
+                    $(".form-control").each(function() {
+                        var id = $(this).attr("id");
+                        if ($("#" + id + "Error").text()) {
+                            $(this).focus();
+                            return false;
+                        }
+                    });
+                }
+            });
+        }
+
+        // Pomoćne funkcije za validaciju
+        function showError(fieldId, message) {
+            $("#" + fieldId).addClass("is-invalid border-danger");
+            $("#" + fieldId + "Error").text(message);
+        }
+
+        function clearError(fieldId) {
+            $("#" + fieldId).removeClass("is-invalid border-danger");
+            $("#" + fieldId + "Error").text("");
+        }
+
+        function clearAllErrors() {
+            $(".form-control").removeClass("is-invalid border-danger");
+            $(".error-message").text("");
+        }
+
+        function resetPaymentForm() {
+            $("#paymentForm")[0].reset();
+            clearAllErrors();
+            $("#submitPayment").prop("disabled", false).html('Potvrdi kupovinu');
+        }
+    </script>
+
+    <style>
+        /* Stilovi za validaciju forme */
+        .form-control.is-invalid {
+            background-image: none; /* Ukloni defaultni Bootstrap icon */
+        }
+
+        .error-message {
+            font-size: 0.875rem;
+            min-height: 20px; /* Prostor za poruku o grešci */
+        }
+
+        /* Stilizacija polja s greškom */
+        .border-danger {
+            border: 2px solid #dc3545 !important;
+        }
+
+        /* Stilizacija polja prilikom fokusa */
+        .form-control:focus {
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+
+        /* Stilizirajte placeholder */
+        ::placeholder {
+            opacity: 0.6;
+        }
+
+        /* Stilovi za recenzije */
+        .reviews-container {
+            max-height: 600px;
+            overflow-y: auto;
+            padding-left: 25px;
+            width: 300px; /* Fixed width of 300px */
+            margin: 0 auto; /* Centers the container */
+        }
+
+
+        .bi-star-fill.text-warning {
+            color: #ffc107 !important;
+        }
+
+        .bi-star {
+            color: #ccc;
+        }
+
+        .card-header {
+            background-color: rgba(0, 0, 0, 0.03);
+        }
+
+        /* Stilizacija scrollbara za recenzije */
+        .reviews-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .reviews-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .reviews-container::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 4px;
+        }
+
+            .reviews-container::-webkit-scrollbar-thumb:hover {
+                background: #aaa;
+            }
+
+        /* Stilovi za prikaz komentara recenzija */
+        .truncated-text {
+            cursor: pointer;
+        }
+
+        .view-komentar-recenzije {
+            color: inherit;
+            text-decoration: none;
+            display: block;
+        }
+
+            .view-komentar-recenzije:hover {
+                text-decoration: none;
+            }
+
+                .view-komentar-recenzije:hover p {
+                    color: #007bff;
+                }
+    </style>
+}
+

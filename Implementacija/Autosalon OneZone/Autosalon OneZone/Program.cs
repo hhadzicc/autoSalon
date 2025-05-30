@@ -7,6 +7,17 @@ using Microsoft.EntityFrameworkCore; // Potrebno za UseSqlServer
 using Autosalon_OneZone.Data;
 
 var builder = WebApplication.CreateBuilder(args);
+// Dodati u builder.Services dio, prije builder.Build()
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
+// Dodati u konfiguracijski dio HTTP pipeline-a, nakon app.UseRouting() a prije app.UseAuthentication()
+
 
 // --- Konfiguracija Servisa (Add services to the container.) ---
 
@@ -221,6 +232,6 @@ app.MapControllerRoute(
 
 // Mapira Razor Pages endpoint-e (potrebno za Identity UI)
 app.MapRazorPages();
-
+app.UseSession();
 // Pokre?e aplikaciju
 app.Run();

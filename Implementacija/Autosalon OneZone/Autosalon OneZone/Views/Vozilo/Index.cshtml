@@ -97,9 +97,9 @@
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Godište:</label>
                             <div class="input-group">
-                                <input type="number" class="form-control" placeholder="Od" id="godisteOd" name="godisteOd" 
+                                <input type="number" class="form-control" placeholder="Od" id="godisteOd" name="godisteOd"
                                        min="1900" max="@currentYear" value="@ViewData["GodisteOd"]">
-                                <input type="number" class="form-control" placeholder="Do" id="godisteDo" name="godisteDo" 
+                                <input type="number" class="form-control" placeholder="Do" id="godisteDo" name="godisteDo"
                                        min="1900" max="@currentYear" value="@ViewData["GodisteDo"]">
                                 <button type="button" class="btn btn-outline-secondary" onclick="clearFilter('godisteOd', 'godisteDo')">
                                     Očisti
@@ -139,7 +139,7 @@
                         <div class="col-md-4 mb-3">
                             <label for="boja" class="form-label">Boja:</label>
                             <div class="input-group">
-                                <input type="text" class="form-control" id="boja" name="boja" placeholder="Unesite boju" 
+                                <input type="text" class="form-control" id="boja" name="boja" placeholder="Unesite boju"
                                        value="@ViewData["Boja"]">
                                 <button type="button" class="btn btn-outline-secondary" onclick="clearFilter('boja')">
                                     Očisti
@@ -153,9 +153,9 @@
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Kubikaža:</label>
                             <div class="input-group">
-                                <input type="number" step="0.1" min="0.1" class="form-control" placeholder="Od" id="kubikazaOd" 
+                                <input type="number" step="0.1" min="0.1" class="form-control" placeholder="Od" id="kubikazaOd"
                                        name="kubikazaOd" value="@ViewData["KubikazaOd"]">
-                                <input type="number" step="0.1" min="0.1" class="form-control" placeholder="Do" id="kubikazaDo" 
+                                <input type="number" step="0.1" min="0.1" class="form-control" placeholder="Do" id="kubikazaDo"
                                        name="kubikazaDo" value="@ViewData["KubikazaDo"]">
                                 <button type="button" class="btn btn-outline-secondary" onclick="clearFilter('kubikazaOd', 'kubikazaDo')">
                                     Očisti
@@ -167,9 +167,9 @@
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Kilometraža:</label>
                             <div class="input-group">
-                                <input type="number" min="0" class="form-control" placeholder="Od" id="kilometrazaOd" 
+                                <input type="number" min="0" class="form-control" placeholder="Od" id="kilometrazaOd"
                                        name="kilometrazaOd" value="@ViewData["KilometrazaOd"]">
-                                <input type="number" min="0" class="form-control" placeholder="Do" id="kilometrazaDo" 
+                                <input type="number" min="0" class="form-control" placeholder="Do" id="kilometrazaDo"
                                        name="kilometrazaDo" value="@ViewData["KilometrazaDo"]">
                                 <button type="button" class="btn btn-outline-secondary" onclick="clearFilter('kilometrazaOd', 'kilometrazaDo')">
                                     Očisti
@@ -181,9 +181,9 @@
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Cijena (€):</label>
                             <div class="input-group">
-                                <input type="number" min="0" class="form-control" placeholder="Od" id="cijenaOd" 
+                                <input type="number" min="0" class="form-control" placeholder="Od" id="cijenaOd"
                                        name="cijenaOd" value="@ViewData["CijenaOd"]">
-                                <input type="number" min="0" class="form-control" placeholder="Do" id="cijenaDo" 
+                                <input type="number" min="0" class="form-control" placeholder="Do" id="cijenaDo"
                                        name="cijenaDo" value="@ViewData["CijenaDo"]">
                                 <button type="button" class="btn btn-outline-secondary" onclick="clearFilter('cijenaOd', 'cijenaDo')">
                                     Očisti
@@ -335,10 +335,26 @@ else
                             </div>
 
                             <!-- Moved button container outside vehicle-specs -->
+                            <!-- Moved button container outside vehicle-specs -->
                             <div class="button-container">
-                                <a href="@Url.Action("Details", "Vozila", new { id = vozilo.VoziloID })" class="btn btn-primary">Detalji</a>
-                                <a href="@Url.Action("DodajUKorpu", "Korpa", new { id = vozilo.VoziloID })" class="btn btn-success">Dodaj u korpu</a>
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    <a href="@Url.Action("Details", "Vozilo", new { id = vozilo.VoziloID })" class="btn btn-primary">Detalji</a>
+                                    <form asp-controller="Korpa" asp-action="DodajUKorpu" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@vozilo.VoziloID" />
+                                        <button type="submit" class="btn btn-success">Dodaj u korpu</button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <a href="@Url.Action("Details", "Vozilo", new { id = vozilo.VoziloID })" class="btn btn-primary">Detalji</a>
+                                    <a href="@Url.Action("Login", "Account", new { returnUrl = Context.Request.Path })" class="btn btn-outline-success">
+                                        Prijava za kupovinu
+                                    </a>
+                                }
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -362,14 +378,14 @@ else
             $('#clearAllFilters').click(function() {
                 // Keep the search term, clear everything else
                 var searchTerm = '@ViewData["SearchTerm"]';
-                
+
                 // Reset all filter form fields
                 $('#filterForm').find('input:not([name="searchTerm"])').val('');
                 $('#filterForm').find('select:not([name="searchTerm"])').val('');
-                
+
                 // Reset sort order to default
                 $('#sortOrder').val('');
-                
+
                 // If there was a search term, maintain it
                 if (searchTerm) {
                     $('<input>').attr({
@@ -378,32 +394,74 @@ else
                         value: searchTerm
                     }).appendTo('#filterForm');
                 }
-                
+
                 // Submit the form
                 $('#filterForm').submit();
             });
-            
+
             // Change event for sort order to auto-submit
             $('#sortOrder').change(function() {
                 $('#filterForm').submit();
             });
-            
-            // Validation for godište (year range)
-            $('#godisteOd, #godisteDo').on('input', function() {
+
+            // Validation for godište (year range) with fixes:
+            // 1. Remove automatic "1900" default
+            // 2. Add range validation between Od and Do
+            $('#godisteOd, #godisteDo').on('change', function() {
                 var min = 1900;
                 var max = @currentYear;
-                var val = parseInt($(this).val());
-                
-                if (val < min) {
-                    $(this).val(min);
-                } else if (val > max) {
-                    $(this).val(max);
+                var val = $(this).val() ? parseInt($(this).val()) : '';
+
+                // Only validate if value is entered
+                if (val !== '') {
+                    if (val < min) {
+                        $(this).val(min);
+                    } else if (val > max) {
+                        $(this).val(max);
+                    }
+
+                    // Validate Od <= Do
+                    if (this.id === 'godisteOd' && $('#godisteDo').val()) {
+                        var doVal = parseInt($('#godisteDo').val());
+                        if (val > doVal) {
+                            $('#godisteDo').val(val);
+                        }
+                    }
+                    else if (this.id === 'godisteDo' && $('#godisteOd').val()) {
+                        var odVal = parseInt($('#godisteOd').val());
+                        if (val < odVal) {
+                            $('#godisteOd').val(val);
+                        }
+                    }
                 }
             });
-            
+
+            // Add range validation for all other Od-Do fields
+            function validateRange(odId, doId) {
+                var odVal = $('#' + odId).val() ? parseFloat($('#' + odId).val()) : '';
+                var doVal = $('#' + doId).val() ? parseFloat($('#' + doId).val()) : '';
+
+                if (odVal !== '' && doVal !== '' && odVal > doVal) {
+                    $('#' + doId).val(odVal);
+                }
+            }
+
+            // Add validation to other range fields
+            $('#kubikazaOd, #kubikazaDo').on('change', function() {
+                validateRange('kubikazaOd', 'kubikazaDo');
+            });
+
+            $('#kilometrazaOd, #kilometrazaDo').on('change', function() {
+                validateRange('kilometrazaOd', 'kilometrazaDo');
+            });
+
+            $('#cijenaOd, #cijenaDo').on('change', function() {
+                validateRange('cijenaOd', 'cijenaDo');
+            });
+
             // Show filter panel if filters are applied
             if (
-                '@ViewData["GodisteOd"]' || 
+                '@ViewData["GodisteOd"]' ||
                 '@ViewData["GodisteDo"]' ||
                 '@ViewData["Gorivo"]' ||
                 '@ViewData["Boja"]' ||

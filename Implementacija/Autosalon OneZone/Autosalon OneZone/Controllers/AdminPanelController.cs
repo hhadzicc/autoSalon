@@ -480,9 +480,102 @@ namespace Autosalon_OneZone.Controllers
             }
         }
 
-        #endregion
+        #endregion
 
 
+        // Add this method to the AdminPanelController.cs file in the Recenzije sekcija region
+        [HttpGet]
+        public async Task<JsonResult> GetRecenzijeJson(string? searchQuery = null, string? korisnikFilter = null, string? voziloFilter = null, int page = 1)
+        {
+            int pageSize = int.MaxValue;
+
+            var query = _context.Recenzije
+                .Include(r => r.Korisnik)
+                .Include(r => r.Vozilo)
+                .AsQueryable();
+
+            // Apply user filter
+            if (!string.IsNullOrEmpty(korisnikFilter))
+            {
+                query = query.Where(r =>
+                    (r.Korisnik.UserName != null && r.Korisnik.UserName.Contains(korisnikFilter)) ||
+                    (r.Korisnik.Email != null && r.Korisnik.Email.Contains(korisnikFilter)) ||
+                    (r.Korisnik.Ime != null && r.Korisnik.Ime.Contains(korisnikFilter)) ||
+                    (r.Korisnik.Prezime != null && r.Korisnik.Prezime.Contains(korisnikFilter))
+                );
+            }
+
+            // Apply vehicle filter
+            if (!string.IsNullOrEmpty(voziloFilter))
+            {
+                query = query.Where(r =>
+                    (r.Vozilo.Marka != null && r.Vozilo.Marka.Contains(voziloFilter)) ||
+                    (r.Vozilo.Model != null && r.Vozilo.Model.Contains(voziloFilter))
+                );
+            }
+
+            // Apply text search filter
+            if (!string.IsNullOrEmpty(searchQuery))
+            {
+                query = query.Where(r => r.Komentar != null && r.Komentar.Contains(searchQuery));
+            }
+
+            // Sort by date - newest first
+            query = query.OrderByDescending(r => r.DatumRecenzije);
+
+            // Get total count for pagination
+            var totalCount = await query.CountAsync();
+            var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+
+            // Apply pagination
+            var recenzije = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            // Map to JSON-friendly objects
+            var jsonRecenzije = recenzije.Select(r => new
+            {
+                recenzijaID = r.RecenzijaID,
+                korisnikId = r.KorisnikId,
+                korisnikUserName = r.Korisnik?.UserName ?? "N/A",
+                korisnikIme = $"{r.Korisnik?.Ime ?? ""} {r.Korisnik?.Prezime ?? ""}".Trim(),
+                voziloID = r.VoziloID,
+                voziloMarka = r.Vozilo?.Marka ?? "N/A",
+                voziloModel = r.Vozilo?.Model ?? "",
+                voziloNaziv = $"{r.Vozilo?.Marka ?? ""} {r.Vozilo?.Model ?? ""}".Trim(),
+                ocjena = r.Ocjena,
+                komentar = r.Komentar,
+                datumRecenzije = r.DatumRecenzije
+            }).ToList();
+
+            // Return data and pagination info
+            return Json(new
+            {
+                recenzije = jsonRecenzije,
+                totalCount = totalCount,
+                totalPages = totalPages,
+                currentPage = page,
+                pageSize = pageSize
+            });
+        }
+
+        // Add this method to handle deletion of reviews
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteRecenzija(int id)
+        {
+            var recenzija = await _context.Recenzije.FindAsync(id);
+            if (recenzija == null)
+            {
+                return NotFound();
+            }
+
+            _context.Recenzije.Remove(recenzija);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { successMessage = "Recenzija uspješno obrisana." });
+        }
 
         // Unutar AdminPanelController.cs klase
 

@@ -80,12 +80,20 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcS29ycGFcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/AP/Desktop/repos/Grupa7-Tim4/Implementacija/Autosalon OneZone/Autosalon OneZone/Views/Korpa/Uspjeh.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcS29ycGFcVXNwamVoLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/AP/Desktop/repos/Grupa7-Tim4/Implementacija/Autosalon OneZone/Autosalon OneZone/Views/Profil/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZmlsXEVkaXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/AP/Desktop/repos/Grupa7-Tim4/Implementacija/Autosalon OneZone/Autosalon OneZone/Views/Profil/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZmlsXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/AP/Desktop/repos/Grupa7-Tim4/Implementacija/Autosalon OneZone/Autosalon OneZone/Views/Profil/KupljeniArtikli.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZmlsXEt1cGxqZW5pQXJ0aWtsaS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/AP/Desktop/repos/Grupa7-Tim4/Implementacija/Autosalon OneZone/Autosalon OneZone/Views/Shared/Error.cshtml]
@@ -102,6 +110,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/AP/Desktop/repos/Grupa7-Tim4/Implementacija/Autosalon OneZone/Autosalon OneZone/Views/Vozilo/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVm96aWxvXENyZWF0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/AP/Desktop/repos/Grupa7-Tim4/Implementacija/Autosalon OneZone/Autosalon OneZone/Views/Vozilo/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVm96aWxvXERldGFpbHMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/AP/Desktop/repos/Grupa7-Tim4/Implementacija/Autosalon OneZone/Autosalon OneZone/Views/Vozilo/Index.cshtml]

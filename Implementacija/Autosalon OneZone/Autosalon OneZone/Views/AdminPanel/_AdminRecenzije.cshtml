@@ -3,7 +3,7 @@
 <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 @* Preporuka: Uklonite CSS linkove iz parcijalnih viewa i stavite ih u glavni _CustomLayout.cshtml *@
 @* <link href="~/css/admin-specific.css" rel="stylesheet" /> *@
-@* <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"> *@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
 <h3>Pregled Recenzija</h3>
 
@@ -21,9 +21,11 @@
 </div>
 
 
-<div id="recenzije-list-container"> @* Dodan kontejner za listu recenzija *@
+<div id="recenzije-list-container">
+    @* Dodan kontejner za listu recenzija *@
     @* Tabela za prikaz recenzija *@
-    <table class="table table-striped table-hover"> @* Dodane Bootstrap klase za stil *@
+    <table class="table table-striped table-hover">
+        @* Dodane Bootstrap klase za stil *@
         <thead>
             <tr>
                 @* Headeri kolona *@
@@ -45,6 +47,24 @@
     @* Placeholder za paginaciju *@
     <div id="pagination-controls">
         @* Paginacija će se renderovati ovdje, ili dinamički kreirati/ažurirati JS-om *@
+    </div>
+</div>
+
+<!-- Modal za prikaz cijelog komentara -->
+<div class="modal fade" id="komentarModal" tabindex="-1" aria-labelledby="komentarModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="komentarModalLabel">Komentar recenzije</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="komentarModalText"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zatvori</button>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -78,7 +98,6 @@
             recenzijaTableBody.html('<tr><td colspan="6">Učitavanje recenzija...</td></tr>'); // Prikazi poruku o učitavanju
 
             // URL endpoint koji vraća JSON podatke o recenzijama
-            // MORATE IMPLEMENTIRATI GetRecenzijeJson akciju u AdminPanelControlleru KOJA VRAĆA JSON!
             const url = '@Url.Action("GetRecenzijeJson", "AdminPanel")';
 
             $.get(url, params, function (data) {
@@ -88,18 +107,26 @@
                 if (data && data.recenzije && data.recenzije.length > 0) {
                     // Iteriraj kroz primljene podatke i dodaj redove u tabelu
                     $.each(data.recenzije, function (index, recenzija) {
-                         // Pretpostavljamo da JSON objekat 'recenzija' ima svojstva:
-                         // recenzijaID, korisnikUserName, voziloMarka (ili voziloNaziv), ocjena, komentar, datumRecenzije (string)
+                        // Pripremi skraćenu verziju komentara
+                        const komentarText = recenzija.komentar || '';
+                        let skraceniKomentar = komentarText;
+                        if (komentarText.length > 50) {
+                            skraceniKomentar = komentarText.substring(0, 50) + '...';
+                        }
+
                         const row = `
                             <tr>
-                                <td>${recenzija.korisnikUserName || 'Nepoznat'}</td> @* Prilagodite pristupu username-u *@
-                                <td>${recenzija.voziloMarka || recenzija.voziloNaziv || 'Nepoznato vozilo'}</td> @* Prilagodite pristupu nazivu vozila *@
+                                <td>${recenzija.korisnikUserName || 'Nepoznat'}</td>
+                                <td>${recenzija.voziloMarka || recenzija.voziloNaziv || 'Nepoznato vozilo'}</td>
                                 <td>${recenzija.ocjena || ''}</td>
-                                @* Opcionalno: Skratite komentar ako je predugačak *@
-                                <td>${(recenzija.komentar || '').substring(0, 150) + ((recenzija.komentar || '').length > 150 ? '...' : '')}</td>
-                                <td>${formatDate(recenzija.datumRecenzije)}</td> @* Formatiranje datuma na klijentskoj strani *@
                                 <td>
-                                    @* Dugme za brisanje *@
+                                    <a href="#" class="view-komentar" data-komentar="${encodeURIComponent(komentarText)}"
+                                       style="text-decoration: none; color: inherit; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block;">
+                                        ${skraceniKomentar}
+                                    </a>
+                                </td>
+                                <td>${formatDate(recenzija.datumRecenzije)}</td>
+                                <td>
                                     <button class="delete-recenzija-button btn btn-danger btn-sm" data-id="${recenzija.recenzijaID}"><i class="bi bi-trash"></i> Obriši</button>
                                 </td>
                             </tr>
@@ -135,23 +162,28 @@
 
         // Handle-anje klika na dugme "Primijeni Filter/Pretragu"
         filterSearchButton.on('click', function () {
-            // konzola.log("Kliknuto primijeni filter/pretragu za recenzije"); // Debugging
             loadRecenzijeList(getCurrentFilterParams()); // Pozovi funkciju za učitavanje sa trenutnim filterima
         });
 
-         // Opcionalno: Pretraga/Filtriranje na pritisak Enter tastera u bilo kojem input polju filtera/pretrage
-         $('.admin-section-controls input[type="text"]').keypress(function(e) {
-             if(e.which == 13) {
-                 e.preventDefault();
-                 filterSearchButton.click(); // Simulate button click
-             }
-         });
+        // Opcionalno: Pretraga/Filtriranje na pritisak Enter tastera u bilo kojem input polju filtera/pretrage
+        $('.admin-section-controls input[type="text"]').keypress(function(e) {
+            if(e.which == 13) {
+                e.preventDefault();
+                filterSearchButton.click(); // Simulate button click
+            }
+        });
 
+        // Handle-anje klika na komentar za prikaz cijelog teksta u modalu
+        $(document).on('click', '.view-komentar', function(e) {
+            e.preventDefault();
+            const komentar = decodeURIComponent($(this).data('komentar'));
+            $('#komentarModalText').text(komentar);
+            $('#komentarModal').modal('show');
+        });
 
         // Handle-anje klika na dugme "Obriši" (Delegacija događaja)
         $(document).on('click', '.delete-recenzija-button', function () {
             var recenzijaId = $(this).data('id'); // Dobijanje ID-a recenzije iz data atributa
-            // konzola.log("Kliknuto obriši recenziju dugme za ID:", recenzijaId); // Debugging
 
             if (confirm('Da li ste sigurni da želite obrisati ovu recenziju?')) {
                 $.ajax({
@@ -174,12 +206,28 @@
                 });
             }
         });
-
-        // Dodajte handle-ere za klikove na dugmad za paginaciju ako ih implementirate
-
     }); // Kraj document.ready
 </script>
 
-@* Potrebne klijentske skripte ako imate dinamičke forme ili klijentsku validaciju u ovoj sekciji *@
-@* <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script> *@
-@* <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script> *@
+<style>
+    /* Stilizacija za prikaz komentara recenzije */
+    .view-komentar {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: block;
+        max-width: 300px;
+    }
+
+        /* Stilizacija za hover efekat */
+        .view-komentar:hover {
+            text-decoration: underline !important;
+            color: #007bff !important;
+        }
+
+    /* Osigurajte da tabela pravilno prikazuje sadržaj */
+    .table td {
+        vertical-align: middle;
+    }
+</style>
+

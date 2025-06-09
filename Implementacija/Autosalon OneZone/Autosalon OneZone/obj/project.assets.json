@@ -4458,11 +4458,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\AP\\Desktop\\repos\\Grupa7-Tim4\\Implementacija\\Autosalon OneZone\\Autosalon OneZone\\Autosalon OneZone.csproj",
+      "projectUniqueName": "C:\\Users\\AP\\Documents\\OOADProjekat\\Implementacija\\Autosalon OneZone\\Autosalon OneZone\\Autosalon OneZone.csproj",
       "projectName": "Autosalon OneZone",
-      "projectPath": "C:\\Users\\AP\\Desktop\\repos\\Grupa7-Tim4\\Implementacija\\Autosalon OneZone\\Autosalon OneZone\\Autosalon OneZone.csproj",
+      "projectPath": "C:\\Users\\AP\\Documents\\OOADProjekat\\Implementacija\\Autosalon OneZone\\Autosalon OneZone\\Autosalon OneZone.csproj",
       "packagesPath": "C:\\Users\\AP\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\AP\\Desktop\\repos\\Grupa7-Tim4\\Implementacija\\Autosalon OneZone\\Autosalon OneZone\\obj\\",
+      "outputPath": "C:\\Users\\AP\\Documents\\OOADProjekat\\Implementacija\\Autosalon OneZone\\Autosalon OneZone\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

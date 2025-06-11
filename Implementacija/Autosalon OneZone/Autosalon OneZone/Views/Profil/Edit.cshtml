@@ -28,30 +28,30 @@
     <div class="form-container">
         <h2>Uredi Profil</h2>
 
-        <div asp-validation-summary="All" class="text-danger"></div>
+        <div asp-validation-summary="All" class="text-danger validation-summary"></div>
         <form asp-controller="Profil" asp-action="Edit" method="post">
 
             <div class="form-group">
                 <label asp-for="Ime"></label>
-                <input asp-for="Ime" type="text" class="form-control" placeholder="Ime" required />
+                <input asp-for="Ime" type="text" class="form-control" placeholder="Ime" required pattern="[A-Za-z\s]+" data-val-regex="Ime može sadržavati samo slova." data-val-required="Ime je obavezno." />
                 <span asp-validation-for="Ime" class="text-danger"></span>
             </div>
 
             <div class="form-group">
                 <label asp-for="Prezime"></label>
-                <input asp-for="Prezime" type="text" class="form-control" placeholder="Prezime" required />
+                <input asp-for="Prezime" type="text" class="form-control" placeholder="Prezime" required pattern="[A-Za-z\s]+" data-val-regex="Prezime može sadržavati samo slova." data-val-required="Prezime je obavezno." />
                 <span asp-validation-for="Prezime" class="text-danger"></span>
             </div>
 
             <div class="form-group">
                 <label asp-for="Email"></label>
-                <input asp-for="Email" type="email" class="form-control" placeholder="Email adresa" required />
+                <input asp-for="Email" type="email" class="form-control" placeholder="Email adresa" required data-val-required="Email adresa je obavezna." data-val-email="Unesite ispravnu email adresu." />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
 
             <div class="form-group">
                 <label asp-for="UserName"></label>
-                <input asp-for="UserName" type="text" class="form-control" placeholder="Korisničko ime" required />
+                <input asp-for="UserName" type="text" class="form-control" placeholder="Korisničko ime" required pattern="[A-Za-z0-9]+" data-val-regex="Korisničko ime može sadržavati samo slova i brojeve." data-val-required="Korisničko ime je obavezno." />
                 <span asp-validation-for="UserName" class="text-danger"></span>
             </div>
 
@@ -111,6 +111,51 @@
 
     <script>
         $(document).ready(function() {
+            // Ime i prezime - dozvoli samo slova
+            $("#Ime, #Prezime").on("input", function() {
+                var value = $(this).val();
+                var lettersOnly = /^[A-Za-z\s]*$/;
+
+                if (!lettersOnly.test(value)) {
+                    var cleanValue = value.replace(/[^A-Za-z\s]/g, '');
+                    $(this).val(cleanValue);
+                }
+            });
+
+            // Korisničko ime - dozvoli slova i brojeve
+            $("#UserName").on("input", function() {
+                var value = $(this).val();
+                var alphanumericOnly = /^[A-Za-z0-9]*$/;
+
+                if (!alphanumericOnly.test(value)) {
+                    var cleanValue = value.replace(/[^A-Za-z0-9]/g, '');
+                    $(this).val(cleanValue);
+                }
+            });
+
+            // Validacijske poruke na bosanskom
+            $.extend($.validator.messages, {
+                required: "Ovo polje je obavezno.",
+                email: "Unesite ispravnu email adresu.",
+                regex: "Unesite vrijednost u ispravnom formatu.",
+                pattern: "Unesite vrijednost u ispravnom formatu."
+            });
+
+            // Prijevod validacijskih poruka u sumarnom prikazu
+            function translateValidationMessages() {
+                $('.validation-summary ul li').each(function() {
+                    var text = $(this).text();
+
+                    text = text.replace(/The field [A-Za-z]+ must match the regular expression/i, 'Polje mora biti u ispravnom formatu.');
+                    text = text.replace(/Username .* is already taken/i, 'Korisničko ime je već zauzeto.');
+                    text = text.replace(/Email .* is already taken/i, 'Email adresa je već zauzeta.');
+
+                    $(this).text(text);
+                });
+            }
+
+            translateValidationMessages();
+
             // Open password change modal
             $("#change-password-btn").click(function() {
                 // Clear form data and errors

@@ -149,7 +149,7 @@ namespace Autosalon_OneZone.Services
                             userMessage = "Transakcija odbijena - sumnja na prevaru.";
                             break;
                         default:
-                            userMessage = $"Transakcija odbijena. NEVAZECA KARTICA? {ex.StripeError?.Message ?? ex.Message}";
+                            userMessage = $"Transakcija odbijena. Kartica nije validna";
                             break;
                     }
 

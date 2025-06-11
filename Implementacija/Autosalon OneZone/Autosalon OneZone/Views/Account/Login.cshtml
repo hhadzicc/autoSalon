@@ -1,74 +1,106 @@
-﻿
-@model Autosalon_OneZone.Models.ViewModels.LoginViewModel 
+﻿@model Autosalon_OneZone.Models.ViewModels.LoginViewModel
 <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 @{
-    ViewData["Title"] = "Prijava"; // Naslov stranice
+    ViewData["Title"] = "Prijava";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 @section Head {
-    @* Linkujemo CSS fajl specifičan za ovu stranicu *@
     <link rel="stylesheet" href="~/css/login.css" />
 }
 
+<div class="login-container">
+    <div class="form-container">
 
+        <h2>Prijava</h2>
 
-<div class="login-container"> @* Glavni kontejner za formu - koristi klasu login-container iz login.css *@
-    <div class="form-container"> @* Kontejner oko forme (beli boks) - koristi klasu form-container iz login.css *@
-
-        <h2>Prijava</h2> @* Naslov forme *@
-
-        @* --- DODATO: Prikazuje sažetak svih grešaka validacije i greške iz SignInManagera --- *@
-        @* Greške će se prikazati ovde ako ModelState sadrzi greške, stilizovane klasom .text-danger *@
-        <div asp-validation-summary="All" class="text-danger"></div>
-        @* ----------------------------------------------------------------------------------- *@
+        <div asp-validation-summary="All" class="text-danger validation-summary"></div>
 
         <form asp-controller="Account" asp-action="Login" method="post">
-            @* --- PROMENJENO: Input polja koriste asp-for Tag Helper-e --- *@
-            @* Omogucava zadrzavanje unetih vrednosti i pravilnu validaciju *@
 
             <div class="form-group">
-                @* <label asp-for="Email"></label> *@
-                <input asp-for="Email" type="email" class="form-control" placeholder="E-mail" required />
-                <span asp-validation-for="Email" class="text-danger"></span> @* Opciono: prikazuje gresku samo za ovo polje *@
+                <input asp-for="Email" type="email" class="form-control" placeholder="E-mail" required data-val-required="Email adresa je obavezna." data-val-email="Unesite ispravnu email adresu." />
+                <span asp-validation-for="Email" class="text-danger"></span>
             </div>
 
             <div class="form-group">
-                @* <label asp-for="Password"></label> *@
-                <input asp-for="Password" type="password" class="form-control" placeholder="Lozinka" required />
+                <input asp-for="Password" type="password" class="form-control" placeholder="Lozinka" required data-val-required="Lozinka je obavezna." />
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
 
-            <div class="form-group remember-me"> @* Klasa za "Zapamti me" checkbox * @
+            <div class="form-group remember-me">
                 <label>
-                    @* --- PROMENJENO: Checkbox koristi asp-for --- *@
                     <input asp-for="RememberMe" type="checkbox" />
-                    @* ------------------------------------------ *@
                     Zapamti me
                 </label>
-                 <span asp-validation-for="RememberMe" class="text-danger"></span>
+                <span asp-validation-for="RememberMe" class="text-danger"></span>
             </div>
 
             <div class="form-group">
-                @* Dugme za slanje forme - koristi klasu login-button iz login.css *@
                 <button type="submit" class="login-button">Prijavi me</button>
             </div>
 
-            <div class="register-link"> @* Klasa za link "Nemate nalog?" - stilizovana u login.css *@
+            <div class="register-link">
                 Nemate nalog? <a href="/Account/Register">Registrujte se</a>
             </div>
 
-            <div class="forgot-password"> @* Klasa za link "Zaboravili ste lozinku?" - stilizovana u login.css *@
-                 @* Proverite da li ova putanja /Identity/Account/ForgotPassword postoji u vasem projektu (standardno za Identity Razor Pages) *@
+            <div class="forgot-password">
                 <a href="/Identity/Account/ForgotPassword">Zaboravili ste lozinku?</a>
             </div>
         </form>
     </div>
 </div>
 
-@* Sekcija za skripte, uključujući validacione skripte *@
-@* --- DODATO: Neophodno za klijentsku validaciju --- *@
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        $(document).ready(function () {
+            $.extend($.validator.messages, {
+                required: "Ovo polje je obavezno.",
+                email: "Unesite ispravnu email adresu.",
+                url: "Unesite ispravnu web adresu.",
+                date: "Unesite ispravan datum.",
+                dateISO: "Unesite ispravan datum (ISO).",
+                number: "Unesite ispravan broj.",
+                digits: "Unesite samo brojeve.",
+                creditcard: "Unesite ispravan broj kreditne kartice.",
+                equalTo: "Unesite ponovo istu vrijednost.",
+                maxlength: $.validator.format("Unesite najviše {0} znakova."),
+                minlength: $.validator.format("Unesite najmanje {0} znakova."),
+                rangelength: $.validator.format("Unesite vrijednost između {0} i {1} znakova."),
+                range: $.validator.format("Unesite vrijednost između {0} i {1}."),
+                max: $.validator.format("Unesite vrijednost manju ili jednaku {0}."),
+                min: $.validator.format("Unesite vrijednost veću ili jednaku {0}.")
+            });
+
+            function translateIdentityErrors() {
+                $('.validation-summary ul li').each(function() {
+                    var text = $(this).text();
+
+                    text = text.replace(/Invalid login attempt/i, 'Neuspješan pokušaj prijave. Provjerite email i lozinku.');
+                    text = text.replace(/Username .* is already taken/i, 'Korisničko ime je već zauzeto.');
+                    text = text.replace(/Email .* is already taken/i, 'Email adresa je već zauzeta.');
+                    text = text.replace(/Password must be at least \d+ characters/i, 'Lozinka mora imati najmanje $1 znakova.');
+                    text = text.replace(/Passwords must have at least one non alphanumeric character/i, 'Lozinka mora sadržavati najmanje jedan poseban znak.');
+                    text = text.replace(/Passwords must have at least one lowercase/i, 'Lozinka mora sadržavati najmanje jedno malo slovo.');
+                    text = text.replace(/Passwords must have at least one uppercase/i, 'Lozinka mora sadržavati najmanje jedno veliko slovo.');
+                    text = text.replace(/Passwords must have at least one digit/i, 'Lozinka mora sadržavati najmanje jednu cifru.');
+                    text = text.replace(/User name .* is invalid/i, 'Korisničko ime sadrži nedozvoljene znakove.');
+                    text = text.replace(/Email .* is invalid/i, 'Email adresa nije ispravna.');
+                    text = text.replace(/Incorrect password/i, 'Pogrešna lozinka.');
+                    text = text.replace(/Your account has been locked out/i, 'Vaš račun je privremeno zaključan. Pokušajte kasnije.');
+
+                    $(this).text(text);
+                });
+            }
+
+            translateIdentityErrors();
+            $('form').on('submit', function() {
+                setTimeout(translateIdentityErrors, 100);
+            });
+        });
+    </script>
 }
-@* --------------------------------------------------------- *@

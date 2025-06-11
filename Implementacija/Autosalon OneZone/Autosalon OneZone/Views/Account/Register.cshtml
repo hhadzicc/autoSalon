@@ -17,31 +17,31 @@
         <div class="form-content">
             <h2>Kreirajte Nalog</h2>
 
-            <div asp-validation-summary="All" class="text-danger"></div>
+            <div asp-validation-summary="All" class="text-danger validation-summary"></div>
 
             <form asp-controller="Account" asp-action="Register" method="post">
                 <div class="form-group">
-                    <input asp-for="Ime" type="text" class="form-control" placeholder="Ime" required />
+                    <input asp-for="Ime" type="text" class="form-control" placeholder="Ime" required data-val-required="Ime je obavezno." pattern="[A-Za-z\s]+" data-val-regex="Ime može sadržavati samo slova." />
                     <span asp-validation-for="Ime" class="text-danger"></span>
                 </div>
 
                 <div class="form-group">
-                    <input asp-for="Prezime" type="text" class="form-control" placeholder="Prezime" required />
+                    <input asp-for="Prezime" type="text" class="form-control" placeholder="Prezime" required data-val-required="Prezime je obavezno." pattern="[A-Za-z\s]+" data-val-regex="Prezime može sadržavati samo slova." />
                     <span asp-validation-for="Prezime" class="text-danger"></span>
                 </div>
 
                 <div class="form-group">
-                    <input asp-for="Email" type="email" class="form-control" placeholder="Email adresa" required />
+                    <input asp-for="Email" type="email" class="form-control" placeholder="Email adresa" required data-val-required="Email adresa je obavezna." data-val-email="Unesite ispravnu email adresu." />
                     <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
 
                 <div class="form-group">
-                    <input asp-for="Password" type="password" class="form-control" placeholder="Šifra" required />
+                    <input asp-for="Password" type="password" class="form-control" placeholder="Šifra" required data-val-required="Šifra je obavezna." />
                     <span asp-validation-for="Password" class="text-danger"></span>
                 </div>
 
                 <div class="form-group">
-                    <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Potvrdite šifru" required />
+                    <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Potvrdite šifru" required data-val-required="Potvrda šifre je obavezna." data-val-equalto="Šifre se ne podudaraju." />
                     <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                 </div>
 
@@ -61,4 +61,58 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script>
+        $(document).ready(function () {
+            $.extend($.validator.messages, {
+                required: "Ovo polje je obavezno.",
+                email: "Unesite ispravnu email adresu.",
+                equalto: "Unesite istu vrijednost ponovo.",
+                regex: "Unesite vrijednost u ispravnom formatu.",
+                maxlength: $.validator.format("Unesite najviše {0} znakova."),
+                minlength: $.validator.format("Unesite najmanje {0} znakova."),
+                rangelength: $.validator.format("Unesite vrijednost između {0} i {1} znakova."),
+                range: $.validator.format("Unesite vrijednost između {0} i {1}."),
+                max: $.validator.format("Unesite vrijednost manju ili jednaku {0}."),
+                min: $.validator.format("Unesite vrijednost veću ili jednaku {0}.")
+            });
+
+            function validateNameFields() {
+                $("#Ime, #Prezime").on("input", function() {
+                    var value = $(this).val();
+                    var lettersOnly = /^[A-Za-z\s]*$/;
+
+                    if (!lettersOnly.test(value)) {
+                        var cleanValue = value.replace(/[^A-Za-z\s]/g, '');
+                        $(this).val(cleanValue);
+                    }
+                });
+            }
+
+            function translateIdentityErrors() {
+                $('.validation-summary ul li').each(function() {
+                    var text = $(this).text();
+
+                    text = text.replace(/Username .* is already taken/i, 'Korisničko ime je već zauzeto.');
+                    text = text.replace(/Email .* is already taken/i, 'Email adresa je već zauzeta.');
+                    text = text.replace(/Password must be at least \d+ characters/i, 'Šifra mora imati najmanje $1 znakova.');
+                    text = text.replace(/Passwords must have at least one non alphanumeric character/i, 'Šifra mora sadržavati najmanje jedan poseban znak.');
+                    text = text.replace(/Passwords must have at least one lowercase/i, 'Šifra mora sadržavati najmanje jedno malo slovo.');
+                    text = text.replace(/Passwords must have at least one uppercase/i, 'Šifra mora sadržavati najmanje jedno veliko slovo.');
+                    text = text.replace(/Passwords must have at least one digit/i, 'Šifra mora sadržavati najmanje jednu cifru.');
+                    text = text.replace(/User name .* is invalid/i, 'Korisničko ime sadrži nedozvoljene znakove.');
+                    text = text.replace(/Email .* is invalid/i, 'Email adresa nije ispravna.');
+                    text = text.replace(/The password and confirmation password do not match/i, 'Šifra i potvrda šifre se ne podudaraju.');
+
+                    $(this).text(text);
+                });
+            }
+
+            validateNameFields();
+            translateIdentityErrors();
+            $('form').on('submit', function() {
+                setTimeout(translateIdentityErrors, 100);
+            });
+        });
+    </script>
 }

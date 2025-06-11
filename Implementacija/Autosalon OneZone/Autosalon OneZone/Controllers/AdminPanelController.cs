@@ -928,21 +928,61 @@ namespace Autosalon_OneZone.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteProfil(string id)
         {
-            var user = await _userManager.FindByIdAsync(id);
-            if (user == null)
+            try
             {
-                return NotFound();
+                var user = await _userManager.FindByIdAsync(id);
+                if (user == null)
+                {
+                    return NotFound();
+                }
+
+                // 1. Dohvati sve narudžbe korisnika
+                var userOrders = await _context.Narudzbe
+                    .Where(n => n.KorisnikId == id)
+                    .ToListAsync();
+
+                // 2. Za svaku narudžbu pronađi plaćanje i stavke korpe
+                foreach (var order in userOrders)
+                {
+                    // Prvo obriši plaćanje povezano s narudžbom (ako postoji)
+                    var payment = await _context.Placanja
+                        .FirstOrDefaultAsync(p => p.NarudzbaID == order.NarudzbaID);
+
+                    if (payment != null)
+                    {
+                        _context.Placanja.Remove(payment);
+                    }
+
+                    // Zatim obriši stavke korpe povezane s narudžbom
+                    var orderItems = await _context.StavkeKorpe
+                        .Where(s => s.NarudzbaID == order.NarudzbaID)
+                        .ToListAsync();
+
+                    if (orderItems.Any())
+                    {
+                        _context.StavkeKorpe.RemoveRange(orderItems);
+                    }
+                }
+
+                // 3. Sačuvaj promjene prije brisanja korisnika
+                await _context.SaveChangesAsync();
+
+                // 4. Sada briši korisnika
+                var result = await _userManager.DeleteAsync(user);
+
+                if (!result.Succeeded)
+                {
+                    return BadRequest(result.Errors.Select(e => e.Description));
+                }
+
+                return Ok(new { successMessage = "Korisnik uspješno obrisan." });
             }
-
-            var result = await _userManager.DeleteAsync(user);
-
-            if (!result.Succeeded)
+            catch (Exception ex)
             {
-                return BadRequest(result.Errors.Select(e => e.Description));
+                return BadRequest(new { errorMessage = $"Greška prilikom brisanja korisnika: {ex.Message}" });
             }
-
-            return Ok(new { successMessage = "Korisnik uspješno obrisan." });
         }
+
 
     }
 }

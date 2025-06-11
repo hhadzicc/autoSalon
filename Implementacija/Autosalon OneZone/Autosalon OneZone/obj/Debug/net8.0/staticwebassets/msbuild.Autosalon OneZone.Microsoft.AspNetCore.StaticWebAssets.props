@@ -216,24 +216,6 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\images\vozila\04fa33ac-2c64-44d0-82fc-e69437abf1f9_photo_2024-06-08_15-20-20.jpg'))</OriginalItemSpec>
     </StaticWebAsset>
-    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\images\vozila\0d3de070-b137-4a69-940a-d577525dc8ff_photo_2024-06-08_15-20-19.jpg'))">
-      <SourceType>Package</SourceType>
-      <SourceId>Autosalon OneZone</SourceId>
-      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
-      <BasePath>_content/Autosalon OneZone</BasePath>
-      <RelativePath>images/vozila/0d3de070-b137-4a69-940a-d577525dc8ff_photo_2024-06-08_15-20-19.jpg</RelativePath>
-      <AssetKind>All</AssetKind>
-      <AssetMode>All</AssetMode>
-      <AssetRole>Primary</AssetRole>
-      <RelatedAsset></RelatedAsset>
-      <AssetTraitName></AssetTraitName>
-      <AssetTraitValue></AssetTraitValue>
-      <Fingerprint>c969ul34u3</Fingerprint>
-      <Integrity>8AnX/V43jDsJPZqY0CXqPrVZ7rPwuR9+Va8NjoB3fhA=</Integrity>
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\images\vozila\0d3de070-b137-4a69-940a-d577525dc8ff_photo_2024-06-08_15-20-19.jpg'))</OriginalItemSpec>
-    </StaticWebAsset>
     <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\images\vozila\1011929f-6ed9-4d2d-8fc1-6bb0ade46462_photo_2024-06-08_15-20-21.jpg'))">
       <SourceType>Package</SourceType>
       <SourceId>Autosalon OneZone</SourceId>

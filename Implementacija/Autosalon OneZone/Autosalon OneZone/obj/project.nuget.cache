@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Tap4+ZK7Ad0=",
+  "dgSpecHash": "SA0LOnQ7TSw=",
   "success": true,
-  "projectFilePath": "C:\\Users\\AP\\Documents\\Grupa77OAD\\Implementacija\\Autosalon OneZone\\Autosalon OneZone\\Autosalon OneZone.csproj",
+  "projectFilePath": "C:\\Users\\AP\\Desktop\\repos\\Grupa7-Tim4\\Implementacija\\Autosalon OneZone\\Autosalon OneZone\\Autosalon OneZone.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\AP\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
     "C:\\Users\\AP\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",

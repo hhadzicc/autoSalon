@@ -327,6 +327,7 @@
         });
 
         // Funkcija koja inicijalizira validaciju forme
+                // Zamjenite cijelu setupPaymentFormValidation funkciju s ovom:
         function setupPaymentFormValidation() {
             // Inicijalno čišćenje eventualnih grešaka
             clearAllErrors();
@@ -398,90 +399,129 @@
 
             // Validacija forme pri slanju
             $("#paymentForm").on('submit', function(e) {
-                e.preventDefault();
+                e.preventDefault(); // Spriječiti standardno slanje forme
 
                 // Očisti sve prethodne greške
                 clearAllErrors();
 
-                // Pratimo ima li grešaka
-                var isValid = true;
+                // Validacija forme
+                var isValid = validatePaymentForm();
 
-                // Validacija imena i prezimena
-                var imePrezime = $("#imeVlasnika").val().trim();
-                if (!imePrezime) {
-                    showError('imeVlasnika', 'Ime i prezime su obavezni.');
-                    isValid = false;
-                } else if (!imePrezime.includes(' ')) {
-                    showError('imeVlasnika', 'Unesite ime i prezime (mora sadržavati razmak).');
-                    isValid = false;
-                } else if (imePrezime.length < 5) {
-                    showError('imeVlasnika', 'Ime i prezime moraju sadržavati najmanje 5 karaktera.');
-                    isValid = false;
-                }
-
-                // Validacija broja kartice
-                var brojKartice = $("#brojKartice").val().replace(/\s+/g, '');
-                if (!brojKartice) {
-                    showError('brojKartice', 'Broj kartice je obavezan.');
-                    isValid = false;
-                } else if (brojKartice.length !== 16) {
-                    showError('brojKartice', 'Broj kartice mora sadržavati tačno 16 cifara.');
-                    isValid = false;
-                }
-
-                // Validacija datuma isteka
-                var datumIsteka = $("#datumIsteka").val().trim();
-                if (!datumIsteka) {
-                    showError('datumIsteka', 'Datum isteka je obavezan.');
-                    isValid = false;
-                } else {
-                    var parts = datumIsteka.split('/');
-                    if (parts.length !== 2 || !/^(0[1-9]|1[0-2])$/.test(parts[0]) || !/^\d{2}$/.test(parts[1])) {
-                        showError('datumIsteka', 'Neispravan format (MM/YY).');
-                        isValid = false;
-                    } else {
-                        var month = parseInt(parts[0]);
-                        var year = parseInt("20" + parts[1]);
-                        var now = new Date();
-                        var currentYear = now.getFullYear();
-                        var currentMonth = now.getMonth() + 1;
-
-                        if (year < currentYear || (year === currentYear && month < currentMonth)) {
-                            showError('datumIsteka', 'Kartica je istekla.');
-                            isValid = false;
-                        }
-                    }
-                }
-
-                // Validacija CVV koda
-                var cvv = $("#cvv").val().trim();
-                if (!cvv) {
-                    showError('cvv', 'CVV kod je obavezan.');
-                    isValid = false;
-                } else if (cvv.length !== 3) {
-                    showError('cvv', 'CVV kod mora sadržavati tačno 3 cifre.');
-                    isValid = false;
-                }
-
-                // Ako je forma validna, pošalji je
                 if (isValid) {
                     // Prikaži loader i onemogući dugme
                     $("#submitPayment").prop("disabled", true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Obrađivanje...');
 
-                    // Pošalji formu
-                    this.submit();
-                } else {
-                    // Fokusiraj prvo polje s greškom
-                    $(".form-control").each(function() {
-                        var id = $(this).attr("id");
-                        if ($("#" + id + "Error").text()) {
-                            $(this).focus();
-                            return false;
+                    // Pripremi podatke forme
+                    var formData = $(this).serialize();
+
+                    // Pošalji AJAX zahtjev
+                    $.ajax({
+                        url: $(this).attr('action'),
+                        type: 'POST',
+                        data: formData,
+                        success: function(response) {
+                            if (response.success) {
+                                // Uspješno plaćanje - preusmjeri na stranicu uspjeha
+                                window.location.href = response.redirectUrl;
+                            } else {
+                                // Neuspješno plaćanje
+                                if (response.errors) {
+                                    // Prikaži specifične greške po poljima
+                                    $.each(response.errors, function(field, message) {
+                                        showError(field, message);
+                                    });
+                                } else if (response.message) {
+                                    // Prikaži opću poruku greške
+                                    $('#paymentModal').modal('hide');
+                                    alert("Plaćanje nije uspjelo: " + response.message);
+                                }
+                                // Omogući ponovo dugme
+                                $("#submitPayment").prop("disabled", false).html('Potvrdi kupovinu');
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            // Greška u AJAX pozivu
+                            $('#paymentModal').modal('hide');
+                            alert("Došlo je do greške prilikom obrade zahtjeva. Molimo pokušajte ponovo.");
+                            $("#submitPayment").prop("disabled", false).html('Potvrdi kupovinu');
                         }
                     });
                 }
             });
         }
+
+        // Dodajte novu funkciju za validaciju forme
+        function validatePaymentForm() {
+            var isValid = true;
+
+            // Validacija imena i prezimena
+            var imePrezime = $("#imeVlasnika").val().trim();
+            if (!imePrezime) {
+                showError('imeVlasnika', 'Ime i prezime su obavezni.');
+                isValid = false;
+            } else if (!imePrezime.includes(' ')) {
+                showError('imeVlasnika', 'Unesite ime i prezime (mora sadržavati razmak).');
+                isValid = false;
+            }
+
+            // Validacija broja kartice
+            var brojKartice = $("#brojKartice").val().replace(/\s+/g, '');
+            if (!brojKartice) {
+                showError('brojKartice', 'Broj kartice je obavezan.');
+                isValid = false;
+            } else if (brojKartice.length !== 16) {
+                showError('brojKartice', 'Broj kartice mora sadržavati tačno 16 cifara.');
+                isValid = false;
+            }
+
+            // Validacija datuma isteka
+            var datumIsteka = $("#datumIsteka").val().trim();
+            if (!datumIsteka) {
+                showError('datumIsteka', 'Datum isteka je obavezan.');
+                isValid = false;
+            } else {
+                var parts = datumIsteka.split('/');
+                if (parts.length !== 2 || !/^(0[1-9]|1[0-2])$/.test(parts[0]) || !/^\d{2}$/.test(parts[1])) {
+                    showError('datumIsteka', 'Neispravan format (MM/YY).');
+                    isValid = false;
+                } else {
+                    var month = parseInt(parts[0]);
+                    var year = parseInt("20" + parts[1]);
+                    var now = new Date();
+                    var currentYear = now.getFullYear();
+                    var currentMonth = now.getMonth() + 1;
+
+                    if (year < currentYear || (year === currentYear && month < currentMonth)) {
+                        showError('datumIsteka', 'Kartica je istekla.');
+                        isValid = false;
+                    }
+                }
+            }
+
+            // Validacija CVV koda
+            var cvv = $("#cvv").val().trim();
+            if (!cvv) {
+                showError('cvv', 'CVV kod je obavezan.');
+                isValid = false;
+            } else if (cvv.length !== 3) {
+                showError('cvv', 'CVV kod mora sadržavati tačno 3 cifre.');
+                isValid = false;
+            }
+
+            // Fokusiraj prvo polje s greškom
+            if (!isValid) {
+                $(".form-control").each(function() {
+                    var id = $(this).attr("id");
+                    if ($("#" + id + "Error").text()) {
+                        $(this).focus();
+                        return false;
+                    }
+                });
+            }
+
+            return isValid;
+        }
+
 
         // Pomoćne funkcije za validaciju
         function showError(fieldId, message) {

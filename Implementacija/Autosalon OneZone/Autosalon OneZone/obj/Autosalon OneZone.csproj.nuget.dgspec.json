@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\AP\\Documents\\OOADProjekat\\Implementacija\\Autosalon OneZone\\Autosalon OneZone\\Autosalon OneZone.csproj": {}
+    "C:\\Users\\AP\\Documents\\Grupa77OAD\\Implementacija\\Autosalon OneZone\\Autosalon OneZone\\Autosalon OneZone.csproj": {}
   },
   "projects": {
-    "C:\\Users\\AP\\Documents\\OOADProjekat\\Implementacija\\Autosalon OneZone\\Autosalon OneZone\\Autosalon OneZone.csproj": {
+    "C:\\Users\\AP\\Documents\\Grupa77OAD\\Implementacija\\Autosalon OneZone\\Autosalon OneZone\\Autosalon OneZone.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\AP\\Documents\\OOADProjekat\\Implementacija\\Autosalon OneZone\\Autosalon OneZone\\Autosalon OneZone.csproj",
+        "projectUniqueName": "C:\\Users\\AP\\Documents\\Grupa77OAD\\Implementacija\\Autosalon OneZone\\Autosalon OneZone\\Autosalon OneZone.csproj",
         "projectName": "Autosalon OneZone",
-        "projectPath": "C:\\Users\\AP\\Documents\\OOADProjekat\\Implementacija\\Autosalon OneZone\\Autosalon OneZone\\Autosalon OneZone.csproj",
+        "projectPath": "C:\\Users\\AP\\Documents\\Grupa77OAD\\Implementacija\\Autosalon OneZone\\Autosalon OneZone\\Autosalon OneZone.csproj",
         "packagesPath": "C:\\Users\\AP\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\AP\\Documents\\OOADProjekat\\Implementacija\\Autosalon OneZone\\Autosalon OneZone\\obj\\",
+        "outputPath": "C:\\Users\\AP\\Documents\\Grupa77OAD\\Implementacija\\Autosalon OneZone\\Autosalon OneZone\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -69,6 +69,10 @@
             "Microsoft.EntityFrameworkCore.Tools": {
               "target": "Package",
               "version": "[8.0.14, )"
+            },
+            "Stripe.net": {
+              "target": "Package",
+              "version": "[48.2.0, )"
             }
           },
           "imports": [

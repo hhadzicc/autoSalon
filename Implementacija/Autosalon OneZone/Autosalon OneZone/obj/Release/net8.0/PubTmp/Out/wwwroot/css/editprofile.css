@@ -1,0 +1,157 @@
+﻿/* profile.css - Styles for user profile page */
+
+/* Remove the <style> tags and duplicate styles from your CSS file */
+
+body {
+    /* Don't redefine body styles that are already in kod.css */
+    /* This prevents conflicts with your global styles */
+}
+
+header {
+    background-color: #2f2f2f;
+    color: white;
+    padding: 30px 0;
+    text-align: center;
+    margin: 0; /* Explicitly set margin to 0 */
+}
+
+    header h1 {
+        font-size: 36px;
+        margin: 0; /* Explicitly set margin to 0 */
+    }
+
+.container {
+    display: flex;
+    justify-content: center;
+    padding: 50px 20px;
+    margin: 0; /* Add this to explicitly remove any margin */
+}
+
+.profile-container {
+    background-color: white;
+    width: 70%;
+    padding: 30px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 10px;
+}
+
+.profile-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+    .profile-header h2 {
+        font-size: 28px;
+        margin-bottom: 5px;
+        color: #333;
+    }
+
+    .profile-header p {
+        font-size: 16px;
+        color: #666;
+    }
+
+.profile-info {
+    width: 100%;
+    max-width: 600px;
+    margin-top: 20px;
+}
+
+    .profile-info p {
+        font-size: 18px;
+        margin: 10px 0;
+        color: #444;
+    }
+
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 400px;
+    margin-top: 30px;
+}
+
+.edit-button, .reviews-button {
+    padding: 12px 20px;
+    background-color: #e74c3c;
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 48%;
+    text-align: center;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+    .edit-button:hover, .reviews-button:hover {
+        background-color: #c0392b;
+    }
+
+.reviews-section {
+    width: 100%;
+    max-width: 70%;
+    margin-top: 30px; /* Change this from -20px to 30px */
+    padding: 30px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+    .reviews-section h3 {
+        font-size: 24px;
+        margin-bottom: 20px;
+        text-align: center;
+        color: #333;
+    }
+
+.review-item {
+    background-color: white;
+    padding: 20px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+    .review-item h4 {
+        margin-top: 0;
+        color: #333;
+    }
+
+    .review-item p {
+        font-size: 16px;
+        color: #666;
+        margin: 8px 0;
+    }
+
+    .review-item .rating {
+        font-weight: bold;
+        color: #e74c3c;
+    }
+
+.no-reviews {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    padding: 20px 0;
+}
+
+/* Responsiveness for smaller screens */
+@media (max-width: 768px) {
+    .profile-container, .reviews-section {
+        width: 90%;
+    }
+
+    .button-container {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .edit-button, .reviews-button {
+        width: 100%;
+    }
+}

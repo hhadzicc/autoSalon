@@ -1,0 +1,285 @@
+﻿/* cart.css - Stilovi za stranicu korpe */
+
+body {
+    background-color: #f4f4f4;
+}
+
+.top-bar {
+    width: 100%;
+    background-color: #2f2f2f;
+    color: white;
+    padding: 10px 0;
+    text-align: left;
+    font-size: 16px;
+}
+
+    .top-bar a {
+        color: white;
+        text-decoration: none;
+        padding-left: 20px;
+        display: inline-block;
+        transition: color 0.3s;
+    }
+
+        .top-bar a:hover {
+            color: #3498db;
+        }
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+    .header h2 {
+        font-size: 24px;
+        color: #333;
+        margin: 0;
+    }
+
+.sort-select {
+    font-size: 16px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    background-color: white;
+    cursor: pointer;
+}
+
+.container {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 20px 40px 20px;
+    flex-wrap: wrap;
+}
+
+.cart-list {
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+}
+
+.cart-item {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    margin: 10px 0;
+    background-color: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+    .cart-item img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        background-color: #e0e0e0;
+        margin-right: 20px;
+        border-radius: 5px;
+    }
+
+    .cart-item .details {
+        flex-grow: 1;
+    }
+
+        .cart-item .details h4 {
+            margin-top: 0;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .cart-item .details p {
+            margin: 5px 0;
+            color: #666;
+        }
+
+        .cart-item .details strong {
+            color: #e74c3c;
+        }
+
+    .cart-item .remove-button {
+        background-color: #e74c3c;
+        color: white;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+        .cart-item .remove-button:hover {
+            background-color: #c0392b;
+        }
+
+.total-price {
+    font-size: 22px;
+    text-align: right;
+    font-weight: bold;
+    margin-top: 20px;
+    color: #e74c3c;
+    padding: 10px;
+}
+
+.checkout-button {
+    background-color: #3498db;
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px;
+    display: block;
+    margin-left: auto;
+    text-decoration: none;
+    text-align: center;
+    width: 150px;
+    transition: background-color 0.3s;
+}
+
+    .checkout-button:hover {
+        background-color: #2980b9;
+    }
+
+.empty-cart {
+    text-align: center;
+    padding: 50px 20px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+    .empty-cart p {
+        font-size: 18px;
+        color: #666;
+        margin-bottom: 20px;
+    }
+
+.back-to-shop {
+    display: inline-block;
+    background-color: #3498db;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+    .back-to-shop:hover {
+        background-color: #2980b9;
+    }
+
+.credit-calculator {
+    width: 35%;
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    height: fit-content;
+}
+
+    .credit-calculator h3 {
+        margin-top: 0;
+        margin-bottom: 20px;
+        color: #333;
+        text-align: center;
+    }
+
+    .credit-calculator .input-group {
+        margin-bottom: 15px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .credit-calculator label {
+        font-size: 14px;
+        font-weight: bold;
+        margin-bottom: 5px;
+        color: #444;
+    }
+
+    .credit-calculator input,
+    .credit-calculator select {
+        padding: 10px;
+        font-size: 16px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        transition: border 0.3s;
+    }
+
+        .credit-calculator input:focus,
+        .credit-calculator select:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+        }
+
+    .credit-calculator button {
+        background-color: #3498db;
+        color: white;
+        padding: 12px 25px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        margin-top: 20px;
+        width: 100%;
+        transition: background-color 0.3s;
+    }
+
+        .credit-calculator button:hover {
+            background-color: #2980b9;
+        }
+
+    .credit-calculator .result {
+        margin-top: 20px;
+        font-weight: bold;
+        font-size: 18px;
+        color: #e74c3c;
+        text-align: center;
+    }
+
+/* Responzivnost za manje ekrane */
+@media (max-width: 992px) {
+    .container {
+        flex-direction: column;
+    }
+
+    .cart-list, .credit-calculator {
+        width: 100%;
+    }
+
+    .credit-calculator {
+        margin-top: 30px;
+    }
+}
+
+@media (max-width: 768px) {
+    .cart-item {
+        flex-direction: column;
+        align-items: start;
+    }
+
+        .cart-item img {
+            margin-right: 0;
+            margin-bottom: 15px;
+            width: 100%;
+            height: auto;
+            max-height: 200px;
+        }
+
+        .cart-item .remove-button {
+            margin-top: 15px;
+            align-self: flex-end;
+        }
+
+    .header {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+}

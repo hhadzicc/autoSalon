@@ -5,8 +5,12 @@ using Autosalon_OneZone.Services; // Namespace gde su vaši servisi (IVoziloServ
 using Microsoft.AspNetCore.Identity; // Potrebno za Identity, UserManager, RoleManager, IdentityRole
 using Microsoft.EntityFrameworkCore; // Potrebno za UseSqlServer
 using Autosalon_OneZone.Data;
+using Stripe;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
+StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
+builder.Services.AddScoped<IPaymentService, StripePaymentService>();
 // Dodati u builder.Services dio, prije builder.Build()
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
@@ -36,7 +40,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
     // Konfiguracija Identity opcija (Password, Lockout, User, SignIn)
     // Ove opcije ste ranije naveli, prilagodite ih svojim zahtevima
-    options.SignIn.RequireConfirmedAccount = false; // Promenite ako želite potvrdu naloga emailom
+    options.SignIn.RequireConfirmedAccount = false;
     options.Password.RequireDigit = true;
     options.Password.RequiredLength = 8;
     options.Password.RequireNonAlphanumeric = false; // Primer: Ne zahteva specijalne karaktere
@@ -165,21 +169,6 @@ using (var scope = app.Services.CreateScope())
                     await userManager.AddToRoleAsync(adminUser, adminRoleName);
                     logger.LogInformation($"Admin korisnik '{adminEmail}' već postoji, dodeljena mu je rola '{adminRoleName}'.");
                 }
-
-                // --- Opciono: Ažuriraj Ime/Prezime ako se promene u konfiguraciji ---
-                // Ovo je složenije i zahteva proveru da li su se promenili pre update-a
-                // Ako želiš da automatski ažuriraš Ime i Prezime admina ako ih promeniš u appsettings.json
-                // if (adminUser.Ime != adminFirstName || adminUser.Prezime != adminLastName) {
-                //    adminUser.Ime = adminFirstName;
-                //    adminUser.Prezime = adminLastName;
-                //    var updateResult = await userManager.UpdateAsync(adminUser);
-                //    if(updateResult.Succeeded) {
-                //        logger.LogInformation($"Ažurirano ime/prezime za admin korisnika '{adminEmail}'.");
-                //    } else {
-                //        logger.LogError($"Greška pri ažuriranju imena/prezimena za admin korisnika '{adminEmail}': {string.Join(", ", updateResult.Errors.Select(e => e.Description))}");
-                //    }
-                // }
-                // -------------------------------------------------------------------
             }
         } // Kraj bloka ako su required podaci pronađeni u konfiguraciji
     }

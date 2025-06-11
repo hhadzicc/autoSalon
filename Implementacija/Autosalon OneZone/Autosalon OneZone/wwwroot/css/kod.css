@@ -124,6 +124,7 @@ header {
 
     .cta-button:hover {
         background-color: #2980b9;
+        color: white;
     }
 
 /* Forme i kontejneri */

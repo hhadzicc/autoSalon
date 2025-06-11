@@ -201,57 +201,7 @@ namespace Autosalon_OneZone.Controllers
         }
 
 
-        // --- PRIMERI AKCIJA ZA BUDUĆU IMPLEMENTACIJU (Trenutno KOMENTARISANE) ---
-
-        // GET: /Vozilo/Details/5
-        // Akcija za prikaz detalja o jednom vozilu
-        // [HttpGet] // Opciono: moze biti dostupno svima ili samo prijavljenim
-        // public async Task<IActionResult> Details(int id)
-        // {
-        //     // ... implementacija ...
-        //     return View(); // Ili NotFound()
-        // }
-
-        // GET: /Vozilo/Edit/5
-        // Akcija za prikaz forme za izmenu postojećeg vozila
-        // [Authorize(Policy = "RequireAdminRole")]
-        // [HttpGet]
-        // public async Task<IActionResult> Edit(int id)
-        // {
-        //     // ... implementacija ...
-        //     return View(); // Ili NotFound()
-        // }
-
-        // POST: /Vozilo/Edit/5
-        // Akcija za procesiranje forme i ažuriranje postojećeg vozila
-        // [Authorize(Policy = "RequireAdminRole")]
-        // [HttpPost]
-        // [ValidateAntiForgeryToken]
-        // public async Task<IActionResult> Edit(int id, Vozilo updatedVozilo)
-        // {
-        //     // ... implementacija ...
-        //     return RedirectToAction(nameof(Index)); // Ili neku drugu akciju
-        // }
-
-        // POST: /Vozilo/Delete/5
-        // Akcija za brisanje vozila iz baze (često ide sa GET potvrdom brisanja)
-        // [Authorize(Policy = "RequireAdminRole")]
-        // [HttpPost, ActionName("Delete")] // Ime akcije je DeleteConfirmed, ali putanja je /Vozilo/Delete/5
-        // [ValidateAntiForgeryToken]
-        // public async Task<IActionResult> DeleteConfirmed(int id)
-        // {
-        //     // ... implementacija ...
-        //     return RedirectToAction(nameof(Index));
-        // }
-
-        // GET: /Vozilo/FilteredList?marka=BMW&godisteOd=2020
-        // Akcija za prikaz filtrirane/pretražene liste vozila
-        // [HttpGet]
-        // public async Task<IActionResult> FilteredList(string marka, string model, ...)
-        // {
-        //     // ... implementacija ...
-        //     return View("Index", vozila); // Prikazuje isti View, ali sa filtriranim/pretraženim rezultatima
-        // }
+      
 
     }
 }

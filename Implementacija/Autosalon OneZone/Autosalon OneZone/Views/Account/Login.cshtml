@@ -3,17 +3,15 @@
 <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 @{
     ViewData["Title"] = "Prijava"; // Naslov stranice
-    Layout = "~/Views/Shared/_Layout.cshtml"; // Koristimo Vas Layout
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 @section Head {
     @* Linkujemo CSS fajl specifičan za ovu stranicu *@
     <link rel="stylesheet" href="~/css/login.css" />
-    @* NAPOMENA: Proverite da li Vas _Layout.cshtml vec linkuje globalni kod.css.
-                 Ako linkuje, stilovi iz login.css ce se ucitati posle kod.css i imati prednost. *@
 }
 
-@* NAPOMENA: Header i Footer ako su zajednicki idu u Layout. Ako treba samo ovde, dodajte ih. *@
+
 
 <div class="login-container"> @* Glavni kontejner za formu - koristi klasu login-container iz login.css *@
     <div class="form-container"> @* Kontejner oko forme (beli boks) - koristi klasu form-container iz login.css *@

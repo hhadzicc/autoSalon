@@ -31,6 +31,11 @@
                 </div>
 
                 <div class="form-group">
+                    <input asp-for="UserName" type="text" class="form-control" placeholder="Korisničko ime" required data-val-required="Korisničko ime je obavezno." pattern="[A-Za-z0-9]+" data-val-regex="Korisničko ime može sadržavati samo slova i brojeve." />
+                    <span asp-validation-for="UserName" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
                     <input asp-for="Email" type="email" class="form-control" placeholder="Email adresa" required data-val-required="Email adresa je obavezna." data-val-email="Unesite ispravnu email adresu." />
                     <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
@@ -77,13 +82,25 @@
                 min: $.validator.format("Unesite vrijednost veću ili jednaku {0}.")
             });
 
-            function validateNameFields() {
+            function validateFields() {
+                // Validacija za ime i prezime - samo slova
                 $("#Ime, #Prezime").on("input", function() {
                     var value = $(this).val();
                     var lettersOnly = /^[A-Za-z\s]*$/;
 
                     if (!lettersOnly.test(value)) {
                         var cleanValue = value.replace(/[^A-Za-z\s]/g, '');
+                        $(this).val(cleanValue);
+                    }
+                });
+
+                // Validacija za korisničko ime - samo slova i brojevi
+                $("#UserName").on("input", function() {
+                    var value = $(this).val();
+                    var alphanumericOnly = /^[A-Za-z0-9]*$/;
+
+                    if (!alphanumericOnly.test(value)) {
+                        var cleanValue = value.replace(/[^A-Za-z0-9]/g, '');
                         $(this).val(cleanValue);
                     }
                 });
@@ -108,7 +125,7 @@
                 });
             }
 
-            validateNameFields();
+            validateFields();
             translateIdentityErrors();
             $('form').on('submit', function() {
                 setTimeout(translateIdentityErrors, 100);

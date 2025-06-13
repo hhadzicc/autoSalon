@@ -8,6 +8,12 @@ namespace Autosalon_OneZone.Models.ViewModels // Prilagodite Namespace
     public class RegisterViewModel
     {
         [Required]
+        [Display(Name = "Korisničko ime")]
+        [MaxLength(100)]
+        [RegularExpression(@"^[a-zA-Z0-9]+$", ErrorMessage = "Korisničko ime može sadržavati samo slova i brojeve.")]
+        public string UserName { get; set; }
+
+        [Required]
         [EmailAddress] // Validacija formata emaila
         [Display(Name = "Email")]
         public string Email { get; set; }
@@ -26,14 +32,14 @@ namespace Autosalon_OneZone.Models.ViewModels // Prilagodite Namespace
         [Required]
         [Display(Name = "Ime")]
         [MaxLength(100)]
+        [RegularExpression(@"^[a-zA-Z\s]+$", ErrorMessage = "Ime može sadržavati samo slova.")]
         public string Ime { get; set; }
 
         [Required]
         [Display(Name = "Prezime")]
         [MaxLength(100)]
+        [RegularExpression(@"^[a-zA-Z\s]+$", ErrorMessage = "Prezime može sadržavati samo slova.")]
         public string Prezime { get; set; }
-
-        // Dodajte ostala polja sa forme za registraciju
     }
 
     // ViewModel za formu za login

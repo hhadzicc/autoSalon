@@ -45,36 +45,50 @@ namespace Autosalon_OneZone.Controllers
         }
 
         // POST: /Account/Register
-        // Procesira submit forme za registraciju
         [HttpPost]
-        [AllowAnonymous] // Omogucava neautentifikovanim korisnicima pristup ovoj akciji
-        [ValidateAntiForgeryToken] // Standardna zaštita od CSRF napada
-        public async Task<IActionResult> Register(RegisterViewModel model, string returnUrl = null) // Dodato rukovanje returnUrl
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Register(RegisterViewModel model, string returnUrl = null)
         {
-            returnUrl ??= Url.Content("~/"); // Ako returnUrl nije postavljen (npr. null ili prazan), preusmeri na pocetnu stranicu (~)
+            returnUrl ??= Url.Content("~/");
 
-            if (ModelState.IsValid) // Proverite validaciju modela (na osnovu Data Annotations na ViewModelu)
+            if (ModelState.IsValid)
             {
-                // Kreirajte novu ApplicationUser instancu iz podataka forme
+                // Prvo provjeri da li korisničko ime već postoji
+                var existingUserByUsername = await _userManager.FindByNameAsync(model.UserName);
+                if (existingUserByUsername != null)
+                {
+                    ModelState.AddModelError(string.Empty, $"Korisničko ime '{model.UserName}' je već zauzeto.");
+                    ViewData["ReturnUrl"] = returnUrl;
+                    return View(model);
+                }
+
+                // Provjeri da li email već postoji
+                var existingUserByEmail = await _userManager.FindByEmailAsync(model.Email);
+                if (existingUserByEmail != null)
+                {
+                    ModelState.AddModelError(string.Empty, $"Email '{model.Email}' je već zauzet.");
+                    ViewData["ReturnUrl"] = returnUrl;
+                    return View(model);
+                }
+
+                // Kreiraj novog korisnika sa podacima iz forme
                 var user = new ApplicationUser
                 {
-                    UserName = model.Email, // Obično se Email koristi kao UserName u Identity
+                    UserName = model.UserName, // Koristi korisničko ime iz forme umjesto emaila
                     Email = model.Email,
                     Ime = model.Ime,
                     Prezime = model.Prezime
-                    // Popunite ostala dodatna polja iz modela ako postoje
-                    // EmailConfirmed = true // Ako ne radite email potvrdu, postavite na true
                 };
 
-                // Kreirajte korisnika preko UserManagera
-                // UserManager automatski hešira lozinku
+                // Kreiraj korisnika preko UserManager-a
                 var result = await _userManager.CreateAsync(user, model.Password);
 
-                if (result.Succeeded) // Ako je kreiranje korisnika uspesno
+                if (result.Succeeded)
                 {
-                    _logger?.LogInformation("User created a new account with password."); // Logovanje (opciono)
+                    _logger?.LogInformation("User created a new account with password.");
 
-                    // Proverite da li rola "Kupac" postoji. Ako ne postoji, kreirajte je.
+                    // Provjeri da li rola "Kupac" postoji, ako ne postoji, kreiraj je
                     const string kupacRoleName = "Kupac";
                     if (!await _roleManager.RoleExistsAsync(kupacRoleName))
                     {
@@ -84,30 +98,31 @@ namespace Autosalon_OneZone.Controllers
 
                     // Dodaj korisnika u rolu "Kupac"
                     await _userManager.AddToRoleAsync(user, kupacRoleName);
-                    _logger?.LogInformation($"Korisnik '{user.Email}' dodan u rolu '{kupacRoleName}'.");
+                    _logger?.LogInformation($"Korisnik '{user.UserName}' dodan u rolu '{kupacRoleName}'.");
 
-                    // Opciono: Prijavite korisnika odmah nakon registracije
-                    // Ako zelite da korisnik bude automatski prijavljen, odkomentarisite sledecu liniju
-                    // await _signInManager.SignInAsync(user, isPersistent: false); // isPersistent: false znaci session cookie
+                    // UKLONJEN DEO koji automatski prijavljuje korisnika
+                    // await _signInManager.SignInAsync(user, isPersistent: false);
+                    // _logger?.LogInformation($"Korisnik '{user.UserName}' automatski prijavljen nakon registracije.");
 
-                    // Preusmerite na neku stranicu nakon uspešne registracije
-                    //return LocalRedirect(returnUrl); // Preusmeri na originalni URL ili pocetnu
-                    return RedirectToAction("Index", "Home"); // Primer: Preusmeri na Home/Index stranicu
+                    // Dodaj informativnu poruku da je registracija uspješna
+                    TempData["SuccessMessage"] = "Registracija uspješna! Sada se možete prijaviti.";
+
+                    // Preusmjeri na Login stranicu umjesto na početnu
+                    return RedirectToAction("Login", "Account");
                 }
 
-                // Ako registracija nije uspela, dodajte greške u ModelState i vratite View
-                // Greske ce biti prikazane u asp-validation-summary tag helperu u Viewu
+                // Ako registracija nije uspjela, dodaj greške u ModelState i vrati View
                 foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
             }
 
-            // Ako podaci iz forme nisu validni (ModelState.IsValid == false)
-            // Vratite View sa modelom i greskama ( ModelState ce ih sadrzati)
-            ViewData["ReturnUrl"] = returnUrl; // Ponovo postavite returnUrl
+            // Ako podaci iz forme nisu validni, vrati View sa greškama
+            ViewData["ReturnUrl"] = returnUrl;
             return View(model);
         }
+
 
         // ... ostali kod ...
         // Sve ostale akcije ostaju nepromenjene
@@ -124,80 +139,69 @@ namespace Autosalon_OneZone.Controllers
         }
 
         // POST: /Account/Login
-        // Procesira submit forme za login
         [HttpPost]
-        [AllowAnonymous] // Omogucava neautentifikovanim korisnicima pristup ovoj akciji
-        [ValidateAntiForgeryToken] // Bitno za sigurnost
-        public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null) // Dodato rukovanje returnUrl
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
         {
-            returnUrl ??= Url.Content("~/"); // Ako returnUrl nije postavljen, preusmeri na pocetnu stranicu (~)
+            returnUrl ??= Url.Content("~/");
 
-            if (ModelState.IsValid) // Proveravamo da li su podaci iz forme validni
+            if (ModelState.IsValid)
             {
-                // Pokušaj prijavu korisnika
-                // Prvi parametar (userName) je obicno Email u Identity podrazumevanoj konfiguraciji
-                // isPersistent: model.RememberMe -> Da li ce cookie ostati nakon zatvaranja browsera
-                // lockoutOnFailure: false -> Da li ce se nalog zakljucati posle neuspesnih pokusaja (konfigurise se u Identity opcijama)
-                var result = await _signInManager.PasswordSignInAsync(
-                    model.Email, // Koristite Email iz modela (ili UserName ako ste tako konfigurisali)
-                    model.Password,
-                    model.RememberMe, // Polje za "Zapamti me" iz ViewModel-a
-                    lockoutOnFailure: false // Mozete postaviti na true ako zelite lockout
-                );
-
-                if (result.Succeeded) // Ako je prijava uspesna
+                // Prvo pronađi korisnika po email adresi
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                if (user != null)
                 {
-                    _logger?.LogInformation("User logged in."); // Logovanje (opciono)
+                    // Kad pronađemo korisnika, koristi njegovo korisničko ime za prijavu
+                    var result = await _signInManager.PasswordSignInAsync(
+                        user.UserName, // Koristimo korisničko ime pronađenog korisnika
+                        model.Password,
+                        model.RememberMe,
+                        lockoutOnFailure: false
+                    );
 
-                    // Preusmeravanje nakon uspesne prijave
-                    // Provera da li je returnUrl lokalni radi sigurnosti (sprecava open redirect attack)
-                    if (Url.IsLocalUrl(returnUrl))
+                    if (result.Succeeded)
                     {
-                        return Redirect(returnUrl); // Preusmeri na originalni URL
+                        _logger?.LogInformation("User logged in.");
+                        if (Url.IsLocalUrl(returnUrl))
+                        {
+                            return Redirect(returnUrl);
+                        }
+                        else
+                        {
+                            return RedirectToAction("Index", "Home");
+                        }
+                    }
+
+                    if (result.RequiresTwoFactor)
+                    {
+                        ModelState.AddModelError(string.Empty, "Potrebna je dvofaktorska autentifikacija.");
+                    }
+                    else if (result.IsLockedOut)
+                    {
+                        _logger?.LogWarning("User account locked out.");
+                        ModelState.AddModelError(string.Empty, "Korisnički nalog je privremeno zaključan zbog previše neuspjelih pokušaja.");
+                    }
+                    else if (result.IsNotAllowed)
+                    {
+                        ModelState.AddModelError(string.Empty, "Nalog nije dozvoljen za prijavu (npr. email nije potvrđen).");
                     }
                     else
                     {
-                        return RedirectToAction("Index", "Home"); // Ako returnUrl nije lokalni ili ne postoji, preusmeri na pocetnu
+                        ModelState.AddModelError(string.Empty, "Neispravna email adresa ili šifra.");
                     }
-                }
-
-                // --- Rukovanje razlicitim stanjima neuspesne prijave ---
-
-                if (result.RequiresTwoFactor)
-                {
-                    // Ako je potrebna dvofaktorska autentifikacija (ako ste je omogucili)
-                    // Redirekt na stranicu za dvofaktorsku autentifikaciju
-                    // return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
-                    ModelState.AddModelError(string.Empty, "Potrebna je dvofaktorska autentifikacija.");
-                    // Vrati View sa greskom
-                }
-                else if (result.IsLockedOut)
-                {
-                    _logger?.LogWarning("User account locked out."); // Logovanje (opciono)
-                                                                     // Redirekt na stranicu za zakljucane naloge
-                                                                     // return RedirectToPage("./Lockout");
-                    ModelState.AddModelError(string.Empty, "Korisnički nalog je privremeno zaključan zbog previše neuspelih pokušaja.");
-                    // Vrati View sa greskom
-                }
-                else if (result.IsNotAllowed)
-                {
-                    // Ako nalog nije dozvoljen za prijavu (npr. email nije potvrđen, nalog deaktiviran, itd.)
-                    ModelState.AddModelError(string.Empty, "Nalog nije dozvoljen za prijavu (npr. email nije potvrđen).");
-                    // Vrati View sa greskom
                 }
                 else
                 {
-                    // Ako prijava nije uspela iz nekog drugog razloga (npr. pogresna email/lozinka)
-                    ModelState.AddModelError(string.Empty, "Neispravna email adresa ili šifra."); // Dodaj gresku za prikaz u validacionom sazetku
-                    // Vrati View sa greskom
+                    // Ako korisnik nije pronađen po email adresi
+                    ModelState.AddModelError(string.Empty, "Neispravna email adresa ili šifra.");
                 }
             }
 
-            // Ako podaci iz forme nisu validni (ModelState.IsValid == false)
-            // Vrati View sa unesenim podacima i validacionim greskama
-            ViewData["ReturnUrl"] = returnUrl; // Ponovo postavite returnUrl
+            ViewData["ReturnUrl"] = returnUrl;
             return View(model);
         }
+
 
         // POST: /Account/Logout
         // Procesira odjavu korisnika

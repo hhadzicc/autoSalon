@@ -10,7 +10,7 @@
 
     <div class="form-group">
         <label asp-for="UserName">Korisničko ime</label>
-        <input asp-for="UserName" class="form-control" required />
+        <input asp-for="UserName" class="form-control" pattern="[A-Za-z0-9]+" title="Korisničko ime može sadržavati samo slova i brojeve" required />
         <span asp-validation-for="UserName" class="text-danger"></span>
     </div>
 
@@ -22,48 +22,47 @@
 
     <div class="form-group">
         <label asp-for="Ime">Ime</label>
-        <input asp-for="Ime" class="form-control" required />
+        <input asp-for="Ime" class="form-control" pattern="[A-Za-z\s]+" title="Ime može sadržavati samo slova" required />
         <span asp-validation-for="Ime" class="text-danger"></span>
     </div>
 
     <div class="form-group">
         <label asp-for="Prezime">Prezime</label>
-        <input asp-for="Prezime" class="form-control" required />
+        <input asp-for="Prezime" class="form-control" pattern="[A-Za-z\s]+" title="Prezime može sadržavati samo slova" required />
         <span asp-validation-for="Prezime" class="text-danger"></span>
     </div>
 
     @* Prikaži polja za lozinku samo ako je novi korisnik (UserId == null) *@
     @if (string.IsNullOrEmpty(Model.UserId))
     {
-    <div class="form-group">
-        <label asp-for="Password">Lozinka</label>
-        <input asp-for="Password" class="form-control" type="password" required />
-        <span asp-validation-for="Password" class="text-danger"></span>
-    </div>
+        <div class="form-group">
+            <label asp-for="Password">Lozinka</label>
+            <input asp-for="Password" class="form-control" type="password" required />
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
 
-    <div class="form-group">
-        <label asp-for="ConfirmPassword">Potvrda lozinke</label>
-        <input asp-for="ConfirmPassword" class="form-control" type="password" required />
-        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-    </div>
+        <div class="form-group">
+            <label asp-for="ConfirmPassword">Potvrda lozinke</label>
+            <input asp-for="ConfirmPassword" class="form-control" type="password" required />
+            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+        </div>
     }
 
     @* Opcija za izbor uloga *@
     @if (Model.DostupneRole != null && Model.DostupneRole.Any())
-{
-    <div class="form-group">
-        <label>Uloga:</label><br />
-        @foreach (var role in Model.DostupneRole)
-        {
-        <div class="form-check">
-            <input class="form-check-input" type="radio" name="OdabraneRole" value="@role.Name"
-                   @(Model.OdabraneRole != null && Model.OdabraneRole.Contains(role.Name) ? "checked" : "") />
-            <label class="form-check-label">@role.Name</label>
+    {
+        <div class="form-group">
+            <label>Uloga:</label><br />
+            @foreach (var role in Model.DostupneRole)
+            {
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="OdabraneRole" value="@role.Name"
+                    @(Model.OdabraneRole != null && Model.OdabraneRole.Contains(role.Name) ? "checked" : "") />
+                    <label class="form-check-label">@role.Name</label>
+                </div>
+            }
         </div>
-        }
-    </div>
-}
-
+    }
 
     <div class="form-group mt-3">
         <button type="submit" class="btn btn-primary">Sačuvaj</button>
@@ -76,10 +75,61 @@
         console.log("Profil form script loaded");
         // Sklanjamo prethodne validacijske handlere
         $("#add-profil-form").off();
+
+        // Real-time validation for name and surname - allow only letters
+        $("#Ime, #Prezime").on("input", function() {
+            var value = $(this).val();
+            var lettersOnly = /^[A-Za-z\s]*$/;
+
+            if (!lettersOnly.test(value)) {
+                var cleanValue = value.replace(/[^A-Za-z\s]/g, '');
+                $(this).val(cleanValue);
+            }
+        });
+
+        // Real-time validation for username - allow only letters and numbers
+        $("#UserName").on("input", function() {
+            var value = $(this).val();
+            var alphanumericOnly = /^[A-Za-z0-9]*$/;
+
+            if (!alphanumericOnly.test(value)) {
+                var cleanValue = value.replace(/[^A-Za-z0-9]/g, '');
+                $(this).val(cleanValue);
+            }
+        });
+
         // Aktiviranje jQuery validacije
         $("#add-profil-form").validate({
             errorElement: "span",
             errorClass: "text-danger",
+            rules: {
+                UserName: {
+                    required: true,
+                    pattern: /^[A-Za-z0-9]+$/
+                },
+                Ime: {
+                    required: true,
+                    pattern: /^[A-Za-z\s]+$/
+                },
+                Prezime: {
+                    required: true,
+                    pattern: /^[A-Za-z\s]+$/
+                }
+            },
+            messages: {
+                UserName: {
+                    required: "Korisničko ime je obavezno.",
+                    pattern: "Korisničko ime može sadržavati samo slova i brojeve."
+                },
+                Ime: {
+                    required: "Ime je obavezno.",
+                    pattern: "Ime može sadržavati samo slova."
+                },
+                Prezime: {
+                    required: "Prezime je obavezno.",
+                    pattern: "Prezime može sadržavati samo slova."
+                }
+            },
             highlight: function (element, errorClass, validClass) {
                 $(element).addClass("is-invalid").removeClass("is-valid");
             },

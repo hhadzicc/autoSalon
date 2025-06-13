@@ -114,10 +114,10 @@
                             skraceniKomentar = komentarText.substring(0, 50) + '...';
                         }
 
-                        const row = `
+                            const row = `
                             <tr>
                                 <td>${recenzija.korisnikUserName || 'Nepoznat'}</td>
-                                <td>${recenzija.voziloMarka || recenzija.voziloNaziv || 'Nepoznato vozilo'}</td>
+                                <td>${recenzija.voziloMarka} ${recenzija.voziloModel}</td>
                                 <td>${recenzija.ocjena || ''}</td>
                                 <td>
                                     <a href="#" class="view-komentar" data-komentar="${encodeURIComponent(komentarText)}"
@@ -131,7 +131,8 @@
                                 </td>
                             </tr>
                         `;
-                        recenzijaTableBody.append(row);
+
+                       recenzijaTableBody.append(row);
                     });
 
                     // Ovdje možete dodati logiku za renderovanje paginacije

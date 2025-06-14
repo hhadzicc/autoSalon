@@ -1,4 +1,9 @@
-﻿@model IEnumerable<Autosalon_OneZone.Models.Vozilo>
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<Autosalon_OneZone.Models.ApplicationUser> SignInManager
+@inject UserManager<Autosalon_OneZone.Models.ApplicationUser> UserManager
+
+
+@model IEnumerable<Autosalon_OneZone.Models.Vozilo>
 @{
     ViewData["Title"] = "Vozila";
     var currentYear = DateTime.Now.Year;
@@ -334,26 +339,26 @@ else
                                 </div>
                             </div>
 
-                            <!-- Moved button container outside vehicle-specs -->
-                            <!-- Moved button container outside vehicle-specs -->
-                            <div class="button-container">
-                                @if (User.Identity.IsAuthenticated)
+                                    <div class="button-container">
+            <a href="@Url.Action("Details", "Vozilo", new { id = vozilo.VoziloID })" class="btn btn-primary">Detalji</a>
+
+                                @if (SignInManager.IsSignedIn(User) && User.Identity != null && User.Identity.IsAuthenticated)
                                 {
-                                    <a href="@Url.Action("Details", "Vozilo", new { id = vozilo.VoziloID })" class="btn btn-primary">Detalji</a>
-                                    <form asp-controller="Korpa" asp-action="DodajUKorpu" method="post" class="d-inline">
+                    <form asp-controller="Korpa" asp-action="DodajUKorpu" method="post" class="d-inline">
                                         @Html.AntiForgeryToken()
-                                        <input type="hidden" name="id" value="@vozilo.VoziloID" />
-                                        <button type="submit" class="btn btn-success">Dodaj u korpu</button>
-                                    </form>
+                        <input type="hidden" name="id" value="@vozilo.VoziloID" />
+                        <button type="submit" class="btn btn-success">Dodaj u korpu</button>
+                    </form>
                                 }
                                 else
                                 {
-                                    <a href="@Url.Action("Details", "Vozilo", new { id = vozilo.VoziloID })" class="btn btn-primary">Detalji</a>
-                                    <a href="@Url.Action("Login", "Account", new { returnUrl = Context.Request.Path })" class="btn btn-outline-success">
-                                        Prijava za kupovinu
-                                    </a>
+                    <a href="@Url.Action("Login", "Account", new { returnUrl = Context.Request.Path })" class="btn btn-outline-success">
+                        Prijava za kupovinu
+                    </a>
                                 }
-                            </div>
+        </div>
+
+
 
                         </div>
                     </div>

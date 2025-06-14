@@ -1,4 +1,8 @@
-﻿@model Autosalon_OneZone.Models.Vozilo
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<Autosalon_OneZone.Models.ApplicationUser> SignInManager
+@inject UserManager<Autosalon_OneZone.Models.ApplicationUser> UserManager
+
+@model Autosalon_OneZone.Models.Vozilo
 <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css" />
 @{
@@ -31,7 +35,7 @@
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h3 class="text-success">€@Model.Cijena.Value.ToString("N0")</h3>
                         <div>
-                            @if (User.Identity.IsAuthenticated)
+                            @if (SignInManager.IsSignedIn(User) && User.Identity != null && User.Identity.IsAuthenticated)
                             {
                                 <form asp-controller="Korpa" asp-action="DodajUKorpu" method="post" class="d-inline">
                                     @Html.AntiForgeryToken()
@@ -39,7 +43,6 @@
                                     <button type="submit" class="btn btn-success">Dodaj u korpu</button>
                                 </form>
                                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#paymentModal">Kupi odmah</button>
-
                             }
                             else
                             {
@@ -47,6 +50,7 @@
                                     Prijavite se za kupovinu
                                 </a>
                             }
+
                         </div>
                     </div>
 
@@ -175,7 +179,7 @@
             {
                 <div class="alert alert-info">
                     <p>Trenutno nema recenzija za ovo vozilo.</p>
-                    @if (User.Identity.IsAuthenticated)
+                    @if (SignInManager.IsSignedIn(User) && User.Identity != null && User.Identity.IsAuthenticated)
                     {
                         <p>Kupite ovo vozilo da biste mogli dodati recenziju!</p>
                     }

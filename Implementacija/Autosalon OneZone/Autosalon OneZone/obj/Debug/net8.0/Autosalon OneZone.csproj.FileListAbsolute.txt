@@ -601,3 +601,4 @@ C:\Users\AP\Documents\OOAD\Implementacija\Autosalon OneZone\Autosalon OneZone\ob
 C:\Users\AP\Documents\OOAD\Implementacija\Autosalon OneZone\Autosalon OneZone\obj\Debug\net8.0\Autosalon OneZone.pdb
 C:\Users\AP\Documents\OOAD\Implementacija\Autosalon OneZone\Autosalon OneZone\obj\Debug\net8.0\Autosalon OneZone.genruntimeconfig.cache
 C:\Users\AP\Documents\OOAD\Implementacija\Autosalon OneZone\Autosalon OneZone\obj\Debug\net8.0\ref\Autosalon OneZone.dll
+C:\Users\AP\Documents\OOAD\Implementacija\Autosalon OneZone\Autosalon OneZone\bin\Debug\net8.0\web.config

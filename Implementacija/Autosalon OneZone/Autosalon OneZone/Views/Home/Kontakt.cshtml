@@ -1,4 +1,7 @@
 ﻿@* Views/Home/Kontakt.cshtml - improved validation *@
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<Autosalon_OneZone.Models.ApplicationUser> SignInManager
+@inject UserManager<Autosalon_OneZone.Models.ApplicationUser> UserManager
 @model Autosalon_OneZone.ViewModels.KontaktViewModel
 <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 @{
@@ -66,7 +69,7 @@
 
 
         <div class="contact-form">
-            @if (User.Identity.IsAuthenticated)
+            @if (SignInManager.IsSignedIn(User) && User.Identity != null && User.Identity.IsAuthenticated)
             {
                 <form asp-controller="Home" asp-action="Kontakt" method="post" id="contact-form">
                     @Html.AntiForgeryToken()

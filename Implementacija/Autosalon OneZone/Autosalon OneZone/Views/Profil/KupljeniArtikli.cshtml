@@ -95,7 +95,7 @@
                         <div class="modal fade" id="reviewModal-@item.VoziloID" tabindex="-1" aria-labelledby="reviewModalLabel-@item.VoziloID" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
-                                    <form asp-action="DodajRecenziju" method="post">
+                                    <form asp-action="DodajRecenziju" method="post" class="review-form" id="review-form-@item.VoziloID">
                                         <div class="modal-header">
                                             <h5 class="modal-title" id="reviewModalLabel-@item.VoziloID">
                                                 @(item.HasReview ? "Izmijeni recenziju" : "Dodaj recenziju") za @item.Naziv
@@ -106,7 +106,7 @@
                                             <input type="hidden" name="voziloId" value="@item.VoziloID" />
 
                                             <div class="mb-3">
-                                                <label class="form-label">Ocjena</label>
+                                                <label class="form-label required">Ocjena</label>
                                                 <div class="rating">
                                                     <div class="form-check form-check-inline">
                                                         <input class="form-check-input" type="radio" name="ocjena" id="ocjena1-@item.VoziloID" value="1" @(item.HasReview && item.Recenzija.Ocjena == 1 ? "checked" : "")>
@@ -129,11 +129,17 @@
                                                         <label class="form-check-label" for="ocjena5-@item.VoziloID">5</label>
                                                     </div>
                                                 </div>
+                                                <div class="invalid-feedback" id="ocjena-error-@item.VoziloID">
+                                                    Molimo odaberite ocjenu.
+                                                </div>
                                             </div>
 
                                             <div class="mb-3">
-                                                <label for="komentar-@item.VoziloID" class="form-label">Komentar</label>
-                                                <textarea class="form-control" id="komentar-@item.VoziloID" name="komentar" rows="3" maxlength="1000">@(item.HasReview ? item.Recenzija.Komentar : "")</textarea>
+                                                <label for="komentar-@item.VoziloID" class="form-label required">Komentar</label>
+                                                <textarea class="form-control" id="komentar-@item.VoziloID" name="komentar" rows="3" maxlength="1000" required>@(item.HasReview ? item.Recenzija.Komentar : "")</textarea>
+                                                <div class="invalid-feedback">
+                                                    Komentar ne može biti prazan.
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="modal-footer">
@@ -141,6 +147,7 @@
                                             <button type="submit" class="btn btn-primary">Sačuvaj</button>
                                         </div>
                                     </form>
+
                                 </div>
                             </div>
                         </div>
@@ -165,9 +172,85 @@
 @section Scripts {
     <script>
         $(document).ready(function() {
+            // Add required CSS for form validation
+            $("<style>")
+                .prop("type", "text/css")
+                .html(`
+                    .required::after {
+                        content: "*";
+                        color: red;
+                        margin-left: 3px;
+                    }
+                    .is-invalid {
+                        border-color: #dc3545 !important;
+                    }
+                    .invalid-feedback {
+                        display: none;
+                        width: 100%;
+                        margin-top: 0.25rem;
+                        font-size: 0.875em;
+                        color: #dc3545;
+                    }
+                `)
+                .appendTo("head");
+
             // Handle Bootstrap modal dismissal
             $('.modal').on('hidden.bs.modal', function () {
                 $(this).find('form')[0].reset();
+                // Reset validation state
+                $(this).find('.is-invalid').removeClass('is-invalid');
+                $(this).find('.invalid-feedback').hide();
+            });
+
+            // Handle form submission
+            $('.review-form').on('submit', function(event) {
+                const form = $(this);
+                const formId = form.attr('id');
+                const voziloId = formId.split('-').pop();
+                let isValid = true;
+
+                // Validate rating
+                if (!form.find('input[name="ocjena"]:checked').length) {
+                    form.find('.rating').addClass('is-invalid');
+                    form.find(`#ocjena-error-${voziloId}`).show();
+                    isValid = false;
+                } else {
+                    form.find('.rating').removeClass('is-invalid');
+                    form.find(`#ocjena-error-${voziloId}`).hide();
+                }
+
+                // Validate comment
+                const komentar = form.find('textarea[name="komentar"]').val().trim();
+                if (!komentar) {
+                    form.find('textarea[name="komentar"]').addClass('is-invalid');
+                    form.find('textarea[name="komentar"]').siblings('.invalid-feedback').show();
+                    isValid = false;
+                } else {
+                    form.find('textarea[name="komentar"]').removeClass('is-invalid');
+                    form.find('textarea[name="komentar"]').siblings('.invalid-feedback').hide();
+                }
+
+                if (!isValid) {
+                    event.preventDefault();
+                }
+            });
+
+            // Validation on change for rating
+            $('input[name="ocjena"]').on('change', function() {
+                const form = $(this).closest('form');
+                const formId = form.attr('id');
+                const voziloId = formId.split('-').pop();
+                form.find('.rating').removeClass('is-invalid');
+                form.find(`#ocjena-error-${voziloId}`).hide();
+            });
+
+            // Validation on input for comment
+            $('textarea[name="komentar"]').on('input', function() {
+                const kommentarValue = $(this).val().trim();
+                if (kommentarValue) {
+                    $(this).removeClass('is-invalid');
+                    $(this).siblings('.invalid-feedback').hide();
+                }
             });
         });
     </script>

@@ -3,16 +3,16 @@
   "WorkspaceRootPath": "C:\\Users\\AP\\Documents\\OOAD\\Implementacija\\Autosalon OneZone\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{62378DA7-8671-47F5-B8E9-6F051442DAE8}|Autosalon OneZone\\Autosalon OneZone.csproj|c:\\users\\ap\\documents\\ooad\\implementacija\\autosalon onezone\\autosalon onezone\\views\\vozilo\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{62378DA7-8671-47F5-B8E9-6F051442DAE8}|Autosalon OneZone\\Autosalon OneZone.csproj|solutionrelative:autosalon onezone\\views\\vozilo\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{62378DA7-8671-47F5-B8E9-6F051442DAE8}|Autosalon OneZone\\Autosalon OneZone.csproj|c:\\users\\ap\\documents\\ooad\\implementacija\\autosalon onezone\\autosalon onezone\\views\\home\\kontakt.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{62378DA7-8671-47F5-B8E9-6F051442DAE8}|Autosalon OneZone\\Autosalon OneZone.csproj|solutionrelative:autosalon onezone\\views\\home\\kontakt.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{62378DA7-8671-47F5-B8E9-6F051442DAE8}|Autosalon OneZone\\Autosalon OneZone.csproj|c:\\users\\ap\\documents\\ooad\\implementacija\\autosalon onezone\\autosalon onezone\\views\\vozilo\\details.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{62378DA7-8671-47F5-B8E9-6F051442DAE8}|Autosalon OneZone\\Autosalon OneZone.csproj|solutionrelative:autosalon onezone\\views\\vozilo\\details.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{62378DA7-8671-47F5-B8E9-6F051442DAE8}|Autosalon OneZone\\Autosalon OneZone.csproj|c:\\users\\ap\\documents\\ooad\\implementacija\\autosalon onezone\\autosalon onezone\\views\\vozilo\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{62378DA7-8671-47F5-B8E9-6F051442DAE8}|Autosalon OneZone\\Autosalon OneZone.csproj|solutionrelative:autosalon onezone\\views\\vozilo\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{62378DA7-8671-47F5-B8E9-6F051442DAE8}|Autosalon OneZone\\Autosalon OneZone.csproj|c:\\users\\ap\\documents\\ooad\\implementacija\\autosalon onezone\\autosalon onezone\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
@@ -58,11 +58,15 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 3,
           "Children": [
             {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "Kontakt.cshtml",
               "DocumentMoniker": "C:\\Users\\AP\\Documents\\OOAD\\Implementacija\\Autosalon OneZone\\Autosalon OneZone\\Views\\Home\\Kontakt.cshtml",
               "RelativeDocumentMoniker": "Autosalon OneZone\\Views\\Home\\Kontakt.cshtml",
@@ -75,7 +79,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "Details.cshtml",
               "DocumentMoniker": "C:\\Users\\AP\\Documents\\OOAD\\Implementacija\\Autosalon OneZone\\Autosalon OneZone\\Views\\Vozilo\\Details.cshtml",
               "RelativeDocumentMoniker": "Autosalon OneZone\\Views\\Vozilo\\Details.cshtml",
@@ -83,18 +87,17 @@
               "RelativeToolTip": "Autosalon OneZone\\Views\\Vozilo\\Details.cshtml",
               "ViewState": "AgIAAK4AAAAAAAAAAAAIwLgAAAAVAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-06-14T20:20:13.041Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-14T20:20:13.041Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 0,
               "Title": "Index.cshtml",
               "DocumentMoniker": "C:\\Users\\AP\\Documents\\OOAD\\Implementacija\\Autosalon OneZone\\Autosalon OneZone\\Views\\Vozilo\\Index.cshtml",
               "RelativeDocumentMoniker": "Autosalon OneZone\\Views\\Vozilo\\Index.cshtml",
               "ToolTip": "C:\\Users\\AP\\Documents\\OOAD\\Implementacija\\Autosalon OneZone\\Autosalon OneZone\\Views\\Vozilo\\Index.cshtml",
               "RelativeToolTip": "Autosalon OneZone\\Views\\Vozilo\\Index.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAM4AAAAAAAAAAAAAAOIAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2025-06-14T19:53:29.208Z",
               "EditorCaption": ""
@@ -109,8 +112,7 @@
               "RelativeToolTip": "Autosalon OneZone\\Controllers\\VoziloController.cs",
               "ViewState": "AgIAABIAAAAAAAAAAAAqwBsAAAA4AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-14T19:51:30.561Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-14T19:51:30.561Z"
             },
             {
               "$type": "Document",
@@ -122,8 +124,7 @@
               "RelativeToolTip": "Autosalon OneZone\\Views\\Shared\\Error.cshtml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-06-14T19:47:24.919Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-14T19:47:24.919Z"
             },
             {
               "$type": "Document",
@@ -135,8 +136,7 @@
               "RelativeToolTip": "Autosalon OneZone\\Views\\Shared\\_ValidationScriptsPartial.cshtml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-06-14T19:47:20.868Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-14T19:47:20.868Z"
             },
             {
               "$type": "Document",
@@ -148,8 +148,7 @@
               "RelativeToolTip": "Autosalon OneZone\\Views\\Shared\\_LoginPartial.cshtml",
               "ViewState": "AgIAAAcAAAAAAAAAAAAQwBEAAAAEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-06-14T19:47:15.23Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-14T19:47:15.23Z"
             },
             {
               "$type": "Document",
@@ -161,8 +160,7 @@
               "RelativeToolTip": "Autosalon OneZone\\Views\\Shared\\_Layout.cshtml",
               "ViewState": "AgIAAH0AAAAAAAAAAAAQwJEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-06-14T19:47:13.479Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-14T19:47:13.479Z"
             },
             {
               "$type": "Document",
@@ -174,8 +172,7 @@
               "RelativeToolTip": "Autosalon OneZone\\web.config",
               "ViewState": "AgIAABAAAAAAAAAAAAAmwCEAAAAbAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000601|",
-              "WhenOpened": "2025-06-14T19:27:35.604Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-14T19:27:35.604Z"
             },
             {
               "$type": "Document",
@@ -187,8 +184,7 @@
               "RelativeToolTip": "Autosalon OneZone\\Properties\\PublishProfiles\\IISProfile.pubxml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003576|",
-              "WhenOpened": "2025-06-14T19:26:08.74Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-14T19:26:08.74Z"
             },
             {
               "$type": "Document",
@@ -200,12 +196,7 @@
               "RelativeToolTip": "Autosalon OneZone\\Keys\\key-243a1bd4-97a7-40eb-8deb-b4b127482880.xml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003576|",
-              "WhenOpened": "2025-06-14T19:26:03.568Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+              "WhenOpened": "2025-06-14T19:26:03.568Z"
             },
             {
               "$type": "Document",
@@ -217,8 +208,7 @@
               "RelativeToolTip": "Autosalon OneZone\\Program.cs",
               "ViewState": "AgIAAJcAAAAAAAAAAAAgwKEAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-14T19:15:04.926Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-14T19:15:04.926Z"
             }
           ]
         }

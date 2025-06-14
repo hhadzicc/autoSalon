@@ -132,6 +132,18 @@
       <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-Jtxf9L\u002B5ITKRc1gIRl4VbUpGkRNfOBXjYTdhJD4facM="}]]]></EndpointProperties>
       <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=3600, must-revalidate"},{"Name":"Content-Length","Value":"5430"},{"Name":"Content-Type","Value":"image/x-icon"},{"Name":"ETag","Value":"\u0022Jtxf9L\u002B5ITKRc1gIRl4VbUpGkRNfOBXjYTdhJD4facM=\u0022"},{"Name":"Last-Modified","Value":"Sat, 14 Jun 2025 14:55:20 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/Autosalon OneZone/images/vozila/001527a1-f449-42cf-8421-5b861ac9473a_AAGolf 8.jpg">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\images\vozila\001527a1-f449-42cf-8421-5b861ac9473a_AAGolf 8.jpg'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-e9sMgonX5Qu4xmX3HM2KfOe2X6ts3jPoX7\u002BCOWsq0So="}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=3600, must-revalidate"},{"Name":"Content-Length","Value":"47981"},{"Name":"Content-Type","Value":"image/jpeg"},{"Name":"ETag","Value":"\u0022e9sMgonX5Qu4xmX3HM2KfOe2X6ts3jPoX7\u002BCOWsq0So=\u0022"},{"Name":"Last-Modified","Value":"Sat, 14 Jun 2025 20:51:43 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/Autosalon OneZone/images/vozila/001527a1-f449-42cf-8421-5b861ac9473a_AAGolf 8.pnj406tlgk.jpg">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\images\vozila\001527a1-f449-42cf-8421-5b861ac9473a_AAGolf 8.jpg'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"pnj406tlgk"},{"Name":"integrity","Value":"sha256-e9sMgonX5Qu4xmX3HM2KfOe2X6ts3jPoX7\u002BCOWsq0So="},{"Name":"label","Value":"_content/Autosalon OneZone/images/vozila/001527a1-f449-42cf-8421-5b861ac9473a_AAGolf 8.jpg"}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"47981"},{"Name":"Content-Type","Value":"image/jpeg"},{"Name":"ETag","Value":"\u0022e9sMgonX5Qu4xmX3HM2KfOe2X6ts3jPoX7\u002BCOWsq0So=\u0022"},{"Name":"Last-Modified","Value":"Sat, 14 Jun 2025 20:51:43 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
     <StaticWebAssetEndpoint Include="_content/Autosalon OneZone/images/vozila/04fa33ac-2c64-44d0-82fc-e69437abf1f9_photo_2024-06-08_15-20-20.aob79xzvdb.jpg">
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\images\vozila\04fa33ac-2c64-44d0-82fc-e69437abf1f9_photo_2024-06-08_15-20-20.jpg'))</AssetFile>
       <Selectors><![CDATA[[]]]></Selectors>
@@ -383,6 +395,18 @@
       <Selectors><![CDATA[[]]]></Selectors>
       <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-10f/Jnj3llUnME\u002BH0O/6hskoZHsHJcfx5EjGBmldhh0="}]]]></EndpointProperties>
       <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=3600, must-revalidate"},{"Name":"Content-Length","Value":"77511"},{"Name":"Content-Type","Value":"image/jpeg"},{"Name":"ETag","Value":"\u002210f/Jnj3llUnME\u002BH0O/6hskoZHsHJcfx5EjGBmldhh0=\u0022"},{"Name":"Last-Modified","Value":"Sat, 14 Jun 2025 14:55:20 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/Autosalon OneZone/images/vozila/f3ddfedf-b427-40f3-9dc2-236a9251b322_2024-porsche-panamera-4-e-hybrid-108-6643725bab45b.jpeg">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\images\vozila\f3ddfedf-b427-40f3-9dc2-236a9251b322_2024-porsche-panamera-4-e-hybrid-108-6643725bab45b.jpeg'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-lnnPT5B4sSw4NxV6AEHR1MtDcqfmkwoOXSf1XlQ3qV8="}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=3600, must-revalidate"},{"Name":"Content-Length","Value":"91354"},{"Name":"Content-Type","Value":"image/jpeg"},{"Name":"ETag","Value":"\u0022lnnPT5B4sSw4NxV6AEHR1MtDcqfmkwoOXSf1XlQ3qV8=\u0022"},{"Name":"Last-Modified","Value":"Sat, 14 Jun 2025 20:52:34 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/Autosalon OneZone/images/vozila/f3ddfedf-b427-40f3-9dc2-236a9251b322_2024-porsche-panamera-4-e-hybrid-108-6643725bab45b.uif0jmaatn.jpeg">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\images\vozila\f3ddfedf-b427-40f3-9dc2-236a9251b322_2024-porsche-panamera-4-e-hybrid-108-6643725bab45b.jpeg'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"uif0jmaatn"},{"Name":"integrity","Value":"sha256-lnnPT5B4sSw4NxV6AEHR1MtDcqfmkwoOXSf1XlQ3qV8="},{"Name":"label","Value":"_content/Autosalon OneZone/images/vozila/f3ddfedf-b427-40f3-9dc2-236a9251b322_2024-porsche-panamera-4-e-hybrid-108-6643725bab45b.jpeg"}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"91354"},{"Name":"Content-Type","Value":"image/jpeg"},{"Name":"ETag","Value":"\u0022lnnPT5B4sSw4NxV6AEHR1MtDcqfmkwoOXSf1XlQ3qV8=\u0022"},{"Name":"Last-Modified","Value":"Sat, 14 Jun 2025 20:52:34 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
     <StaticWebAssetEndpoint Include="_content/Autosalon OneZone/images/vozila/f4cf1221-3a96-4320-ba3a-2f904a9c37ae_photo_2024-06-08_15-20-20.aob79xzvdb.jpg">
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\images\vozila\f4cf1221-3a96-4320-ba3a-2f904a9c37ae_photo_2024-06-08_15-20-20.jpg'))</AssetFile>

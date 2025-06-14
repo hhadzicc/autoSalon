@@ -16,7 +16,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Autosalon OneZone")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+93bd086b26cc7355893b1cba6ed5aac6ac32bda4")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+49b9f05d559dce08cf637df65489a6df91fd6f95")]
 [assembly: System.Reflection.AssemblyProductAttribute("Autosalon OneZone")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Autosalon OneZone")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

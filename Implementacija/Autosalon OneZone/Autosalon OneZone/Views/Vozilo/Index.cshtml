@@ -212,15 +212,11 @@
 </div>
 
 
-
 <style>
-    /* Add this to control the overall card container padding */
     .card-container {
-        padding-left: 30px;
-        padding-right: 30px;
+        padding: 0 25px;
     }
 
-    /* Style for the results count text */
     .results-count {
         font-size: 1.25rem;
         font-weight: 500;
@@ -233,7 +229,9 @@
         transition: transform 0.2s;
         overflow: hidden;
         border-radius: 10px;
-        position: relative; /* For absolute positioning of button container */
+        position: relative;
+        margin-bottom: 25px;
+        height: 255px;
     }
 
         .vehicle-card:hover {
@@ -241,57 +239,67 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
-    .vehicle-image {
-        width: 240px;
-        height: 100%;
-        object-fit: cover;
-        padding: 15px 0 15px 15px;
-        border-radius: 8px;
+    /* Povećane dimenzije okvira za sliku */
+    .image-container {
+        width: 350px; /* Povećano sa 240px */
+        height: 240px; /* Fiksna visina za bolju konzistentnost */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        padding: 10px;
+        margin-right: 15px;
     }
 
-    .image-container {
+    .vehicle-image {
+        width: 100%;
         height: 100%;
-        display: flex;
-        align-items: stretch;
+        object-fit: contain; /* Osigurava da se cijela slika vidi */
     }
 
     .vehicle-price {
         font-size: 1.3rem;
         font-weight: bold;
         color: #28a745;
-        margin-bottom: 70px; /* Make space for button container */
+        margin-bottom: 70px;
     }
 
-    /* Increase the font size for vehicle details */
     .vehicle-details {
-        font-size: 1.1rem; /* Larger font for details */
+        font-size: 1.05rem; /* Malo smanjeno zbog većeg prostora za sliku */
     }
 
     .vehicle-specs {
-        width: 120%;
-        padding: 20px 0;
+        width: 100%; /* Promijenjeno sa 120% */
+        padding: 15px 0;
     }
 
     .card-body {
+        display: flex;
         padding: 0;
-        height: 100%; /* Make card body take full height */
-        position: relative; /* For positioning children */
+        height: 100%;
+        position: relative;
     }
 
     .card-content {
-        padding: 10px;
-        height: 100%;
+        flex: 1;
+        padding: 15px;
+        display: flex;
+        flex-direction: column;
     }
 
-    /* Style for the button container at the bottom */
     .button-container {
         padding: 15px;
         position: absolute;
         bottom: 0;
-        left: 240px; /* Width of the image */
         right: 0;
+        width: calc(100% - 300px); /* Prilagođeno novoj širini slike */
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
     }
 </style>
+
+
 
 @* Display results count with new class *@
 <p class="results-count">Pronađeno @Model.Count() vozila</p>

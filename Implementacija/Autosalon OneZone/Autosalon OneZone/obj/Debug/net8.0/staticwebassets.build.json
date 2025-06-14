@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "986M6sKxwNTz76EuDCgK3ZV4NDwD1e/BSb5tIf68Wsk=",
+  "Hash": "mMLFy0geCvROc+JWdov/3bdx+9LQKrjZTJ6qUR8iCww=",
   "Source": "Autosalon OneZone",
   "BasePath": "_content/Autosalon OneZone",
   "Mode": "Default",
@@ -1529,6 +1529,27 @@
       "OriginalItemSpec": "wwwroot\\favicon.ico"
     },
     {
+      "Identity": "C:\\Users\\AP\\Documents\\OOAD\\Implementacija\\Autosalon OneZone\\Autosalon OneZone\\wwwroot\\images\\vozila\\001527a1-f449-42cf-8421-5b861ac9473a_AAGolf 8.jpg",
+      "SourceId": "Autosalon OneZone",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\AP\\Documents\\OOAD\\Implementacija\\Autosalon OneZone\\Autosalon OneZone\\wwwroot\\",
+      "BasePath": "_content/Autosalon OneZone",
+      "RelativePath": "images/vozila/001527a1-f449-42cf-8421-5b861ac9473a_AAGolf 8#[.{fingerprint}]?.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "pnj406tlgk",
+      "Integrity": "e9sMgonX5Qu4xmX3HM2KfOe2X6ts3jPoX7+COWsq0So=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\vozila\\001527a1-f449-42cf-8421-5b861ac9473a_AAGolf 8.jpg"
+    },
+    {
       "Identity": "C:\\Users\\AP\\Documents\\OOAD\\Implementacija\\Autosalon OneZone\\Autosalon OneZone\\wwwroot\\images\\vozila\\04fa33ac-2c64-44d0-82fc-e69437abf1f9_photo_2024-06-08_15-20-20.jpg",
       "SourceId": "Autosalon OneZone",
       "SourceType": "Discovered",
@@ -1968,6 +1989,27 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\vozila\\e5d9f22d-2c24-476e-a473-03d46dab35d5_photo_2024-06-08_15-20-22.jpg"
+    },
+    {
+      "Identity": "C:\\Users\\AP\\Documents\\OOAD\\Implementacija\\Autosalon OneZone\\Autosalon OneZone\\wwwroot\\images\\vozila\\f3ddfedf-b427-40f3-9dc2-236a9251b322_2024-porsche-panamera-4-e-hybrid-108-6643725bab45b.jpeg",
+      "SourceId": "Autosalon OneZone",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\AP\\Documents\\OOAD\\Implementacija\\Autosalon OneZone\\Autosalon OneZone\\wwwroot\\",
+      "BasePath": "_content/Autosalon OneZone",
+      "RelativePath": "images/vozila/f3ddfedf-b427-40f3-9dc2-236a9251b322_2024-porsche-panamera-4-e-hybrid-108-6643725bab45b#[.{fingerprint}]?.jpeg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "uif0jmaatn",
+      "Integrity": "lnnPT5B4sSw4NxV6AEHR1MtDcqfmkwoOXSf1XlQ3qV8=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\vozila\\f3ddfedf-b427-40f3-9dc2-236a9251b322_2024-porsche-panamera-4-e-hybrid-108-6643725bab45b.jpeg"
     },
     {
       "Identity": "C:\\Users\\AP\\Documents\\OOAD\\Implementacija\\Autosalon OneZone\\Autosalon OneZone\\wwwroot\\images\\vozila\\f4cf1221-3a96-4320-ba3a-2f904a9c37ae_photo_2024-06-08_15-20-20.jpg",
@@ -6415,6 +6457,88 @@
       ]
     },
     {
+      "Route": "images/vozila/001527a1-f449-42cf-8421-5b861ac9473a_AAGolf 8.jpg",
+      "AssetFile": "C:\\Users\\AP\\Documents\\OOAD\\Implementacija\\Autosalon OneZone\\Autosalon OneZone\\wwwroot\\images\\vozila\\001527a1-f449-42cf-8421-5b861ac9473a_AAGolf 8.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "47981"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"e9sMgonX5Qu4xmX3HM2KfOe2X6ts3jPoX7+COWsq0So=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 14 Jun 2025 20:51:43 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-e9sMgonX5Qu4xmX3HM2KfOe2X6ts3jPoX7+COWsq0So="
+        }
+      ]
+    },
+    {
+      "Route": "images/vozila/001527a1-f449-42cf-8421-5b861ac9473a_AAGolf 8.pnj406tlgk.jpg",
+      "AssetFile": "C:\\Users\\AP\\Documents\\OOAD\\Implementacija\\Autosalon OneZone\\Autosalon OneZone\\wwwroot\\images\\vozila\\001527a1-f449-42cf-8421-5b861ac9473a_AAGolf 8.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "47981"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"e9sMgonX5Qu4xmX3HM2KfOe2X6ts3jPoX7+COWsq0So=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 14 Jun 2025 20:51:43 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "pnj406tlgk"
+        },
+        {
+          "Name": "label",
+          "Value": "images/vozila/001527a1-f449-42cf-8421-5b861ac9473a_AAGolf 8.jpg"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-e9sMgonX5Qu4xmX3HM2KfOe2X6ts3jPoX7+COWsq0So="
+        }
+      ]
+    },
+    {
       "Route": "images/vozila/04fa33ac-2c64-44d0-82fc-e69437abf1f9_photo_2024-06-08_15-20-20.aob79xzvdb.jpg",
       "AssetFile": "C:\\Users\\AP\\Documents\\OOAD\\Implementacija\\Autosalon OneZone\\Autosalon OneZone\\wwwroot\\images\\vozila\\04fa33ac-2c64-44d0-82fc-e69437abf1f9_photo_2024-06-08_15-20-20.jpg",
       "Selectors": [],
@@ -8133,6 +8257,88 @@
         {
           "Name": "integrity",
           "Value": "sha256-10f/Jnj3llUnME+H0O/6hskoZHsHJcfx5EjGBmldhh0="
+        }
+      ]
+    },
+    {
+      "Route": "images/vozila/f3ddfedf-b427-40f3-9dc2-236a9251b322_2024-porsche-panamera-4-e-hybrid-108-6643725bab45b.jpeg",
+      "AssetFile": "C:\\Users\\AP\\Documents\\OOAD\\Implementacija\\Autosalon OneZone\\Autosalon OneZone\\wwwroot\\images\\vozila\\f3ddfedf-b427-40f3-9dc2-236a9251b322_2024-porsche-panamera-4-e-hybrid-108-6643725bab45b.jpeg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "91354"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"lnnPT5B4sSw4NxV6AEHR1MtDcqfmkwoOXSf1XlQ3qV8=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 14 Jun 2025 20:52:34 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-lnnPT5B4sSw4NxV6AEHR1MtDcqfmkwoOXSf1XlQ3qV8="
+        }
+      ]
+    },
+    {
+      "Route": "images/vozila/f3ddfedf-b427-40f3-9dc2-236a9251b322_2024-porsche-panamera-4-e-hybrid-108-6643725bab45b.uif0jmaatn.jpeg",
+      "AssetFile": "C:\\Users\\AP\\Documents\\OOAD\\Implementacija\\Autosalon OneZone\\Autosalon OneZone\\wwwroot\\images\\vozila\\f3ddfedf-b427-40f3-9dc2-236a9251b322_2024-porsche-panamera-4-e-hybrid-108-6643725bab45b.jpeg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "91354"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"lnnPT5B4sSw4NxV6AEHR1MtDcqfmkwoOXSf1XlQ3qV8=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 14 Jun 2025 20:52:34 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "uif0jmaatn"
+        },
+        {
+          "Name": "label",
+          "Value": "images/vozila/f3ddfedf-b427-40f3-9dc2-236a9251b322_2024-porsche-panamera-4-e-hybrid-108-6643725bab45b.jpeg"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-lnnPT5B4sSw4NxV6AEHR1MtDcqfmkwoOXSf1XlQ3qV8="
         }
       ]
     },

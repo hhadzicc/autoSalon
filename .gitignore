@@ -24,6 +24,11 @@
 *.publishsettings
 *.local.json.user
 
+# Local environment files
+.env
+.env.*
+!.env.example
+
 # NuGet
 *.nupkg
 *.snupkg

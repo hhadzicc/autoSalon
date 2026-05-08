@@ -1,24 +1,20 @@
-﻿@* Fajl: Views/AdminPanel/_AdminProfili.cshtml *@
 @model Autosalon_OneZone.ViewModels.Admin.ProfilListViewModel
 <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 <h3>Pregled Profila</h3>
 
-@* Forma/Link za dodavanje novog korisnika i pretraga *@
 <div class="admin-section-controls">
     <button id="add-profil-button" class="btn btn-primary">Dodaj Novog Korisnika</button>
     <input type="text" id="profil-search-input" placeholder="Pretraži po imenu ili email-u..." value="@Model.SearchQuery" />
     <button id="profil-search-button" class="btn btn-secondary">Pretraži</button>
 </div>
 
-@* Forma za dodavanje/izmjenu korisnika (početno skrivena) *@
 <div id="add-profil-form-container" style="display: none;">
     <h4 id="add-edit-profil-form-title">Dodaj Novog Korisnika</h4>
     <div id="add-profil-form-placeholder">
-        @* Forma će se učitati ovdje putem AJAX-a (_AddProfilForm.cshtml) *@
+
     </div>
 </div>
 
-@* Lista korisnika - struktura tabele *@
 <div id="profili-list-container">
     <table class="table table-striped table-hover">
         <thead>
@@ -38,15 +34,14 @@
         </tbody>
     </table>
     <div id="profil-pagination-controls">
-        @* Paginacija će se renderovati ovdje *@
+
     </div>
 </div>
 
-@* Skripte specifične za _AdminProfili parcijalni View *@
 <script>
     $(document).ready(function () {
         console.log("_AdminProfili.cshtml script loaded and ready.");
-        // Remove any previously attached event handlers
+
         $(document).off('click', '.edit-profil-button');
         $(document).off('click', '#add-profil-button');
         $(document).off('click', '#profil-search-button');
@@ -61,12 +56,10 @@
         const addFormPlaceholder = $('#add-profil-form-placeholder');
         const addFormTitle = $('#add-edit-profil-form-title');
 
-        // Funkcija za učitavanje liste korisnika putem AJAX-a
         function loadProfiliList(searchQuery = '', page = 1) {
             console.log("Loading profili list...");
             profiliTableBody.html('<tr><td colspan="6">Učitavanje korisnika...</td></tr>');
 
-            // URL endpoint koji vraća JSON podatke o korisnicima
             const url = '@Url.Action("GetProfiliJson", "AdminPanel")';
 
             $.get(url, { searchQuery: searchQuery, page: page }, function (data) {
@@ -74,7 +67,7 @@
                 profiliTableBody.empty();
 
                 if (data && data.profili && data.profili.length > 0) {
-                    // Iteriraj kroz primljene podatke i dodaj redove u tabelu
+
                     $.each(data.profili, function (index, profil) {
                         const row = `
                             <tr>
@@ -94,7 +87,6 @@
                         profiliTableBody.append(row);
                     });
 
-                    // Implementacija paginacije ako je potrebna
                 } else {
                     profiliTableBody.html('<tr><td colspan="6">Nema dostupnih korisnika.</td></tr>');
                 }
@@ -104,16 +96,13 @@
             });
         }
 
-        // Učitaj listu korisnika kada se parcijalni view učita
         loadProfiliList(searchInput.val() || '@Model.SearchQuery');
 
-        // Handle-anje klika na dugme "Pretraži"
         searchButton.on('click', function () {
             const searchQuery = searchInput.val();
             loadProfiliList(searchQuery);
         });
 
-        // Pretraga na pritisak Enter tastera u input polju
         searchInput.keypress(function(e) {
             if(e.which == 13) {
                 e.preventDefault();
@@ -121,7 +110,6 @@
             }
         });
 
-        // Handle-anje klika na dugme "Dodaj Novog Korisnika"
         $('#add-profil-button').on('click', function () {
             addFormTitle.text('Dodaj Novog Korisnika');
             $.get('@Url.Action("GetAddProfilForm", "AdminPanel")', function(data) {
@@ -138,7 +126,6 @@
             });
         });
 
-        // Handle-anje klika na dugme "Izmijeni" (Delegacija događaja)
         $(document).on('click', '.edit-profil-button', function () {
             var profilId = $(this).data('id');
             addFormTitle.text('Izmijeni Korisnika');
@@ -156,13 +143,11 @@
             });
         });
 
-        // Handle-anje klika na dugme "Otkaži" unutar forme (Delegacija događaja)
         $(document).on('click', '#cancel-add-profil', function () {
             addFormContainer.hide();
             addFormPlaceholder.empty();
         });
 
-        // Handle-anje submit-a forme za dodavanje/izmjenu korisnika (Delegacija događaja)
         $(document).on('submit', '#add-profil-form', function (e) {
             e.preventDefault();
             console.log("Form submitted via AJAX");
@@ -190,7 +175,7 @@
                     loadProfiliList(searchInput.val());
                     alert('Korisnik uspješno sačuvan!');
                 },
-                // Replace your existing error handling in the submit handler for the form:
+
                 error: function (jqXHR, textStatus, errorThrown) {
                     console.error('AJAX Error:', textStatus, errorThrown, jqXHR.responseText);
 
@@ -199,22 +184,20 @@
                     if (jqXHR.status === 400 && jqXHR.responseJSON) {
                         console.log("Validation errors:", jqXHR.responseJSON);
 
-                        // Prikazi validacijske greške direktno u formi
                         if (jqXHR.responseJSON.errors) {
                             var errors = jqXHR.responseJSON.errors;
                             $.each(errors, function (key, messages) {
-                                // Pronađi validation-span za ovaj ključ
+
                                 var validationSpan = $('span[data-valmsg-for="' + key + '"]');
                                 if (validationSpan.length) {
                                     validationSpan.text(messages.join(', ')).show();
                                 } else {
-                                    // Ako ne postoji span za ovaj key, dodaj opću grešku u errorMessage
+
                                     errorMessage += '\n' + key + ': ' + messages.join(', ');
                                 }
                             });
                         }
 
-                        // Ako postoje IdentityErrors ili druge greške koje nisu povezane s konkretnim poljima
                         if (jqXHR.responseJSON.identityErrors) {
                             errorMessage += '\n\nGreške identiteta:';
                             $.each(jqXHR.responseJSON.identityErrors, function (index, message) {
@@ -225,7 +208,7 @@
                         alert(errorMessage);
                     } else if (jqXHR.responseText) {
                         try {
-                            // Pokušaj parsirati responseText kao JSON
+
                             var jsonResponse = JSON.parse(jqXHR.responseText);
                             if (jsonResponse && jsonResponse.message) {
                                 errorMessage += '\n\nDetalji: ' + jsonResponse.message;
@@ -245,7 +228,6 @@
             });
         });
 
-        // Handle-anje klika na dugme "Obriši" (Delegacija događaja)
         $(document).off('click', '.delete-profil-button');
         $(document).on('click', '.delete-profil-button', function () {
             var profilId = $(this).data('id');

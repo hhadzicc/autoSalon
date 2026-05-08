@@ -1,4 +1,3 @@
-﻿// Autosalon OneZone/Models/ViewModels/ChangePasswordViewModel.cs
 using System.ComponentModel.DataAnnotations;
 
 namespace Autosalon_OneZone.Models.ViewModels

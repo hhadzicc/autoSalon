@@ -1,4 +1,3 @@
-﻿// Models/PaymentModels.cs
 namespace Autosalon_OneZone.Models
 {
     public class PaymentRequest

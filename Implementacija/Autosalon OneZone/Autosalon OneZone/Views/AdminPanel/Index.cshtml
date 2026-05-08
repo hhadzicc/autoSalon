@@ -1,5 +1,3 @@
-﻿@* Create new file: Views/AdminPanel/Index.cshtml - updated version *@
-@* Ovaj View koristi vas globalni _CustomLayout.cshtml *@
 @Html.AntiForgeryToken()
 @using Microsoft.AspNetCore.Identity
 @using Autosalon_OneZone.Models
@@ -7,25 +5,18 @@
 
 @{
     ViewData["Title"] = "Admin Panel";
-    // Koristite vaš globalni layout
-    Layout = "~/Views/Shared/_Layout.cshtml";
-    var currentSection = ViewBag.CurrentSection; // Uzimamo trenutnu sekciju iz ViewBag-a
 
-    // Provjeravamo je li korisnik u roli "Administrator"
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var currentSection = ViewBag.CurrentSection;
+
     var user = await UserManager.GetUserAsync(User);
     bool isAdmin = user != null && await UserManager.IsInRoleAsync(user, "Administrator");
 }
 
-@* *** Uvjerite se da je admin-specific.css linkovan ovdje ili u vasem glavnom layoutu sa odgovarajucom klasom na body-u *** *@
 <link rel="stylesheet" href="~/css/admin-specific.css" asp-append-version="true" />
 
-@* Opcionalno: Link na Bootstrap Icons CSS, ako ga ne linkujete globalno *@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
-
-@* Ovdje ide sadržaj vaše stranice Admin Panela, koji će biti unutar RenderBody() u _CustomLayout.cshtml *@
-
-@* Glavni kontejner admin panela koji ce drzati sidebar i content *@
 <div class="admin-panel-container">
     <div class="admin-sidebar-internal">
         <h2>Admin Meni</h2>
@@ -41,30 +32,29 @@
     </div>
 
     <div class="admin-content-internal">
-        @* *** DODAJTE OVAJ WRAPPER DIV OKO SADRŽAJA SEKCIJA *** *@
+
         <div class="admin-content-wrapper">
-            @* Ovdje će se dinamički učitavati sadržaj sekcija *@
+
             <div id="admin-section-content">
-                @* Default sadržaj (Vozila) će biti učitan putem JavaScripta kada se stranica učita *@
-                <h2>Molimo odaberite sekciju iz menija...</h2> @* Početni placeholder *@
+
+                <h2>Molimo odaberite sekciju iz menija...</h2>
             </div>
         </div>
-        @* *** KRAJ WRAPPER DIVA *** *@
+
     </div>
 </div>
 
 @section Scripts {
-    @* Skripte specifične za Admin Panel Index View * ativaraju se nakon učitavanja _CustomLayout skripti *@
+
     <script>
         $(document).ready(function () {
             const adminSectionContent = $('#admin-section-content');
             const adminSidebarLinks = $('.admin-sidebar-internal a');
 
-            // Funkcija za učitavanje sadržaja sekcije putem AJAX-a
-            function loadSection(sectionName, params = {}) { // Prihvatamo i parametre (npr. searchQuery)
-                console.log(`Attempting to load section: ${sectionName}`); // Dodan log za praćenje
+            function loadSection(sectionName, params = {}) {
+                console.log(`Attempting to load section: ${sectionName}`);
                 let url = '';
-                // Odredite URL endpoint na osnovu imena sekcije
+
                 switch (sectionName) {
                     case 'Vozila':
                         url = '@Url.Action("GetVozilaSection", "AdminPanel")';
@@ -80,112 +70,77 @@
                         break;
                     default:
                         adminSectionContent.html('<h2>Sekcija nije pronađena.</h2>');
-                        console.error(`Unknown section name: ${sectionName}`); // Logirajte grešku
+                        console.error(`Unknown section name: ${sectionName}`);
                         return;
                 }
 
-                console.log(`Loading section content from URL: ${url} with params:`, params); // Logirajte URL i parametre
+                console.log(`Loading section content from URL: ${url} with params:`, params);
 
-                // Učitavanje sadržaja putem AJAX GET zahtjeva sa parametrima
                 $.get(url, params, function (data) {
-                    console.log(`Successfully fetched data for section: ${sectionName}`); // Logirajte uspjeh
+                    console.log(`Successfully fetched data for section: ${sectionName}`);
 
-                    // --- POČETAK POBOLJŠANE LOGIKE ZA RE-IZVRŠAVANJE SKRIPTI ---
-
-                    // 1. Ukloni sve prethodno dodane dinamičke skripte.
-                    // Koristimo klasu 'dynamic-partial-script' koju ćemo dodati novim skriptama.
-                    // Ovo je neophodno da se isti skripti ne bi izvršavali više puta
-                    // svaki put kada se nova sekcija učita.
                     $('script.dynamic-partial-script').remove();
                     console.log("Removed previous dynamic partial scripts from body.");
 
-
-                    // Privremeno kreiraj DOM element od dobijenog HTML-a.
-                    // Ovo omogućava da radimo sa HTML strukturom i pronalazimo skripte
-                    // PRIJE nego što cijeli sadržaj ubacimo na stranicu.
                     var tempDiv = $('<div>').html(data);
 
-                    // 2. Pronađi skripte unutar novoučitanog sadržaja (privremenog elementa).
                     tempDiv.find('script').each(function() {
-                        var $originalScript = $(this); // jQuery objekat za originalni script tag
-                        var newScript = document.createElement('script'); // Kreiraj novi DOM script element
+                        var $originalScript = $(this);
+                        var newScript = document.createElement('script');
 
-                        // Kopiraj src ili textContent iz originalnog script taga
                         if (this.src) {
-                            // Ako skript ima 'src' (eksterni fajl), kopiraj src
+
                             newScript.src = this.src;
                              console.log(`Found and preparing script with src: ${this.src}`);
                         } else {
-                            // Ako skript ima inline kod, kopiraj textContent
+
                             newScript.textContent = this.textContent;
                             console.log("Found and preparing inline script.");
                         }
 
-                        // Postavi tip (nije uvijek neophodno, ali je dobra praksa)
                          newScript.type = 'text/javascript';
-                         // Dodaj klasu 'dynamic-partial-script' kako bismo kasnije mogli lako pronaći i ukloniti OVE skripte
+
                          newScript.classList.add('dynamic-partial-script');
 
-
-                        // Dodaj novi script element u DOM (preporučeno na kraj body-a) da bi se odmah izvršio
-                        // Dodavanje u body je generalno sigurnije od dodavanja unutar admin-section-contenta.
                         document.body.appendChild(newScript);
                         console.log("Appended new script to body for execution.");
 
-
-                        // Ukloni originalni script tag iz privremenog DOM elementa.
-                        // Ovo je važno da se isti script tag ne bi ponovo procesirao ili duplirao u #admin-section-content divu.
                         $originalScript.remove();
                         console.log("Removed original script tag from temporary element.");
 
                     });
 
-                     // 3. Ubaci SADA pročišćeni HTML sadržaj (bez originalnih script tagova) u glavni kontejner.
-                     // Koristi innerHTML od tempDiv da dobijes samo unutrasnji HTML sadrzaj.
                     adminSectionContent.html(tempDiv.html());
                      console.log(`Injected content into ${adminSectionContent.attr('id')}.`);
 
-
-                     // --- KRAJ POBOLJŠANE LOGIKE ZA RE-IZVRŠAVANJE SKRIPTI ---
-
-
                 }).fail(function (jqXHR, textStatus, errorThrown) {
-                     // Handle-anje grešaka prilikom AJAX poziva
-                     console.error(`Error loading section ${sectionName}:`, textStatus, errorThrown, jqXHR); // Logirajte grešku AJAX poziva
+
+                     console.error(`Error loading section ${sectionName}:`, textStatus, errorThrown, jqXHR);
                      adminSectionContent.html('<div class="alert alert-danger">Greška prilikom učitavanja sekcije: ' + errorThrown + '</div>');
                  });
 
-                // Ažurirajte klasu 'active' na linkovima menija
                 adminSidebarLinks.removeClass('active');
                 $(`a[data-section="${sectionName}"]`).addClass('active');
 
-                 // Opcionalno: Ažurirajte URL u browseru bez osvježavanja (HTML5 History API)
-                 // history.pushState(null, '', '/AdminPanel?section=' + sectionName);
             }
 
-            // Handle-anje klikova na linkove u sidebar-u
             adminSidebarLinks.on('click', function (e) {
-                e.preventDefault(); // Spriječite default navigaciju
+                e.preventDefault();
                 const sectionName = $(this).data('section');
-                // Proslijedite trenutne filtere/parametere ako ih imate
-                // loadSection(sectionName, { searchQuery: '', filter1: '', filter2: '' }); // Primjer
-                loadSection(sectionName); // Učitajte sadržaj odabrane sekcije bez parametara za sada
+
+                loadSection(sectionName);
             });
 
-            // Učitaj default sekciju (Vozila) kada se stranica prvi put učita
-            // Proverimo da li je trenutna sekcija "Profili" i korisnik nije admin
-            let defaultSection = '@(currentSection ?? "Vozila")'; // Koristi ViewBag ili default "Vozila"
+            let defaultSection = '@(currentSection ?? "Vozila")';
 
-            // Ako je trenutna sekcija "Profili" ali korisnik je Prodavac (nije Admin), prebaci na "Vozila"
             if (defaultSection === 'Profili' && !@Json.Serialize(isAdmin)) {
                 defaultSection = 'Vozila';
             }
 
             loadSection(defaultSection);
 
-            // Osigurajte da loadSection funkcija bude globalno dostupna
             window.loadSection = loadSection;
 
-        }); // Kraj $(document).ready
+        });
     </script>
 }

@@ -1,11 +1,10 @@
-﻿@* Fajl: Views/AdminPanel/_AddVoziloForm.cshtml *@
 @model Autosalon_OneZone.ViewModels.Admin.AddVoziloViewModel
 <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-@* Dodajemo Anti-forgery token radi sigurnosti *@
+
 @Html.AntiForgeryToken()
 
 <form id="add-edit-vozilo-form" asp-controller="AdminPanel" asp-action="SaveVozilo" method="post" enctype="multipart/form-data">
-    @* VoziloID - Skriveno polje, koristi se za Edit scenarij (bit će 0 za Add) *@
+
     <input type="hidden" asp-for="VoziloID" />
 
     <div class="form-group mb-3">
@@ -86,7 +85,6 @@ else
     }
     </div>
 
-
     <div class="form-group mb-3">
         <label asp-for="Opis">Opis</label>
         <textarea asp-for="Opis" class="form-control" rows="4" required></textarea>
@@ -103,18 +101,10 @@ else
     $(document).ready(function() {
         console.log("Form script loaded");
 
-        // Uklanjamo prethodne handlere
         $(document).off('submit', '#add-edit-vozilo-form');
         $(document).off('click', '.edit-vozilo-button');
         $(document).off('click', '#add-vozilo-button');
-/*
-$(document).off('click', '#add-vozilo-button');
-$(document).off('click', '#vozilo-search-button');
-searchInput.off('keypress');
-$(document).off('click', '#cancel-add-vozilo');
-$(document).off('click', '.delete-vozilo-button');
-*/
-        // Inicijalizacija klijentske validacije
+
         $("#add-edit-vozilo-form").validate({
             errorElement: "span",
             errorClass: "text-danger",
@@ -214,7 +204,6 @@ $(document).off('click', '.delete-vozilo-button');
             }
         });
 
-        // Validacija tipa fajla za sliku
         $("input[type=file]").change(function() {
             var fileInput = $(this)[0];
             if(fileInput.files.length > 0) {
@@ -227,7 +216,6 @@ $(document).off('click', '.delete-vozilo-button');
                     return false;
                 }
 
-                // Provjera veličine fajla (opciono, npr. max 5MB)
                 if(file.size > 5 * 1024 * 1024) {
                     alert('Veličina slike ne smije prelaziti 5MB.');
                     $(this).val('');
@@ -236,18 +224,15 @@ $(document).off('click', '.delete-vozilo-button');
             }
         });
 
-        // AJAX submit forme
         $(document).on('submit', '#add-edit-vozilo-form', function (e) {
             e.preventDefault();
 
-            // Prvo provjerava validaciju forme
             if(!$(this).valid()) {
                 return false;
             }
 
             console.log("Form submitted");
 
-            // Logiranje podataka forme za debugging
             var formData = new FormData(this);
             console.log("FormData created");
             for (var pair of formData.entries()) {
@@ -281,7 +266,6 @@ $(document).off('click', '.delete-vozilo-button');
                             if (Array.isArray(value)) {
                                 errorMessage += '\n - ' + key + ': ' + value.join(', ');
 
-                                // Update the validation error message in the form
                                 var fieldErrorSpan = $('span[data-valmsg-for="' + key + '"]');
                                 if (fieldErrorSpan.length) {
                                     fieldErrorSpan.text(value.join(', ')).show();
@@ -289,7 +273,6 @@ $(document).off('click', '.delete-vozilo-button');
                             } else {
                                 errorMessage += '\n - ' + key + ': ' + value;
 
-                                // Update the validation error message in the form
                                 var fieldErrorSpan = $('span[data-valmsg-for="' + key + '"]');
                                 if (fieldErrorSpan.length) {
                                     fieldErrorSpan.text(value).show();
@@ -307,7 +290,6 @@ $(document).off('click', '.delete-vozilo-button');
             });
         });
 
-        // Handler za otkazivanje
         $(document).on('click', '#cancel-add-vozilo', function () {
             $('#add-vozilo-form-container').hide();
             $('#add-vozilo-form-placeholder').empty();

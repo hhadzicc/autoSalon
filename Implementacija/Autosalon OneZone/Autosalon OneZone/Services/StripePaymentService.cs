@@ -1,4 +1,3 @@
-﻿// Services/StripePaymentService.cs
 using Stripe;
 using Autosalon_OneZone.Models;
 using Microsoft.Extensions.Options;
@@ -22,57 +21,51 @@ namespace Autosalon_OneZone.Services
         {
             try
             {
-                // Ukloni sve razmake i nečifre iz broja kartice
                 string cleanCardNumber = new string(paymentRequest.CardNumber.Where(char.IsDigit).ToArray());
                 string stripeToken;
 
-                // Odaberi odgovarajući token na osnovu broja kartice
-                // Za više tokena vidjeti: https://stripe.com/docs/testing
                 switch (cleanCardNumber)
                 {
                     case "4242424242424242":
-                        stripeToken = "tok_visa"; // Uspješna Visa
+                        stripeToken = "tok_visa";
                         break;
                     case "5555555555554444":
-                        stripeToken = "tok_mastercard"; // Uspješna Mastercard
+                        stripeToken = "tok_mastercard";
                         break;
                     case "378282246310005":
-                        stripeToken = "tok_amex"; // Uspješna American Express
+                        stripeToken = "tok_amex";
                         break;
                     case "6011111111111117":
-                        stripeToken = "tok_discover"; // Uspješna Discover
+                        stripeToken = "tok_discover";
                         break;
                     case "3056930009020004":
-                        stripeToken = "tok_diners"; // Uspješna Diners Club
+                        stripeToken = "tok_diners";
                         break;
                     case "4000000000009995":
-                        stripeToken = "tok_chargeDeclined"; // Odbijena transakcija
+                        stripeToken = "tok_chargeDeclined";
                         break;
                     case "4000000000000002":
-                        stripeToken = "tok_chargeDeclinedInsufficientFunds"; // Nedovoljno sredstava
+                        stripeToken = "tok_chargeDeclinedInsufficientFunds";
                         break;
                     case "4000000000000028":
-                        stripeToken = "tok_chargeDeclinedLostCard"; // Izgubljena kartica
+                        stripeToken = "tok_chargeDeclinedLostCard";
                         break;
                     case "4000000000000036":
-                        stripeToken = "tok_chargeDeclinedStolenCard"; // Ukradena kartica
+                        stripeToken = "tok_chargeDeclinedStolenCard";
                         break;
                     case "4000000000000101":
-                        stripeToken = "tok_chargeDeclinedExpiredCard"; // Istekla kartica
+                        stripeToken = "tok_chargeDeclinedExpiredCard";
                         break;
                     case "4000000000000341":
-                        stripeToken = "tok_chargeDeclinedFraudulent"; // Sumnja na prevaru
+                        stripeToken = "tok_chargeDeclinedFraudulent";
                         break;
                     default:
                         if (cleanCardNumber.Length == 16)
                         {
-                            // Za sve druge kartice s ispravnom dužinom, koristimo test token
-                            // koji će biti odbijen zbog nevalidnog broja kartice
                             stripeToken = "tok_chargeDeclinedProcessingError";
                         }
                         else
                         {
-                            // Za kartice s pogrešnom dužinom, vraćamo mock odgovor bez pozivanja Stripe API-a
                             _logger.LogInformation("Odbijanje kartice s neispravnom dužinom: {Length} cifara", cleanCardNumber.Length);
                             return new PaymentResult
                             {
@@ -86,14 +79,12 @@ namespace Autosalon_OneZone.Services
 
                 _logger.LogInformation("Procesiranje plaćanja sa tokenom {Token} za iznos: {Amount}", stripeToken, paymentRequest.Amount);
 
-                // Maskiranje broja kartice za metapodatke
                 string maskedCardNumber = "xxxx-xxxx-xxxx-" +
                     (cleanCardNumber.Length >= 4 ? cleanCardNumber.Substring(cleanCardNumber.Length - 4) : "????");
 
-                // Koristimo token za kreiranje naplate
                 var options = new ChargeCreateOptions
                 {
-                    Amount = (long)(paymentRequest.Amount * 100), // Pretvaranje u cente
+                    Amount = (long)(paymentRequest.Amount * 100),
                     Currency = "eur",
                     Source = stripeToken,
                     Description = $"Plaćanje za {paymentRequest.Description}",
@@ -110,7 +101,6 @@ namespace Autosalon_OneZone.Services
 
                 try
                 {
-                    // Stvarno poslati zahtjev Stripe API-ju
                     Charge charge = await service.CreateAsync(options);
 
                     _logger.LogInformation("Uspješno procesirana transakcija ID: {ChargeId}", charge.Id);
@@ -125,11 +115,9 @@ namespace Autosalon_OneZone.Services
                                               ex.StripeError?.Code == "card_declined" ||
                                               ex.StripeError?.Type == "card_error")
                 {
-                    // Ovo hvata odbijene kartice i druge greške vezane za kartice
                     _logger.LogWarning("Odbijena kartica: {Message}, Kod: {DeclineCode}",
                         ex.Message, ex.StripeError?.DeclineCode);
 
-                    // Formatiraj poruku za korisnika
                     string userMessage;
                     switch (ex.StripeError?.DeclineCode)
                     {
@@ -163,7 +151,6 @@ namespace Autosalon_OneZone.Services
             }
             catch (StripeException ex)
             {
-                // Druge Stripe greške (ne vezane za odbijanje kartice)
                 _logger.LogError(ex, "Greška u Stripe API-ju: {Message}", ex.Message);
                 return new PaymentResult
                 {
@@ -173,7 +160,6 @@ namespace Autosalon_OneZone.Services
             }
             catch (Exception ex)
             {
-                // Opće greške
                 _logger.LogError(ex, "Opća greška: {Message}", ex.Message);
                 return new PaymentResult
                 {

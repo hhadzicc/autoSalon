@@ -1,5 +1,3 @@
-﻿@* Fajl: Views/Shared/_CustomLayout.cshtml *@
-@* Ovo je Vas glavni Layout fajl *@
 @using Microsoft.AspNetCore.Identity
 @using Autosalon_OneZone.Models
 @inject SignInManager<ApplicationUser> SignInManager
@@ -11,77 +9,67 @@
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>@ViewData["Title"] - Autosalon OneZone</title>
-            <link rel="stylesheet" type="text/css" href="~/css/kod.css"> @* Link na Vas globalni CSS *@
-            @await RenderSectionAsync("Head", required: false) @* Omogucava View-ima da dodaju stvari u <head> (npr. dodatni CSS) *@
+            <link rel="stylesheet" type="text/css" href="~/css/kod.css">
+            @await RenderSectionAsync("Head", required: false)
         </head>
         <body>
             <div class="nav-bar">
-                @* Navigaciona traka *@
-                <div class="logo">
-                    @* Logo/Naziv sajta *@
-                    <a href="/">Autosalon OneZone</a> @* Link na pocetnu *@
 
+                <div class="logo">
+
+                    <a href="/">Autosalon OneZone</a>
 
                 </div>
 
-
                 <div class="nav-links">
 
-                    @* Admin Panel dugme - vidljivo samo ako je korisnik prijavljen i ima odgovarajucu rolu *@
                     @if (SignInManager.IsSignedIn(User) && (User.IsInRole("Administrator") || User.IsInRole("Prodavac")))
 			{
                     <a href="/AdminPanel/Index">  Admin Panel</a>
-                    @*<a href="/Account/Login">Prijavi se</a> *@
+
 			}
 
                 </div>
                 <div class="spacer"></div>
 
-
         <div class="search-bar">
-            @* Traka za pretragu *@
+
             <form id="searchForm" action="/Vozilo/Index" method="get">
                 <input type="text" placeholder="Pretraži vozila..." id="search-input" name="searchTerm">
-                <button id="search-button" type="submit">Pretraži</button> @* Dugme za pretragu (stil u kod.css) *@
+                <button id="search-button" type="submit">Pretraži</button>
             </form>
         </div>
 
-
-
                 <div class="nav-links">
-                    @* Kontejner za linkove na desnoj strani *@
-                    <a href="/Vozilo">Vozila</a> @* Link ka listi vozila *@
-                    <a href="/Home/Kontakt">Piši nam</a> @* Link ka stranici O nama *@
 
-                    @* --- Linkovi za PRIJAVLJENOG KORISNIKA --- *@
+                    <a href="/Vozilo">Vozila</a>
+                    <a href="/Home/Kontakt">Piši nam</a>
+
                     @if (SignInManager.IsSignedIn(User))
 			{
-                    <a href="/Korpa">Korpa</a>  @* Link ka korpi *@
-                    @* Proverite ovu putanju za Profil. Ako ste kreirali svoj MVC kontroler/View, linkujte na njega, npr. /Account/Manage *@
+                    <a href="/Korpa">Korpa</a>
+
                     <a href="/Profil">Moj Profil</a>
 
-                    @* --- FORMA ZA ODJAVU - NEOPHODNA ZA POST METODU --- *@
                     <form id="logoutForm" asp-controller="Account" asp-action="Logout" method="post" style="display: inline;">
-                        @* Obavezni Anti-förgery token za sigurnost POST zahteva *@
+
                         @Html.AntiForgeryToken()
-                        @* Link koji izgleda kao ostali linkovi i pokreće formu preko JavaScripta *@
+
                         <a href="javascript:void(0);" class="nav-link" onclick="document.getElementById('logoutForm').submit();">Odjavi se</a>
                     </form>
 
 			}
-                    @* --- Linkovi za ODJAVLJENOG KORISNIKA (GOSTA) --- *@
+
 			else
 			{
-                    <a href="/Account/Login">Prijavi se</a>  @* Link na vas MVC Account/Login *@
-                    <a id="register" href="/Account/Register">Registruj se</a>  @* Link na vas MVC Account/Register *@
+                    <a href="/Account/Login">Prijavi se</a>
+                    <a id="register" href="/Account/Register">Registruj se</a>
 			}
                 </div>
             </div>
 
             <div class="main-content-container">
-                @* Glavni kontejner za sadrzaj View-a *@
-                @* --- PRIKAZ PORUKA IZ TEMP DATA (npr. nakon uspesne registracije) --- *@
-                @* Za ovo su potrebni Bootstrap CSS i JS, koji su linkovani ispod *@
+
                 @if (TempData["SuccessMessage"] != null)
 		{
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -89,53 +77,35 @@
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
 		}
-                @* Opciono: Prikaz poruke o neuspehu iz TempData ako saljete genericke greske tim putem *@
-                @*
-                    @if (TempData["ErrorMessage"] != null)
-                    {
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            @TempData["ErrorMessage"]
-                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    }
-                *@
-                @* --------------------------------------------------------------------- *@
 
-                @RenderBody() @* Ovde se prikazuje sadrzaj specifičnog View-a (@{ Layout = ... }) *@
+                @RenderBody()
             </div>
 
             <footer>
-                @* Footer *@
+
                 <p>Kontakt: +387 000 000 000 | Email: <a href="mailto:autosalon@autosalon.com">autosalon@autosalon.com</a></p>
                 <p><a href="#">Politika privatnosti</a> | <a href="#">Uslovi korišćenja</a></p>
-                <div>&copy; @DateTime.Now.Year Autosalon OneZone</div> @* Copyright *@
+                <div>&copy; @DateTime.Now.Year Autosalon OneZone</div>
             </footer>
 
-            @* --- LINK NA JQUERY I BOOTSTRAP (ako ih koristite) --- *@
-            @* Ovi fajlovi su neophodni za rad Bootstrap komponenti (kao alert) i za klijentsku validaciju *@
-            @* Proverite putanje "~/lib/jquery/dist/jquery.min.js" i "~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" *@
             <script src="~/lib/jquery/dist/jquery.min.js"></script>
             <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-            @* --------------------------------------------------- *@
 
-            @* === DODANE LINIJE SKRIPTI ZA VALIDACIJU === *@
             <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
             <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
-            @* =========================================== *@
 
-            <script src="~/js/site.js" asp-append-version="true"></script> @* Vas globalni JS fajl *@
-            @await RenderSectionAsync("Scripts", required: false) @* Omogucava View-ima da dodaju skripte na kraj tela (npr. validacija) *@
-            @await RenderSectionAsync("BottomScripts", required: false) @* Dodatna sekcija za skripte ako vam treba *@
+            <script src="~/js/site.js" asp-append-version="true"></script>
+            @await RenderSectionAsync("Scripts", required: false)
+            @await RenderSectionAsync("BottomScripts", required: false)
         </body>
     </html>
-
 
 @section Scripts {
     <script>
         $(document).ready(function() {
-            // Handle Enter key press in search input
+
             $("#search-input").keypress(function(e) {
-                if (e.which == 13) { // Enter key
+                if (e.which == 13) {
                     e.preventDefault();
                     $("#searchForm").submit();
                 }

@@ -1,5 +1,3 @@
-﻿/* support.css - Stilovi za stranicu kontakta sa podrškom */
-
 .container {
     display: flex;
     justify-content: center;
@@ -81,7 +79,6 @@
     font-style: italic;
 }
 
-/* Responzivnost za manje ekrane */
 @media (max-width: 768px) {
     .container {
         padding: 20px;

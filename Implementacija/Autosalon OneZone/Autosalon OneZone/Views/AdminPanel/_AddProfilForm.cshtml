@@ -1,11 +1,10 @@
-﻿@* Fajl: Views/AdminPanel/_AddProfilForm.cshtml *@
 @model Autosalon_OneZone.ViewModels.Admin.AddProfilViewModel
 <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-@* Anti-forgery token radi sigurnosti *@
+
 @Html.AntiForgeryToken()
 
 <form id="add-profil-form" asp-controller="AdminPanel" asp-action="SaveProfil" method="post">
-    @* Skriven UserId - koristi se za Edit scenarij (bit će null za Add) *@
+
     <input type="hidden" asp-for="UserId" />
 
     <div class="form-group">
@@ -32,7 +31,6 @@
         <span asp-validation-for="Prezime" class="text-danger"></span>
     </div>
 
-    @* Prikaži polja za lozinku samo ako je novi korisnik (UserId == null) *@
     @if (string.IsNullOrEmpty(Model.UserId))
     {
         <div class="form-group">
@@ -48,7 +46,6 @@
         </div>
     }
 
-    @* Opcija za izbor uloga *@
     @if (Model.DostupneRole != null && Model.DostupneRole.Any())
     {
         <div class="form-group">
@@ -73,10 +70,9 @@
 <script>
     $(document).ready(function () {
         console.log("Profil form script loaded");
-        // Sklanjamo prethodne validacijske handlere
+
         $("#add-profil-form").off();
 
-        // Real-time validation for name and surname - allow only letters
         $("#Ime, #Prezime").on("input", function() {
             var value = $(this).val();
             var lettersOnly = /^[A-Za-z\s]*$/;
@@ -87,7 +83,6 @@
             }
         });
 
-        // Real-time validation for username - allow only letters and numbers
         $("#UserName").on("input", function() {
             var value = $(this).val();
             var alphanumericOnly = /^[A-Za-z0-9]*$/;
@@ -98,7 +93,6 @@
             }
         });
 
-        // Aktiviranje jQuery validacije
         $("#add-profil-form").validate({
             errorElement: "span",
             errorClass: "text-danger",

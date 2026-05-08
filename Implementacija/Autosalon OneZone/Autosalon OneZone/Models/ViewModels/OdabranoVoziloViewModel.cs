@@ -1,6 +1,5 @@
 ﻿namespace Autosalon_OneZone.Models.ViewModels
 {
-    // Može se dodati u Models/ViewModels/OdabranoVoziloViewModel.cs
     public class OdabranoVoziloViewModel
     {
         public int id { get; set; }

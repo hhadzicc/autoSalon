@@ -1,9 +1,7 @@
-﻿// Put this file in your Data or Persistence folder, e.g., Autosalon_OneZone/Data/ApplicationDbContext.cs
-
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
-using Autosalon_OneZone.Models; // Uvjerite se da je ovo ispravan namespace za vaše modele
+using Autosalon_OneZone.Models;
 
 namespace Autosalon_OneZone.Data
 {
@@ -28,7 +26,6 @@ namespace Autosalon_OneZone.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // --- Mapiranje Enumeracija ---
             modelBuilder.Entity<Vozilo>()
                .Property(v => v.Kubikaza)
                .HasColumnType("decimal(18,1)");
@@ -49,68 +46,54 @@ namespace Autosalon_OneZone.Data
                 .Property(e => e.Status)
                 .HasConversion<string>();
 
-
-            // --- Konfiguracija Relacija ---
-
-            // ApplicationUser (1) -> Narudzba (0..*)
             modelBuilder.Entity<ApplicationUser>()
                 .HasMany(u => u.Narudzbe)
                 .WithOne(n => n.Korisnik)
                 .HasForeignKey(n => n.KorisnikId)
-                .OnDelete(DeleteBehavior.Cascade); // Kaskadno brisanje narudžbi kada se korisnik obriše.
+                .OnDelete(DeleteBehavior.Cascade);
 
-            // ApplicationUser (1) -> Korpa (0..1)
             modelBuilder.Entity<ApplicationUser>()
                 .HasOne(u => u.Korpa)
                 .WithOne(k => k.Korisnik)
                 .HasForeignKey<Korpa>(k => k.KorisnikId)
                 .IsRequired()
-                .OnDelete(DeleteBehavior.Cascade); // Kaskadno brisanje korpe kada se korisnik obriše.
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Korpa>()
                 .HasIndex(k => k.KorisnikId)
                 .IsUnique();
 
-            // ApplicationUser (1) -> Recenzija (0..*)
             modelBuilder.Entity<ApplicationUser>()
                 .HasMany(u => u.Recenzije)
                 .WithOne(r => r.Korisnik)
                 .HasForeignKey(r => r.KorisnikId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // ApplicationUser (1) -> Podrska (0..*)
             modelBuilder.Entity<ApplicationUser>()
                 .HasMany(u => u.PodrskaUpiti)
                 .WithOne(p => p.Korisnik)
                 .HasForeignKey(p => p.KorisnikId)
-                .OnDelete(DeleteBehavior.Cascade); // Kaskadno brisanje upita podrške kada se korisnik obriše.
+                .OnDelete(DeleteBehavior.Cascade);
 
-            // Vozilo (1) -> StavkaKorpe (0..*)
             modelBuilder.Entity<Vozilo>()
                 .HasMany(v => v.StavkeKorpe)
                 .WithOne(s => s.Vozilo)
                 .HasForeignKey(s => s.VoziloID)
-                .OnDelete(DeleteBehavior.Cascade); // Kaskadno brisanje stavki korpe kada se vozilo obriše.
+                .OnDelete(DeleteBehavior.Cascade);
 
-            // Vozilo (1) -> Recenzija (0..*)
             modelBuilder.Entity<Vozilo>()
                 .HasMany(v => v.Recenzije)
                 .WithOne(r => r.Vozilo)
                 .HasForeignKey(r => r.VoziloID)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Korpa (1) -> StavkaKorpe (0..*)
             modelBuilder.Entity<Korpa>()
                 .HasMany(k => k.StavkeKorpe)
                 .WithOne(s => s.Korpa)
                 .HasForeignKey(s => s.KorpaID)
                 .IsRequired(false)
-                .OnDelete(DeleteBehavior.Cascade); // Kaskadno brisanje stavki korpe kada se korpa obriše.
+                .OnDelete(DeleteBehavior.Cascade);
 
-            // Narudzba (1) -> StavkaKorpe (1..*)
-            // IZMIJENJENO: Postavljeno na DeleteBehavior.Restrict da se izbjegne problem "multiple cascade paths".
-            // Ako se Narudzba obriše, stavke korpe neće biti automatski obrisane ako su dio i Korpe i Narudzbe.
-            // Baza podataka neće dozvoliti kaskadno brisanje kroz dva puta do iste tabele.
             modelBuilder.Entity<Narudzba>()
                 .HasMany(n => n.StavkeKorpe)
                 .WithOne(s => s.Narudzba)
@@ -118,14 +101,12 @@ namespace Autosalon_OneZone.Data
                 .IsRequired(false)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Narudzba (1) -> Placanje (1)
             modelBuilder.Entity<Narudzba>()
                 .HasOne(n => n.Placanje)
                 .WithOne(p => p.Narudzba)
                 .HasForeignKey<Placanje>(p => p.NarudzbaID)
                 .IsRequired();
 
-            // Placanje (1) -> Kartica (0..1)
             modelBuilder.Entity<Placanje>()
                 .HasOne(p => p.Kartica)
                 .WithMany()
@@ -133,7 +114,6 @@ namespace Autosalon_OneZone.Data
                 .IsRequired(false)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Placanje (1) -> Kredit (0..1)
             modelBuilder.Entity<Placanje>()
                 .HasOne(p => p.Kredit)
                 .WithMany()
@@ -141,27 +121,24 @@ namespace Autosalon_OneZone.Data
                 .IsRequired(false)
                 .OnDelete(DeleteBehavior.Restrict);
 
-
-            // --- Konfiguracija Svojstava (sa rješenjima za decimal upozorenja) ---
-
             modelBuilder.Entity<Vozilo>()
                 .Property(v => v.Cijena)
                 .HasColumnType("decimal(18,2)");
 
             modelBuilder.Entity<Korpa>()
                 .Property(k => k.UkupnaCijena)
-                .HasColumnType("decimal(18,2)"); // DODANO: Rješava upozorenje za Korpa.UkupnaCijena
+                .HasColumnType("decimal(18,2)");
 
             modelBuilder.Entity<Narudzba>()
                 .Property(n => n.UkupnaCijena)
-                .HasColumnType("decimal(18,2)"); // DODANO: Rješava upozorenje za Narudzba.UkupnaCijena
+                .HasColumnType("decimal(18,2)");
 
             modelBuilder.Entity<Placanje>()
-                .HasKey(p => p.NarudzbaID); // Ostaje kao PK
+                .HasKey(p => p.NarudzbaID);
 
             modelBuilder.Entity<Placanje>()
                 .Property(p => p.Iznos)
-                .HasColumnType("decimal(18,2)"); // DODANO: Rješava upozorenje za Placanje.Iznos
+                .HasColumnType("decimal(18,2)");
 
             modelBuilder.Entity<StavkaKorpe>()
                 .Property(s => s.Kolicina)
@@ -192,7 +169,7 @@ namespace Autosalon_OneZone.Data
             modelBuilder.Entity<Kartica>()
                 .Property(c => c.DatumIsteka)
                 .IsRequired()
-                .HasMaxLength(5); // MM/YY
+                .HasMaxLength(5);
             modelBuilder.Entity<Kartica>()
                 .Property(c => c.Cvv)
                 .IsRequired()

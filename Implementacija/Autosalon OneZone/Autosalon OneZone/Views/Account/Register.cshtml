@@ -83,7 +83,7 @@
             });
 
             function validateFields() {
-                // Validacija za ime i prezime - samo slova
+
                 $("#Ime, #Prezime").on("input", function() {
                     var value = $(this).val();
                     var lettersOnly = /^[A-Za-z\s]*$/;
@@ -94,7 +94,6 @@
                     }
                 });
 
-                // Validacija za korisničko ime - samo slova i brojevi
                 $("#UserName").on("input", function() {
                     var value = $(this).val();
                     var alphanumericOnly = /^[A-Za-z0-9]*$/;

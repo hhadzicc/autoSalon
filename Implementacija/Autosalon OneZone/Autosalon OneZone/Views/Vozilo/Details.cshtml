@@ -11,13 +11,12 @@
 }
 
 <div class="container mt-4">
-    
 
     <div class="row">
-        <!-- Lijeva strana - Detalji vozila -->
+
         <div class="col-lg-8 mb-4">
             <div class="card">
-                <!-- Slika vozila -->
+
                 <div class="text-center p-3">
                     @if (!string.IsNullOrEmpty(Model.Slika))
                     {
@@ -29,7 +28,6 @@
                     }
                 </div>
 
-                <!-- Osnovni podaci o vozilu -->
                 <div class="card-body">
                     <h2 class="card-title">@Model.Marka @Model.Model</h2>
                     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -53,7 +51,6 @@
 
                         </div>
                     </div>
-
 
                     <h4>Specifikacije</h4>
                     <table class="table table-striped">
@@ -81,14 +78,12 @@
                         </tbody>
                     </table>
 
-                    <!-- Opis vozila -->
                     <h4>Opis</h4>
                     <p class="card-text">@(Model.Opis ?? "Nema dostupnog opisa za ovo vozilo.")</p>
                 </div>
             </div>
         </div>
 
-        <!-- Desna strana - Kalkulator rata -->
         <div class="col-lg-4">
             <div class="card">
                 <div class="card-header">
@@ -132,11 +127,9 @@
         </div>
     </div>
 
-    <!-- Sekcija za recenzije -->
     <div class="row mt-5">
         <div class="col-12">
             <h3 class="mb-4" style="padding-left: 25px;">Recenzije korisnika</h3>
-
 
             @if (Model.Recenzije != null && Model.Recenzije.Any())
             {
@@ -193,7 +186,6 @@
     </div>
 </div>
 
-<!-- Modal za prikaz cijelog komentara recenzije -->
 <div class="modal fade" id="komentarRecenzijeModal" tabindex="-1" aria-labelledby="komentarRecenzijeModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -211,8 +203,6 @@
     </div>
 </div>
 
-<!-- Podaci za kreditnu karticu -->
-<!-- Modal za unos podataka kartice - NOVA VERZIJA -->
 <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -221,19 +211,17 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <!-- Ukupna cijena -->
+
                 <div class="alert alert-info mb-4">
                     <strong>Ukupno za plaćanje:</strong> €@Model.Cijena.Value.ToString("N0")
                 </div>
 
-                <!-- Forma za plaćanje -->
                 <form id="paymentForm" asp-controller="Korpa" asp-action="IzvrsiPlacanje" method="post" novalidate>
                     @Html.AntiForgeryToken()
-                    <!-- Skrivena polja za podatke vozila -->
+
                     <input type="hidden" name="VoziloID" value="@Model.VoziloID" />
                     <input type="hidden" name="Cijena" value="@Model.Cijena" />
 
-                    <!-- Ime i prezime -->
                     <div class="form-group mb-3">
                         <label for="imeVlasnika" class="form-label">Ime i prezime vlasnika kartice <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="imeVlasnika" name="ImeVlasnika"
@@ -241,7 +229,6 @@
                         <div class="error-message text-danger mt-1" id="imeVlasnikaError"></div>
                     </div>
 
-                    <!-- Broj kartice -->
                     <div class="form-group mb-3">
                         <label for="brojKartice" class="form-label">Broj kartice <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="brojKartice" name="BrojKartice"
@@ -249,7 +236,6 @@
                         <div class="error-message text-danger mt-1" id="brojKarticeError"></div>
                     </div>
 
-                    <!-- Datum isteka i CVV -->
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group mb-3">
@@ -269,7 +255,6 @@
                         </div>
                     </div>
 
-                    <!-- Potvrda kupovine -->
                     <div class="d-grid gap-2 mt-4">
                         <button type="submit" class="btn btn-primary" id="submitPayment">
                             Potvrdi kupovinu
@@ -283,9 +268,9 @@
 
 @section Scripts {
     <script>
-        // Izvršava se pri učitavanju stranice
+
         $(document).ready(function() {
-            // Kalkulator kredita - postojeći JS
+
             updateCalculation();
 
             $("#calculateBtn").click(function() {
@@ -308,20 +293,16 @@
                     return;
                 }
 
-                // Pretvorba godišnje kamatne stope u mjesečnu (u decimalnom obliku)
                 var monthlyRate = (interestRate / 100) / 12;
 
-                // Formula za izračunavanje mjesečne rate (PMT)
                 var monthlyPayment = loanAmount * monthlyRate * Math.pow(1 + monthlyRate, loanPeriod) /
                                     (Math.pow(1 + monthlyRate, loanPeriod) - 1);
 
                 $("#loan-result").text("€" + monthlyPayment.toFixed(2));
             }
 
-            // NOVA VALIDACIJA ZA FORMU PLAĆANJA
             setupPaymentFormValidation();
 
-            // Klik na komentar recenzije - prikazuje modal s punim tekstom
             $(".view-komentar-recenzije").on("click", function(e) {
                 e.preventDefault();
                 const komentar = $(this).data("komentar");
@@ -330,21 +311,17 @@
             });
         });
 
-        // Funkcija koja inicijalizira validaciju forme
-                // Zamjenite cijelu setupPaymentFormValidation funkciju s ovom:
         function setupPaymentFormValidation() {
-            // Inicijalno čišćenje eventualnih grešaka
+
             clearAllErrors();
 
-            // Resetiraj formu kada se modal otvori
             $('#paymentModal').on('show.bs.modal', function() {
                 resetPaymentForm();
             });
 
-            // Ime vlasnika - dozvoli samo slova i razmake
             $("#imeVlasnika").on('input', function() {
                 var value = $(this).val();
-                var filteredValue = value.replace(/[^A-Za-z ]/g, ''); // Samo slova i razmaci
+                var filteredValue = value.replace(/[^A-Za-z ]/g, '');
 
                 if (value !== filteredValue) {
                     $(this).val(filteredValue);
@@ -353,7 +330,6 @@
                 clearError('imeVlasnika');
             });
 
-            // Broj kartice - formatiraj i dozvoli samo brojeve
             $("#brojKartice").on('input', function() {
                 var value = $(this).val().replace(/\D/g, '');
 
@@ -373,7 +349,6 @@
                 clearError('brojKartice');
             });
 
-            // Datum isteka - formatiraj MM/YY
             $("#datumIsteka").on('input', function() {
                 var value = $(this).val().replace(/\D/g, '');
 
@@ -389,7 +364,6 @@
                 clearError('datumIsteka');
             });
 
-            // CVV kod - dozvoli samo brojeve i max 3 cifre
             $("#cvv").on('input', function() {
                 var value = $(this).val().replace(/\D/g, '');
 
@@ -401,50 +375,45 @@
                 clearError('cvv');
             });
 
-            // Validacija forme pri slanju
             $("#paymentForm").on('submit', function(e) {
-                e.preventDefault(); // Spriječiti standardno slanje forme
+                e.preventDefault();
 
-                // Očisti sve prethodne greške
                 clearAllErrors();
 
-                // Validacija forme
                 var isValid = validatePaymentForm();
 
                 if (isValid) {
-                    // Prikaži loader i onemogući dugme
+
                     $("#submitPayment").prop("disabled", true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Obrađivanje...');
 
-                    // Pripremi podatke forme
                     var formData = $(this).serialize();
 
-                    // Pošalji AJAX zahtjev
                     $.ajax({
                         url: $(this).attr('action'),
                         type: 'POST',
                         data: formData,
                         success: function(response) {
                             if (response.success) {
-                                // Uspješno plaćanje - preusmjeri na stranicu uspjeha
+
                                 window.location.href = response.redirectUrl;
                             } else {
-                                // Neuspješno plaćanje
+
                                 if (response.errors) {
-                                    // Prikaži specifične greške po poljima
+
                                     $.each(response.errors, function(field, message) {
                                         showError(field, message);
                                     });
                                 } else if (response.message) {
-                                    // Prikaži opću poruku greške
+
                                     $('#paymentModal').modal('hide');
                                     alert("Plaćanje nije uspjelo: " + response.message);
                                 }
-                                // Omogući ponovo dugme
+
                                 $("#submitPayment").prop("disabled", false).html('Potvrdi kupovinu');
                             }
                         },
                         error: function(xhr, status, error) {
-                            // Greška u AJAX pozivu
+
                             $('#paymentModal').modal('hide');
                             alert("Došlo je do greške prilikom obrade zahtjeva. Molimo pokušajte ponovo.");
                             $("#submitPayment").prop("disabled", false).html('Potvrdi kupovinu');
@@ -454,11 +423,9 @@
             });
         }
 
-        // Dodajte novu funkciju za validaciju forme
         function validatePaymentForm() {
             var isValid = true;
 
-            // Validacija imena i prezimena
             var imePrezime = $("#imeVlasnika").val().trim();
             if (!imePrezime) {
                 showError('imeVlasnika', 'Ime i prezime su obavezni.');
@@ -468,7 +435,6 @@
                 isValid = false;
             }
 
-            // Validacija broja kartice
             var brojKartice = $("#brojKartice").val().replace(/\s+/g, '');
             if (!brojKartice) {
                 showError('brojKartice', 'Broj kartice je obavezan.');
@@ -478,7 +444,6 @@
                 isValid = false;
             }
 
-            // Validacija datuma isteka
             var datumIsteka = $("#datumIsteka").val().trim();
             if (!datumIsteka) {
                 showError('datumIsteka', 'Datum isteka je obavezan.');
@@ -502,7 +467,6 @@
                 }
             }
 
-            // Validacija CVV koda
             var cvv = $("#cvv").val().trim();
             if (!cvv) {
                 showError('cvv', 'CVV kod je obavezan.');
@@ -512,7 +476,6 @@
                 isValid = false;
             }
 
-            // Fokusiraj prvo polje s greškom
             if (!isValid) {
                 $(".form-control").each(function() {
                     var id = $(this).attr("id");
@@ -526,8 +489,6 @@
             return isValid;
         }
 
-
-        // Pomoćne funkcije za validaciju
         function showError(fieldId, message) {
             $("#" + fieldId).addClass("is-invalid border-danger");
             $("#" + fieldId + "Error").text(message);
@@ -551,40 +512,35 @@
     </script>
 
     <style>
-        /* Stilovi za validaciju forme */
+
         .form-control.is-invalid {
-            background-image: none; /* Ukloni defaultni Bootstrap icon */
+            background-image: none;
         }
 
         .error-message {
             font-size: 0.875rem;
-            min-height: 20px; /* Prostor za poruku o grešci */
+            min-height: 20px;
         }
 
-        /* Stilizacija polja s greškom */
         .border-danger {
             border: 2px solid #dc3545 !important;
         }
 
-        /* Stilizacija polja prilikom fokusa */
         .form-control:focus {
             box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
         }
 
-        /* Stilizirajte placeholder */
         ::placeholder {
             opacity: 0.6;
         }
 
-        /* Stilovi za recenzije */
         .reviews-container {
             max-height: 600px;
             overflow-y: auto;
             padding-left: 25px;
-            width: 300px; /* Fixed width of 300px */
-            margin: 0 auto; /* Centers the container */
+            width: 300px;
+            margin: 0 auto;
         }
-
 
         .bi-star-fill.text-warning {
             color: #ffc107 !important;
@@ -598,7 +554,6 @@
             background-color: rgba(0, 0, 0, 0.03);
         }
 
-        /* Stilizacija scrollbara za recenzije */
         .reviews-container::-webkit-scrollbar {
             width: 8px;
         }
@@ -617,7 +572,6 @@
                 background: #aaa;
             }
 
-        /* Stilovi za prikaz komentara recenzija */
         .truncated-text {
             cursor: pointer;
         }
@@ -637,4 +591,3 @@
                 }
     </style>
 }
-

@@ -65,7 +65,6 @@
     </div>
 </div>
 
-<!-- Password Change Modal -->
 <div class="modal fade" id="passwordChangeModal" tabindex="-1" aria-labelledby="passwordChangeModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -111,7 +110,7 @@
 
     <script>
         $(document).ready(function() {
-            // Ime i prezime - dozvoli samo slova
+
             $("#Ime, #Prezime").on("input", function() {
                 var value = $(this).val();
                 var lettersOnly = /^[A-Za-z\s]*$/;
@@ -122,7 +121,6 @@
                 }
             });
 
-            // Korisničko ime - dozvoli slova i brojeve
             $("#UserName").on("input", function() {
                 var value = $(this).val();
                 var alphanumericOnly = /^[A-Za-z0-9]*$/;
@@ -133,7 +131,6 @@
                 }
             });
 
-            // Validacijske poruke na bosanskom
             $.extend($.validator.messages, {
                 required: "Ovo polje je obavezno.",
                 email: "Unesite ispravnu email adresu.",
@@ -141,7 +138,6 @@
                 pattern: "Unesite vrijednost u ispravnom formatu."
             });
 
-            // Prijevod validacijskih poruka u sumarnom prikazu
             function translateValidationMessages() {
                 $('.validation-summary ul li').each(function() {
                     var text = $(this).text();
@@ -156,24 +152,20 @@
 
             translateValidationMessages();
 
-            // Open password change modal
             $("#change-password-btn").click(function() {
-                // Clear form data and errors
+
                 $("#change-password-form")[0].reset();
                 $("#password-errors").html("");
                 $(".password-error").html("");
 
-                // Show modal
                 const passwordModal = new bootstrap.Modal(document.getElementById('passwordChangeModal'));
                 passwordModal.show();
             });
 
-            // Submit password change
             $("#submit-password-change").click(function() {
-                // Validate form
+
                 let isValid = true;
 
-                // Check current password
                 if ($("#currentPassword").val() === "") {
                     $("#currentPassword-error").text("Trenutna lozinka je obavezna");
                     isValid = false;
@@ -181,7 +173,6 @@
                     $("#currentPassword-error").text("");
                 }
 
-                // Check new password
                 if ($("#newPassword").val() === "") {
                     $("#newPassword-error").text("Nova lozinka je obavezna");
                     isValid = false;
@@ -192,7 +183,6 @@
                     $("#newPassword-error").text("");
                 }
 
-                // Check confirm password
                 if ($("#confirmPassword").val() === "") {
                     $("#confirmPassword-error").text("Potvrda lozinke je obavezna");
                     isValid = false;
@@ -207,7 +197,6 @@
                     return;
                 }
 
-                // Submit form via AJAX
                 $.ajax({
                     url: "@Url.Action("ChangePassword", "Profil")",
                     type: "POST",
@@ -223,7 +212,7 @@
                     },
                     error: function(xhr) {
                         if (xhr.responseJSON && xhr.responseJSON.errors) {
-                            // Display validation errors
+
                             $("#password-errors").html("");
                             const errors = xhr.responseJSON.errors;
 
@@ -236,7 +225,7 @@
 
                             $("#password-errors").html(errorHtml);
                         } else {
-                            // Display general error
+
                             $("#password-errors").html("<div>Došlo je do greške. Pokušajte ponovo.</div>");
                         }
                     }

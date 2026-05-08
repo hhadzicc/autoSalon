@@ -1,11 +1,8 @@
-﻿// Put this file in your Services folder, e.g., Autosalon_OneZone/Services/VoziloService.cs
-
-using Microsoft.EntityFrameworkCore; // Potrebno za korišćenje DbContexta i metoda kao ToListAsync, FindAsync, etc.
-using Autosalon_OneZone.Models; // Namespace gde se nalaze vaši entiteti (Vozilo, itd.)
+using Microsoft.EntityFrameworkCore;
+using Autosalon_OneZone.Models;
 using Autosalon_OneZone.Data;
 namespace Autosalon_OneZone.Services
 {
-    // Interfejs za servis (dobra praksa za lakše testiranje i Dependency Injection)
     public interface IVoziloService
     {
         Task<IEnumerable<Vozilo>> GetAllVozilaAsync();
@@ -17,134 +14,117 @@ namespace Autosalon_OneZone.Services
         Task<IEnumerable<Vozilo>> SearchVozilaAsync(string searchTerm);
     }
 
-    // Implementacija servisa
     public class VoziloService : IVoziloService
     {
-        private readonly ApplicationDbContext _context; // Referenca na vaš DbContext
+        private readonly ApplicationDbContext _context;
 
-        // Konstruktor - DbContext se injektuje (Dependency Injection)
         public VoziloService(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // Dohvatanje svih vozila
         public async Task<IEnumerable<Vozilo>> GetAllVozilaAsync()
         {
             return await _context.Vozila.ToListAsync();
         }
 
-        // Dohvatanje vozila po ID-u
         public async Task<Vozilo> GetVoziloByIdAsync(int id)
         {
-            // FindAsync pronalazi entitet po primarnom ključu, prvo u memoriji, zatim u bazi
             return await _context.Vozila.FindAsync(id);
         }
 
-        // Dodavanje novog vozila
         public async Task<Vozilo> AddVoziloAsync(Vozilo vozilo)
         {
-            _context.Vozila.Add(vozilo); // Dodaj entitet u DbContext praćenje promena
-            await _context.SaveChangesAsync(); // Sačuvaj promene u bazi (INSERT)
-            return vozilo; // Vrati dodato vozilo sa popunjenim ID-om
+            _context.Vozila.Add(vozilo);
+            await _context.SaveChangesAsync();
+            return vozilo;
         }
 
-        // Ažuriranje postojećeg vozila
         public async Task<Vozilo> UpdateVoziloAsync(Vozilo vozilo)
         {
-            // Attach entitet ako nije već praćen ili uzmi entitet iz baze
             var existingVozilo = await _context.Vozila.FindAsync(vozilo.VoziloID);
 
             if (existingVozilo == null)
             {
-                return null; // Vozilo sa datim ID-om ne postoji
+                return null;
             }
 
-            // Ažuriraj svojstva postojećeg entiteta sa novim vrednostima
             _context.Entry(existingVozilo).CurrentValues.SetValues(vozilo);
-            // Ili ručno prekopirajte svojstva:
-            // existingVozilo.Marka = vozilo.Marka;
-            // existingVozilo.Model = vozilo.Model;
-            // ... ostala svojstva
 
-            await _context.SaveChangesAsync(); // Sačuvaj promene u bazi (UPDATE)
-            return existingVozilo; // Vrati ažurirano vozilo
+            await _context.SaveChangesAsync();
+            return existingVozilo;
         }
 
-        // Brisanje vozila
         public async Task<bool> DeleteVoziloAsync(int id)
         {
             var voziloToDelete = await _context.Vozila.FindAsync(id);
 
             if (voziloToDelete == null)
             {
-                return false; // Vozilo nije pronađeno
+                return false;
             }
 
-            _context.Vozila.Remove(voziloToDelete); // Označi entitet za brisanje
-            await _context.SaveChangesAsync(); // Sačuvaj promene u bazi (DELETE)
+            _context.Vozila.Remove(voziloToDelete);
+            await _context.SaveChangesAsync();
 
-            return true; // Brisanje uspešno
+            return true;
         }
 
-        // Implementacija Filtriranja vozila
         public async Task<IEnumerable<Vozilo>> FilterVozilaAsync(string marka, string model, int? godisteOd, int? godisteDo, TipGoriva? gorivo, decimal? cijenaOd, decimal? cijenaDo)
         {
-            var query = _context.Vozila.AsQueryable(); // Počni sa IQueryable
+            var query = _context.Vozila.AsQueryable();
 
             if (!string.IsNullOrEmpty(marka))
             {
-                query = query.Where(v => v.Marka.Contains(marka)); // Filtriraj po marki
+                query = query.Where(v => v.Marka.Contains(marka));
             }
 
             if (!string.IsNullOrEmpty(model))
             {
-                query = query.Where(v => v.Model.Contains(model)); // Filtriraj po modelu
+                query = query.Where(v => v.Model.Contains(model));
             }
 
             if (godisteOd.HasValue)
             {
-                query = query.Where(v => v.Godiste >= godisteOd.Value); // Filtriraj po godištu (od)
+                query = query.Where(v => v.Godiste >= godisteOd.Value);
             }
 
             if (godisteDo.HasValue)
             {
-                query = query.Where(v => v.Godiste <= godisteDo.Value); // Filtriraj po godištu (do)
+                query = query.Where(v => v.Godiste <= godisteDo.Value);
             }
 
             if (gorivo.HasValue)
             {
-                query = query.Where(v => v.Gorivo == gorivo.Value); // Filtriraj po tipu goriva
+                query = query.Where(v => v.Gorivo == gorivo.Value);
             }
 
             if (cijenaOd.HasValue)
             {
-                query = query.Where(v => v.Cijena >= cijenaOd.Value); // Filtriraj po ceni (od)
+                query = query.Where(v => v.Cijena >= cijenaOd.Value);
             }
 
             if (cijenaDo.HasValue)
             {
-                query = query.Where(v => v.Cijena <= cijenaDo.Value); // Filtriraj po ceni (do)
+                query = query.Where(v => v.Cijena <= cijenaDo.Value);
             }
 
-            return await query.ToListAsync(); // Izvrši upit i vrati rezultate
+            return await query.ToListAsync();
         }
 
-        // Implementacija Pretrage vozila (po imenu ili modelu)
         public async Task<IEnumerable<Vozilo>> SearchVozilaAsync(string searchTerm)
         {
             if (string.IsNullOrWhiteSpace(searchTerm))
             {
-                return new List<Vozilo>(); // Vrati praznu listu ako nema pojma za pretragu
+                return new List<Vozilo>();
             }
 
-            var term = searchTerm.ToLower(); // Pretraga bez obzira na velika/mala slova
+            var term = searchTerm.ToLower();
 
             return await _context.Vozila
                 .Where(v => v.Marka.ToLower().Contains(term) ||
                             v.Model.ToLower().Contains(term))
-                .ToListAsync(); // Izvrši pretragu
+                .ToListAsync();
         }
-
     }
 }

@@ -1,4 +1,3 @@
-﻿// Autosalon OneZone/ViewModels/KontaktViewModel.cs
 using System.ComponentModel.DataAnnotations;
 
 namespace Autosalon_OneZone.ViewModels

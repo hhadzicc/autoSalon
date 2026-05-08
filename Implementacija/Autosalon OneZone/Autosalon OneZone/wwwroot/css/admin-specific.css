@@ -1,4 +1,3 @@
-﻿/* admin-specific.css */
     .admin-sidebar-internal h2 {
         margin-top: 0;
         font-size: 1.2em;
@@ -11,23 +10,22 @@
     }
 
     .admin-sidebar-internal li {
-        margin-bottom: 5px; /* Manji razmak između stavki menija */
+        margin-bottom: 5px;
     }
 
-    /* Stilovi slicni nav-link klasi iz vaseg layouta za meni */
     .admin-sidebar-internal .nav-link-style {
         text-decoration: none;
-        color: #333; /* Boja linka */
+        color: #333;
         font-weight: bold;
-        display: block; /* Da link zauzme celu sirinu */
+        display: block;
         padding: 8px;
         border-radius: 4px;
-        transition: background-color 0.3s ease; /* Animacija promene boje */
+        transition: background-color 0.3s ease;
     }
 
         .admin-sidebar-internal .nav-link-style:hover {
-            background-color: #ddd; /* Boja pozadine na hover */
-            color: #007bff; /* Plava boja na hover */
+            background-color: #ddd;
+            color: #007bff;
         }
 
         .admin-sidebar-internal .nav-link-style.active {
@@ -36,10 +34,9 @@
             font-weight: bold;
         }
 
-    /* Dodatni stilovi za dugme "Odjavi se" u sidebar-u */
     .admin-sidebar-internal .logout-form {
-        display: block; /* Forma zauzima celu sirinu */
-        margin-top: 20px; /* Razmak od menija */
+        display: block;
+        margin-top: 20px;
     }
 
         .admin-sidebar-internal .logout-form button {
@@ -48,63 +45,55 @@
             padding: 0;
             cursor: pointer;
             font-weight: bold;
-            color: #dc3545; /* Standardna Bootstrap crvena boja (za upozorenja/greške) */
+            color: #dc3545;
         }
 
             .admin-sidebar-internal .logout-form button:hover {
                 text-decoration: underline;
             }
 
-
 .admin-content-internal {
     flex-grow: 1;
-    /* Uklonili smo horizontalni padding odavde */
+
     padding-top: 20px;
     padding-bottom: 20px;
-    padding-left: 0; /* Osigurajte da lijevi padding na ovome bude 0 ako ga stavljate na wrapper */
-    padding-right: 0; /* Osigurajte da desni padding na ovome bude 0 */
-    margin-left: 200px; /* Prostor za fiksni sidebar */
-    /* Dodajte po potrebi min-height: calc(100vh - 60px - visina_futer); da zauzme visinu */
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: 200px;
+
 }
 .admin-content-wrapper {
-    max-width: 1200px; /* Ostavite max-width ako ne zelite da sadrzaj ide skroz do desne ivice na sirokim ekranima */
-    /* *** UKLONILI SMO margin: 0 auto; ZA LIJEVO PORAVNANJE *** */
-    margin-left: 0; /* Explicitno postavite lijevu marginu na 0 */
-    margin-right: auto; /* Postavite desnu marginu na auto da se blok "gurne" ulijevo (alternativa uklanjanju obje margine) */
-    /* Ili jednostavno uklonite margin liniju skroz: margin: 0; */
+    max-width: 1200px;
 
-    padding: 0 20px; /* Dodajte horizontalni padding unutar wrappera (lijevo i desno) za razmak od ivica */
-    /* Ako želite samo razmak od lijeve ivice, koristite: padding-left: 20px; padding-right: 0; */
+    margin-left: 0;
+    margin-right: auto;
+
+    padding: 0 20px;
+
 }
 
-    /* 2. Stilovi za elemente unutar admin panela (imitacija Bootstrapa sa specifičnim selektorima) */
-
-    /* Kontejner za kontrole (dugmad, inputi) na vrhu svake sekcije */
     .admin-content-internal .admin-section-controls {
         margin-bottom: 20px;
         display: flex;
-        gap: 10px; /* Razmak između elemenata */
+        gap: 10px;
         align-items: center;
-        flex-wrap: wrap; /* Omogući prelamanje na manjim ekranima */
+        flex-wrap: wrap;
     }
 
-        /* Stil za input polje unutar kontrola */
         .admin-content-internal .admin-section-controls input[type="text"] {
-            /* Prilagodite Bootstrap form-control stilu */
-            flex-grow: 1; /* Input polje zauzima raspolozivi prostor */
-            padding: .375rem .75rem; /* Standardni Bootstrap padding */
+
+            flex-grow: 1;
+            padding: .375rem .75rem;
             font-size: 1rem;
             line-height: 1.5;
             color: #212529;
             background-color: #fff;
             background-clip: padding-box;
-            border: 1px solid #ced4da; /* Standardna Bootstrap boja ivice */
-            border-radius: .25rem; /* Standardni Bootstrap border-radius */
+            border: 1px solid #ced4da;
+            border-radius: .25rem;
             transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
         }
 
-    /* Stilovi za dugmad (imitacija Bootstrap .btn klasa) */
-    /* Osnovni stil dugmeta */
     .admin-content-internal .btn {
         display: inline-block;
         font-weight: 400;
@@ -117,16 +106,15 @@
         -moz-user-select: none;
         user-select: none;
         border: 1px solid transparent;
-        padding: .375rem .75rem; /* Standardni padding */
-        font-size: 1rem; /* Standardna veličina fonta */
-        border-radius: .25rem; /* Standardni border-radius */
+        padding: .375rem .75rem;
+        font-size: 1rem;
+        border-radius: .25rem;
         transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
     }
 
-    /* Stilovi za primarno dugme (.btn-primary) */
     .admin-content-internal .btn-primary {
         color: #fff;
-        background-color: #0d6efd; /* Standardna Bootstrap plava */
+        background-color: #0d6efd;
         border-color: #0d6efd;
     }
 
@@ -135,12 +123,10 @@
             background-color: #0b5ed7;
             border-color: #0a58ca;
         }
-    /* Dodajte i :focus, :active, disabled stanja ako želite potpunu imitaciju */
 
-    /* Stilovi za sekundarno dugme (.btn-secondary) */
     .admin-content-internal .btn-secondary {
         color: #fff;
-        background-color: #6c757d; /* Standardna Bootstrap siva */
+        background-color: #6c757d;
         border-color: #6c757d;
     }
 
@@ -149,13 +135,10 @@
             background-color: #5c636a;
             border-color: #565e64;
         }
-    /* Dodajte i :focus, :active, disabled stanja */
 
-
-    /* Stilovi za danger dugme (.btn-danger) */
     .admin-content-internal .btn-danger {
         color: #fff;
-        background-color: #dc3545; /* Standardna Bootstrap crvena */
+        background-color: #dc3545;
         border-color: #dc3545;
     }
 
@@ -164,13 +147,10 @@
             background-color: #cb2b37;
             border-color: #c12834;
         }
-    /* Dodajte i :focus, :active, disabled stanja */
 
-
-    /* Stilovi za info dugme (.btn-info) (za mailto link u podrsci) */
     .admin-content-internal .btn-info {
-        color: #000; /* Bootstrap info boja teksta je tamna */
-        background-color: #0dcaf0; /* Standardna Bootstrap svijetlo plava */
+        color: #000;
+        background-color: #0dcaf0;
         border-color: #0dcaf0;
     }
 
@@ -180,27 +160,23 @@
             border-color: #2icef4;
         }
 
-
-    /* Stilovi za malo dugme (.btn-sm) */
     .admin-content-internal .btn-sm {
         padding: .25rem .5rem;
         font-size: .875rem;
         border-radius: .2rem;
     }
 
-
-    /* Stilovi za tabele (.table) */
     .admin-content-internal .table {
         width: 100%;
         margin-bottom: 1rem;
-        color: #212529; /* Boja teksta */
-        vertical-align: top; /* Poravnanje sadržaja */
-        border-color: #dee2e6; /* Boja ivica */
+        color: #212529;
+        vertical-align: top;
+        border-color: #dee2e6;
     }
 
         .admin-content-internal .table > :not(caption) > * > * {
             padding: .5rem .5rem;
-            background-color: #fff; /* Standardna boja pozadine reda */
+            background-color: #fff;
             border-bottom-width: 1px;
             box-shadow: inset 0 0 0 9999px transparent;
         }
@@ -208,18 +184,13 @@
         .admin-content-internal .table > thead {
             vertical-align: bottom;
         }
-    /* Dodajte i ostala pravila za .table (striped, bordered, hover, itd.) ako zelite */
 
-    /* Stilovi za validacijske poruke (.text-danger) (za forme) */
     .admin-content-internal .text-danger {
-        color: #dc3545 !important; /* Koristi !important da nadjaca ostale boje teksta */
+        color: #dc3545 !important;
     }
 
-    /* Stilovi za forme (.form-group, .form-control ako se koriste) */
-    /* Preporučeno je da koristite form-control klasu na input poljima u formama
-   poput _AddVoziloForm.cshtml i _AddProfilForm.cshtml */
     .admin-content-internal .form-group {
-        margin-bottom: 1rem; /* Standardni razmak ispod grupe forme */
+        margin-bottom: 1rem;
     }
 
     .admin-content-internal .form-control {
@@ -239,15 +210,7 @@
         border-radius: .25rem;
         transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
     }
-/* Dodajte i ostale stilove za :focus, validaciju, itd. za form-control */
 
-
-/* Stilovi za Bootstrap Ikone */
-/* Ako zelite ikone, najlakse je linkovati bootstrap-icons.css samo za admin stranicu
-   umjesto kopiranja svih pravila za ikone. */
-
-
-/* Stil za sekciju sa kontrolama */
 .admin-section-controls {
     display: flex;
     justify-content: space-between;
@@ -255,22 +218,17 @@
     margin-bottom: 20px;
 }
 
-/* Leva grupa sa dugmetom za dodavanje */
 .admin-controls-left {
     display: flex;
     align-items: center;
 }
 
-/* Desna grupa sa pretragom */
 .admin-controls-right {
     display: flex;
     gap: 10px;
     align-items: center;
 }
 
-/* Stil za input polje pretrage */
 #profil-search-input {
     width: 250px;
 }
-
-

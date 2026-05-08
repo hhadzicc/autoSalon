@@ -21,12 +21,10 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
-// Dodaj Data Protection s perzistencijom u folderu Keys
 builder.Services.AddDataProtection()
     .PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(builder.Environment.ContentRootPath, "Keys")))
     .SetApplicationName("AutosalonOneZone");
 
-// Dodaj podršku za X-Forwarded-Proto header
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
@@ -138,7 +136,6 @@ using (var scope = app.Services.CreateScope())
         logger.LogError(ex, "Došlo je do greške prilikom inicijalizacije Identity podataka (rola i admin korisnika).");
     }
 
-    // Kreiraj folder Keys ako ne postoji
     try
     {
         var keysPath = Path.Combine(app.Environment.ContentRootPath, "Keys");
@@ -164,7 +161,6 @@ else
     app.UseHsts();
 }
 
-// Primjeni forwarded headers prije HTTPS redirekcije
 app.UseForwardedHeaders();
 
 app.UseHttpsRedirection();

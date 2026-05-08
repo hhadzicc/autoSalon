@@ -1,4 +1,3 @@
-﻿// Autosalon OneZone/Controllers/HomeController.cs - updated version
 using System.Diagnostics;
 using Autosalon_OneZone.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -34,10 +33,8 @@ namespace Autosalon_OneZone.Controllers
         [HttpGet]
         public IActionResult Kontakt()
         {
-            // Create view model
             var viewModel = new KontaktViewModel();
 
-            // Return the view with the model
             return View(viewModel);
         }
 
@@ -52,7 +49,6 @@ namespace Autosalon_OneZone.Controllers
 
             try
             {
-                // Create a new support entry
                 var podrska = new Podrska
                 {
                     Naslov = model.Naslov,
@@ -61,7 +57,6 @@ namespace Autosalon_OneZone.Controllers
                     Status = StatusUpita.Poslat
                 };
 
-                // If user is authenticated, attach their ID
                 if (User.Identity.IsAuthenticated)
                 {
                     var user = await _userManager.GetUserAsync(User);
@@ -72,26 +67,21 @@ namespace Autosalon_OneZone.Controllers
                     }
                     else
                     {
-                        // If we can't find the user for some reason
                         TempData["ErrorMessage"] = "Došlo je do problema sa vašim korisničkim nalogom.";
                         return View(model);
                     }
                 }
                 else
                 {
-                    // For unauthenticated users, we need to handle differently
-                    // For now, we'll redirect to email client
                     string subject = Uri.EscapeDataString(model.Naslov);
                     string body = Uri.EscapeDataString(model.Sadrzaj);
                     string mailtoUrl = $"mailto:autosalon@autosalon.com?subject={subject}&body={body}";
                     return Redirect(mailtoUrl);
                 }
 
-                // Save to database
                 _context.PodrskaUpiti.Add(podrska);
                 await _context.SaveChangesAsync();
 
-                // Show success message
                 TempData["SuccessMessage"] = "Vaša poruka je uspješno poslana!";
                 return RedirectToAction(nameof(Index));
             }

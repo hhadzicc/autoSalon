@@ -1,4 +1,3 @@
-﻿// Controllers/KorpaController.cs
 using Autosalon_OneZone.Data.Helpers;
 using Autosalon_OneZone.Models;
 using Autosalon_OneZone.Data;
@@ -19,7 +18,7 @@ using System.Text.Json.Serialization;
 
 namespace Autosalon_OneZone.Controllers
 {
-    [Authorize] // Zahtijeva autentikaciju za sve akcije u kontroleru
+    [Authorize]
     public class KorpaController : Controller
     {
         private readonly IPaymentService _paymentService;
@@ -48,7 +47,6 @@ namespace Autosalon_OneZone.Controllers
             {
                 _logger.LogInformation($"Početak dodavanja vozila ID: {id} u korpu");
 
-                // Pronađi vozilo u bazi
                 var vozilo = await _context.Vozila.FindAsync(id);
                 if (vozilo == null)
                 {
@@ -60,12 +58,9 @@ namespace Autosalon_OneZone.Controllers
                 decimal cijenaVozila = vozilo.Cijena ?? 0;
                 _logger.LogInformation($"Cijena vozila: {cijenaVozila}");
 
-                // Dohvati trenutno prijavljenog korisnika
                 var user = await _userManager.GetUserAsync(User);
                 if (user == null)
                 {
-                    // Ova linija se ne bi trebala izvršiti zbog [Authorize] atributa,
-                    // ali dodatna je provjera
                     _logger.LogWarning("Korisnik nije prijavljen iako je zaštićeno sa [Authorize]");
                     return RedirectToAction("Login", "Account",
                         new { returnUrl = Url.Action("Index", "Vozilo") });
@@ -73,7 +68,6 @@ namespace Autosalon_OneZone.Controllers
 
                 _logger.LogInformation($"Korisnik je prijavljen, ID: {user.Id}");
 
-                // Prvo provjerimo ima li korisnik već korpu
                 var korpa = await _context.Korpe
                     .Include(k => k.StavkeKorpe)
                     .FirstOrDefaultAsync(k => k.KorisnikId == user.Id);
@@ -82,22 +76,19 @@ namespace Autosalon_OneZone.Controllers
                 {
                     _logger.LogInformation("Korisnik nema korpu, kreiram novu");
 
-                    // Kreiraj novu korpu za korisnika
                     korpa = new Korpa
                     {
                         KorisnikId = user.Id,
-                        UkupnaCijena = 0 // Inicijalna ukupna cijena je 0
+                        UkupnaCijena = 0
                     };
 
                     _context.Korpe.Add(korpa);
                     await _context.SaveChangesAsync();
 
-                    // Ponovno dohvati korpu sa ID-em koji je generirala baza
                     korpa = await _context.Korpe.FirstOrDefaultAsync(k => k.KorisnikId == user.Id);
                     _logger.LogInformation($"Kreirana nova korpa, ID: {korpa.KorpaID}");
                 }
 
-                // Provjeri ima li već vozilo u korpi
                 var stavkaKorpe = await _context.StavkeKorpe
                     .FirstOrDefaultAsync(s => s.KorpaID == korpa.KorpaID && s.VoziloID == id);
 
@@ -105,7 +96,6 @@ namespace Autosalon_OneZone.Controllers
                 {
                     _logger.LogInformation($"Dodajem novo vozilo u korpu ID: {korpa.KorpaID}");
 
-                    // Dodaj novu stavku u korpu
                     var novaStavka = new StavkaKorpe
                     {
                         KorpaID = korpa.KorpaID,
@@ -116,7 +106,6 @@ namespace Autosalon_OneZone.Controllers
 
                     _context.StavkeKorpe.Add(novaStavka);
 
-                    // Ažuriraj ukupnu cijenu korpe
                     korpa.UkupnaCijena += cijenaVozila;
                     _context.Korpe.Update(korpa);
 
@@ -150,7 +139,6 @@ namespace Autosalon_OneZone.Controllers
                 List<CartItemViewModel> stavkeKorpe = new List<CartItemViewModel>();
                 decimal ukupnaCijena = 0;
 
-                // Za prijavljenog korisnika, dohvati korpu iz baze
                 var korpa = await _context.Korpe
                     .Include(k => k.StavkeKorpe)
                     .ThenInclude(s => s.Vozilo)
@@ -195,12 +183,10 @@ namespace Autosalon_OneZone.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> IzvrsiPlacanje(int VoziloID, decimal Cijena, string ImeVlasnika, string BrojKartice, string DatumIsteka, string Cvv)
         {
-            // Create a dictionary to hold validation errors
             var errors = new Dictionary<string, string>();
 
             try
             {
-                // Validate card owner name
                 if (string.IsNullOrWhiteSpace(ImeVlasnika))
                 {
                     errors.Add("imeVlasnika", "Ime i prezime su obavezni.");
@@ -210,7 +196,6 @@ namespace Autosalon_OneZone.Controllers
                     errors.Add("imeVlasnika", "Unesite i ime i prezime (mora sadržavati razmak).");
                 }
 
-                // Validate card number
                 string cleanCardNumber = new string(BrojKartice.Where(char.IsDigit).ToArray());
                 if (string.IsNullOrWhiteSpace(cleanCardNumber))
                 {
@@ -221,7 +206,6 @@ namespace Autosalon_OneZone.Controllers
                     errors.Add("brojKartice", "Broj kartice mora sadržavati tačno 16 cifara.");
                 }
 
-                // Validate expiration date
                 if (string.IsNullOrWhiteSpace(DatumIsteka))
                 {
                     errors.Add("datumIsteka", "Datum isteka je obavezan.");
@@ -235,7 +219,6 @@ namespace Autosalon_OneZone.Controllers
                     }
                     else
                     {
-                        // Use different variable names in validation to avoid scope conflicts
                         if (!int.TryParse(dateParts[0], out int monthVal) || monthVal < 1 || monthVal > 12)
                         {
                             errors.Add("datumIsteka", "Mjesec mora biti između 01 i 12.");
@@ -257,7 +240,6 @@ namespace Autosalon_OneZone.Controllers
                     }
                 }
 
-                // Validate CVV
                 string cleanCvv = new string(Cvv.Where(char.IsDigit).ToArray());
                 if (string.IsNullOrWhiteSpace(cleanCvv))
                 {
@@ -268,32 +250,27 @@ namespace Autosalon_OneZone.Controllers
                     errors.Add("cvv", "CVV kod mora sadržavati tačno 3 cifre.");
                 }
 
-                // If there are any validation errors, return them to the client
                 if (errors.Any())
                 {
                     return Json(new { success = false, errors });
                 }
 
-                // Parse expiration date for payment processing
                 var parts = DatumIsteka.Split('/');
                 string month = parts[0];
-                string year = "20" + parts[1]; // Convert YY to YYYY
+                string year = "20" + parts[1];
 
-                // Get the vehicle for description
                 var vozilo = await _context.Vozila.FindAsync(VoziloID);
                 if (vozilo == null)
                 {
                     return Json(new { success = false, message = "Vozilo nije pronađeno." });
                 }
 
-                // Get current user's email
                 var user = await _userManager.GetUserAsync(User);
                 if (user == null)
                 {
                     return Json(new { success = false, message = "Korisnik nije pronađen." });
                 }
 
-                // Create payment request
                 var paymentRequest = new PaymentRequest
                 {
                     CardNumber = cleanCardNumber,
@@ -307,12 +284,10 @@ namespace Autosalon_OneZone.Controllers
                     ProductId = VoziloID
                 };
 
-                // Process payment
                 var result = await _paymentService.ProcessPaymentAsync(paymentRequest);
 
                 if (result.Success)
                 {
-                    // Create order
                     var narudzba = new Narudzba
                     {
                         KorisnikId = user.Id,
@@ -324,7 +299,6 @@ namespace Autosalon_OneZone.Controllers
                     _context.Narudzbe.Add(narudzba);
                     await _context.SaveChangesAsync();
 
-                    // Add order item
                     var stavka = new StavkaKorpe
                     {
                         VoziloID = VoziloID,
@@ -335,19 +309,17 @@ namespace Autosalon_OneZone.Controllers
 
                     _context.StavkeKorpe.Add(stavka);
 
-                    // Create payment record
                     var placanje = new Placanje
                     {
                         NarudzbaID = narudzba.NarudzbaID,
                         DatumPlacanja = DateTime.Now,
                         Iznos = Cijena,
                         Status = StatusPlacanja.Uspjesno,
-                        KarticaID = null // You might want to store the masked card details
+                        KarticaID = null
                     };
 
                     _context.Placanja.Add(placanje);
 
-                    // Remove item from cart if it was there
                     var userCart = await _context.Korpe
                         .Include(k => k.StavkeKorpe)
                         .FirstOrDefaultAsync(k => k.KorisnikId == user.Id);
@@ -357,10 +329,8 @@ namespace Autosalon_OneZone.Controllers
                         var cartItem = userCart.StavkeKorpe.FirstOrDefault(s => s.VoziloID == VoziloID);
                         if (cartItem != null)
                         {
-                            // Remove item from cart
                             _context.StavkeKorpe.Remove(cartItem);
 
-                            // Update cart total
                             userCart.UkupnaCijena -= cartItem.CijenaStavke;
                             if (userCart.UkupnaCijena < 0)
                                 userCart.UkupnaCijena = 0;
@@ -384,7 +354,6 @@ namespace Autosalon_OneZone.Controllers
                 {
                     _logger.LogWarning($"Neuspješno plaćanje za vozilo ID: {VoziloID}, iznos: {Cijena}, korisnik: {user.Id}, razlog: {result.Message}");
 
-                    // Payment failed with Stripe
                     return Json(new { success = false, message = result.Message });
                 }
             }
@@ -395,15 +364,11 @@ namespace Autosalon_OneZone.Controllers
             }
         }
 
-
-
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
         public async Task<IActionResult> IzvrsiPlacanjeSvih(string OdabranaVozilaJSON, string ImeVlasnika, string BrojKartice, string DatumIsteka, string Cvv)
         {
-            // Create a dictionary to hold validation errors
             var errors = new Dictionary<string, string>();
 
             try
@@ -411,14 +376,12 @@ namespace Autosalon_OneZone.Controllers
                 _logger.LogInformation("Početak obrade grupnog plaćanja");
                 _logger.LogInformation("Primljeni JSON: {OdabranaVozilaJSON}", OdabranaVozilaJSON);
 
-                // Koristimo posebne opcije za deserijalizaciju
                 var options = new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true,
                     NumberHandling = JsonNumberHandling.AllowReadingFromString
                 };
 
-                // Dekodiranje JSON podataka
                 var odabranaVozila = JsonSerializer.Deserialize<List<OdabranoVoziloViewModel>>(OdabranaVozilaJSON, options);
 
                 if (odabranaVozila == null || !odabranaVozila.Any())
@@ -428,7 +391,6 @@ namespace Autosalon_OneZone.Controllers
 
                 _logger.LogInformation("Broj odabranih vozila: {Count}", odabranaVozila.Count);
 
-                // Validate card owner name
                 if (string.IsNullOrWhiteSpace(ImeVlasnika))
                 {
                     errors.Add("checkoutImeVlasnika", "Ime i prezime su obavezni.");
@@ -438,7 +400,6 @@ namespace Autosalon_OneZone.Controllers
                     errors.Add("checkoutImeVlasnika", "Unesite i ime i prezime (mora sadržavati razmak).");
                 }
 
-                // Validate card number
                 string cleanCardNumber = new string(BrojKartice.Where(char.IsDigit).ToArray());
                 if (string.IsNullOrWhiteSpace(cleanCardNumber))
                 {
@@ -449,7 +410,6 @@ namespace Autosalon_OneZone.Controllers
                     errors.Add("checkoutBrojKartice", "Broj kartice mora sadržavati tačno 16 cifara.");
                 }
 
-                // Validate expiration date
                 if (string.IsNullOrWhiteSpace(DatumIsteka))
                 {
                     errors.Add("checkoutDatumIsteka", "Datum isteka je obavezan.");
@@ -463,7 +423,6 @@ namespace Autosalon_OneZone.Controllers
                     }
                     else
                     {
-                        // Use different variable names in validation to avoid scope conflicts
                         if (!int.TryParse(dateParts[0], out int monthVal) || monthVal < 1 || monthVal > 12)
                         {
                             errors.Add("checkoutDatumIsteka", "Mjesec mora biti između 01 i 12.");
@@ -485,7 +444,6 @@ namespace Autosalon_OneZone.Controllers
                     }
                 }
 
-                // Validate CVV
                 string cleanCvv = new string(Cvv.Where(char.IsDigit).ToArray());
                 if (string.IsNullOrWhiteSpace(cleanCvv))
                 {
@@ -496,25 +454,21 @@ namespace Autosalon_OneZone.Controllers
                     errors.Add("checkoutCvv", "CVV kod mora sadržavati tačno 3 cifre.");
                 }
 
-                // If there are any validation errors, return them to the client
                 if (errors.Any())
                 {
                     return Json(new { success = false, errors });
                 }
 
-                // Parse expiration date for payment processing
                 var parts = DatumIsteka.Split('/');
                 string month = parts[0];
-                string year = "20" + parts[1]; // Convert YY to YYYY
+                string year = "20" + parts[1];
 
-                // Dohvati trenutno prijavljenog korisnika
                 var user = await _userManager.GetUserAsync(User);
                 if (user == null)
                 {
                     return Json(new { success = false, message = "Korisnik nije pronađen." });
                 }
 
-                // Dohvati korpu korisnika sa svim stavkama
                 var korpa = await _context.Korpe
                     .Include(k => k.StavkeKorpe)
                     .ThenInclude(s => s.Vozilo)
@@ -525,11 +479,9 @@ namespace Autosalon_OneZone.Controllers
                     return Json(new { success = false, message = "Korpa nije pronađena." });
                 }
 
-                // Kreiraj set ID-ova odabranih vozila za brže poređenje
                 var odabraniVozilaIds = odabranaVozila.Select(v => v.id).ToHashSet();
                 _logger.LogInformation("Odabrana vozila IDs: {IDs}", string.Join(", ", odabraniVozilaIds));
 
-                // Provjeri da li sva odabrana vozila postoje u korpi
                 foreach (var voziloId in odabraniVozilaIds)
                 {
                     if (!korpa.StavkeKorpe.Any(s => s.VoziloID == voziloId))
@@ -538,12 +490,10 @@ namespace Autosalon_OneZone.Controllers
                     }
                 }
 
-                // Izračunaj ukupnu cijenu odabranih vozila
                 decimal ukupnaCijena = korpa.StavkeKorpe
                     .Where(s => odabraniVozilaIds.Contains(s.VoziloID))
                     .Sum(s => s.CijenaStavke);
 
-                // Create payment request for the total amount
                 var paymentRequest = new PaymentRequest
                 {
                     CardNumber = cleanCardNumber,
@@ -554,15 +504,13 @@ namespace Autosalon_OneZone.Controllers
                     CustomerName = ImeVlasnika,
                     Email = user.Email,
                     Description = $"Grupna kupovina {odabraniVozilaIds.Count} vozila",
-                    ProductId = 0 // Group purchase has no single product ID
+                    ProductId = 0
                 };
 
-                // Process payment using the payment service
                 var result = await _paymentService.ProcessPaymentAsync(paymentRequest);
 
                 if (result.Success)
                 {
-                    // Kreiramo zajedničku narudžbu za sva vozila
                     var narudzba = new Narudzba
                     {
                         KorisnikId = user.Id,
@@ -575,7 +523,6 @@ namespace Autosalon_OneZone.Controllers
                     await _context.SaveChangesAsync();
                     _logger.LogInformation("Kreirana zajednička narudžba, ID: {NarudzbaID}", narudzba.NarudzbaID);
 
-                    // Kreiramo karticu jednom za sve transakcije
                     string maskicaniBrojKartice = cleanCardNumber;
                     if (maskicaniBrojKartice.Length >= 4)
                     {
@@ -594,7 +541,6 @@ namespace Autosalon_OneZone.Controllers
                     await _context.SaveChangesAsync();
                     _logger.LogInformation("Kreirana kartica, ID: {KarticaID}", kartica.KarticaID);
 
-                    // Kreiramo JEDNO plaćanje za cijelu narudžbu (ovo rješava problem)
                     var placanje = new Placanje
                     {
                         NarudzbaID = narudzba.NarudzbaID,
@@ -608,42 +554,34 @@ namespace Autosalon_OneZone.Controllers
                     _context.Placanja.Add(placanje);
                     _logger.LogInformation("Kreirano jedno plaćanje za cijelu narudžbu");
 
-                    // Lista za praćenje kupljenih vozila i stavki za ažuriranje
                     List<int> kupljenaVozilaIds = new List<int>();
                     List<StavkaKorpe> stavkeZaAzuriranje = new List<StavkaKorpe>();
 
-                    // Pronađi stavke korpe koje odgovaraju odabranim vozilima
                     foreach (var stavkaKorpe in korpa.StavkeKorpe.ToList())
                     {
-                        // Provjeri da li je vozilo iz ove stavke među odabranim vozilima
                         if (odabraniVozilaIds.Contains(stavkaKorpe.VoziloID))
                         {
                             _logger.LogInformation("Procesiranje odabrane stavke korpe, VoziloID: {VoziloID}", stavkaKorpe.VoziloID);
 
-                            // Prebaci stavku iz korpe u narudžbu
                             stavkaKorpe.KorpaID = null;
                             stavkaKorpe.NarudzbaID = narudzba.NarudzbaID;
                             stavkeZaAzuriranje.Add(stavkaKorpe);
 
-                            // Ažuriraj ukupnu cijenu korpe
                             korpa.UkupnaCijena -= stavkaKorpe.CijenaStavke;
                             kupljenaVozilaIds.Add(stavkaKorpe.VoziloID);
                         }
                     }
 
-                    // Ažuriraj stavke umjesto da ih brišeš
                     foreach (var stavka in stavkeZaAzuriranje)
                     {
                         _context.StavkeKorpe.Update(stavka);
                     }
 
-                    // Ažuriraj korpu
                     if (korpa.UkupnaCijena < 0)
                         korpa.UkupnaCijena = 0;
 
                     _context.Korpe.Update(korpa);
 
-                    // Sačuvaj sve promjene
                     await _context.SaveChangesAsync();
                     _logger.LogInformation("Sve promjene uspješno sačuvane");
 
@@ -667,56 +605,16 @@ namespace Autosalon_OneZone.Controllers
             }
         }
 
-
-
-
-
-        // Validacija imena i prezimena - dozvoljava samo slova engleskog alfabeta
         private bool IsValidName(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
                 return false;
 
-            // Provjerava da li su svi znakovi slova (dozvoljena su i razmaci između imena i prezimena)
             return name.All(c => char.IsLetter(c) || char.IsWhiteSpace(c));
         }
 
-        // Jednostavna validacija broja kartice - više ne koristimo Luhnov algoritam
-        // Novu metodu IsValidCreditCardNumber nećemo koristiti, ali je zadržavam kao komentar
-        // da pokažem da smo uklonili kompleksnu validaciju
-        /*
-        // Stara validacija sa Luhn algoritmom - više je ne koristimo
-        private bool IsValidCreditCardNumber(string cardNumber)
-        {
-            // The Luhn Algorithm
-            // https://en.wikipedia.org/wiki/Luhn_algorithm
-            int[] numberArray = cardNumber.Select(c => c - '0').ToArray();
-            int sum = 0;
-            bool alternate = false;
-
-            for (int i = numberArray.Length - 1; i >= 0; i--)
-            {
-                int n = numberArray[i];
-                if (alternate)
-                {
-                    n *= 2;
-                    if (n > 9)
-                    {
-                        n -= 9;
-                    }
-                }
-                sum += n;
-                alternate = !alternate;
-            }
-
-            return (sum % 10 == 0);
-        }
-        */
-
-        // Validacija datuma isteka kartice
         private bool ValidateExpiryDate(string expiryDate)
         {
-            // Očekivani format: MM/YY
             if (!System.Text.RegularExpressions.Regex.IsMatch(expiryDate, @"^(0[1-9]|1[0-2])\/[0-9]{2}$"))
                 return false;
 
@@ -727,19 +625,14 @@ namespace Autosalon_OneZone.Controllers
             if (!int.TryParse(parts[0], out int month) || !int.TryParse(parts[1], out int year))
                 return false;
 
-            // Dodaj 2000 da bi dobio punu godinu
             year += 2000;
 
-            // Provjeri da li je kartica istekla
             DateTime now = DateTime.Now;
-            DateTime cardExpiry = new DateTime(year, month, DateTime.DaysInMonth(year, month)); // Zadnji dan mjeseca
+            DateTime cardExpiry = new DateTime(year, month, DateTime.DaysInMonth(year, month));
 
             return cardExpiry >= new DateTime(now.Year, now.Month, 1);
         }
 
-
-
-        // GET: /Korpa/Uspjeh/5
         public async Task<IActionResult> Uspjeh(int id)
         {
             var narudzba = await _context.Narudzbe
@@ -755,9 +648,6 @@ namespace Autosalon_OneZone.Controllers
             return View(narudzba);
         }
 
-
-
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UkloniIzKorpe(int id)
@@ -767,7 +657,6 @@ namespace Autosalon_OneZone.Controllers
                 _logger.LogInformation($"Uklanjanje stavke iz korpe, ID: {id}");
                 var user = await _userManager.GetUserAsync(User);
 
-                // Za prijavljenog korisnika, briši iz baze
                 var korpa = await _context.Korpe
                     .FirstOrDefaultAsync(k => k.KorisnikId == user.Id);
 
@@ -780,9 +669,8 @@ namespace Autosalon_OneZone.Controllers
                     {
                         _logger.LogInformation($"Pronađena stavka za brisanje, ID: {stavka.StavkaID}, Cijena: {stavka.CijenaStavke}");
 
-                        // Umanjujemo ukupnu cijenu korpe
                         korpa.UkupnaCijena -= (stavka.CijenaStavke * stavka.Kolicina);
-                        if (korpa.UkupnaCijena < 0) korpa.UkupnaCijena = 0; // Sigurnosna provjera
+                        if (korpa.UkupnaCijena < 0) korpa.UkupnaCijena = 0;
 
                         _context.Korpe.Update(korpa);
                         _context.StavkeKorpe.Remove(stavka);
@@ -834,15 +722,12 @@ namespace Autosalon_OneZone.Controllers
                     {
                         _logger.LogInformation($"Ažuriranje količine stavke ID: {stavkaId}, stara kol: {stavka.Kolicina}, nova kol: {kolicina}");
 
-                        // Računamo razliku za ukupnu cijenu
                         decimal staraVrijednost = stavka.Kolicina * stavka.CijenaStavke;
                         decimal novaVrijednost = kolicina * stavka.CijenaStavke;
 
-                        // Ažuriraj količinu stavke
                         stavka.Kolicina = kolicina;
                         _context.StavkeKorpe.Update(stavka);
 
-                        // Ažuriraj ukupnu cijenu korpe
                         korpa.UkupnaCijena = korpa.UkupnaCijena - staraVrijednost + novaVrijednost;
                         _context.Korpe.Update(korpa);
 
@@ -867,7 +752,6 @@ namespace Autosalon_OneZone.Controllers
         {
             try
             {
-                // Checkout je dostupan samo prijavljenim korisnicima
                 return View();
             }
             catch (Exception ex)
@@ -892,10 +776,8 @@ namespace Autosalon_OneZone.Controllers
 
                 if (korpa != null)
                 {
-                    // Ukloni sve stavke iz korpe
                     _context.StavkeKorpe.RemoveRange(korpa.StavkeKorpe);
 
-                    // Resetiraj ukupnu cijenu
                     korpa.UkupnaCijena = 0;
                     _context.Korpe.Update(korpa);
 

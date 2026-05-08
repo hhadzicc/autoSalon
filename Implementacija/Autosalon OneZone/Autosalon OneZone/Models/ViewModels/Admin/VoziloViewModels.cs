@@ -1,28 +1,23 @@
 ﻿using System;
-using System.Collections.Generic; // Mozda ne treba, ali ne skodi
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Http; // Za IFormFile
+using Microsoft.AspNetCore.Http;
 
-// Ovisno gdje se nalaze TipGoriva i Vozilo entitet:
-// using Autosalon_OneZone.Models; // Ako su u Models folderu i ovom namespace-u
-// Ili specifičnije: using Autosalon_OneZone.Models.DomainEntities; // Ako su u fajlu DomainEntities.cs sa tim namespace-om
-
-namespace Autosalon_OneZone.ViewModels.Admin // Provjerite da li je ovo ispravan namespace za ViewModele
+namespace Autosalon_OneZone.ViewModels.Admin
 {
     public class VoziloListViewModel
     {
-        public List<Autosalon_OneZone.Models.Vozilo>? Vozila { get; set; } // Uklonjen warning CS8618: dodan '?'
-        public string? SearchQuery { get; set; } // Uklonjen warning CS8618: dodan '?'
-        public string? SortOrder { get; set; } // Uklonjen warning CS8618: dodan '?'
+        public List<Autosalon_OneZone.Models.Vozilo>? Vozila { get; set; }
+        public string? SearchQuery { get; set; }
+        public string? SortOrder { get; set; }
         public int? CurrentPage { get; set; }
-        // public int TotalPages { get; set; } // Uklonjen warning CS8618: ako nije inicijalizovan, dodati '= 0;' ili ?
-        public int TotalPages { get; set; } = 0; // Primjer inicijalizacije za int
 
+        public int TotalPages { get; set; } = 0;
     }
 
     public class AddVoziloViewModel
     {
-        public int VoziloID { get; set; } // 0 za Add, > 0 za Edit
+        public int VoziloID { get; set; }
 
         [Required(ErrorMessage = "Marka vozila ne smije biti prazna.")]
         [MaxLength(100, ErrorMessage = "Marka ne može biti duža od 100 karaktera.")]
@@ -73,20 +68,17 @@ namespace Autosalon_OneZone.ViewModels.Admin // Provjerite da li je ovo ispravan
         public string? Opis { get; set; }
     }
 
-
-    // Keep EditVoziloViewModel inheriting if it only adds image handling
     public class EditVoziloViewModel : AddVoziloViewModel
     {
-        public string? PostojecaSlikaPath { get; set; } // Path do postojeće slike za Edit
-        public bool ZadrzatiPostojecuSliku { get; set; } = true; // Flag za edit
+        public string? PostojecaSlikaPath { get; set; }
+        public bool ZadrzatiPostojecuSliku { get; set; } = true;
     }
 
-    // Ostali ViewModeli kao prije
     public class VoziloDetailsViewModel
     {
-        public Autosalon_OneZone.Models.Vozilo? Vozilo { get; set; } // Uklonjen warning CS8618: dodan '?'
-        public List<Autosalon_OneZone.Models.Recenzija>? Recenzije { get; set; } // Uklonjen warning CS8618: dodan '?'
-                                                                                 // public double ProsjecnaOcjena { get; set; } // Uklonjen warning CS8618: ako nije inicijalizovan, dodati '= 0;' ili ?
-        public double ProsjecnaOcjena { get; set; } = 0; // Primjer inicijalizacije za double
+        public Autosalon_OneZone.Models.Vozilo? Vozilo { get; set; }
+        public List<Autosalon_OneZone.Models.Recenzija>? Recenzije { get; set; }
+
+        public double ProsjecnaOcjena { get; set; } = 0;
     }
 }

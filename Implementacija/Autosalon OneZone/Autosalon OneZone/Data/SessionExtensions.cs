@@ -1,4 +1,3 @@
-// Kreirajte novi fajl SessionExtensions.cs u folderu Helpers ili Utils
 using Microsoft.AspNetCore.Http;
 using System.Text.Json;
 

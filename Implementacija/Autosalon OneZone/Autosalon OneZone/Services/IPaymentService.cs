@@ -1,4 +1,3 @@
-﻿// Services/IPaymentService.cs
 using Autosalon_OneZone.Models;
 
 namespace Autosalon_OneZone.Services

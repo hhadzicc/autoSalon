@@ -1,4 +1,3 @@
-﻿// Models/ViewModels/PurchasedItemsViewModel.cs
 using System;
 using System.Collections.Generic;
 

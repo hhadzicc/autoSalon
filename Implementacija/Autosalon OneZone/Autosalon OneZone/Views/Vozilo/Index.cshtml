@@ -2,7 +2,6 @@
 @inject SignInManager<Autosalon_OneZone.Models.ApplicationUser> SignInManager
 @inject UserManager<Autosalon_OneZone.Models.ApplicationUser> UserManager
 
-
 @model IEnumerable<Autosalon_OneZone.Models.Vozilo>
 @{
     ViewData["Title"] = "Vozila";
@@ -10,8 +9,6 @@
 }
 <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 
-
-@* Show search info if search was performed *@
 @if (!string.IsNullOrEmpty(ViewData["SearchTerm"] as string))
 {
     <div class="alert alert-info">
@@ -98,7 +95,7 @@
                     </div>
 
                     <div class="row">
-                        <!-- Godište filter -->
+
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Godište:</label>
                             <div class="input-group">
@@ -112,7 +109,6 @@
                             </div>
                         </div>
 
-                        <!-- Gorivo filter -->
                         <div class="col-md-4 mb-3">
                             <label for="gorivo" class="form-label">Gorivo:</label>
                             <div class="input-group">
@@ -140,7 +136,6 @@
                             </div>
                         </div>
 
-                        <!-- Boja filter -->
                         <div class="col-md-4 mb-3">
                             <label for="boja" class="form-label">Boja:</label>
                             <div class="input-group">
@@ -154,7 +149,7 @@
                     </div>
 
                     <div class="row">
-                        <!-- Kubikaža filter -->
+
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Kubikaža:</label>
                             <div class="input-group">
@@ -168,7 +163,6 @@
                             </div>
                         </div>
 
-                        <!-- Kilometraža filter -->
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Kilometraža:</label>
                             <div class="input-group">
@@ -182,7 +176,6 @@
                             </div>
                         </div>
 
-                        <!-- Cijena filter -->
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Cijena (€):</label>
                             <div class="input-group">
@@ -211,7 +204,6 @@
     </div>
 </div>
 
-
 <style>
     .card-container {
         padding: 0 25px;
@@ -239,10 +231,9 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
-    /* Povećane dimenzije okvira za sliku */
     .image-container {
-        width: 350px; /* Povećano sa 240px */
-        height: 240px; /* Fiksna visina za bolju konzistentnost */
+        width: 350px;
+        height: 240px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -254,7 +245,7 @@
     .vehicle-image {
         width: 100%;
         height: 100%;
-        object-fit: contain; /* Osigurava da se cijela slika vidi */
+        object-fit: contain;
     }
 
     .vehicle-price {
@@ -265,11 +256,11 @@
     }
 
     .vehicle-details {
-        font-size: 1.05rem; /* Malo smanjeno zbog većeg prostora za sliku */
+        font-size: 1.05rem;
     }
 
     .vehicle-specs {
-        width: 100%; /* Promijenjeno sa 120% */
+        width: 100%;
         padding: 15px 0;
     }
 
@@ -292,16 +283,13 @@
         position: absolute;
         bottom: 0;
         right: 0;
-        width: calc(100% - 300px); /* Prilagođeno novoj širini slike */
+        width: calc(100% - 300px);
         display: flex;
         justify-content: flex-end;
         gap: 10px;
     }
 </style>
 
-
-
-@* Display results count with new class *@
 <p class="results-count">Pronađeno @Model.Count() vozila</p>
 
 @if (!Model.Any())
@@ -334,7 +322,7 @@ else
                                     <h5 class="card-title">@vozilo.Marka @vozilo.Model</h5>
 
                                     <div class="vehicle-specs">
-                                        <!-- Vehicle details with larger text -->
+
                                         <p class="card-text mb-1 vehicle-details">
                                             Godište: @vozilo.Godiste<br>
                                             Gorivo: @vozilo.Gorivo<br>
@@ -366,8 +354,6 @@ else
                                 }
         </div>
 
-
-
                         </div>
                     </div>
                 </div>
@@ -376,10 +362,9 @@ else
     </div>
 }
 
-
 @section Scripts {
     <script>
-        // Function to clear individual filter fields
+
         function clearFilter(...fields) {
             fields.forEach(field => {
                 document.getElementById(field).value = '';
@@ -387,19 +372,16 @@ else
         }
 
         $(document).ready(function() {
-            // Handle the Clear All Filters button
+
             $('#clearAllFilters').click(function() {
-                // Keep the search term, clear everything else
+
                 var searchTerm = '@ViewData["SearchTerm"]';
 
-                // Reset all filter form fields
                 $('#filterForm').find('input:not([name="searchTerm"])').val('');
                 $('#filterForm').find('select:not([name="searchTerm"])').val('');
 
-                // Reset sort order to default
                 $('#sortOrder').val('');
 
-                // If there was a search term, maintain it
                 if (searchTerm) {
                     $('<input>').attr({
                         type: 'hidden',
@@ -408,24 +390,18 @@ else
                     }).appendTo('#filterForm');
                 }
 
-                // Submit the form
                 $('#filterForm').submit();
             });
 
-            // Change event for sort order to auto-submit
             $('#sortOrder').change(function() {
                 $('#filterForm').submit();
             });
 
-            // Validation for godište (year range) with fixes:
-            // 1. Remove automatic "1900" default
-            // 2. Add range validation between Od and Do
             $('#godisteOd, #godisteDo').on('change', function() {
                 var min = 1900;
                 var max = @currentYear;
                 var val = $(this).val() ? parseInt($(this).val()) : '';
 
-                // Only validate if value is entered
                 if (val !== '') {
                     if (val < min) {
                         $(this).val(min);
@@ -433,7 +409,6 @@ else
                         $(this).val(max);
                     }
 
-                    // Validate Od <= Do
                     if (this.id === 'godisteOd' && $('#godisteDo').val()) {
                         var doVal = parseInt($('#godisteDo').val());
                         if (val > doVal) {
@@ -449,7 +424,6 @@ else
                 }
             });
 
-            // Add range validation for all other Od-Do fields
             function validateRange(odId, doId) {
                 var odVal = $('#' + odId).val() ? parseFloat($('#' + odId).val()) : '';
                 var doVal = $('#' + doId).val() ? parseFloat($('#' + doId).val()) : '';
@@ -459,7 +433,6 @@ else
                 }
             }
 
-            // Add validation to other range fields
             $('#kubikazaOd, #kubikazaDo').on('change', function() {
                 validateRange('kubikazaOd', 'kubikazaDo');
             });
@@ -472,7 +445,6 @@ else
                 validateRange('cijenaOd', 'cijenaDo');
             });
 
-            // Show filter panel if filters are applied
             if (
                 '@ViewData["GodisteOd"]' ||
                 '@ViewData["GodisteDo"]' ||

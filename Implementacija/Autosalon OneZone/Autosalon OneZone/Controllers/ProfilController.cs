@@ -47,7 +47,6 @@ namespace Autosalon_OneZone.Controllers
             var roles = await _userManager.GetRolesAsync(user);
             string role = roles.FirstOrDefault() ?? "Klijent";
 
-            // Get user reviews
             var userReviews = await _context.Recenzije
                 .Include(r => r.Vozilo)
                 .Where(r => r.KorisnikId == user.Id)
@@ -231,7 +230,6 @@ namespace Autosalon_OneZone.Controllers
                 return NotFound($"Korisnik sa ID-om '{_userManager.GetUserId(User)}' nije pronađen.");
             }
 
-            // Get all orders for this user
             var narudzbe = await _context.Narudzbe
                 .Where(n => n.KorisnikId == user.Id)
                 .Include(n => n.StavkeKorpe)
@@ -239,21 +237,18 @@ namespace Autosalon_OneZone.Controllers
                 .OrderByDescending(n => n.DatumNarudzbe)
                 .ToListAsync();
 
-            // Get all user reviews
             var recenzije = await _context.Recenzije
                 .Where(r => r.KorisnikId == user.Id)
                 .ToListAsync();
 
             var model = new PurchasedItemsViewModel();
 
-            // Use a dictionary to track unique vehicles by VoziloID
             var uniqueVehicles = new Dictionary<int, PurchasedItemsViewModel.PurchasedItemViewModel>();
 
             foreach (var narudzba in narudzbe)
             {
                 foreach (var stavka in narudzba.StavkeKorpe)
                 {
-                    // If we haven't seen this vehicle before, or if this purchase is more recent than what we've seen
                     if (!uniqueVehicles.ContainsKey(stavka.VoziloID) ||
                         narudzba.DatumNarudzbe > uniqueVehicles[stavka.VoziloID].DatumKupovine)
                     {
@@ -280,18 +275,15 @@ namespace Autosalon_OneZone.Controllers
                             };
                         }
 
-                        // Replace or add the vehicle to the dictionary
                         uniqueVehicles[stavka.VoziloID] = purchasedItem;
                     }
                 }
             }
 
-            // Add all unique vehicles to the model
             model.PurchasedItems = uniqueVehicles.Values.ToList();
 
             return View(model);
         }
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -309,7 +301,6 @@ namespace Autosalon_OneZone.Controllers
                 return NotFound($"Korisnik sa ID-om '{_userManager.GetUserId(User)}' nije pronađen.");
             }
 
-            // Check if user has actually purchased this vehicle
             var hasPurchased = await _context.Narudzbe
                 .Where(n => n.KorisnikId == user.Id)
                 .SelectMany(n => n.StavkeKorpe)
@@ -321,13 +312,11 @@ namespace Autosalon_OneZone.Controllers
                 return RedirectToAction("KupljeniArtikli");
             }
 
-            // Check if user already has a review for this vehicle
             var existingReview = await _context.Recenzije
                 .FirstOrDefaultAsync(r => r.KorisnikId == user.Id && r.VoziloID == voziloId);
 
             if (existingReview != null)
             {
-                // Update existing review
                 existingReview.Ocjena = ocjena;
                 existingReview.Komentar = komentar;
                 existingReview.DatumRecenzije = DateTime.Now;
@@ -339,7 +328,6 @@ namespace Autosalon_OneZone.Controllers
             }
             else
             {
-                // Create new review
                 var recenzija = new Recenzija
                 {
                     KorisnikId = user.Id,

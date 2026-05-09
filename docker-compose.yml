@@ -1,0 +1,51 @@
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: autosalon-db
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD:-AutoSalon_Demo123!}
+    ports:
+      - "14333:1433"
+    volumes:
+      - autosalon-sql-data:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "(/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$${MSSQL_SA_PASSWORD}\" -C -Q \"SELECT 1\" || /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P \"$${MSSQL_SA_PASSWORD}\" -Q \"SELECT 1\")"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: autosalon-web
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__DefaultConnection: Server=db,1433;Database=AutoSalonDb;User Id=sa;Password=${MSSQL_SA_PASSWORD:-AutoSalon_Demo123!};TrustServerCertificate=True;MultipleActiveResultSets=true
+      Database__ApplyMigrations: "true"
+      Database__SeedDemoData: "true"
+      AdminUserSecrets__Email: ${DEMO_ADMIN_EMAIL:-admin@autosalon.local}
+      AdminUserSecrets__Password: ${DEMO_ADMIN_PASSWORD:-Admin123!}
+      AdminUserSecrets__FirstName: ${DEMO_ADMIN_FIRST_NAME:-Demo}
+      AdminUserSecrets__LastName: ${DEMO_ADMIN_LAST_NAME:-Admin}
+      DemoUsers__BuyerEmail: ${DEMO_BUYER_EMAIL:-kupac@autosalon.local}
+      DemoUsers__BuyerPassword: ${DEMO_BUYER_PASSWORD:-Kupac123!}
+      DemoUsers__SellerEmail: ${DEMO_SELLER_EMAIL:-prodavac@autosalon.local}
+      DemoUsers__SellerPassword: ${DEMO_SELLER_PASSWORD:-Prodavac123!}
+      Stripe__UseMockPayments: "true"
+      Stripe__SecretKey: ${STRIPE_SECRET_KEY:-}
+      Stripe__PublishableKey: ${STRIPE_PUBLISHABLE_KEY:-}
+    ports:
+      - "8080:8080"
+    volumes:
+      - autosalon-keys:/app/Keys
+
+volumes:
+  autosalon-sql-data:
+  autosalon-keys:

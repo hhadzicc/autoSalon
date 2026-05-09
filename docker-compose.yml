@@ -38,7 +38,7 @@ services:
       DemoUsers__BuyerPassword: ${DEMO_BUYER_PASSWORD:-Kupac123!}
       DemoUsers__SellerEmail: ${DEMO_SELLER_EMAIL:-prodavac@autosalon.local}
       DemoUsers__SellerPassword: ${DEMO_SELLER_PASSWORD:-Prodavac123!}
-      Stripe__UseMockPayments: "true"
+      Stripe__UseMockPayments: ${STRIPE_USE_MOCK_PAYMENTS:-true}
       Stripe__SecretKey: ${STRIPE_SECRET_KEY:-}
       Stripe__PublishableKey: ${STRIPE_PUBLISHABLE_KEY:-}
     ports:

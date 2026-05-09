@@ -3,15 +3,22 @@ using Autosalon_OneZone.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Autosalon_OneZone.Data;
-using Stripe;
 using Microsoft.AspNetCore.HttpOverrides;
 using System.IO;
 using Microsoft.AspNetCore.DataProtection;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
-StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
-builder.Services.AddScoped<IPaymentService, StripePaymentService>();
+
+var stripeSettings = builder.Configuration.GetSection("Stripe").Get<StripeSettings>() ?? new StripeSettings();
+if (stripeSettings.UseMockPayments || string.IsNullOrWhiteSpace(stripeSettings.SecretKey))
+{
+    builder.Services.AddScoped<IPaymentService, MockPaymentService>();
+}
+else
+{
+    builder.Services.AddScoped<IPaymentService, StripePaymentService>();
+}
 
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>

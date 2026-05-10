@@ -1,6 +1,6 @@
 # AutoSalon OneZone
 
-AutoSalon OneZone je ASP.NET Core MVC aplikacija za upravljanje autosalonom. Aplikacija pokriva pregled vozila, korisnicke naloge, role, korpu, narudzbe, placanje i administrativni dio.
+AutoSalon OneZone je ASP.NET Core MVC aplikacija za upravljanje autosalonom. Aplikacija pokriva pregled vozila, korisničke naloge, role, korpu, narudžbe, plaćanje i administrativni dio.
 
 ## Tehnologije
 
@@ -9,7 +9,7 @@ AutoSalon OneZone je ASP.NET Core MVC aplikacija za upravljanje autosalonom. Apl
 - ASP.NET Core Identity
 - SQL Server
 - Docker Compose
-- Stripe integracija, uz mock payment mode za javni demo
+- Stripe integracija, uz mock način plaćanja za lokalni demo
 
 ## Brzo pokretanje preko Dockera
 
@@ -27,7 +27,7 @@ Nakon pokretanja aplikacija je dostupna na:
 http://localhost:8080
 ```
 
-Docker Compose dize dvije usluge:
+Docker Compose diže dvije usluge:
 
 - `db`: SQL Server 2022 na lokalnom portu `14333`
 - `web`: ASP.NET Core aplikaciju na lokalnom portu `8080`
@@ -42,31 +42,29 @@ Na prvom pokretanju aplikacija automatski primijeni EF Core migracije i ubaci de
 | Prodavac | `prodavac@autosalon.local` | `Prodavac123!` |
 | Kupac | `kupac@autosalon.local` | `Kupac123!` |
 
-## Demo placanje
+## Demo plaćanje
 
-Docker demo koristi mock payment mode, tako da nisu potrebni stvarni Stripe kljucevi.
+Docker demo koristi mock način plaćanja, tako da za pokretanje nisu potrebni Stripe ključevi.
 
-Za uspjesno test placanje moze se koristiti:
+Za uspješno test plaćanje može se koristiti:
 
 ```text
 Broj kartice: 4242424242424242
-Datum isteka: bilo koji buduci datum
+Datum isteka: bilo koji budući datum
 CVV: bilo koje 3 cifre
 ```
 
 Kartica `4000000000000002` simulira odbijenu transakciju.
 
-## Environment varijable
+## Varijable okruženja
 
-Prave tajne se ne cuvaju u repozitoriju. Fajl `.env` je ignorisan kroz Git, a `.env.example` sluzi kao javni template.
-
-Ako zelis promijeniti demo vrijednosti:
+Repozitorij sadrži `.env.example` kao primjer lokalne konfiguracije. Za lokalne izmjene konfiguracije potrebno je napraviti `.env` fajl:
 
 ```powershell
 Copy-Item .env.example .env
 ```
 
-Zatim izmijeni `.env` lokalno i ponovo pokreni:
+Zatim izmijeni vrijednosti u `.env` i ponovo pokreni:
 
 ```powershell
 docker compose up --build
@@ -80,18 +78,18 @@ Najbitnije varijable su:
 | `DEMO_ADMIN_EMAIL` / `DEMO_ADMIN_PASSWORD` | Demo administrator |
 | `DEMO_SELLER_EMAIL` / `DEMO_SELLER_PASSWORD` | Demo prodavac |
 | `DEMO_BUYER_EMAIL` / `DEMO_BUYER_PASSWORD` | Demo kupac |
-| `STRIPE_USE_MOCK_PAYMENTS` | `true` za mock placanje, `false` za stvarni Stripe test mode |
-| `STRIPE_SECRET_KEY` / `STRIPE_PUBLISHABLE_KEY` | Stripe test kljucevi za privatno lokalno testiranje |
+| `STRIPE_USE_MOCK_PAYMENTS` | `true` za mock plaćanje, `false` za Stripe test mode |
+| `STRIPE_SECRET_KEY` / `STRIPE_PUBLISHABLE_KEY` | Stripe test ključevi za lokalno testiranje Stripe integracije |
 
-## Korisne komande
+## Korisne naredbe
 
-Za gasenje containera:
+Za gašenje containera:
 
 ```powershell
 docker compose down
 ```
 
-Za brisanje lokalne demo baze i potpuno svjez start:
+Za brisanje lokalne demo baze i potpuno svjež start:
 
 ```powershell
 docker compose down -v
@@ -103,10 +101,3 @@ Za lokalni build bez Dockera:
 ```powershell
 dotnet build "Implementacija/Autosalon OneZone/Autosalon OneZone.sln"
 ```
-
-## Sigurnosne napomene
-
-- Ne commitati `.env`, connection stringove, lozinke ili Stripe kljuceve.
-- Demo lozinke iz `.env.example` nisu stvarne tajne; koriste se samo za lokalni Docker demo.
-- Za privatno testiranje stvarnog Stripe flowa koristi `.env` i `STRIPE_USE_MOCK_PAYMENTS=false`.
-- Za produkciju koristiti posebne produkcijske tajne kroz hosting provider, ne kroz `appsettings.json`.

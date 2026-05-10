@@ -641,14 +641,27 @@ namespace Autosalon_OneZone.Controllers
 
         public async Task<IActionResult> Uspjeh(int id)
         {
-            var narudzba = await _context.Narudzbe
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return Challenge();
+            }
+
+            var narudzbeQuery = _context.Narudzbe
                 .Include(n => n.StavkeKorpe)
                 .ThenInclude(s => s.Vozilo)
-                .FirstOrDefaultAsync(n => n.NarudzbaID == id);
+                .AsQueryable();
+
+            if (!User.IsInRole("Administrator"))
+            {
+                narudzbeQuery = narudzbeQuery.Where(n => n.KorisnikId == user.Id);
+            }
+
+            var narudzba = await narudzbeQuery.FirstOrDefaultAsync(n => n.NarudzbaID == id);
 
             if (narudzba == null)
             {
-                return NotFound();
+                return Forbid();
             }
 
             return View(narudzba);

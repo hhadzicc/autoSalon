@@ -181,7 +181,7 @@ namespace Autosalon_OneZone.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> IzvrsiPlacanje(int VoziloID, decimal Cijena, string ImeVlasnika, string BrojKartice, string DatumIsteka, string Cvv)
+        public async Task<IActionResult> IzvrsiPlacanje(int VoziloID, string ImeVlasnika, string BrojKartice, string DatumIsteka, string Cvv)
         {
             var errors = new Dictionary<string, string>();
 
@@ -271,13 +271,19 @@ namespace Autosalon_OneZone.Controllers
                     return Json(new { success = false, message = "Korisnik nije pronađen." });
                 }
 
+                var cijenaVozila = vozilo.Cijena ?? 0;
+                if (cijenaVozila <= 0)
+                {
+                    return Json(new { success = false, message = "Cijena vozila nije validna." });
+                }
+
                 var paymentRequest = new PaymentRequest
                 {
                     CardNumber = cleanCardNumber,
                     ExpirationMonth = month,
                     ExpirationYear = year,
                     Cvv = cleanCvv,
-                    Amount = Cijena,
+                    Amount = cijenaVozila,
                     CustomerName = ImeVlasnika,
                     Email = user.Email,
                     Description = $"Purchase of {vozilo.Marka} {vozilo.Model}",
@@ -292,7 +298,7 @@ namespace Autosalon_OneZone.Controllers
                     {
                         KorisnikId = user.Id,
                         DatumNarudzbe = DateTime.Now,
-                        UkupnaCijena = Cijena,
+                        UkupnaCijena = cijenaVozila,
                         Status = StatusNarudzbe.Placena
                     };
 
@@ -303,7 +309,7 @@ namespace Autosalon_OneZone.Controllers
                     {
                         VoziloID = VoziloID,
                         Kolicina = 1,
-                        CijenaStavke = Cijena,
+                        CijenaStavke = cijenaVozila,
                         NarudzbaID = narudzba.NarudzbaID
                     };
 
@@ -313,7 +319,7 @@ namespace Autosalon_OneZone.Controllers
                     {
                         NarudzbaID = narudzba.NarudzbaID,
                         DatumPlacanja = DateTime.Now,
-                        Iznos = Cijena,
+                        Iznos = cijenaVozila,
                         Status = StatusPlacanja.Uspjesno,
                         KarticaID = null
                     };
@@ -341,7 +347,7 @@ namespace Autosalon_OneZone.Controllers
 
                     await _context.SaveChangesAsync();
 
-                    _logger.LogInformation($"Uspješno izvršeno plaćanje za vozilo ID: {VoziloID}, iznos: {Cijena}, korisnik: {user.Id}");
+                    _logger.LogInformation($"Uspješno izvršeno plaćanje za vozilo ID: {VoziloID}, iznos: {cijenaVozila}, korisnik: {user.Id}");
 
                     return Json(new
                     {
@@ -352,7 +358,7 @@ namespace Autosalon_OneZone.Controllers
                 }
                 else
                 {
-                    _logger.LogWarning($"Neuspješno plaćanje za vozilo ID: {VoziloID}, iznos: {Cijena}, korisnik: {user.Id}, razlog: {result.Message}");
+                    _logger.LogWarning($"Neuspješno plaćanje za vozilo ID: {VoziloID}, iznos: {cijenaVozila}, korisnik: {user.Id}, razlog: {result.Message}");
 
                     return Json(new { success = false, message = result.Message });
                 }

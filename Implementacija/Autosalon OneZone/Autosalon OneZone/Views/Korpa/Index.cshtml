@@ -293,7 +293,6 @@
                     @Html.AntiForgeryToken()
 
                     <input type="hidden" name="VoziloID" id="modalVoziloID" value="" />
-                    <input type="hidden" name="Cijena" id="modalCijena" value="" />
 
                     <div class="form-group mb-3">
                         <label for="imeVlasnika" class="form-label">Ime i prezime vlasnika kartice <span class="text-danger">*</span></label>
@@ -444,7 +443,6 @@
                 var naziv = $(this).data('naziv');
 
                 $('#modalVoziloID').val(id);
-                $('#modalCijena').val(cijena);
                 $('#modalUkupnaCijena').text('€' + cijena.toLocaleString());
                 $('#paymentModalLabel').text('Podaci za plaćanje - ' + naziv);
             });

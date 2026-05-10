@@ -227,6 +227,7 @@ namespace Autosalon_OneZone.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteVozilo(int id)
         {
             var vozilo = await _context.Vozila.FindAsync(id);
@@ -770,6 +771,7 @@ namespace Autosalon_OneZone.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteProfil(string id)
         {
             try

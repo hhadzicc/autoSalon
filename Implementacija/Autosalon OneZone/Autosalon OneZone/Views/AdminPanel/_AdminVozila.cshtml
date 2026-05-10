@@ -2,6 +2,7 @@
 <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 
 <h3>Pregled Vozila</h3>
+@Html.AntiForgeryToken()
 
 <div class="admin-section-controls">
     <button id="add-vozilo-button" class="btn btn-primary">Dodaj Novo Vozilo</button>
@@ -199,6 +200,9 @@
                 $.ajax({
                     url: '@Url.Action("DeleteVozilo", "AdminPanel")',
                     method: 'POST',
+                    headers: {
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    },
                     data: { id: voziloId },
                     success: function (response) {
                         console.log("Delete successful:", response);

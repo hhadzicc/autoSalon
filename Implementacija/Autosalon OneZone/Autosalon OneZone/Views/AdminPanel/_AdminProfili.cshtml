@@ -1,6 +1,7 @@
 @model Autosalon_OneZone.ViewModels.Admin.ProfilListViewModel
 <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 <h3>Pregled Profila</h3>
+@Html.AntiForgeryToken()
 
 <div class="admin-section-controls">
     <button id="add-profil-button" class="btn btn-primary">Dodaj Novog Korisnika</button>
@@ -236,6 +237,9 @@
                 $.ajax({
                     url: '@Url.Action("DeleteProfil", "AdminPanel")',
                     method: 'POST',
+                    headers: {
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    },
                     data: { id: profilId },
                     success: function (response) {
                         console.log("Delete successful:", response);

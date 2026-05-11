@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System.Threading.Tasks;
-using System;
 
 namespace Autosalon_OneZone.Controllers
 {
@@ -9,14 +7,14 @@ namespace Autosalon_OneZone.Controllers
     {
         private readonly ILogger<SupportController> _logger;
 
-        public SupportController(ILogger<SupportController> logger = null)
+        public SupportController(ILogger<SupportController> logger)
         {
             _logger = logger;
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SendMessage(string message)
+        public IActionResult SendMessage(string message)
         {
             if (string.IsNullOrWhiteSpace(message))
             {

@@ -255,6 +255,7 @@ namespace Autosalon_OneZone.Controllers
 
         #region Profili sekcija
 
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> GetProfiliSection(string? searchQuery = null)
         {
             var usersQuery = _context.Users.AsQueryable();
@@ -541,6 +542,7 @@ namespace Autosalon_OneZone.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Administrator")]
         public async Task<JsonResult> GetProfiliJson(string? searchQuery = null, int page = 1)
         {
             int pageSize = int.MaxValue;
@@ -595,6 +597,7 @@ namespace Autosalon_OneZone.Controllers
             });
         }
 
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> GetAddProfilForm()
         {
             var viewModel = new AddProfilViewModel();
@@ -605,6 +608,7 @@ namespace Autosalon_OneZone.Controllers
             return PartialView("_AddProfilForm", viewModel);
         }
 
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> GetEditProfilForm(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
@@ -630,6 +634,7 @@ namespace Autosalon_OneZone.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Administrator")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SaveProfil(AddProfilViewModel viewModel)
         {
@@ -771,6 +776,7 @@ namespace Autosalon_OneZone.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Administrator")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteProfil(string id)
         {

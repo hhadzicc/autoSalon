@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <Nullable>enable</Nullable>
+    <Nullable>annotations</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>aspnet-Autosalon_OneZone-9ecfda69-8d08-463e-9068-00db8af2df8e</UserSecretsId>
     <RootNamespace>Autosalon_OneZone</RootNamespace>

@@ -36,6 +36,8 @@ Na prvom pokretanju aplikacija automatski primijeni EF Core migracije i ubaci de
 
 ## Demo nalozi
 
+Detaljniji pregled demo naloga je u [DEMO_ACCOUNTS.md](DEMO_ACCOUNTS.md).
+
 | Rola | Email | Lozinka |
 | --- | --- | --- |
 | Administrator | `admin@autosalon.local` | `Admin123!` |

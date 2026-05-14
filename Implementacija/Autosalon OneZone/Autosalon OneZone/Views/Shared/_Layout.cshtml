@@ -3,115 +3,101 @@
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>@ViewData["Title"] - Autosalon OneZone</title>
-            <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-            <link rel="stylesheet" type="text/css" href="~/css/kod.css" asp-append-version="true">
-            @await RenderSectionAsync("Head", required: false)
-        </head>
-        <body>
-            <div class="nav-bar">
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"] - Autosalon OneZone</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" type="text/css" href="~/css/kod.css" asp-append-version="true">
+    @await RenderSectionAsync("Head", required: false)
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark app-navbar">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand app-navbar-brand" href="/">Autosalon OneZone</a>
 
-                <div class="logo">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+                    aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-                    <a href="/">Autosalon OneZone</a>
+            <div class="collapse navbar-collapse" id="mainNavbar">
+                <form id="searchForm" class="d-flex app-navbar-search mx-lg-auto my-3 my-lg-0" action="/Vozilo/Index" method="get">
+                    <input class="form-control" type="search" placeholder="Pretraži vozila..." id="search-input" name="searchTerm" autocomplete="off">
+                    <button class="btn btn-primary ms-2" id="search-button" type="submit">Pretraži</button>
+                </form>
 
-                </div>
-
-                <div class="nav-links">
-
+                <ul class="navbar-nav ms-lg-auto align-items-lg-center gap-lg-2">
                     @if (SignInManager.IsSignedIn(User) && (User.IsInRole("Administrator") || User.IsInRole("Prodavac")))
-			{
-                    <a href="/AdminPanel/Index">  Admin Panel</a>
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" href="/AdminPanel/Index">Admin Panel</a>
+                        </li>
+                    }
 
-			}
-
-                </div>
-                <div class="spacer"></div>
-
-        <div class="search-bar">
-
-            <form id="searchForm" action="/Vozilo/Index" method="get">
-                <input type="text" placeholder="Pretraži vozila..." id="search-input" name="searchTerm">
-                <button id="search-button" type="submit">Pretraži</button>
-            </form>
-        </div>
-
-                <div class="nav-links">
-
-                    <a href="/Vozilo">Vozila</a>
-                    <a href="/Home/Kontakt">Piši nam</a>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Vozilo">Vozila</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Home/Kontakt">Piši nam</a>
+                    </li>
 
                     @if (SignInManager.IsSignedIn(User))
-			{
-                    <a href="/Korpa">Korpa</a>
-
-                    <a href="/Profil">Moj Profil</a>
-
-                    <form id="logoutForm" asp-controller="Account" asp-action="Logout" method="post" style="display: inline;">
-
-                        @Html.AntiForgeryToken()
-
-                        <a href="javascript:void(0);" class="nav-link" onclick="document.getElementById('logoutForm').submit();">Odjavi se</a>
-                    </form>
-
-			}
-
-			else
-			{
-                    <a href="/Account/Login">Prijavi se</a>
-                    <a id="register" href="/Account/Register">Registruj se</a>
-			}
-                </div>
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" href="/Korpa">Korpa</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/Profil">Moj Profil</a>
+                        </li>
+                        <li class="nav-item">
+                            <form id="logoutForm" asp-controller="Account" asp-action="Logout" method="post">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="nav-link btn btn-link app-logout-link">Odjavi se</button>
+                            </form>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" href="/Account/Login">Prijavi se</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="register" href="/Account/Register">Registruj se</a>
+                        </li>
+                    }
+                </ul>
             </div>
+        </div>
+    </nav>
 
-            <div class="main-content-container">
-
-                @if (TempData["SuccessMessage"] != null)
-		{
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    @TempData["SuccessMessage"]
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-		}
-
-                @RenderBody()
+    <div class="main-content-container">
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
+        }
 
-            <footer>
+        @RenderBody()
+    </div>
 
-                <p>Kontakt: +387 000 000 000 | Email: <a href="mailto:autosalon@autosalon.com">autosalon@autosalon.com</a></p>
-                <p><a href="#">Politika privatnosti</a> | <a href="#">Uslovi korišćenja</a></p>
-                <div>&copy; @DateTime.Now.Year Autosalon OneZone</div>
-            </footer>
+    <footer>
+        <p>Kontakt: +387 000 000 000 | Email: <a href="mailto:autosalon@autosalon.com">autosalon@autosalon.com</a></p>
+        <p><a href="#">Politika privatnosti</a> | <a href="#">Uslovi korišćenja</a></p>
+        <div>&copy; @DateTime.Now.Year Autosalon OneZone</div>
+    </footer>
 
-            <script src="~/lib/jquery/dist/jquery.min.js"></script>
-            <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-
-            <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
-            <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
-
-            <script src="~/js/site.js" asp-append-version="true"></script>
-            @await RenderSectionAsync("Scripts", required: false)
-            @await RenderSectionAsync("BottomScripts", required: false)
-        </body>
-    </html>
-
-@section Scripts {
-    <script>
-        $(document).ready(function() {
-
-            $("#search-input").keypress(function(e) {
-                if (e.which == 13) {
-                    e.preventDefault();
-                    $("#searchForm").submit();
-                }
-            });
-        });
-    </script>
-}
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+    @await RenderSectionAsync("BottomScripts", required: false)
+</body>
+</html>

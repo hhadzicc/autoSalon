@@ -15,9 +15,12 @@
     @await RenderSectionAsync("Head", required: false)
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark app-navbar">
-        <div class="container-fluid px-4">
-            <a class="navbar-brand app-navbar-brand" href="/">Autosalon OneZone</a>
+    <nav class="navbar navbar-expand-lg navbar-dark custom-navbar sticky-top">
+        <div class="container align-items-center">
+            <a class="navbar-brand fw-bold text-white d-flex align-items-center" href="/">
+                <span class="brand-icon"><i class="bi bi-car-front-fill"></i></span>
+                Autosalon OneZone
+            </a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
                     aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -25,12 +28,7 @@
             </button>
 
             <div class="collapse navbar-collapse" id="mainNavbar">
-                <form id="searchForm" class="d-flex app-navbar-search mx-lg-auto my-3 my-lg-0" action="/Vozilo/Index" method="get">
-                    <input class="form-control" type="search" placeholder="Pretraži vozila..." id="search-input" name="searchTerm" autocomplete="off">
-                    <button class="btn btn-primary ms-2" id="search-button" type="submit">Pretraži</button>
-                </form>
-
-                <ul class="navbar-nav ms-lg-auto align-items-lg-center gap-lg-2">
+                <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
                     @if (SignInManager.IsSignedIn(User) && (User.IsInRole("Administrator") || User.IsInRole("Prodavac")))
                     {
                         <li class="nav-item">
@@ -56,7 +54,7 @@
                         <li class="nav-item">
                             <form id="logoutForm" asp-controller="Account" asp-action="Logout" method="post">
                                 @Html.AntiForgeryToken()
-                                <button type="submit" class="nav-link btn btn-link app-logout-link">Odjavi se</button>
+                                <button type="submit" class="nav-link btn btn-link logout-link">Odjavi se</button>
                             </form>
                         </li>
                     }
@@ -74,7 +72,7 @@
         </div>
     </nav>
 
-    <div class="main-content-container">
+    <main class="main-content-container">
         @if (TempData["SuccessMessage"] != null)
         {
             <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -84,12 +82,24 @@
         }
 
         @RenderBody()
-    </div>
+    </main>
 
-    <footer>
-        <p>Kontakt: +387 000 000 000 | Email: <a href="mailto:autosalon@autosalon.com">autosalon@autosalon.com</a></p>
-        <p><a href="#">Politika privatnosti</a> | <a href="#">Uslovi korišćenja</a></p>
-        <div>&copy; @DateTime.Now.Year Autosalon OneZone</div>
+    <footer class="footer">
+        <div class="container">
+            <div class="row align-items-center g-4">
+                <div class="col-lg-7">
+                    <h5 class="text-white fw-bold mb-2">Autosalon OneZone</h5>
+                    <p class="mb-1">Kontakt: +387 000 000 000 · Email: <a href="mailto:autosalon@autosalon.com">autosalon@autosalon.com</a></p>
+                    <p class="mb-0">&copy; @DateTime.Now.Year Autosalon OneZone. Sva prava zadržana.</p>
+                </div>
+                <div class="col-lg-5">
+                    <div class="d-flex justify-content-lg-end gap-3 flex-wrap">
+                        <a href="#">Politika privatnosti</a>
+                        <a href="#">Uslovi korišćenja</a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

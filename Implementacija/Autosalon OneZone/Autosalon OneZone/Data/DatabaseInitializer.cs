@@ -205,12 +205,8 @@ namespace Autosalon_OneZone.Data
 
         private static async Task SeedVehiclesAsync(ApplicationDbContext dbContext, ILogger logger)
         {
-            if (await dbContext.Vozila.AnyAsync())
+            var seedVehicles = new List<Vozilo>
             {
-                return;
-            }
-
-            dbContext.Vozila.AddRange(
                 new Vozilo
                 {
                     Marka = "Volkswagen",
@@ -221,7 +217,7 @@ namespace Autosalon_OneZone.Data
                     Boja = "Siva",
                     Kilometraza = 48500,
                     Cijena = 37500m,
-                    Slika = "001527a1-f449-42cf-8421-5b861ac9473a_AAGolf 8.jpg",
+                    Slika = "seed-volkswagen-golf8-2021.jpg",
                     Opis = "Demo vozilo spremno za lokalno pokretanje aplikacije."
                 },
                 new Vozilo
@@ -235,7 +231,7 @@ namespace Autosalon_OneZone.Data
                     Kilometraza = 9200,
                     Cijena = 149900m,
                     Slika = "f3ddfedf-b427-40f3-9dc2-236a9251b322_2024-porsche-panamera-4-e-hybrid-108-6643725bab45b.jpeg",
-                    Opis = "Premium demo model za prikaz detalja i procesa narudzbe."
+                    Opis = "Premium demo model za prikaz detalja i procesa narudžbe."
                 },
                 new Vozilo
                 {
@@ -247,7 +243,7 @@ namespace Autosalon_OneZone.Data
                     Boja = "Bijela",
                     Kilometraza = 76000,
                     Cijena = 43900m,
-                    Slika = "04fa33ac-2c64-44d0-82fc-e69437abf1f9_photo_2024-06-08_15-20-20.jpg",
+                    Slika = "seed-audi-a4-2020.jpg",
                     Opis = "Pouzdana limuzina za svakodnevnu voznju."
                 },
                 new Vozilo
@@ -260,7 +256,7 @@ namespace Autosalon_OneZone.Data
                     Boja = "Plava",
                     Kilometraza = 38500,
                     Cijena = 89500m,
-                    Slika = "1011929f-6ed9-4d2d-8fc1-6bb0ade46462_photo_2024-06-08_15-20-21.jpg",
+                    Slika = "seed-bmw-x5-2022.jpg",
                     Opis = "SUV demo vozilo sa bogatom opremom."
                 },
                 new Vozilo
@@ -273,8 +269,8 @@ namespace Autosalon_OneZone.Data
                     Boja = "Crvena",
                     Kilometraza = 21400,
                     Cijena = 72800m,
-                    Slika = "15ce749e-99dc-4775-80f4-d8ac9479dae2_photo_2024-06-08_15-20-20.jpg",
-                    Opis = "Elektricno demo vozilo za prikaz razlicitih tipova pogona."
+                    Slika = "seed-tesla-model3-2023.jpg",
+                    Opis = "Električno demo vozilo za prikaz različitih tipova pogona."
                 },
                 new Vozilo
                 {
@@ -286,12 +282,81 @@ namespace Autosalon_OneZone.Data
                     Boja = "Srebrna",
                     Kilometraza = 93000,
                     Cijena = 41500m,
-                    Slika = "17c0d7b4-3943-4f50-8c70-4dab8f8e3fd0_photo_2024-06-08_15-20-22.jpg",
+                    Slika = "seed-mercedes-c220-2019.jpg",
                     Opis = "Demo sedan za testiranje pretrage i korpe."
-                });
+                },
+                new Vozilo
+                {
+                    Marka = "Audi",
+                    Model = "e-tron GT quattro",
+                    Godiste = 2022,
+                    Gorivo = TipGoriva.Elektro,
+                    Kubikaza = 0m,
+                    Boja = "Bijela",
+                    Kilometraza = 28400,
+                    Cijena = 129500m,
+                    Slika = "seed-audi-etron-gt-2022.jpg",
+                    Opis = "Električni gran turismo sa naprednom opremom i sportskim karakterom."
+                },
+                new Vozilo
+                {
+                    Marka = "BMW",
+                    Model = "M4 Competition",
+                    Godiste = 2022,
+                    Gorivo = TipGoriva.Benzin,
+                    Kubikaza = 3.0m,
+                    Boja = "Žuta",
+                    Kilometraza = 18500,
+                    Cijena = 118900m,
+                    Slika = "seed-bmw-m4-competition-2022.jpg",
+                    Opis = "Sportski coupe sa visokim performansama i upečatljivim izgledom."
+                },
+                new Vozilo
+                {
+                    Marka = "Mercedes-Benz",
+                    Model = "GLC 300",
+                    Godiste = 2020,
+                    Gorivo = TipGoriva.Benzin,
+                    Kubikaza = 2.0m,
+                    Boja = "Bijela",
+                    Kilometraza = 66400,
+                    Cijena = 56900m,
+                    Slika = "seed-mercedes-glc300-2020.jpg",
+                    Opis = "Premium SUV za porodičnu i poslovnu vožnju."
+                }
+            };
+
+            var addedVehicles = 0;
+            var updatedVehicles = 0;
+
+            foreach (var vehicle in seedVehicles)
+            {
+                var existingVehicle = await dbContext.Vozila.FirstOrDefaultAsync(v =>
+                    v.Marka == vehicle.Marka &&
+                    v.Model == vehicle.Model);
+
+                if (existingVehicle != null)
+                {
+                    if (existingVehicle.Slika != vehicle.Slika)
+                    {
+                        existingVehicle.Slika = vehicle.Slika;
+                        updatedVehicles++;
+                    }
+
+                    continue;
+                }
+
+                dbContext.Vozila.Add(vehicle);
+                addedVehicles++;
+            }
+
+            if (addedVehicles == 0 && updatedVehicles == 0)
+            {
+                return;
+            }
 
             await dbContext.SaveChangesAsync();
-            logger.LogInformation("Seeded demo vehicles.");
+            logger.LogInformation("Seeded {AddedVehicleCount} and updated {UpdatedVehicleCount} demo vehicles.", addedVehicles, updatedVehicles);
         }
 
         private static bool HasCredentials(IConfiguration configuration, string sectionName)

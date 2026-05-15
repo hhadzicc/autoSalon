@@ -1,4 +1,4 @@
-﻿@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Identity
 @inject SignInManager<Autosalon_OneZone.Models.ApplicationUser> SignInManager
 @inject UserManager<Autosalon_OneZone.Models.ApplicationUser> UserManager
 
@@ -7,7 +7,6 @@
     ViewData["Title"] = "Vozila";
     var currentYear = DateTime.Now.Year;
 }
-<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 
 @if (!string.IsNullOrEmpty(ViewData["SearchTerm"] as string))
 {

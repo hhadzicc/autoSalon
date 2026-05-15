@@ -1,10 +1,8 @@
-﻿@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Identity
 @inject SignInManager<Autosalon_OneZone.Models.ApplicationUser> SignInManager
 @inject UserManager<Autosalon_OneZone.Models.ApplicationUser> UserManager
 
 @model Autosalon_OneZone.Models.Vozilo
-<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css" />
 @{
     ViewData["Title"] = $"{Model.Marka} {Model.Model}";
     Layout = "~/Views/Shared/_Layout.cshtml";

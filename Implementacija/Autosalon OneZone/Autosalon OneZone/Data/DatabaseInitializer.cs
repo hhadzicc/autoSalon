@@ -168,6 +168,40 @@ namespace Autosalon_OneZone.Data
 
                 logger.LogInformation("Created {RoleName} seed user {Email}.", roleName, email);
             }
+            else
+            {
+                var profileChanged = false;
+
+                if (!user.EmailConfirmed)
+                {
+                    user.EmailConfirmed = true;
+                    profileChanged = true;
+                }
+
+                if (user.Ime != firstName)
+                {
+                    user.Ime = firstName;
+                    profileChanged = true;
+                }
+
+                if (user.Prezime != lastName)
+                {
+                    user.Prezime = lastName;
+                    profileChanged = true;
+                }
+
+                if (profileChanged)
+                {
+                    var updateResult = await userManager.UpdateAsync(user);
+                    if (!updateResult.Succeeded)
+                    {
+                        logger.LogError("Failed to update {RoleName} seed user {Email}: {Errors}", roleName, email, FormatErrors(updateResult));
+                        return user;
+                    }
+                }
+            }
+
+            await EnsureSeedPasswordAsync(userManager, user, password, roleName, email, logger);
 
             if (!await userManager.IsInRoleAsync(user, roleName))
             {
@@ -185,6 +219,39 @@ namespace Autosalon_OneZone.Data
             }
 
             return user;
+        }
+
+        private static async Task EnsureSeedPasswordAsync(
+            UserManager<ApplicationUser> userManager,
+            ApplicationUser user,
+            string password,
+            string roleName,
+            string email,
+            ILogger logger)
+        {
+            if (await userManager.CheckPasswordAsync(user, password))
+            {
+                return;
+            }
+
+            IdentityResult passwordResult;
+            if (await userManager.HasPasswordAsync(user))
+            {
+                var resetToken = await userManager.GeneratePasswordResetTokenAsync(user);
+                passwordResult = await userManager.ResetPasswordAsync(user, resetToken, password);
+            }
+            else
+            {
+                passwordResult = await userManager.AddPasswordAsync(user, password);
+            }
+
+            if (passwordResult.Succeeded)
+            {
+                logger.LogInformation("Updated password for {RoleName} seed user {Email}.", roleName, email);
+                return;
+            }
+
+            logger.LogError("Failed to update password for {RoleName} seed user {Email}: {Errors}", roleName, email, FormatErrors(passwordResult));
         }
 
         private static async Task EnsureCartAsync(ApplicationDbContext dbContext, string userId)

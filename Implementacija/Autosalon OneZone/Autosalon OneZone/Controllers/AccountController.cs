@@ -118,11 +118,16 @@ namespace Autosalon_OneZone.Controllers
 
             if (ModelState.IsValid)
             {
-                var user = await _userManager.FindByEmailAsync(model.Email);
+                var loginIdentifier = model.LoginIdentifier.Trim();
+                var invalidLoginMessage = "Neispravan e-mail, korisničko ime ili šifra.";
+
+                var user = await _userManager.FindByEmailAsync(loginIdentifier);
+                user ??= await _userManager.FindByNameAsync(loginIdentifier);
+
                 if (user != null)
                 {
                     var result = await _signInManager.PasswordSignInAsync(
-                        user.UserName,
+                        user.UserName!,
                         model.Password,
                         model.RememberMe,
                         lockoutOnFailure: false
@@ -156,12 +161,12 @@ namespace Autosalon_OneZone.Controllers
                     }
                     else
                     {
-                        ModelState.AddModelError(string.Empty, "Neispravna email adresa ili šifra.");
+                        ModelState.AddModelError(string.Empty, invalidLoginMessage);
                     }
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Neispravna email adresa ili šifra.");
+                    ModelState.AddModelError(string.Empty, invalidLoginMessage);
                 }
             }
 

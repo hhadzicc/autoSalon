@@ -42,9 +42,9 @@ namespace Autosalon_OneZone.Models.ViewModels
     public class LoginViewModel
     {
         [Required]
-        [EmailAddress]
-        [Display(Name = "Email")]
-        public string Email { get; set; }
+        [MaxLength(256)]
+        [Display(Name = "E-mail ili korisničko ime")]
+        public string LoginIdentifier { get; set; }
 
         [Required]
         [DataType(DataType.Password)]

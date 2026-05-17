@@ -32,15 +32,15 @@
 
                     <form asp-controller="Account" asp-action="Login" method="post">
                         <div class="mb-3">
-                            <label asp-for="Email" class="form-label">E-mail</label>
-                            <input asp-for="Email" type="email" class="form-control" placeholder="Unesite e-mail" required data-val-required="Email adresa je obavezna." data-val-email="Unesite ispravnu email adresu." />
-                            <span asp-validation-for="Email" class="text-danger"></span>
+                            <label asp-for="LoginIdentifier" class="form-label">E-mail ili korisničko ime</label>
+                            <input asp-for="LoginIdentifier" type="text" class="form-control" placeholder="Unesite e-mail ili korisničko ime" autocomplete="username" required data-val-required="E-mail ili korisničko ime je obavezno." />
+                            <span asp-validation-for="LoginIdentifier" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
                             <label asp-for="Password" class="form-label">Lozinka</label>
                             <div class="password-wrapper">
-                                <input asp-for="Password" type="password" class="form-control password-input" placeholder="Unesite lozinku" required data-val-required="Lozinka je obavezna." />
+                                <input asp-for="Password" type="password" class="form-control password-input" placeholder="Unesite lozinku" autocomplete="current-password" required data-val-required="Lozinka je obavezna." />
                                 <button type="button" class="password-toggle" aria-label="Prikaži lozinku">
                                     <i class="bi bi-eye"></i>
                                 </button>
@@ -111,7 +111,7 @@
                 $('.validation-summary ul li').each(function() {
                     var text = $(this).text();
 
-                    text = text.replace(/Invalid login attempt/i, 'Neuspješan pokušaj prijave. Provjerite email i lozinku.');
+                    text = text.replace(/Invalid login attempt/i, 'Neuspješan pokušaj prijave. Provjerite e-mail, korisničko ime i lozinku.');
                     text = text.replace(/Username .* is already taken/i, 'Korisničko ime je već zauzeto.');
                     text = text.replace(/Email .* is already taken/i, 'Email adresa je već zauzeta.');
                     text = text.replace(/Password must be at least \d+ characters/i, 'Lozinka mora imati najmanje $1 znakova.');

@@ -38,11 +38,7 @@ Na prvom pokretanju aplikacija automatski primijeni EF Core migracije i ubaci de
 
 Detaljniji pregled demo naloga je u [DEMO_ACCOUNTS.md](DEMO_ACCOUNTS.md).
 
-| Rola | Email | Lozinka |
-| --- | --- | --- |
-| Administrator | `admin@autosalon.local` | `Admin123!` |
-| Prodavac | `prodavac@autosalon.local` | `Prodavac123!` |
-| Kupac | `kupac@autosalon.local` | `Kupac123!` |
+Demo nalozi se čitaju iz `.env` fajla ako postoji. Bez `.env` koriste se javne Docker demo vrijednosti navedene u `DEMO_ACCOUNTS.md`.
 
 ## Demo plaćanje
 

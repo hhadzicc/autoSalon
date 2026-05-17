@@ -4,51 +4,71 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-@section Head {
-    <link rel="stylesheet" href="~/css/login.css" />
-}
-
-<div class="login-container">
-    <div class="form-container">
-
-        <h2>Prijava</h2>
-
-        <div asp-validation-summary="All" class="text-danger validation-summary"></div>
-
-        <form asp-controller="Account" asp-action="Login" method="post">
-
-            <div class="form-group">
-                <input asp-for="Email" type="email" class="form-control" placeholder="E-mail" required data-val-required="Email adresa je obavezna." data-val-email="Unesite ispravnu email adresu." />
-                <span asp-validation-for="Email" class="text-danger"></span>
+<section class="inner-page-header">
+    <div class="container">
+        <div class="row justify-content-center text-center">
+            <div class="col-lg-8">
+                <p class="section-eyebrow">Korisnički nalog</p>
+                <h1>Prijava</h1>
+                <p>Prijavite se kako biste nastavili kupovinu, pratili upite i koristili korpu.</p>
             </div>
-
-            <div class="form-group">
-                <input asp-for="Password" type="password" class="form-control" placeholder="Lozinka" required data-val-required="Lozinka je obavezna." />
-                <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
-
-            <div class="form-group remember-me">
-                <label>
-                    <input asp-for="RememberMe" type="checkbox" />
-                    Zapamti me
-                </label>
-                <span asp-validation-for="RememberMe" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <button type="submit" class="login-button">Prijavi me</button>
-            </div>
-
-            <div class="register-link">
-                Nemate nalog? <a href="/Account/Register">Registrujte se</a>
-            </div>
-
-            <div class="forgot-password">
-                <a href="/Identity/Account/ForgotPassword">Zaboravili ste lozinku?</a>
-            </div>
-        </form>
+        </div>
     </div>
-</div>
+</section>
+
+<section class="auth-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-8">
+                <div class="modern-form-card">
+                    <div class="text-center mb-4">
+                        <div class="form-icon mx-auto">
+                            <i class="bi bi-person-circle"></i>
+                        </div>
+                        <h2>Prijava</h2>
+                    </div>
+
+                    <div asp-validation-summary="All" class="text-danger validation-summary mb-3"></div>
+
+                    <form asp-controller="Account" asp-action="Login" method="post">
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label">E-mail</label>
+                            <input asp-for="Email" type="email" class="form-control" placeholder="Unesite e-mail" required data-val-required="Email adresa je obavezna." data-val-email="Unesite ispravnu email adresu." />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Password" class="form-label">Lozinka</label>
+                            <div class="password-wrapper">
+                                <input asp-for="Password" type="password" class="form-control password-input" placeholder="Unesite lozinku" required data-val-required="Lozinka je obavezna." />
+                                <button type="button" class="password-toggle" aria-label="Prikaži lozinku">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-check mb-4">
+                            <input asp-for="RememberMe" type="checkbox" class="form-check-input" />
+                            <label asp-for="RememberMe" class="form-check-label">Zapamti me</label>
+                            <span asp-validation-for="RememberMe" class="text-danger d-block"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-lg rounded-4 w-100">Prijavi me</button>
+
+                        <div class="text-center mt-4">
+                            <p class="mb-2">
+                                Nemate nalog?
+                                <a href="/Account/Register" class="fw-bold">Registrujte se</a>
+                            </p>
+                            <a href="/Identity/Account/ForgotPassword" class="small">Zaboravili ste lozinku?</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
 @section Scripts {
     @{
@@ -73,6 +93,18 @@
                 range: $.validator.format("Unesite vrijednost između {0} i {1}."),
                 max: $.validator.format("Unesite vrijednost manju ili jednaku {0}."),
                 min: $.validator.format("Unesite vrijednost veću ili jednaku {0}.")
+            });
+
+            $('.password-toggle').on('click', function() {
+                var button = $(this);
+                var input = button.closest('.password-wrapper').find('.password-input');
+                var icon = button.find('i');
+                var isPassword = input.attr('type') === 'password';
+
+                input.attr('type', isPassword ? 'text' : 'password');
+                icon.toggleClass('bi-eye', !isPassword);
+                icon.toggleClass('bi-eye-slash', isPassword);
+                button.attr('aria-label', isPassword ? 'Sakrij lozinku' : 'Prikaži lozinku');
             });
 
             function translateIdentityErrors() {

@@ -1,221 +1,455 @@
 @model Autosalon_OneZone.ViewModels.Admin.VoziloListViewModel
 
-<h3>Pregled Vozila</h3>
 @Html.AntiForgeryToken()
 
-<div class="admin-section-controls">
-    <button id="add-vozilo-button" class="btn btn-primary">Dodaj Novo Vozilo</button>
-    <input type="text" id="vozilo-search-input" placeholder="Pretraži po nazivu..." value="@Model.SearchQuery" />
-    <button id="vozilo-search-button" class="btn btn-secondary">Pretraži</button>
-
-</div>
-
-<div id="add-vozilo-form-container" style="display: none;">
-    <h4 id="add-edit-form-title">Dodaj Novo Vozilo</h4>
-    <div id="add-vozilo-form-placeholder">
-
+<div class="admin-page-header">
+    <div>
+        <p class="admin-eyebrow">Admin panel</p>
+        <h1>Pregled vozila</h1>
     </div>
 </div>
 
-<div id="vozila-list-container">
-    <table class="table table-striped table-hover">
-        <thead>
-            <tr>
-
-                <th>Naziv</th>
-                <th>Godište</th>
-                <th>Gorivo</th>
-                <th>Kilometraža</th>
-                <th>Cijena</th>
-                <th>Akcije</th>
-            </tr>
-        </thead>
-        <tbody id="vozila-table-body">
-
-            <tr>
-                <td colspan="6">Učitavanje vozila...</td>
-            </tr>
-        </tbody>
-    </table>
-
-    <div id="pagination-controls">
-
+<div id="add-vozilo-form-container" class="admin-form-card" style="display: none;">
+    <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
+        <div>
+            <p class="admin-eyebrow mb-1">Vozilo</p>
+            <h2 id="add-edit-form-title" class="mb-0">Dodaj novo vozilo</h2>
+        </div>
     </div>
+    <div id="add-vozilo-form-placeholder"></div>
+</div>
+
+<div class="admin-card" id="vozila-list-container">
+    <div class="admin-card-header">
+        <div>
+            <h2>Lista vozila</h2>
+            <p>Pregled svih vozila u sistemu.</p>
+        </div>
+    </div>
+
+    <div class="admin-list-toolbar">
+        <button id="add-vozilo-button" class="btn btn-primary rounded-4 add-admin-btn" type="button">
+            <i class="bi bi-plus-lg me-2"></i>Dodaj novo vozilo
+        </button>
+
+        <div class="admin-filter-chips" aria-label="Filter vozila po gorivu">
+            <button type="button" class="filter-chip active" data-vehicle-fuel="">Sva vozila</button>
+            <button type="button" class="filter-chip" data-vehicle-fuel="Benzin">Benzin</button>
+            <button type="button" class="filter-chip" data-vehicle-fuel="Dizel">Dizel</button>
+            <button type="button" class="filter-chip" data-vehicle-fuel="Hibrid">Hibrid</button>
+            <button type="button" class="filter-chip" data-vehicle-fuel="Elektro">Elektro</button>
+            <button type="button" class="filter-chip" data-vehicle-fuel="Plin">Plin</button>
+        </div>
+
+        <div class="admin-search-compact">
+            <input type="text" id="vozilo-search-input" class="form-control" placeholder="Pretraži po nazivu..." value="@Model.SearchQuery" />
+            <button id="vozilo-search-button" class="search-submit-btn" type="button" aria-label="Pretraži vozila">
+                <i class="bi bi-search"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="admin-mobile-sort">
+        <label for="vozilo-sort-select" class="form-label">Sortiraj po</label>
+        <select id="vozilo-sort-select" class="form-select">
+            <option value="cijena|desc">Cijena: najviša prvo</option>
+            <option value="cijena|asc">Cijena: najniža prvo</option>
+            <option value="godiste|desc">Godište: najnovije prvo</option>
+            <option value="godiste|asc">Godište: najstarije prvo</option>
+            <option value="kilometraza|asc">Kilometraža: najmanja prvo</option>
+            <option value="kilometraza|desc">Kilometraža: najveća prvo</option>
+        </select>
+    </div>
+
+    <div class="table-responsive admin-table-wrapper">
+        <table class="table admin-table align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Naziv</th>
+                    <th>
+                        <a href="?sort=godiste&direction=desc" class="sortable-th" data-sort-key="godiste">
+                            Godište
+                            <i class="bi bi-arrow-down-up"></i>
+                        </a>
+                    </th>
+                    <th>Gorivo</th>
+                    <th>
+                        <a href="?sort=kilometraza&direction=asc" class="sortable-th" data-sort-key="kilometraza">
+                            Kilometraža
+                            <i class="bi bi-arrow-down-up"></i>
+                        </a>
+                    </th>
+                    <th>
+                        <a href="?sort=cijena&direction=desc" class="sortable-th active" data-sort-key="cijena">
+                            Cijena
+                            <i class="bi bi-arrow-down-short"></i>
+                        </a>
+                    </th>
+                    <th class="text-end">Akcije</th>
+                </tr>
+            </thead>
+            <tbody id="vozila-table-body">
+                <tr>
+                    <td colspan="6">Učitavanje vozila...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="vozila-mobile-list" class="admin-mobile-list"></div>
+    <div id="pagination-controls"></div>
 </div>
 
 <script>
     $(document).ready(function () {
-        console.log("_AdminVozila.cshtml script loaded and ready.");
-
         $(document).off('click', '.edit-vozilo-button');
-
+        $(document).off('click', '.filter-chip');
+        $(document).off('click', '.sortable-th');
+        $(document).off('app:delete-confirmed', '.delete-vozilo-button');
         $(document).off('submit', '#add-edit-vozilo-form');
 
         const vozilaTableBody = $('#vozila-table-body');
+        const vozilaMobileList = $('#vozila-mobile-list');
         const searchInput = $('#vozilo-search-input');
         const searchButton = $('#vozilo-search-button');
         const addFormContainer = $('#add-vozilo-form-container');
         const addFormPlaceholder = $('#add-vozilo-form-placeholder');
         const addFormTitle = $('#add-edit-form-title');
+        const sortSelect = $('#vozilo-sort-select');
+        let currentFuelFilter = '';
+        let currentSort = 'cijena';
+        let currentDirection = 'desc';
 
-        function loadVozilaList(searchQuery = '', page = 1, sortOrder = '') {
-            console.log("Loading vozilo list...");
-            vozilaTableBody.html('<tr><td colspan="6">Učitavanje vozila...</td></tr>');
+        const sortDefaults = {
+            godiste: 'desc',
+            kilometraza: 'asc',
+            cijena: 'desc'
+        };
 
-            const url = '@Url.Action("GetVozilaJson", "AdminPanel")';
+        function escapeHtml(value) {
+            return $('<div>').text(value ?? '').html();
+        }
 
-            $.get(url, { searchQuery: searchQuery, page: page, sortOrder: sortOrder }, function (data) {
-                console.log("Vozila data received:", data);
-                vozilaTableBody.empty();
+        function escapeAttribute(value) {
+            return escapeHtml(value).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
 
-                if (data && data.vozila && data.vozila.length > 0) {
+        function formatCurrency(value) {
+            const number = Number(value || 0);
+            return '€' + number.toLocaleString('de-DE', { maximumFractionDigits: 0 });
+        }
 
-                    $.each(data.vozila, function (index, vozilo) {
+        function formatMileage(value) {
+            const number = Number(value || 0);
+            return number.toLocaleString('de-DE') + ' km';
+        }
 
-                        const row = `
-                            <tr>
-                                <td>${vozilo.naziv || ''}</td>
-                                <td>${vozilo.godiste || ''}</td>
-                                <td>${vozilo.gorivo || ''}</td>
-                                <td>${vozilo.kilometraza || ''}</td>
-                                <td>${vozilo.cijena ? vozilo.cijena.toFixed(2) : ''}</td>
-                                <td>
-                                    <button class="edit-vozilo-button btn btn-info btn-sm" data-id="${vozilo.voziloID}"><i class="bi bi-pencil-square"></i> Izmijeni</button>
-                                    <button class="delete-vozilo-button btn btn-danger btn-sm" data-id="${vozilo.voziloID}"><i class="bi bi-trash"></i> Obriši</button>
-                                </td>
-                            </tr>
-                        `;
-                        vozilaTableBody.append(row);
-                    });
+        function vehicleActions(id, naziv) {
+            return '<div class="table-actions">' +
+                '<button class="edit-vozilo-button btn btn-sm btn-outline-primary rounded-3" data-id="' + id + '"><i class="bi bi-pencil-square me-1"></i>Izmijeni</button>' +
+                '<button class="delete-vozilo-button btn btn-sm btn-outline-danger rounded-3" data-id="' + id + '" data-confirm-delete="true" data-confirm-title="Obrisati vozilo?" data-confirm-message="Da li ste sigurni da želite obrisati ovo vozilo?" data-confirm-item="' + escapeAttribute(naziv) + '" data-confirm-action="Da, obriši vozilo"><i class="bi bi-trash me-1"></i>Obriši</button>' +
+                '</div>';
+        }
 
+        function normalizeDirection(value, sortKey) {
+            if (value === 'asc' || value === 'desc') {
+                return value;
+            }
+
+            return sortDefaults[sortKey] || 'desc';
+        }
+
+        function sortIconClass(sortKey) {
+            if (sortKey !== currentSort) {
+                return 'bi-arrow-down-up';
+            }
+
+            return currentDirection === 'asc' ? 'bi-arrow-up-short' : 'bi-arrow-down-short';
+        }
+
+        function getNextSortDirection(sortKey) {
+            if (sortKey === currentSort) {
+                return currentDirection === 'desc' ? 'asc' : 'desc';
+            }
+
+            return sortDefaults[sortKey] || 'desc';
+        }
+
+        function updateSortControls() {
+            $('.sortable-th').each(function () {
+                const link = $(this);
+                const sortKey = link.data('sort-key');
+                const nextDirection = getNextSortDirection(sortKey);
+                const icon = link.find('i');
+
+                link.toggleClass('active', sortKey === currentSort);
+                icon.removeClass('bi-arrow-down-up bi-arrow-down-short bi-arrow-up-short').addClass(sortIconClass(sortKey));
+
+                const params = new URLSearchParams(window.location.search);
+                params.set('section', 'Vozila');
+                params.set('sort', sortKey);
+                params.set('direction', nextDirection);
+
+                const searchValue = searchInput.val();
+                if (searchValue) {
+                    params.set('searchQuery', searchValue);
                 } else {
-                    vozilaTableBody.html('<tr><td colspan="6">Nema dostupnih vozila.</td></tr>');
+                    params.delete('searchQuery');
                 }
-            }).fail(function (jqXHR, textStatus, errorThrown) {
-                console.error('Error loading vozila list:', textStatus, errorThrown, jqXHR.responseText);
-                 vozilaTableBody.html('<tr><td colspan="6"><div class="alert alert-danger">Greška prilikom učitavanja vozila: ' + (jqXHR.responseText || errorThrown) + '</div></td></tr>');
+
+                if (currentFuelFilter) {
+                    params.set('gorivoFilter', currentFuelFilter);
+                } else {
+                    params.delete('gorivoFilter');
+                }
+
+                link.attr('href', '?' + params.toString());
+            });
+
+            sortSelect.val(currentSort + '|' + currentDirection);
+        }
+
+        function updateUrlState() {
+            const params = new URLSearchParams(window.location.search);
+            params.set('section', 'Vozila');
+            params.set('sort', currentSort);
+            params.set('direction', currentDirection);
+
+            const searchValue = searchInput.val();
+            if (searchValue) {
+                params.set('searchQuery', searchValue);
+            } else {
+                params.delete('searchQuery');
+            }
+
+            if (currentFuelFilter) {
+                params.set('gorivoFilter', currentFuelFilter);
+            } else {
+                params.delete('gorivoFilter');
+            }
+
+            window.history.replaceState({}, '', window.location.pathname + '?' + params.toString());
+            updateSortControls();
+        }
+
+        function readInitialState() {
+            const params = new URLSearchParams(window.location.search);
+            const sortParam = params.get('sort');
+            const directionParam = params.get('direction');
+            const fuelParam = params.get('gorivoFilter');
+            const searchParam = params.get('searchQuery');
+
+            if (sortParam && sortDefaults[sortParam]) {
+                currentSort = sortParam;
+            }
+
+            currentDirection = normalizeDirection(directionParam, currentSort);
+
+            if (fuelParam) {
+                const activeFuelChip = $('.filter-chip[data-vehicle-fuel="' + fuelParam + '"]');
+                if (activeFuelChip.length) {
+                    currentFuelFilter = fuelParam;
+                    $('.filter-chip').removeClass('active');
+                    activeFuelChip.addClass('active');
+                }
+            }
+
+            if (searchParam && !searchInput.val()) {
+                searchInput.val(searchParam);
+            }
+
+            updateSortControls();
+        }
+
+        function renderVehicleRows(vozila) {
+            vozilaTableBody.empty();
+            vozilaMobileList.empty();
+
+            if (!vozila || vozila.length === 0) {
+                vozilaTableBody.html('<tr><td colspan="6"><div class="empty-state"><i class="bi bi-car-front"></i><p>Nema dostupnih vozila.</p></div></td></tr>');
+                vozilaMobileList.html('<div class="empty-state"><i class="bi bi-car-front"></i><p>Nema dostupnih vozila.</p></div>');
+                return;
+            }
+
+            $.each(vozila, function (_, vozilo) {
+                const id = vozilo.voziloID;
+                const naziv = escapeHtml(vozilo.naziv || 'Nepoznato vozilo');
+                const godiste = escapeHtml(vozilo.godiste || 'N/A');
+                const gorivo = escapeHtml(vozilo.gorivo || 'N/A');
+                const kilometraza = formatMileage(vozilo.kilometraza);
+                const cijena = formatCurrency(vozilo.cijena);
+                const actions = vehicleActions(id, naziv);
+
+                vozilaTableBody.append(
+                    '<tr>' +
+                        '<td><div class="vehicle-name-cell"><strong>' + naziv + '</strong><span>ID #' + id + '</span></div></td>' +
+                        '<td>' + godiste + '</td>' +
+                        '<td><span class="admin-badge">' + gorivo + '</span></td>' +
+                        '<td>' + kilometraza + '</td>' +
+                        '<td><strong class="price-cell">' + cijena + '</strong></td>' +
+                        '<td>' + actions + '</td>' +
+                    '</tr>'
+                );
+
+                vozilaMobileList.append(
+                    '<article class="admin-vehicle-card">' +
+                        '<div class="d-flex justify-content-between gap-3">' +
+                            '<div><span class="admin-badge">' + gorivo + '</span><h3>' + naziv + '</h3></div>' +
+                            '<strong class="price-cell">' + cijena + '</strong>' +
+                        '</div>' +
+                        '<div class="mobile-specs">' +
+                            '<div><span>Godište</span><strong>' + godiste + '</strong></div>' +
+                            '<div><span>Kilometraža</span><strong>' + kilometraza + '</strong></div>' +
+                        '</div>' +
+                        '<div class="mobile-actions">' + actions + '</div>' +
+                    '</article>'
+                );
             });
         }
 
-        loadVozilaList(searchInput.val() || '@Model.SearchQuery');
+        function loadVozilaList(searchQuery = '', page = 1, sort = currentSort, direction = currentDirection, gorivoFilter = currentFuelFilter) {
+            vozilaTableBody.html('<tr><td colspan="6">Učitavanje vozila...</td></tr>');
+            vozilaMobileList.html('<div class="empty-state"><i class="bi bi-hourglass-split"></i><p>Učitavanje vozila...</p></div>');
+
+            $.get('@Url.Action("GetVozilaJson", "AdminPanel")', { searchQuery: searchQuery, page: page, sort: sort, direction: direction, gorivoFilter: gorivoFilter }, function (data) {
+                renderVehicleRows(data && data.vozila ? data.vozila : []);
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                const message = escapeHtml(jqXHR.responseText || errorThrown || 'Greška');
+                vozilaTableBody.html('<tr><td colspan="6"><div class="alert alert-danger mb-0">Greška prilikom učitavanja vozila: ' + message + '</div></td></tr>');
+                vozilaMobileList.html('<div class="alert alert-danger mb-0">Greška prilikom učitavanja vozila: ' + message + '</div>');
+            });
+        }
+
+        readInitialState();
+        loadVozilaList(searchInput.val() || '@Model.SearchQuery', 1, currentSort, currentDirection, currentFuelFilter);
 
         searchButton.on('click', function () {
-            const searchQuery = searchInput.val();
-            loadVozilaList(searchQuery);
+            updateUrlState();
+            loadVozilaList(searchInput.val(), 1, currentSort, currentDirection, currentFuelFilter);
         });
 
-         searchInput.keypress(function(e) {
-             if(e.which == 13) {
-                 e.preventDefault();
-                 searchButton.click();
-             }
-         });
-
-        $('#add-vozilo-button').on('click', function () {
-            addFormTitle.text('Dodaj Novo Vozilo');
-             $.get('@Url.Action("GetAddVoziloForm", "AdminPanel")', function(data) {
-                 addFormPlaceholder.html(data);
-                 addFormContainer.show();
-                 var form = addFormPlaceholder.find('form');
-                 form.removeData('validator');
-                 form.removeData('unobtrusiveValidation');
-                 $.validator.unobtrusive.parse(form);
-             }).fail(function(jqXHR, textStatus, errorThrown) {
-                 console.error('Error loading add form:', errorThrown);
-                 addFormPlaceholder.html('<div class="alert alert-danger">Greška prilikom učitavanja forme za dodavanje.</div>');
-                 addFormContainer.show();
-             });
-        });
-
-        $(document).on('click', '.edit-vozilo-button', function () {
-             var voziloId = $(this).data('id');
-             addFormTitle.text('Izmijeni Vozilo');
-
-             $.get('@Url.Action("GetEditVoziloForm", "AdminPanel")', { id: voziloId }, function(data) {
-                 addFormPlaceholder.html(data);
-                 addFormContainer.show();
-                 var form = addFormPlaceholder.find('form');
-                 form.removeData('validator');
-                 form.removeData('unobtrusiveValidation');
-                 $.validator.unobtrusive.parse(form);
-             }).fail(function(jqXHR, textStatus, errorThrown) {
-                 console.error('Error loading edit form:', errorThrown);
-                 addFormPlaceholder.html('<div class="alert alert-danger">Greška prilikom učitavanja forme za izmjenu.</div>');
-                 addFormContainer.show();
-             });
-        });
-
-        $(document).on('click', '#cancel-add-vozilo', function () {
-             addFormContainer.hide();
-             addFormPlaceholder.empty();
-        });
-
-        $(document).on('submit', '#add-edit-vozilo-form', function (e) {
-             e.preventDefault();
-             console.log("Form submitted via AJAX");
-
-             var form = $(this);
-             var url = form.attr('action');
-             var method = form.attr('method');
-             var formData = new FormData(this);
-
-             if (!form.valid()) {
-                 console.log("Client validation failed.");
-                 return;
-             }
-
-             $.ajax({
-                  url: url,
-                  method: method,
-                  data: formData,
-                  processData: false,
-                  contentType: false,
-                  success: function (response) {
-                      console.log("Save successful:", response);
-                      addFormContainer.hide();
-                      addFormPlaceholder.empty();
-
-                      loadVozilaList(searchInput.val());
-                      alert('Vozilo uspješno sačuvano!');
-                  },
-                  error: function (jqXHR, textStatus, errorThrown) {
-                      console.error('AJAX Error:', textStatus, errorThrown, jqXHR.responseText);
-                      if (jqXHR.status === 400 && jqXHR.responseJSON) {
-                           console.log("Validation errors:", jqXHR.responseJSON);
-                           alert('Greška prilikom spremanja. Provjerite unesene podatke.');
-                      } else {
-                          alert('Došlo je do greške prilikom spremanja vozila.\nSlika je obavezna');
-                      }
-                  }
-             });
-        });
-
-        $(document).off('click', '.delete-vozilo-button');
-
-        $(document).on('click', '.delete-vozilo-button', function () {
-            var voziloId = $(this).data('id');
-
-            if (confirm('Da li ste sigurni da želite obrisati ovo vozilo?')) {
-                $.ajax({
-                    url: '@Url.Action("DeleteVozilo", "AdminPanel")',
-                    method: 'POST',
-                    headers: {
-                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
-                    },
-                    data: { id: voziloId },
-                    success: function (response) {
-                        console.log("Delete successful:", response);
-                        alert('Vozilo uspješno obrisano.');
-
-                        loadVozilaList(searchInput.val());
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        console.error('Error deleting vozilo:', errorThrown, jqXHR.responseText);
-                        alert('Došlo je do greške prilikom brisanja vozila.');
-                    }
-                });
+        searchInput.on('keypress', function (e) {
+            if (e.which === 13) {
+                e.preventDefault();
+                searchButton.click();
             }
         });
 
+        $(document).on('click', '.filter-chip', function () {
+            currentFuelFilter = $(this).data('vehicle-fuel') || '';
+            $('.filter-chip').removeClass('active');
+            $(this).addClass('active');
+            updateUrlState();
+            loadVozilaList(searchInput.val(), 1, currentSort, currentDirection, currentFuelFilter);
+        });
+
+        $(document).on('click', '.sortable-th', function (e) {
+            e.preventDefault();
+            const sortKey = $(this).data('sort-key');
+
+            if (!sortDefaults[sortKey]) {
+                return;
+            }
+
+            currentDirection = getNextSortDirection(sortKey);
+            currentSort = sortKey;
+            updateUrlState();
+            loadVozilaList(searchInput.val(), 1, currentSort, currentDirection, currentFuelFilter);
+        });
+
+        sortSelect.on('change', function () {
+            const [sortKey, direction] = ($(this).val() || 'cijena|desc').split('|');
+            currentSort = sortDefaults[sortKey] ? sortKey : 'cijena';
+            currentDirection = normalizeDirection(direction, currentSort);
+            updateUrlState();
+            loadVozilaList(searchInput.val(), 1, currentSort, currentDirection, currentFuelFilter);
+        });
+
+        $('#add-vozilo-button').on('click', function () {
+            addFormTitle.text('Dodaj novo vozilo');
+            $.get('@Url.Action("GetAddVoziloForm", "AdminPanel")', function (data) {
+                addFormPlaceholder.html(data);
+                addFormContainer.show();
+                const form = addFormPlaceholder.find('form');
+                form.removeData('validator');
+                form.removeData('unobtrusiveValidation');
+                $.validator.unobtrusive.parse(form);
+            }).fail(function () {
+                addFormPlaceholder.html('<div class="alert alert-danger mb-0">Greška prilikom učitavanja forme za dodavanje.</div>');
+                addFormContainer.show();
+            });
+        });
+
+        $(document).on('click', '.edit-vozilo-button', function () {
+            const voziloId = $(this).data('id');
+            addFormTitle.text('Izmijeni vozilo');
+
+            $.get('@Url.Action("GetEditVoziloForm", "AdminPanel")', { id: voziloId }, function (data) {
+                addFormPlaceholder.html(data);
+                addFormContainer.show();
+                const form = addFormPlaceholder.find('form');
+                form.removeData('validator');
+                form.removeData('unobtrusiveValidation');
+                $.validator.unobtrusive.parse(form);
+            }).fail(function () {
+                addFormPlaceholder.html('<div class="alert alert-danger mb-0">Greška prilikom učitavanja forme za izmjenu.</div>');
+                addFormContainer.show();
+            });
+        });
+
+        $(document).on('click', '#cancel-add-vozilo', function () {
+            addFormContainer.hide();
+            addFormPlaceholder.empty();
+        });
+
+        $(document).on('submit', '#add-edit-vozilo-form', function (e) {
+            e.preventDefault();
+            const form = $(this);
+
+            if (!form.valid()) {
+                return;
+            }
+
+            $.ajax({
+                url: form.attr('action'),
+                method: form.attr('method'),
+                data: new FormData(this),
+                processData: false,
+                contentType: false,
+                success: function () {
+                    addFormContainer.hide();
+                    addFormPlaceholder.empty();
+                    loadVozilaList(searchInput.val(), 1, currentSort, currentDirection, currentFuelFilter);
+                    alert('Vozilo uspješno sačuvano.');
+                },
+                error: function (jqXHR) {
+                    if (jqXHR.status === 400 && jqXHR.responseJSON) {
+                        alert('Greška prilikom spremanja. Provjerite unesene podatke.');
+                    } else {
+                        alert('Došlo je do greške prilikom spremanja vozila. Slika je obavezna za novo vozilo.');
+                    }
+                }
+            });
+        });
+
+        $(document).on('app:delete-confirmed', '.delete-vozilo-button', function () {
+            const voziloId = $(this).data('id');
+
+            $.ajax({
+                url: '@Url.Action("DeleteVozilo", "AdminPanel")',
+                method: 'POST',
+                headers: {
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                },
+                data: { id: voziloId },
+                success: function () {
+                    alert('Vozilo uspješno obrisano.');
+                    loadVozilaList(searchInput.val(), 1, currentSort, currentDirection, currentFuelFilter);
+                },
+                error: function () {
+                    alert('Došlo je do greške prilikom brisanja vozila.');
+                }
+            });
+        });
     });
 </script>

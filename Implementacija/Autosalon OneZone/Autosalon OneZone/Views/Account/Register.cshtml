@@ -57,10 +57,10 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label asp-for="Password" class="form-label">Šifra</label>
+                                <label asp-for="Password" class="form-label">Lozinka</label>
                                 <div class="password-wrapper">
-                                    <input asp-for="Password" type="password" class="form-control password-input" placeholder="Šifra" required data-val-required="Šifra je obavezna." />
-                                    <button type="button" class="password-toggle" aria-label="Prikaži šifru">
+                                    <input asp-for="Password" type="password" class="form-control password-input" placeholder="Lozinka" required data-val-required="Lozinka je obavezna." />
+                                    <button type="button" class="password-toggle" aria-label="Prikaži lozinku">
                                         <i class="bi bi-eye"></i>
                                     </button>
                                 </div>
@@ -68,10 +68,10 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label asp-for="ConfirmPassword" class="form-label">Potvrdite šifru</label>
+                                <label asp-for="ConfirmPassword" class="form-label">Potvrdi lozinku</label>
                                 <div class="password-wrapper">
-                                    <input asp-for="ConfirmPassword" type="password" class="form-control password-input" placeholder="Potvrdite šifru" required data-val-required="Potvrda šifre je obavezna." data-val-equalto="Šifre se ne podudaraju." />
-                                    <button type="button" class="password-toggle" aria-label="Prikaži šifru">
+                                    <input asp-for="ConfirmPassword" type="password" class="form-control password-input" placeholder="Potvrdi lozinku" required data-val-required="Potvrda lozinke je obavezna." data-val-equalto="Lozinke se ne podudaraju." />
+                                    <button type="button" class="password-toggle" aria-label="Prikaži lozinku">
                                         <i class="bi bi-eye"></i>
                                     </button>
                                 </div>
@@ -125,7 +125,7 @@
                 input.attr('type', isPassword ? 'text' : 'password');
                 icon.toggleClass('bi-eye', !isPassword);
                 icon.toggleClass('bi-eye-slash', isPassword);
-                button.attr('aria-label', isPassword ? 'Sakrij šifru' : 'Prikaži šifru');
+                button.attr('aria-label', isPassword ? 'Sakrij lozinku' : 'Prikaži lozinku');
             });
 
             function validateFields() {
@@ -156,14 +156,14 @@
 
                     text = text.replace(/Username .* is already taken/i, 'Korisničko ime je već zauzeto.');
                     text = text.replace(/Email .* is already taken/i, 'Email adresa je već zauzeta.');
-                    text = text.replace(/Password must be at least \d+ characters/i, 'Šifra mora imati najmanje $1 znakova.');
-                    text = text.replace(/Passwords must have at least one non alphanumeric character/i, 'Šifra mora sadržavati najmanje jedan poseban znak.');
-                    text = text.replace(/Passwords must have at least one lowercase/i, 'Šifra mora sadržavati najmanje jedno malo slovo.');
-                    text = text.replace(/Passwords must have at least one uppercase/i, 'Šifra mora sadržavati najmanje jedno veliko slovo.');
-                    text = text.replace(/Passwords must have at least one digit/i, 'Šifra mora sadržavati najmanje jednu cifru.');
+                    text = text.replace(/Password must be at least \d+ characters/i, 'Lozinka mora imati najmanje $1 znakova.');
+                    text = text.replace(/Passwords must have at least one non alphanumeric character/i, 'Lozinka mora sadržavati najmanje jedan poseban znak.');
+                    text = text.replace(/Passwords must have at least one lowercase/i, 'Lozinka mora sadržavati najmanje jedno malo slovo.');
+                    text = text.replace(/Passwords must have at least one uppercase/i, 'Lozinka mora sadržavati najmanje jedno veliko slovo.');
+                    text = text.replace(/Passwords must have at least one digit/i, 'Lozinka mora sadržavati najmanje jednu cifru.');
                     text = text.replace(/User name .* is invalid/i, 'Korisničko ime sadrži nedozvoljene znakove.');
                     text = text.replace(/Email .* is invalid/i, 'Email adresa nije ispravna.');
-                    text = text.replace(/The password and confirmation password do not match/i, 'Šifra i potvrda šifre se ne podudaraju.');
+                    text = text.replace(/The password and confirmation password do not match/i, 'Lozinka i potvrda lozinke se ne podudaraju.');
 
                     $(this).text(text);
                 });

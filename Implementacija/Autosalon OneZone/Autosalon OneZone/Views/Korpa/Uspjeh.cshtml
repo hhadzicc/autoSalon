@@ -3,57 +3,90 @@
     ViewData["Title"] = "Uspješna kupovina";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<div class="container mt-5">
-    <div class="row">
-        <div class="col-md-8 mx-auto">
-            <div class="card border-success">
-                <div class="card-header bg-success text-white">
-                    <h2 class="mb-0"><i class="bi bi-check-circle-fill me-2"></i>Kupovina uspješna!</h2>
-                </div>
-                <div class="card-body">
-                    <div class="text-center mb-4">
-                        <i class="bi bi-check-circle-fill text-success" style="font-size: 5rem;"></i>
+
+<section class="inner-page-header">
+    <div class="container text-center">
+        <p class="section-eyebrow">Kupovina</p>
+        <h1>Kupovina završena</h1>
+        <p>Vaša narudžba je uspješno evidentirana.</p>
+    </div>
+</section>
+
+<section class="success-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-xl-7">
+                <div class="success-card">
+                    <div class="success-icon">
+                        <i class="bi bi-check-lg"></i>
                     </div>
 
-                    <h3 class="card-title text-center mb-4">Hvala na kupovini!</h3>
+                    <h2>Hvala na kupovini!</h2>
+                    <p class="success-text">
+                        Vaša kupovina je uspješno završena. Detalje narudžbe možete pregledati ispod.
+                    </p>
 
-                    <div class="alert alert-info mb-4">
-                        <p class="mb-1"><strong>Broj narudžbe:</strong> #@Model.NarudzbaID</p>
-                        <p class="mb-1"><strong>Datum:</strong> @Model.DatumNarudzbe.ToString("dd.MM.yyyy. HH:mm")</p>
-                        <p class="mb-0"><strong>Ukupan iznos:</strong> €@Model.UkupnaCijena.ToString("N2")</p>
+                    <div class="order-summary">
+                        <div>
+                            <span>Broj narudžbe</span>
+                            <strong>#@Model.NarudzbaID</strong>
+                        </div>
+
+                        <div>
+                            <span>Datum</span>
+                            <strong>@Model.DatumNarudzbe.ToString("dd.MM.yyyy. HH:mm")</strong>
+                        </div>
+
+                        <div>
+                            <span>Ukupan iznos</span>
+                            <strong>€@Model.UkupnaCijena.ToString("N2")</strong>
+                        </div>
                     </div>
 
-                    <h4>Detalji kupovine</h4>
-                    <div class="table-responsive">
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Vozilo</th>
-                                    <th>Cijena</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var stavka in Model.StavkeKorpe)
-                                {
-                                    <tr>
-                                        <td>@stavka.Vozilo.Marka @stavka.Vozilo.Model (@stavka.Vozilo.Godiste)</td>
-                                        <td>€@stavka.CijenaStavke.ToString("N2")</td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
+                    <div class="purchase-details">
+                        <h3>Detalji kupovine</h3>
+
+                        <div class="purchase-row purchase-head">
+                            <span>Vozilo</span>
+                            <span>Cijena</span>
+                        </div>
+
+                        @foreach (var stavka in Model.StavkeKorpe)
+                        {
+                            <div class="purchase-row">
+                                <span>@stavka.Vozilo.Marka @stavka.Vozilo.Model (@stavka.Vozilo.Godiste)</span>
+                                <strong>€@stavka.CijenaStavke.ToString("N2")</strong>
+                            </div>
+                        }
                     </div>
 
-                    <div class="mt-4">
-                        <p>Dodatne informacije o preuzimanju vozila dobit ćete putem e-maila.</p>
-                        <p>Za sva pitanja možete nas kontaktirati na <strong>info@autosalon.com</strong> ili pozivom na <strong>+387 33 123 456</strong>.</p>
+                    <div class="success-note">
+                        <i class="bi bi-info-circle-fill"></i>
+                        <div>
+                            <strong>Šta slijedi?</strong>
+                            <p>
+                                Dodatne informacije o preuzimanju vozila dobit ćete putem e-maila.
+                                Za pitanja možete koristiti kontakt stranicu ili direktno pisati na
+                                <strong>autosalon@autosalon.com</strong>.
+                            </p>
+                        </div>
                     </div>
 
-                    <div class="d-grid gap-2 mt-4">
-                        <a href="@Url.Action("Index", "Vozilo")" class="btn btn-primary">Povratak na vozila</a>
+                    <div class="success-actions">
+                        <a href="@Url.Action("Index", "Vozilo")" class="btn btn-primary rounded-4">
+                            <i class="bi bi-car-front-fill me-2"></i>Povratak na vozila
+                        </a>
+
+                        <a href="@Url.Action("KupljeniArtikli", "Profil")" class="btn btn-outline-primary rounded-4">
+                            <i class="bi bi-bag-check me-2"></i>Moji kupljeni artikli
+                        </a>
+
+                        <a href="@Url.Action("Index", "Profil")" class="btn btn-light border rounded-4">
+                            <i class="bi bi-person-fill me-2"></i>Moj profil
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>

@@ -54,12 +54,15 @@
                             </div>
                         </div>
 
-                        <div class="d-flex flex-wrap gap-2 mt-4">
-                            <a asp-controller="Profil" asp-action="Index" class="btn btn-light border rounded-4 px-4">Nazad na profil</a>
-                            <button type="submit" class="btn btn-primary rounded-4 px-4">Sačuvaj izmjene</button>
-                            <button type="button" class="btn btn-outline-secondary rounded-4 px-4" id="change-password-btn">
-                                <i class="bi bi-key me-2"></i>Promijeni lozinku
-                            </button>
+                        <div class="profile-actions">
+                            <div class="profile-actions-left">
+                                <a asp-controller="Profil" asp-action="Index" class="btn btn-light border rounded-4">Nazad na profil</a>
+                                <button type="button" class="btn btn-outline-secondary rounded-4" id="change-password-btn">
+                                    <i class="bi bi-key me-2"></i>Promijeni lozinku
+                                </button>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary rounded-4">Sačuvaj izmjene</button>
                         </div>
                     </form>
                 </div>
@@ -70,9 +73,17 @@
 
 <div class="modal fade" id="passwordChangeModal" tabindex="-1" aria-labelledby="passwordChangeModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content profile-modal">
-            <div class="modal-header">
-                <h5 class="modal-title" id="passwordChangeModalLabel">Promjena lozinke</h5>
+        <div class="modal-content modern-modal profile-modal">
+            <div class="modal-header modern-modal-header">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="modal-icon">
+                        <i class="bi bi-shield-lock-fill"></i>
+                    </div>
+                    <div>
+                        <h5 class="modal-title" id="passwordChangeModalLabel">Promjena lozinke</h5>
+                        <p class="mb-0 text-muted small">Unesite trenutnu i novu lozinku za svoj nalog.</p>
+                    </div>
+                </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -81,24 +92,44 @@
 
                     <div class="mb-3">
                         <label for="currentPassword" class="form-label">Trenutna lozinka</label>
-                        <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>
+                        <div class="password-wrapper">
+                            <input type="password" class="form-control password-input" id="currentPassword" name="currentPassword" required>
+                            <button type="button" class="password-toggle" aria-label="Prikaži lozinku">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
                         <div class="password-error" id="currentPassword-error"></div>
                     </div>
 
                     <div class="mb-3">
                         <label for="newPassword" class="form-label">Nova lozinka</label>
-                        <input type="password" class="form-control" id="newPassword" name="newPassword" required>
+                        <div class="password-wrapper">
+                            <input type="password" class="form-control password-input" id="newPassword" name="newPassword" required>
+                            <button type="button" class="password-toggle" aria-label="Prikaži lozinku">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
                         <div class="password-error" id="newPassword-error"></div>
                     </div>
 
-                    <div class="mb-3">
+                    <div class="mb-2">
                         <label for="confirmPassword" class="form-label">Potvrdite novu lozinku</label>
-                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                        <div class="password-wrapper">
+                            <input type="password" class="form-control password-input" id="confirmPassword" name="confirmPassword" required>
+                            <button type="button" class="password-toggle" aria-label="Prikaži lozinku">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
                         <div class="password-error" id="confirmPassword-error"></div>
+                    </div>
+
+                    <div class="password-hint">
+                        <i class="bi bi-info-circle me-2"></i>
+                        Preporuka: koristite najmanje 8 karaktera, brojeve i velika slova.
                     </div>
                 </form>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer modern-modal-footer">
                 <button type="button" class="btn btn-light border rounded-4" data-bs-dismiss="modal">Odustani</button>
                 <button type="button" class="btn btn-primary rounded-4" id="submit-password-change">Postavi novu lozinku</button>
             </div>
@@ -237,6 +268,19 @@
                         }
                     }
                 });
+            });
+
+            $(".password-toggle").on("click", function() {
+                const button = $(this);
+                const wrapper = button.closest(".password-wrapper");
+                const input = wrapper.find(".password-input")[0];
+                const icon = button.find("i");
+                const isPassword = input.type === "password";
+
+                input.type = isPassword ? "text" : "password";
+                icon.toggleClass("bi-eye", !isPassword);
+                icon.toggleClass("bi-eye-slash", isPassword);
+                button.attr("aria-label", isPassword ? "Sakrij lozinku" : "Prikaži lozinku");
             });
         });
     </script>

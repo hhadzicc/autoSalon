@@ -3,6 +3,26 @@
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 
+@{
+    var currentPath = Context.Request.Path.Value?.ToLowerInvariant() ?? "";
+    var isAdminArea = currentPath.StartsWith("/adminpanel");
+    var isVehiclesArea = currentPath.StartsWith("/vozilo");
+    var isContactArea = currentPath.StartsWith("/home/kontakt");
+    var isCartArea = currentPath.StartsWith("/korpa");
+    var isProfileArea = currentPath.StartsWith("/profil");
+    var isLoginArea = currentPath.StartsWith("/account/login");
+    var isRegisterArea = currentPath.StartsWith("/account/register");
+    var successMessage = Convert.ToString(TempData["SuccessMessage"]);
+    var errorMessage = Convert.ToString(TempData["ErrorMessage"]);
+    var infoMessage = Convert.ToString(TempData["InfoMessage"]);
+    var warningMessage = Convert.ToString(TempData["WarningMessage"]);
+    var hasFlashMessage =
+        !string.IsNullOrWhiteSpace(successMessage) ||
+        !string.IsNullOrWhiteSpace(errorMessage) ||
+        !string.IsNullOrWhiteSpace(infoMessage) ||
+        !string.IsNullOrWhiteSpace(warningMessage);
+}
+
 <!DOCTYPE html>
 <html lang="bs">
 <head>
@@ -16,8 +36,8 @@
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark custom-navbar sticky-top">
-        <div class="container align-items-center">
-            <a class="navbar-brand fw-bold text-white d-flex align-items-center" href="/">
+        <div class="container-xxl align-items-center">
+            <a class="navbar-brand fw-bold text-white d-flex align-items-center gap-2" href="/">
                 <span class="brand-icon"><i class="bi bi-car-front-fill"></i></span>
                 Autosalon OneZone
             </a>
@@ -32,39 +52,65 @@
                     @if (SignInManager.IsSignedIn(User) && (User.IsInRole("Administrator") || User.IsInRole("Prodavac")))
                     {
                         <li class="nav-item">
-                            <a class="nav-link" href="/AdminPanel/Index">Admin Panel</a>
+                            <a class="nav-link @(isAdminArea ? "active" : "")" href="/AdminPanel/Index">
+                                <i class="bi bi-speedometer2 me-lg-1"></i>Admin Panel
+                            </a>
                         </li>
                     }
 
                     <li class="nav-item">
-                        <a class="nav-link" href="/Vozilo">Vozila</a>
+                        <a class="nav-link @(isVehiclesArea ? "active" : "")" href="/Vozilo">Vozila</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/Home/Kontakt">Piši nam</a>
+                        <a class="nav-link @(isContactArea ? "active" : "")" href="/Home/Kontakt">Piši nam</a>
                     </li>
 
                     @if (SignInManager.IsSignedIn(User))
                     {
                         <li class="nav-item">
-                            <a class="nav-link" href="/Korpa">Korpa</a>
+                            <a class="nav-link cart-link @(isCartArea ? "active" : "")" href="/Korpa">
+                                <i class="bi bi-cart-fill me-lg-1"></i>Korpa
+                            </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/Profil">Moj Profil</a>
-                        </li>
-                        <li class="nav-item">
-                            <form id="logoutForm" asp-controller="Account" asp-action="Logout" method="post">
-                                @Html.AntiForgeryToken()
-                                <button type="submit" class="nav-link btn btn-link logout-link">Odjavi se</button>
-                            </form>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle @(isProfileArea ? "active" : "")" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-circle me-lg-1"></i>Moj profil
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end user-menu">
+                                <li>
+                                    <a class="dropdown-item" href="/Profil">
+                                        <i class="bi bi-person-fill me-2"></i>Profil
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="/Profil/KupljeniArtikli">
+                                        <i class="bi bi-bag-check-fill me-2"></i>Kupljeni artikli
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="/Profil/Edit#password">
+                                        <i class="bi bi-key-fill me-2"></i>Promijeni lozinku
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form id="logoutForm" asp-controller="Account" asp-action="Logout" method="post">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="dropdown-item text-danger">
+                                            <i class="bi bi-box-arrow-right me-2"></i>Odjavi se
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
                         </li>
                     }
                     else
                     {
                         <li class="nav-item">
-                            <a class="nav-link" href="/Account/Login">Prijavi se</a>
+                            <a class="nav-link @(isLoginArea ? "active" : "")" href="/Account/Login">Prijavi se</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" id="register" href="/Account/Register">Registruj se</a>
+                            <a class="nav-link register-link @(isRegisterArea ? "active" : "")" id="register" href="/Account/Register">Registruj se</a>
                         </li>
                     }
                 </ul>
@@ -73,11 +119,37 @@
     </nav>
 
     <main class="main-content-container">
-        @if (TempData["SuccessMessage"] != null)
+        @if (hasFlashMessage)
         {
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                @TempData["SuccessMessage"]
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <div class="flash-messages" aria-live="polite">
+                @if (!string.IsNullOrWhiteSpace(successMessage))
+                {
+                    <div class="alert alert-success alert-dismissible fade show app-alert" role="alert">
+                        @successMessage
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Zatvori"></button>
+                    </div>
+                }
+                @if (!string.IsNullOrWhiteSpace(errorMessage))
+                {
+                    <div class="alert alert-danger alert-dismissible fade show app-alert" role="alert">
+                        @errorMessage
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Zatvori"></button>
+                    </div>
+                }
+                @if (!string.IsNullOrWhiteSpace(infoMessage))
+                {
+                    <div class="alert alert-info alert-dismissible fade show app-alert" role="alert">
+                        @infoMessage
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Zatvori"></button>
+                    </div>
+                }
+                @if (!string.IsNullOrWhiteSpace(warningMessage))
+                {
+                    <div class="alert alert-warning alert-dismissible fade show app-alert" role="alert">
+                        @warningMessage
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Zatvori"></button>
+                    </div>
+                }
             </div>
         }
 
@@ -85,7 +157,7 @@
     </main>
 
     <footer class="footer">
-        <div class="container">
+        <div class="container-xxl">
             <div class="row align-items-center g-4">
                 <div class="col-lg-7">
                     <h5 class="text-white fw-bold mb-2">Autosalon OneZone</h5>
@@ -101,6 +173,35 @@
             </div>
         </div>
     </footer>
+
+    <div class="modal fade" id="globalDeleteConfirmModal" tabindex="-1" aria-labelledby="globalDeleteConfirmTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content delete-confirm-modal">
+                <div class="modal-header border-0">
+                    <div class="delete-modal-heading">
+                        <div class="delete-modal-icon">
+                            <i class="bi bi-trash-fill"></i>
+                        </div>
+                        <div>
+                            <h5 class="modal-title" id="globalDeleteConfirmTitle">Potvrda brisanja</h5>
+                            <p class="mb-0 text-muted small">Ova akcija se ne može jednostavno poništiti.</p>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Zatvori"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="globalDeleteConfirmMessage" class="delete-confirm-message">
+                        Da li ste sigurni da želite obrisati ovu stavku?
+                    </p>
+                    <div id="globalDeleteConfirmItem" class="delete-confirm-item d-none"></div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-light border rounded-4" data-bs-dismiss="modal">Odustani</button>
+                    <button type="button" class="btn btn-danger rounded-4" id="globalDeleteConfirmButton">Da, obriši</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

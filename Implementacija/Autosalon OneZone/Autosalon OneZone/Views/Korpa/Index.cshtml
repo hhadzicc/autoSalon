@@ -3,178 +3,198 @@
     ViewData["Title"] = "Korpa";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<div class="container mt-4">
+<section class="inner-page-header">
+    <div class="container text-center">
+        <p class="section-eyebrow">Kupovina</p>
+        <h1>Vaša korpa</h1>
+        <p>Pregledajte odabrana vozila, izračunajte ratu kredita i nastavite kupovinu.</p>
+    </div>
+</section>
 
-    @if (Model.VozilaUKorpi.Count == 0)
-    {
-        <div class="alert alert-info" role="alert">
-            <h4 class="alert-heading">Vaša korpa je prazna!</h4>
-            <p>Dodajte vozila iz našeg kataloga da biste ih vidjeli ovdje.</p>
-            <hr>
-            <p class="mb-0">
-                <a href="@Url.Action("Index", "Vozilo")" class="btn btn-primary">
-                    <i class="bi bi-car-front-fill me-2"></i>Pregledajte vozila
-                </a>
-            </p>
-        </div>
-    }
-    else
-    {
-        <div class="row">
-
-            <div class="col-lg-8">
-
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <span class="fw-bold">Ukupno vozila: </span>
-                                <span class="badge bg-primary rounded-pill">@Model.VozilaUKorpi.Count</span>
-                            </div>
-                            <div class="d-flex align-items-center">
-                                <span class="me-2">Sortiraj po:</span>
-                                <select id="sortOptions" class="form-select form-select-sm" style="width: auto;">
-                                    <option value="naziv_asc">Naziv (A-Z)</option>
-                                    <option value="naziv_desc">Naziv (Z-A)</option>
-                                    <option value="cijena_asc">Cijena (rastuće)</option>
-                                    <option value="cijena_desc">Cijena (opadajuće)</option>
-                                    <option value="godiste_asc">Godište (rastuće)</option>
-                                    <option value="godiste_desc">Godište (opadajuće)</option>
-                                </select>
-                            </div>
-                        </div>
+<section class="cart-page-section">
+    <div class="container">
+        @if (Model.VozilaUKorpi.Count == 0)
+        {
+            <div class="empty-cart-wrap">
+                <div class="empty-cart-card">
+                    <div class="empty-cart-icon">
+                        <i class="bi bi-cart-x"></i>
                     </div>
-                </div>
 
-                <div id="stavkeKorpe">
-                    @foreach (var vozilo in Model.VozilaUKorpi)
-                    {
-                        <div class="card mb-3 stavka-korpe">
-                            <div class="card-body p-0">
-                                <div class="row g-0">
+                    <h2>Vaša korpa je prazna</h2>
 
-                                    <div class="col-md-3">
-                                        <img src="@vozilo.SlikaUrl" class="img-fluid rounded-start" style="height: 100%; object-fit: cover;" alt="@vozilo.Naziv">
-                                    </div>
+                    <p>Dodajte vozila iz kataloga kako biste ih vidjeli ovdje i nastavili kupovinu.</p>
 
-                                    <div class="col-md-6">
-                                        <div class="card-body">
-                                            <h5 class="card-title">@vozilo.Naziv</h5>
-                                            <p class="card-text">
-                                                <small class="text-muted">Godište: @vozilo.Godiste</small><br>
-                                                <small class="text-muted">Gorivo: @vozilo.Gorivo</small>
-                                            </p>
-                                            <div class="d-flex align-items-center mt-2">
-                                                <h4 class="text-success mb-0">€@vozilo.Cijena.ToString("N0")</h4>
-
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-3 d-flex flex-column justify-content-center align-items-center p-3">
-                                        <div class="btn-group-vertical w-100">
-                                            <a href="@Url.Action("Details", "Vozilo", new { id = vozilo.Id })" class="btn btn-outline-primary mb-2 w-100">
-                                                <i class="bi bi-info-circle"></i> Detalji
-                                            </a>
-                                            <button type="button" class="btn btn-success mb-2 buy-now-btn w-100"
-                                                    data-bs-toggle="modal" data-bs-target="#paymentModal"
-                                                    data-id="@vozilo.Id" data-cijena="@vozilo.Cijena" data-naziv="@vozilo.Naziv">
-                                                <i class="bi bi-credit-card"></i> Kupi
-                                            </button>
-                                            <form asp-controller="Korpa" asp-action="UkloniIzKorpe" method="post" class="w-100">
-                                                @Html.AntiForgeryToken()
-                                                <input type="hidden" name="id" value="@vozilo.Id">
-                                                <button type="submit" class="btn btn-outline-danger w-100">
-                                                    <i class="bi bi-trash"></i> Ukloni
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                    }
+                    <a href="@Url.Action("Index", "Vozilo")" class="btn btn-primary btn-lg rounded-4">
+                        <i class="bi bi-car-front-fill me-2"></i>Pregledajte vozila
+                    </a>
                 </div>
             </div>
-
-            <div class="col-lg-4">
-
-                <div class="card mb-4">
-                    <div class="card-header bg-success text-white">
-                        <h5 class="mb-0">Ukupno</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between mb-3">
-                            <span>Ukupan iznos:</span>
-                            <span class="fw-bold">€@Model.UkupnaCijena.ToString("N0")</span>
-                        </div>
-                        <div class="d-grid gap-2">
-                            <button type="button" class="btn btn-success" id="checkoutButton" data-bs-toggle="modal" data-bs-target="#checkoutModal">
-                                <i class="bi bi-bag-check"></i> Checkout
-                            </button>
-                            <form asp-controller="Korpa" asp-action="OcistiKorpu" method="post"
-                                  onsubmit="return confirm('Da li ste sigurni da želite isprazniti korpu?');">
-                                @Html.AntiForgeryToken()
-                                <button type="submit" class="btn btn-outline-danger w-100 mt-2">
-                                    <i class="bi bi-cart-x"></i> Isprazni korpu
-                                </button>
-                            </form>
+        }
+        else
+        {
+            <div class="row g-4 align-items-start">
+                <div class="col-lg-8">
+                    <div class="cart-toolbar d-flex justify-content-between align-items-center flex-wrap gap-3">
+                        <div class="fw-bold">
+                            Ukupno vozila:
+                            <span class="badge rounded-pill text-bg-primary">@Model.VozilaUKorpi.Count</span>
                         </div>
 
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header bg-primary text-white">
-                        <h5 class="mb-0">Kalkulator kredita</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="mb-3">
-                            <label for="loan-amount" class="form-label">Visina kredita (€)</label>
-                            <input type="number" class="form-control" id="loan-amount" placeholder="Unesite iznos">
-                        </div>
-                        <div class="mb-3">
-                            <label for="loan-period" class="form-label">Broj rata</label>
-                            <select class="form-select" id="loan-period">
-                                <option value="12">12 mjeseci</option>
-                                <option value="24">24 mjeseca</option>
-                                <option value="36" selected>36 mjeseci</option>
-                                <option value="48">48 mjeseci</option>
-                                <option value="60">60 mjeseci</option>
-                                <option value="72">72 mjeseca</option>
+                        <div class="cart-sort d-flex align-items-center gap-2">
+                            <label for="sortOptions" class="fw-bold text-secondary">Sortiraj po:</label>
+                            <select id="sortOptions" class="form-select">
+                                <option value="naziv_asc">Naziv (A-Z)</option>
+                                <option value="naziv_desc">Naziv (Z-A)</option>
+                                <option value="cijena_asc">Cijena (rastuće)</option>
+                                <option value="cijena_desc">Cijena (opadajuće)</option>
+                                <option value="godiste_asc">Godište (rastuće)</option>
+                                <option value="godiste_desc">Godište (opadajuće)</option>
                             </select>
                         </div>
-                        <div class="mb-3">
-                            <label for="interest-rate" class="form-label">Kamatna stopa (%)</label>
-                            <input type="number" class="form-control" id="interest-rate" value="5.0" step="0.1" min="0">
-                        </div>
-                        <button id="calculateBtn" class="btn btn-primary w-100">Izračunaj</button>
+                    </div>
 
-                        <div class="mt-4 p-3 bg-light rounded">
-                            <h5>Rezultat kalkulacije</h5>
-                            <div id="loan-result" class="fw-bold fs-4 text-center text-success">€0</div>
-                            <p class="text-center text-muted mb-0 mt-2">mjesečna rata</p>
-                        </div>
+                    <div id="stavkeKorpe" class="cart-items-list">
+                        @foreach (var vozilo in Model.VozilaUKorpi)
+                        {
+                            <article class="cart-item-card stavka-korpe">
+                                <div class="cart-item-image">
+                                    <img src="@vozilo.SlikaUrl" alt="@vozilo.Naziv">
+                                </div>
 
-                        <div class="mt-3">
-                            <small class="text-muted">
-                                * Kalkulator je informativnog karaktera i ne predstavlja ponudu za kredit.
-                            </small>
-                        </div>
+                                <div class="cart-item-content">
+                                    <div>
+                                        <span class="cart-item-badge">U korpi</span>
+                                        <h3 class="card-title">@vozilo.Naziv</h3>
+
+                                        <div class="cart-meta">
+                                            <span class="text-muted"><i class="bi bi-calendar3"></i>Godište: @vozilo.Godiste</span>
+                                            <span class="text-muted"><i class="bi bi-fuel-pump"></i>Gorivo: @vozilo.Gorivo</span>
+                                        </div>
+
+                                        <div class="cart-price text-success">€@vozilo.Cijena.ToString("N0")</div>
+                                    </div>
+
+                                    <div class="cart-actions">
+                                        <a href="@Url.Action("Details", "Vozilo", new { id = vozilo.Id })" class="btn btn-light border rounded-4">
+                                            <i class="bi bi-info-circle me-2"></i>Detalji
+                                        </a>
+                                        <button type="button" class="btn btn-primary rounded-4 buy-now-btn"
+                                                data-bs-toggle="modal" data-bs-target="#paymentModal"
+                                                data-id="@vozilo.Id" data-cijena="@vozilo.Cijena" data-naziv="@vozilo.Naziv">
+                                            <i class="bi bi-credit-card me-2"></i>Kupi
+                                        </button>
+                                        <form asp-controller="Korpa" asp-action="UkloniIzKorpe" method="post">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@vozilo.Id">
+                                            <button type="submit" class="btn btn-outline-danger rounded-4 w-100">
+                                                <i class="bi bi-trash me-2"></i>Ukloni
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </article>
+                        }
                     </div>
                 </div>
+
+                <div class="col-lg-4">
+                    <aside class="cart-sidebar">
+                        <div class="checkout-card">
+                            <h3>Pregled kupovine</h3>
+
+                            <div class="summary-row">
+                                <span>Broj vozila</span>
+                                <strong>@Model.VozilaUKorpi.Count</strong>
+                            </div>
+
+                            <div class="summary-row">
+                                <span>Ukupan iznos</span>
+                                <strong>€@Model.UkupnaCijena.ToString("N0")</strong>
+                            </div>
+
+                            <div class="summary-total">
+                                <span>Za plaćanje</span>
+                                <strong>€@Model.UkupnaCijena.ToString("N0")</strong>
+                            </div>
+
+                            <div class="d-grid gap-2 mt-4">
+                                <button type="button" class="btn btn-success btn-lg rounded-4" id="checkoutButton" data-bs-toggle="modal" data-bs-target="#checkoutModal">
+                                    <i class="bi bi-bag-check me-2"></i>Nastavi na checkout
+                                </button>
+                                <form asp-controller="Korpa" asp-action="OcistiKorpu" method="post"
+                                      onsubmit="return confirm('Da li ste sigurni da želite isprazniti korpu?');">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-outline-danger rounded-4 w-100">
+                                        <i class="bi bi-cart-x me-2"></i>Isprazni korpu
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="loan-card mt-4">
+                            <div class="loan-card-header">
+                                <div class="loan-icon">
+                                    <i class="bi bi-calculator"></i>
+                                </div>
+                                <div>
+                                    <h3>Kalkulator kredita</h3>
+                                    <p>Izračunajte okvirnu mjesečnu ratu.</p>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="loan-amount" class="form-label">Visina kredita (€)</label>
+                                <input type="number" class="form-control" id="loan-amount" placeholder="Unesite iznos">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="loan-period" class="form-label">Broj rata</label>
+                                <select class="form-select" id="loan-period">
+                                    <option value="12">12 mjeseci</option>
+                                    <option value="24">24 mjeseca</option>
+                                    <option value="36" selected>36 mjeseci</option>
+                                    <option value="48">48 mjeseci</option>
+                                    <option value="60">60 mjeseci</option>
+                                    <option value="72">72 mjeseca</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="interest-rate" class="form-label">Kamatna stopa (%)</label>
+                                <input type="number" class="form-control" id="interest-rate" value="5.0" step="0.1" min="0">
+                            </div>
+
+                            <button id="calculateBtn" class="btn btn-primary rounded-4 w-100">Izračunaj</button>
+
+                            <div class="loan-result">
+                                <span>Mjesečna rata</span>
+                                <strong id="loan-result">€0</strong>
+                            </div>
+
+                            <p class="loan-note">* Kalkulator je informativnog karaktera i ne predstavlja ponudu za kredit.</p>
+                        </div>
+                    </aside>
+                </div>
             </div>
-        </div>
-    }
-</div>
+        }
+    </div>
+</section>
 
 <div class="modal fade" id="checkoutModal" tabindex="-1" aria-labelledby="checkoutModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header bg-success text-white">
-                <h5 class="modal-title" id="checkoutModalLabel">Checkout - Završi kupovinu</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content modern-modal">
+            <div class="modal-header modern-modal-header">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="modal-icon">
+                        <i class="bi bi-bag-check-fill"></i>
+                    </div>
+                    <div>
+                        <h5 class="modal-title" id="checkoutModalLabel">Checkout - završi kupovinu</h5>
+                        <p class="mb-0 text-muted small">Odaberite vozila i unesite podatke za plaćanje.</p>
+                    </div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
 
@@ -276,11 +296,19 @@
 </div>
 
 <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="paymentModalLabel">Podaci za plaćanje</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content modern-modal">
+            <div class="modal-header modern-modal-header">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="modal-icon">
+                        <i class="bi bi-credit-card-fill"></i>
+                    </div>
+                    <div>
+                        <h5 class="modal-title" id="paymentModalLabel">Podaci za plaćanje</h5>
+                        <p class="mb-0 text-muted small">Unesite podatke kartice za završetak kupovine.</p>
+                    </div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
 

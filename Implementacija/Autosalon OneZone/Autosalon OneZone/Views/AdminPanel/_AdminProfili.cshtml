@@ -1,144 +1,217 @@
 @model Autosalon_OneZone.ViewModels.Admin.ProfilListViewModel
-<h3>Pregled Profila</h3>
+
 @Html.AntiForgeryToken()
 
-<div class="admin-section-controls">
-    <button id="add-profil-button" class="btn btn-primary">Dodaj Novog Korisnika</button>
-    <input type="text" id="profil-search-input" placeholder="Pretraži po imenu ili email-u..." value="@Model.SearchQuery" />
-    <button id="profil-search-button" class="btn btn-secondary">Pretraži</button>
-</div>
-
-<div id="add-profil-form-container" style="display: none;">
-    <h4 id="add-edit-profil-form-title">Dodaj Novog Korisnika</h4>
-    <div id="add-profil-form-placeholder">
-
+<div class="admin-page-header">
+    <div>
+        <p class="admin-eyebrow">Admin panel</p>
+        <h1>Korisnici</h1>
     </div>
 </div>
 
-<div id="profili-list-container">
-    <table class="table table-striped table-hover">
-        <thead>
-            <tr>
-                <th>Korisničko ime</th>
-                <th>Email</th>
-                <th>Ime</th>
-                <th>Prezime</th>
-                <th>Uloga</th>
-                <th>Akcije</th>
-            </tr>
-        </thead>
-        <tbody id="profili-table-body">
-            <tr>
-                <td colspan="6">Učitavanje korisnika...</td>
-            </tr>
-        </tbody>
-    </table>
-    <div id="profil-pagination-controls">
-
+<div id="add-profil-form-container" class="admin-form-card" style="display: none;">
+    <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
+        <div>
+            <p class="admin-eyebrow mb-1">Korisnik</p>
+            <h2 id="add-edit-profil-form-title" class="mb-0">Dodaj novog korisnika</h2>
+        </div>
     </div>
+    <div id="add-profil-form-placeholder"></div>
+</div>
+
+<div class="admin-card" id="profili-list-container">
+    <div class="admin-toolbar admin-toolbar-stacked">
+        <div>
+            <h2>Lista korisnika</h2>
+            <span>Pretražite korisnike po imenu, korisničkom imenu ili email adresi.</span>
+        </div>
+
+        <div class="admin-users-toolbar">
+            <button id="add-profil-button" class="btn btn-primary rounded-4 add-admin-btn" type="button">
+                <i class="bi bi-person-plus-fill me-2"></i>Dodaj novog korisnika
+            </button>
+
+            <div class="role-filter-chips" aria-label="Filter korisnika po ulozi">
+                <button type="button" class="role-chip active" data-role-filter="all">Svi</button>
+                <button type="button" class="role-chip" data-role-filter="Administrator">Admini</button>
+                <button type="button" class="role-chip" data-role-filter="Prodavac">Prodavci</button>
+                <button type="button" class="role-chip" data-role-filter="Kupac">Kupci</button>
+            </div>
+
+            <div class="admin-search-compact">
+                <input type="text" id="profil-search-input" class="form-control" placeholder="Pretraži po imenu ili email-u..." value="@Model.SearchQuery" />
+                <button id="profil-search-button" class="search-submit-btn" type="button" aria-label="Pretraži korisnike">
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-responsive admin-table-wrapper">
+        <table class="table admin-table align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Korisničko ime</th>
+                    <th>Email</th>
+                    <th>Ime</th>
+                    <th>Prezime</th>
+                    <th>Uloga</th>
+                    <th class="text-end">Akcije</th>
+                </tr>
+            </thead>
+            <tbody id="profili-table-body">
+                <tr>
+                    <td colspan="6">Učitavanje korisnika...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="profili-mobile-list" class="admin-mobile-list"></div>
+    <div id="profil-pagination-controls"></div>
 </div>
 
 <script>
     $(document).ready(function () {
-        console.log("_AdminProfili.cshtml script loaded and ready.");
-
         $(document).off('click', '.edit-profil-button');
         $(document).off('click', '#add-profil-button');
         $(document).off('click', '#profil-search-button');
         $(document).off('click', '#cancel-add-profil');
         $(document).off('submit', '#add-profil-form');
-        $(document).off('click', '.delete-profil-button');
+        $(document).off('click', '.role-chip');
+        $(document).off('app:delete-confirmed', '.delete-profil-button');
 
         const profiliTableBody = $('#profili-table-body');
+        const profiliMobileList = $('#profili-mobile-list');
         const searchInput = $('#profil-search-input');
         const searchButton = $('#profil-search-button');
         const addFormContainer = $('#add-profil-form-container');
         const addFormPlaceholder = $('#add-profil-form-placeholder');
         const addFormTitle = $('#add-edit-profil-form-title');
 
-        function loadProfiliList(searchQuery = '', page = 1) {
-            console.log("Loading profili list...");
+        function escapeHtml(value) {
+            return $('<div>').text(value ?? '').html();
+        }
+
+        function escapeAttribute(value) {
+            return escapeHtml(value).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+
+        let currentRoleFilter = 'all';
+
+        function profileActions(id, itemName) {
+            return '<div class="table-actions">' +
+                '<button class="edit-profil-button btn btn-sm btn-outline-primary rounded-3" data-id="' + escapeHtml(id) + '"><i class="bi bi-pencil-square me-1"></i>Izmijeni</button>' +
+                '<button class="delete-profil-button btn btn-sm btn-outline-danger rounded-3" data-id="' + escapeAttribute(id) + '" data-confirm-delete="true" data-confirm-title="Obrisati korisnika?" data-confirm-message="Da li ste sigurni da želite obrisati ovog korisnika?" data-confirm-item="' + escapeAttribute(itemName) + '" data-confirm-action="Da, obriši korisnika"><i class="bi bi-trash me-1"></i>Obriši</button>' +
+                '</div>';
+        }
+
+        function renderProfiles(profili) {
+            profiliTableBody.empty();
+            profiliMobileList.empty();
+
+            if (!profili || profili.length === 0) {
+                profiliTableBody.html('<tr><td colspan="6"><div class="empty-state"><i class="bi bi-people"></i><p>Nema dostupnih korisnika.</p></div></td></tr>');
+                profiliMobileList.html('<div class="empty-state"><i class="bi bi-people"></i><p>Nema dostupnih korisnika.</p></div>');
+                return;
+            }
+
+            $.each(profili, function (_, profil) {
+                const id = profil.id || '';
+                const userName = escapeHtml(profil.userName || 'N/A');
+                const email = escapeHtml(profil.email || 'N/A');
+                const ime = escapeHtml(profil.ime || '');
+                const prezime = escapeHtml(profil.prezime || '');
+                const uloga = escapeHtml(profil.uloga || 'N/A');
+                const actions = profileActions(id, profil.userName || profil.email || 'Korisnik');
+
+                profiliTableBody.append(
+                    '<tr>' +
+                        '<td><div class="user-cell"><span class="user-avatar"><i class="bi bi-person-fill"></i></span><strong>' + userName + '</strong></div></td>' +
+                        '<td>' + email + '</td>' +
+                        '<td>' + ime + '</td>' +
+                        '<td>' + prezime + '</td>' +
+                        '<td><span class="admin-badge">' + uloga + '</span></td>' +
+                        '<td>' + actions + '</td>' +
+                    '</tr>'
+                );
+
+                profiliMobileList.append(
+                    '<article class="admin-review-card">' +
+                        '<div class="d-flex justify-content-between gap-3 align-items-start">' +
+                            '<div><span class="admin-badge">' + uloga + '</span><h3>' + userName + '</h3></div>' +
+                        '</div>' +
+                        '<div class="review-mobile-meta">' +
+                            '<div><span>Email</span><strong>' + email + '</strong></div>' +
+                            '<div><span>Ime i prezime</span><strong>' + ime + ' ' + prezime + '</strong></div>' +
+                        '</div>' +
+                        '<div class="mobile-actions">' + actions + '</div>' +
+                    '</article>'
+                );
+            });
+        }
+
+        function loadProfiliList(searchQuery = '', page = 1, roleFilter = currentRoleFilter) {
             profiliTableBody.html('<tr><td colspan="6">Učitavanje korisnika...</td></tr>');
+            profiliMobileList.html('<div class="empty-state"><i class="bi bi-hourglass-split"></i><p>Učitavanje korisnika...</p></div>');
 
-            const url = '@Url.Action("GetProfiliJson", "AdminPanel")';
-
-            $.get(url, { searchQuery: searchQuery, page: page }, function (data) {
-                console.log("Profili data received:", data);
-                profiliTableBody.empty();
-
-                if (data && data.profili && data.profili.length > 0) {
-
-                    $.each(data.profili, function (index, profil) {
-                        const row = `
-                            <tr>
-                                <td>${profil.userName || ''}</td>
-                                <td>${profil.email || ''}</td>
-                                <td>${profil.ime || ''}</td>
-                                <td>${profil.prezime || ''}</td>
-                                <td>${profil.uloga || ''}</td>
-                                <td style="white-space: nowrap;">
-                                    <div style="display: flex; gap: 5px;">
-                                        <button class="edit-profil-button btn btn-info btn-sm" data-id="${profil.id}"><i class="bi bi-pencil-square"></i> Izmijeni</button>
-                                        <button class="delete-profil-button btn btn-danger btn-sm" data-id="${profil.id}"><i class="bi bi-trash"></i> Obriši</button>
-                                    </div>
-                                </td>
-                            </tr>
-                        `;
-                        profiliTableBody.append(row);
-                    });
-
-                } else {
-                    profiliTableBody.html('<tr><td colspan="6">Nema dostupnih korisnika.</td></tr>');
-                }
+            $.get('@Url.Action("GetProfiliJson", "AdminPanel")', { searchQuery: searchQuery, page: page, roleFilter: roleFilter }, function (data) {
+                renderProfiles(data && data.profili ? data.profili : []);
             }).fail(function (jqXHR, textStatus, errorThrown) {
-                console.error('Error loading profili list:', textStatus, errorThrown, jqXHR.responseText);
-                profiliTableBody.html('<tr><td colspan="6"><div class="alert alert-danger">Greška prilikom učitavanja korisnika: ' + (jqXHR.responseText || errorThrown) + '</div></td></tr>');
+                const message = escapeHtml(jqXHR.responseText || errorThrown || 'Greška');
+                profiliTableBody.html('<tr><td colspan="6"><div class="alert alert-danger mb-0">Greška prilikom učitavanja korisnika: ' + message + '</div></td></tr>');
+                profiliMobileList.html('<div class="alert alert-danger mb-0">Greška prilikom učitavanja korisnika: ' + message + '</div>');
             });
         }
 
         loadProfiliList(searchInput.val() || '@Model.SearchQuery');
 
         searchButton.on('click', function () {
-            const searchQuery = searchInput.val();
-            loadProfiliList(searchQuery);
+            loadProfiliList(searchInput.val(), 1, currentRoleFilter);
         });
 
-        searchInput.keypress(function(e) {
-            if(e.which == 13) {
+        searchInput.on('keypress', function (e) {
+            if (e.which === 13) {
                 e.preventDefault();
                 searchButton.click();
             }
         });
 
+        $(document).on('click', '.role-chip', function () {
+            currentRoleFilter = $(this).data('role-filter') || 'all';
+            $('.role-chip').removeClass('active');
+            $(this).addClass('active');
+            loadProfiliList(searchInput.val(), 1, currentRoleFilter);
+        });
+
         $('#add-profil-button').on('click', function () {
-            addFormTitle.text('Dodaj Novog Korisnika');
-            $.get('@Url.Action("GetAddProfilForm", "AdminPanel")', function(data) {
+            addFormTitle.text('Dodaj novog korisnika');
+            $.get('@Url.Action("GetAddProfilForm", "AdminPanel")', function (data) {
                 addFormPlaceholder.html(data);
                 addFormContainer.show();
-                var form = addFormPlaceholder.find('form');
+                const form = addFormPlaceholder.find('form');
                 form.removeData('validator');
                 form.removeData('unobtrusiveValidation');
                 $.validator.unobtrusive.parse(form);
-            }).fail(function(jqXHR, textStatus, errorThrown) {
-                console.error('Error loading add form:', errorThrown);
-                addFormPlaceholder.html('<div class="alert alert-danger">Greška prilikom učitavanja forme za dodavanje.</div>');
+            }).fail(function () {
+                addFormPlaceholder.html('<div class="alert alert-danger mb-0">Greška prilikom učitavanja forme za dodavanje.</div>');
                 addFormContainer.show();
             });
         });
 
         $(document).on('click', '.edit-profil-button', function () {
-            var profilId = $(this).data('id');
-            addFormTitle.text('Izmijeni Korisnika');
-            $.get('@Url.Action("GetEditProfilForm", "AdminPanel")', { id: profilId }, function(data) {
+            const profilId = $(this).data('id');
+            addFormTitle.text('Izmijeni korisnika');
+
+            $.get('@Url.Action("GetEditProfilForm", "AdminPanel")', { id: profilId }, function (data) {
                 addFormPlaceholder.html(data);
                 addFormContainer.show();
-                var form = addFormPlaceholder.find('form');
+                const form = addFormPlaceholder.find('form');
                 form.removeData('validator');
                 form.removeData('unobtrusiveValidation');
                 $.validator.unobtrusive.parse(form);
-            }).fail(function(jqXHR, textStatus, errorThrown) {
-                console.error('Error loading edit form:', errorThrown);
-                addFormPlaceholder.html('<div class="alert alert-danger">Greška prilikom učitavanja forme za izmjenu.</div>');
+            }).fail(function () {
+                addFormPlaceholder.html('<div class="alert alert-danger mb-0">Greška prilikom učitavanja forme za izmjenu.</div>');
                 addFormContainer.show();
             });
         });
@@ -150,49 +223,34 @@
 
         $(document).on('submit', '#add-profil-form', function (e) {
             e.preventDefault();
-            console.log("Form submitted via AJAX");
-
-            var form = $(this);
-            var url = form.attr('action');
-            var method = form.attr('method');
-            var formData = new FormData(this);
+            const form = $(this);
 
             if (!form.valid()) {
-                console.log("Client validation failed.");
                 return;
             }
 
             $.ajax({
-                url: url,
-                method: method,
-                data: formData,
+                url: form.attr('action'),
+                method: form.attr('method'),
+                data: new FormData(this),
                 processData: false,
                 contentType: false,
-                success: function (response) {
-                    console.log("Save successful:", response);
+                success: function () {
                     addFormContainer.hide();
                     addFormPlaceholder.empty();
-                    loadProfiliList(searchInput.val());
-                    alert('Korisnik uspješno sačuvan!');
+                    loadProfiliList(searchInput.val(), 1, currentRoleFilter);
+                    window.showAppFlashMessage('Korisnik uspješno sačuvan.', 'success');
                 },
-
-                error: function (jqXHR, textStatus, errorThrown) {
-                    console.error('AJAX Error:', textStatus, errorThrown, jqXHR.responseText);
-
-                    var errorMessage = 'Došlo je do greške prilikom spremanja korisnika.';
+                error: function (jqXHR, textStatus) {
+                    let errorMessage = 'Došlo je do greške prilikom spremanja korisnika.';
 
                     if (jqXHR.status === 400 && jqXHR.responseJSON) {
-                        console.log("Validation errors:", jqXHR.responseJSON);
-
                         if (jqXHR.responseJSON.errors) {
-                            var errors = jqXHR.responseJSON.errors;
-                            $.each(errors, function (key, messages) {
-
-                                var validationSpan = $('span[data-valmsg-for="' + key + '"]');
+                            $.each(jqXHR.responseJSON.errors, function (key, messages) {
+                                const validationSpan = $('span[data-valmsg-for="' + key + '"]');
                                 if (validationSpan.length) {
                                     validationSpan.text(messages.join(', ')).show();
                                 } else {
-
                                     errorMessage += '\n' + key + ': ' + messages.join(', ');
                                 }
                             });
@@ -200,57 +258,39 @@
 
                         if (jqXHR.responseJSON.identityErrors) {
                             errorMessage += '\n\nGreške identiteta:';
-                            $.each(jqXHR.responseJSON.identityErrors, function (index, message) {
+                            $.each(jqXHR.responseJSON.identityErrors, function (_, message) {
                                 errorMessage += '\n- ' + message;
                             });
                         }
-
-                        alert(errorMessage);
                     } else if (jqXHR.responseText) {
-                        try {
-
-                            var jsonResponse = JSON.parse(jqXHR.responseText);
-                            if (jsonResponse && jsonResponse.message) {
-                                errorMessage += '\n\nDetalji: ' + jsonResponse.message;
-                            } else {
-                                errorMessage += '\n\nDetalji: ' + jqXHR.responseText;
-                            }
-                        } catch (e) {
-                            errorMessage += '\n\nDetalji: ' + jqXHR.responseText;
-                        }
-
-                        alert(errorMessage);
+                        errorMessage += '\n\nDetalji: ' + jqXHR.responseText;
                     } else {
-                        alert(errorMessage + '\nStatus: ' + jqXHR.status + ', Tekst: ' + textStatus);
+                        errorMessage += '\nStatus: ' + jqXHR.status + ', Tekst: ' + textStatus;
                     }
-                }
 
+                    window.showAppFlashMessage(errorMessage, 'error');
+                }
             });
         });
 
-        $(document).off('click', '.delete-profil-button');
-        $(document).on('click', '.delete-profil-button', function () {
-            var profilId = $(this).data('id');
+        $(document).on('app:delete-confirmed', '.delete-profil-button', function () {
+            const profilId = $(this).data('id');
 
-            if (confirm('Da li ste sigurni da želite obrisati ovog korisnika?')) {
-                $.ajax({
-                    url: '@Url.Action("DeleteProfil", "AdminPanel")',
-                    method: 'POST',
-                    headers: {
-                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
-                    },
-                    data: { id: profilId },
-                    success: function (response) {
-                        console.log("Delete successful:", response);
-                        alert('Korisnik uspješno obrisan.');
-                        loadProfiliList(searchInput.val());
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        console.error('Error deleting profil:', errorThrown, jqXHR.responseText);
-                        alert('Došlo je do greške prilikom brisanja korisnika.');
-                    }
-                });
-            }
+            $.ajax({
+                url: '@Url.Action("DeleteProfil", "AdminPanel")',
+                method: 'POST',
+                headers: {
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                },
+                data: { id: profilId },
+                success: function () {
+                    window.showAppFlashMessage('Korisnik uspješno obrisan.', 'success');
+                    loadProfiliList(searchInput.val(), 1, currentRoleFilter);
+                },
+                error: function () {
+                    window.showAppFlashMessage('Došlo je do greške prilikom brisanja korisnika.', 'error');
+                }
+            });
         });
     });
 </script>

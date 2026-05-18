@@ -480,7 +480,13 @@ namespace Autosalon_OneZone.Controllers
         }
 
         [HttpGet]
-        public async Task<JsonResult> GetVozilaJson(string? searchQuery = null, int page = 1, string? sortOrder = null)
+        public async Task<JsonResult> GetVozilaJson(
+            string? searchQuery = null,
+            int page = 1,
+            string? sortOrder = null,
+            string? gorivoFilter = null,
+            string? sort = null,
+            string? direction = null)
         {
             int pageSize = int.MaxValue;
 
@@ -491,25 +497,57 @@ namespace Autosalon_OneZone.Controllers
                 query = query.Where(v => (v.Marka != null && v.Marka.Contains(searchQuery)) || (v.Model != null && v.Model.Contains(searchQuery)));
             }
 
-            switch (sortOrder)
+            if (!string.IsNullOrWhiteSpace(gorivoFilter) && Enum.TryParse<TipGoriva>(gorivoFilter, true, out var gorivo))
             {
-                case "price_asc":
-                    query = query.OrderBy(v => v.Cijena);
-                    break;
-                case "price_desc":
-                    query = query.OrderByDescending(v => v.Cijena);
-                    break;
-                case "year_asc":
-                    query = query.OrderBy(v => v.Godiste);
-                    break;
-                case "year_desc":
-                    query = query.OrderByDescending(v => v.Godiste);
-                    break;
-
-                default:
-                    query = query.OrderByDescending(v => v.VoziloID);
-                    break;
+                query = query.Where(v => v.Gorivo == gorivo);
             }
+
+            sort = string.IsNullOrWhiteSpace(sort) ? null : sort.ToLowerInvariant();
+            direction = string.IsNullOrWhiteSpace(direction) ? null : direction.ToLowerInvariant();
+
+            if (string.IsNullOrWhiteSpace(sort) && !string.IsNullOrWhiteSpace(sortOrder))
+            {
+                switch (sortOrder)
+                {
+                    case "price_asc":
+                        sort = "cijena";
+                        direction = "asc";
+                        break;
+                    case "price_desc":
+                        sort = "cijena";
+                        direction = "desc";
+                        break;
+                    case "year_asc":
+                        sort = "godiste";
+                        direction = "asc";
+                        break;
+                    case "year_desc":
+                        sort = "godiste";
+                        direction = "desc";
+                        break;
+                }
+            }
+
+            sort ??= "cijena";
+
+            if (direction is not "asc" and not "desc")
+            {
+                direction = sort == "kilometraza" ? "asc" : "desc";
+            }
+
+            query = sort switch
+            {
+                "godiste" => direction == "asc"
+                    ? query.OrderBy(v => v.Godiste)
+                    : query.OrderByDescending(v => v.Godiste),
+                "kilometraza" => direction == "desc"
+                    ? query.OrderByDescending(v => v.Kilometraza)
+                    : query.OrderBy(v => v.Kilometraza),
+                "cijena" => direction == "asc"
+                    ? query.OrderBy(v => v.Cijena)
+                    : query.OrderByDescending(v => v.Cijena),
+                _ => query.OrderByDescending(v => v.Cijena)
+            };
 
             var totalCount = await query.CountAsync();
             var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
@@ -543,11 +581,18 @@ namespace Autosalon_OneZone.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Administrator")]
-        public async Task<JsonResult> GetProfiliJson(string? searchQuery = null, int page = 1)
+        public async Task<JsonResult> GetProfiliJson(string? searchQuery = null, int page = 1, string? roleFilter = null)
         {
             int pageSize = int.MaxValue;
 
             var query = _context.Users.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(roleFilter) && !string.Equals(roleFilter, "all", StringComparison.OrdinalIgnoreCase))
+            {
+                var usersInRole = await _userManager.GetUsersInRoleAsync(roleFilter);
+                var roleUserIds = usersInRole.Select(u => u.Id).ToList();
+                query = query.Where(u => roleUserIds.Contains(u.Id));
+            }
 
             if (!string.IsNullOrEmpty(searchQuery))
             {
@@ -638,10 +683,40 @@ namespace Autosalon_OneZone.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SaveProfil(AddProfilViewModel viewModel)
         {
-            if (!string.IsNullOrEmpty(viewModel.UserId))
+            var isEdit = !string.IsNullOrEmpty(viewModel.UserId);
+
+            if (isEdit)
             {
                 ModelState.Remove("Password");
                 ModelState.Remove("ConfirmPassword");
+
+                if (!string.IsNullOrWhiteSpace(viewModel.Password))
+                {
+                    if (string.IsNullOrWhiteSpace(viewModel.ConfirmPassword))
+                    {
+                        ModelState.AddModelError(nameof(viewModel.ConfirmPassword), "Potvrda nove lozinke je obavezna kada se mijenja lozinka.");
+                    }
+                    else if (viewModel.Password != viewModel.ConfirmPassword)
+                    {
+                        ModelState.AddModelError(nameof(viewModel.ConfirmPassword), "Nova lozinka i potvrda lozinke se ne podudaraju.");
+                    }
+                    else if (viewModel.Password.Length < 8)
+                    {
+                        ModelState.AddModelError(nameof(viewModel.Password), "Nova lozinka mora imati najmanje 8 znakova.");
+                    }
+                }
+                else if (!string.IsNullOrWhiteSpace(viewModel.ConfirmPassword))
+                {
+                    ModelState.AddModelError(nameof(viewModel.Password), "Unesite novu lozinku ili ostavite oba polja za lozinku prazna.");
+                }
+            }
+            else if (string.IsNullOrWhiteSpace(viewModel.Password))
+            {
+                ModelState.AddModelError(nameof(viewModel.Password), "Lozinka je obavezna.");
+            }
+            else if (string.IsNullOrWhiteSpace(viewModel.ConfirmPassword))
+            {
+                ModelState.AddModelError(nameof(viewModel.ConfirmPassword), "Potvrda lozinke je obavezna.");
             }
 
             if (viewModel.OdabraneRole != null && viewModel.OdabraneRole.Count == 0 && Request.Form["OdabraneRole"].Count > 0)

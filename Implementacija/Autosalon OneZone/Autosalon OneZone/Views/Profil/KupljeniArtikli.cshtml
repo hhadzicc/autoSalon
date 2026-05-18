@@ -1,193 +1,163 @@
 @model Autosalon_OneZone.Models.ViewModels.PurchasedItemsViewModel
 @{
-    ViewData["Title"] = "Kupljeni Artikli";
+    ViewData["Title"] = "Kupljeni artikli";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<section class="inner-page-header">
+    <div class="container text-center">
+        <p class="section-eyebrow">Kupovine</p>
+        <h1>Kupljeni artikli</h1>
+        <p>Pregledajte vozila koja ste kupili i dodajte recenziju.</p>
+    </div>
+</section>
 
-<div class="container mt-4">
-    <h1 class="mb-4">Kupljeni Artikli</h1>
+<section class="profile-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="d-flex justify-content-between align-items-center gap-3 mb-4 flex-wrap">
+                    <div>
+                        <h2 class="page-section-title mb-1">Vaše kupovine</h2>
+                        <p class="text-muted mb-0">Lista vozila kupljenih kroz aplikaciju.</p>
+                    </div>
+                    <a href="@Url.Action("Index", "Profil")" class="btn btn-light border rounded-4">
+                        <i class="bi bi-arrow-left me-2"></i>Nazad na profil
+                    </a>
+                </div>
 
-    <div class="row">
-        <div class="col-md-12">
-            @if (Model.PurchasedItems.Any())
-            {
-                <div class="list-group">
-                    @foreach (var item in Model.PurchasedItems)
-                    {
-                        <div class="list-group-item">
-                            <div class="row">
-                                <div class="col-md-2">
-                                    <img src="@item.Slika" class="img-fluid" alt="@item.Naziv" />
-                                </div>
-                                <div class="col-md-6">
-                                    <h5 class="mb-1">@item.Naziv</h5>
-                                    <p class="mb-1">
-                                        <strong>Cijena:</strong> @item.Cijena.ToString("N2") KM
-                                    </p>
-                                    <p class="mb-1">
-                                        <strong>Datum kupovine:</strong> @item.DatumKupovine.ToString("dd.MM.yyyy")
-                                    </p>
-                                </div>
-                                <div class="col-md-4 text-end">
-                                    @if (item.HasReview)
-                                    {
-                                        <div class="text-end mb-2">
-                                            <span class="badge bg-success">Recenzija dodana</span>
+                @if (Model.PurchasedItems.Any())
+                {
+                    <div class="purchase-list">
+                        @foreach (var item in Model.PurchasedItems)
+                        {
+                            <article class="purchase-card">
+                                <img src="@item.Slika" alt="@item.Naziv" />
+
+                                <div class="purchase-body">
+                                    <div class="purchase-main">
+                                        <div class="d-flex align-items-start justify-content-between gap-3 flex-wrap">
+                                            <div>
+                                                <h3>@item.Naziv</h3>
+                                                <p class="mb-1"><strong>Cijena:</strong> @item.Cijena.ToString("N2") KM</p>
+                                                <p class="mb-0"><strong>Datum kupovine:</strong> @item.DatumKupovine.ToString("dd.MM.yyyy")</p>
+                                            </div>
+
+                                            @if (item.HasReview)
+                                            {
+                                                <span class="review-badge">
+                                                    <i class="bi bi-check-circle-fill me-1"></i>Recenzija dodana
+                                                </span>
+                                            }
                                         </div>
-                                    }
-                                    <button type="button" class="btn @(item.HasReview ? "btn-warning" : "btn-primary")"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#reviewModal-@item.VoziloID"
-                                            data-vozilo-id="@item.VoziloID"
-                                            data-vozilo-naziv="@item.Naziv">
-                                        @(item.HasReview ? "Izmijeni recenziju" : "Dodaj recenziju")
-                                    </button>
-                                    @if (item.HasReview)
-                                    {
-                                        <form asp-action="UkloniRecenziju" method="post" class="d-inline">
-                                            <input type="hidden" name="recenzijaId" value="@item.Recenzija.RecenzijaID" />
-                                            <button type="submit" class="btn btn-danger ms-2" onclick="return confirm('Jeste li sigurni da želite ukloniti ovu recenziju?')">
-                                                Ukloni
-                                            </button>
-                                        </form>
-                                    }
-                                </div>
-                            </div>
 
-                            @if (item.HasReview)
-                            {
-                                <div class="row mt-3">
-                                    <div class="col-12">
-                                        <div class="card">
-                                            <div class="card-header">
-                                                <div class="d-flex justify-content-between align-items-center">
-                                                    <div>
-                                                        <h6 class="mb-0">Vaša recenzija</h6>
-                                                    </div>
-                                                    <div>
-                                                        <span class="me-2">Ocjena: </span>
+                                        @if (item.HasReview)
+                                        {
+                                            <div class="purchase-review">
+                                                <div class="d-flex justify-content-between align-items-center gap-3 flex-wrap">
+                                                    <h4>Vaša recenzija</h4>
+                                                    <div class="profile-stars" aria-label="Ocjena @item.Recenzija.Ocjena od 5">
                                                         @for (int i = 1; i <= 5; i++)
                                                         {
-                                                            <i class="bi @(i <= item.Recenzija.Ocjena ? "bi-star-fill text-warning" : "bi-star")"></i>
+                                                            <i class="bi @(i <= item.Recenzija.Ocjena ? "bi-star-fill" : "bi-star")"></i>
                                                         }
                                                     </div>
                                                 </div>
+                                                <p>@item.Recenzija.Komentar</p>
+                                                <span>Datum recenzije: @item.Recenzija.DatumRecenzije.ToString("dd.MM.yyyy")</span>
                                             </div>
-                                            <div class="card-body">
-                                                <p class="card-text">@item.Recenzija.Komentar</p>
-                                                <p class="card-text text-muted small">
-                                                    Datum recenzije: @item.Recenzija.DatumRecenzije.ToString("dd.MM.yyyy")
-                                                </p>
-                                            </div>
-                                        </div>
+                                        }
+                                    </div>
+
+                                    <div class="purchase-actions">
+                                        <button type="button"
+                                                class="btn @(item.HasReview ? "btn-outline-primary" : "btn-primary") rounded-4"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#reviewModal-@item.VoziloID"
+                                                data-vozilo-id="@item.VoziloID"
+                                                data-vozilo-naziv="@item.Naziv">
+                                            <i class="bi bi-star-fill me-2"></i>@(item.HasReview ? "Izmijeni recenziju" : "Dodaj recenziju")
+                                        </button>
+
+                                        @if (item.HasReview)
+                                        {
+                                            <form asp-action="UkloniRecenziju" method="post">
+                                                <input type="hidden" name="recenzijaId" value="@item.Recenzija.RecenzijaID" />
+                                                <button type="submit" class="btn btn-light border rounded-4" onclick="return confirm('Jeste li sigurni da želite ukloniti ovu recenziju?')">
+                                                    Ukloni
+                                                </button>
+                                            </form>
+                                        }
                                     </div>
                                 </div>
-                            }
-                        </div>
+                            </article>
 
-                        <div class="modal fade" id="reviewModal-@item.VoziloID" tabindex="-1" aria-labelledby="reviewModalLabel-@item.VoziloID" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <form asp-action="DodajRecenziju" method="post" class="review-form" id="review-form-@item.VoziloID">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="reviewModalLabel-@item.VoziloID">
-                                                @(item.HasReview ? "Izmijeni recenziju" : "Dodaj recenziju") za @item.Naziv
-                                            </h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <input type="hidden" name="voziloId" value="@item.VoziloID" />
+                            <div class="modal fade" id="reviewModal-@item.VoziloID" tabindex="-1" aria-labelledby="reviewModalLabel-@item.VoziloID" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content profile-modal">
+                                        <form asp-action="DodajRecenziju" method="post" class="review-form" id="review-form-@item.VoziloID">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="reviewModalLabel-@item.VoziloID">
+                                                    @(item.HasReview ? "Izmijeni recenziju" : "Dodaj recenziju") za @item.Naziv
+                                                </h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <input type="hidden" name="voziloId" value="@item.VoziloID" />
 
-                                            <div class="mb-3">
-                                                <label class="form-label required">Ocjena</label>
-                                                <div class="rating">
-                                                    <div class="form-check form-check-inline">
-                                                        <input class="form-check-input" type="radio" name="ocjena" id="ocjena1-@item.VoziloID" value="1" @(item.HasReview && item.Recenzija.Ocjena == 1 ? "checked" : "")>
-                                                        <label class="form-check-label" for="ocjena1-@item.VoziloID">1</label>
+                                                <div class="mb-3">
+                                                    <label class="form-label required">Ocjena</label>
+                                                    <div class="rating">
+                                                        @for (var i = 1; i <= 5; i++)
+                                                        {
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" type="radio" name="ocjena" id="ocjena@i-@item.VoziloID" value="@i" @(item.HasReview && item.Recenzija.Ocjena == i ? "checked" : "")>
+                                                                <label class="form-check-label" for="ocjena@i-@item.VoziloID">@i</label>
+                                                            </div>
+                                                        }
                                                     </div>
-                                                    <div class="form-check form-check-inline">
-                                                        <input class="form-check-input" type="radio" name="ocjena" id="ocjena2-@item.VoziloID" value="2" @(item.HasReview && item.Recenzija.Ocjena == 2 ? "checked" : "")>
-                                                        <label class="form-check-label" for="ocjena2-@item.VoziloID">2</label>
-                                                    </div>
-                                                    <div class="form-check form-check-inline">
-                                                        <input class="form-check-input" type="radio" name="ocjena" id="ocjena3-@item.VoziloID" value="3" @(item.HasReview && item.Recenzija.Ocjena == 3 ? "checked" : "")>
-                                                        <label class="form-check-label" for="ocjena3-@item.VoziloID">3</label>
-                                                    </div>
-                                                    <div class="form-check form-check-inline">
-                                                        <input class="form-check-input" type="radio" name="ocjena" id="ocjena4-@item.VoziloID" value="4" @(item.HasReview && item.Recenzija.Ocjena == 4 ? "checked" : "")>
-                                                        <label class="form-check-label" for="ocjena4-@item.VoziloID">4</label>
-                                                    </div>
-                                                    <div class="form-check form-check-inline">
-                                                        <input class="form-check-input" type="radio" name="ocjena" id="ocjena5-@item.VoziloID" value="5" @(item.HasReview && item.Recenzija.Ocjena == 5 ? "checked" : "")>
-                                                        <label class="form-check-label" for="ocjena5-@item.VoziloID">5</label>
+                                                    <div class="invalid-feedback" id="ocjena-error-@item.VoziloID">
+                                                        Molimo odaberite ocjenu.
                                                     </div>
                                                 </div>
-                                                <div class="invalid-feedback" id="ocjena-error-@item.VoziloID">
-                                                    Molimo odaberite ocjenu.
+
+                                                <div class="mb-3">
+                                                    <label for="komentar-@item.VoziloID" class="form-label required">Komentar</label>
+                                                    <textarea class="form-control" id="komentar-@item.VoziloID" name="komentar" rows="3" maxlength="1000" required>@(item.HasReview ? item.Recenzija.Komentar : "")</textarea>
+                                                    <div class="invalid-feedback">
+                                                        Komentar ne može biti prazan.
+                                                    </div>
                                                 </div>
                                             </div>
-
-                                            <div class="mb-3">
-                                                <label for="komentar-@item.VoziloID" class="form-label required">Komentar</label>
-                                                <textarea class="form-control" id="komentar-@item.VoziloID" name="komentar" rows="3" maxlength="1000" required>@(item.HasReview ? item.Recenzija.Komentar : "")</textarea>
-                                                <div class="invalid-feedback">
-                                                    Komentar ne može biti prazan.
-                                                </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-light border rounded-4" data-bs-dismiss="modal">Odustani</button>
+                                                <button type="submit" class="btn btn-primary rounded-4">Sačuvaj</button>
                                             </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Odustani</button>
-                                            <button type="submit" class="btn btn-primary">Sačuvaj</button>
-                                        </div>
-                                    </form>
-
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="profile-card">
+                        <div class="empty-state">
+                            <i class="bi bi-bag-x"></i>
+                            <p>Još uvijek nema kupljenih artikala.</p>
+                            <a href="@Url.Action("Index", "Vozilo")" class="btn btn-primary rounded-4 mt-2">Pogledaj katalog vozila</a>
                         </div>
-                    }
-                </div>
-            }
-            else
-            {
-                <div class="alert alert-info">
-                    <p>Još uvijek niste kupili nijedan artikal.</p>
-                    <p>Pogledajte naš <a href="/Vozilo">katalog vozila</a> i pronađite vozilo koje vam odgovara!</p>
-                </div>
-            }
+                    </div>
+                }
+            </div>
         </div>
     </div>
-
-    <div class="mt-4">
-        <a href="/Profil" class="btn btn-secondary">Natrag na profil</a>
-    </div>
-</div>
+</section>
 
 @section Scripts {
     <script>
         $(document).ready(function() {
-
-            $("<style>")
-                .prop("type", "text/css")
-                .html(`
-                    .required::after {
-                        content: "*";
-                        color: red;
-                        margin-left: 3px;
-                    }
-                    .is-invalid {
-                        border-color: #dc3545 !important;
-                    }
-                    .invalid-feedback {
-                        display: none;
-                        width: 100%;
-                        margin-top: 0.25rem;
-                        font-size: 0.875em;
-                        color: #dc3545;
-                    }
-                `)
-                .appendTo("head");
-
             $('.modal').on('hidden.bs.modal', function () {
                 $(this).find('form')[0].reset();
 

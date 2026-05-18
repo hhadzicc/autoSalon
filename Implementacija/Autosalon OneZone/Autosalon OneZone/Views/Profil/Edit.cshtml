@@ -1,102 +1,106 @@
 @model Autosalon_OneZone.Models.ViewModels.EditProfileViewModel
 @{
-    ViewData["Title"] = "Uredi Profil";
+    ViewData["Title"] = "Uredi profil";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-@section Head {
-    <link rel="stylesheet" href="~/css/editprofile.css" />
-    <style>
-        .modal-dialog {
-            max-width: 500px;
-        }
-
-        .password-form .form-group {
-            margin-bottom: 15px;
-        }
-
-        .password-error {
-            color: #dc3545;
-            font-size: 80%;
-            margin-top: 0.25rem;
-        }
-    </style>
-}
-
-<div class="container">
-    <div class="form-container">
-        <h2>Uredi Profil</h2>
-
-        <div asp-validation-summary="All" class="text-danger validation-summary"></div>
-        <form asp-controller="Profil" asp-action="Edit" method="post">
-
-            <div class="form-group">
-                <label asp-for="Ime"></label>
-                <input asp-for="Ime" type="text" class="form-control" placeholder="Ime" required pattern="[A-Za-z\s]+" data-val-regex="Ime može sadržavati samo slova." data-val-required="Ime je obavezno." />
-                <span asp-validation-for="Ime" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Prezime"></label>
-                <input asp-for="Prezime" type="text" class="form-control" placeholder="Prezime" required pattern="[A-Za-z\s]+" data-val-regex="Prezime može sadržavati samo slova." data-val-required="Prezime je obavezno." />
-                <span asp-validation-for="Prezime" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Email"></label>
-                <input asp-for="Email" type="email" class="form-control" placeholder="Email adresa" required data-val-required="Email adresa je obavezna." data-val-email="Unesite ispravnu email adresu." />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="UserName"></label>
-                <input asp-for="UserName" type="text" class="form-control" placeholder="Korisničko ime" required pattern="[A-Za-z0-9]+" data-val-regex="Korisničko ime može sadržavati samo slova i brojeve." data-val-required="Korisničko ime je obavezno." />
-                <span asp-validation-for="UserName" class="text-danger"></span>
-            </div>
-
-            <div class="d-flex justify-content-center gap-3 mt-4">
-                <a asp-controller="Profil" asp-action="Index" class="btn btn-secondary">Nazad na profil</a>
-                <button type="submit" class="btn btn-primary">Sačuvaj</button>
-                <button type="button" class="btn btn-warning" id="change-password-btn">Promijeni lozinku</button>
-            </div>
-
-        </form>
+<section class="inner-page-header">
+    <div class="container text-center">
+        <p class="section-eyebrow">Korisnički profil</p>
+        <h1>Uredi profil</h1>
+        <p>Ažurirajte osnovne podatke svog korisničkog naloga.</p>
     </div>
-</div>
+</section>
+
+<section class="profile-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-7 col-xl-6">
+                <div class="profile-card">
+                    <div class="text-center mb-4">
+                        <div class="profile-avatar small-avatar">
+                            <i class="bi bi-pencil-square"></i>
+                        </div>
+                        <h2>Uredi podatke</h2>
+                        <p class="text-muted mb-0">Sačuvajte tačne podatke za prijavu i komunikaciju.</p>
+                    </div>
+
+                    <div asp-validation-summary="All" class="text-danger validation-summary mb-3"></div>
+
+                    <form asp-controller="Profil" asp-action="Edit" method="post">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label asp-for="Ime" class="form-label"></label>
+                                <input asp-for="Ime" type="text" class="form-control" placeholder="Ime" required pattern="[A-Za-z\s]+" data-val-regex="Ime može sadržavati samo slova." data-val-required="Ime je obavezno." />
+                                <span asp-validation-for="Ime" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="Prezime" class="form-label"></label>
+                                <input asp-for="Prezime" type="text" class="form-control" placeholder="Prezime" required pattern="[A-Za-z\s]+" data-val-regex="Prezime može sadržavati samo slova." data-val-required="Prezime je obavezno." />
+                                <span asp-validation-for="Prezime" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-12">
+                                <label asp-for="Email" class="form-label"></label>
+                                <input asp-for="Email" type="email" class="form-control" placeholder="Email adresa" required data-val-required="Email adresa je obavezna." data-val-email="Unesite ispravnu email adresu." />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-12">
+                                <label asp-for="UserName" class="form-label"></label>
+                                <input asp-for="UserName" type="text" class="form-control" placeholder="Korisničko ime" required pattern="[A-Za-z0-9]+" data-val-regex="Korisničko ime može sadržavati samo slova i brojeve." data-val-required="Korisničko ime je obavezno." />
+                                <span asp-validation-for="UserName" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-2 mt-4">
+                            <a asp-controller="Profil" asp-action="Index" class="btn btn-light border rounded-4 px-4">Nazad na profil</a>
+                            <button type="submit" class="btn btn-primary rounded-4 px-4">Sačuvaj izmjene</button>
+                            <button type="button" class="btn btn-outline-secondary rounded-4 px-4" id="change-password-btn">
+                                <i class="bi bi-key me-2"></i>Promijeni lozinku
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
 <div class="modal fade" id="passwordChangeModal" tabindex="-1" aria-labelledby="passwordChangeModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content profile-modal">
             <div class="modal-header">
                 <h5 class="modal-title" id="passwordChangeModalLabel">Promjena lozinke</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="change-password-form" class="password-form">
-                    <div id="password-errors" class="text-danger"></div>
+                    <div id="password-errors" class="text-danger mb-3"></div>
 
-                    <div class="form-group">
-                        <label for="currentPassword">Trenutna lozinka</label>
+                    <div class="mb-3">
+                        <label for="currentPassword" class="form-label">Trenutna lozinka</label>
                         <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>
                         <div class="password-error" id="currentPassword-error"></div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="newPassword">Nova lozinka</label>
+                    <div class="mb-3">
+                        <label for="newPassword" class="form-label">Nova lozinka</label>
                         <input type="password" class="form-control" id="newPassword" name="newPassword" required>
                         <div class="password-error" id="newPassword-error"></div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="confirmPassword">Potvrdite novu lozinku</label>
+                    <div class="mb-3">
+                        <label for="confirmPassword" class="form-label">Potvrdite novu lozinku</label>
                         <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
                         <div class="password-error" id="confirmPassword-error"></div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Odustani</button>
-                <button type="button" class="btn btn-primary" id="submit-password-change">Postavi novu lozinku</button>
+                <button type="button" class="btn btn-light border rounded-4" data-bs-dismiss="modal">Odustani</button>
+                <button type="button" class="btn btn-primary rounded-4" id="submit-password-change">Postavi novu lozinku</button>
             </div>
         </div>
     </div>
@@ -160,6 +164,10 @@
                 const passwordModal = new bootstrap.Modal(document.getElementById('passwordChangeModal'));
                 passwordModal.show();
             });
+
+            if (window.location.hash === "#password") {
+                $("#change-password-btn").trigger("click");
+            }
 
             $("#submit-password-change").click(function() {
 

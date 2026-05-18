@@ -1,55 +1,108 @@
 @model Autosalon_OneZone.Models.ViewModels.ProfileViewModel
 @{
-    ViewData["Title"] = "Profil Korisnika";
+    ViewData["Title"] = "Moj profil";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-@section Head {
-    <link rel="stylesheet" href="~/css/profile.css" />
-}
 
-<header>
-    <h1>Profil Korisnika</h1>
-</header>
-
-<div class="container">
-    <div class="profile-container">
-        <div class="profile-header">
-            <h2>@Model.ImePrezime</h2>
-            <p>@Model.Role</p>
-        </div>
-
-        <div class="profile-info">
-            <p><strong>Ime i Prezime:</strong> @Model.ImePrezime</p>
-            <p><strong>Email:</strong> @Model.Email</p>
-            <p><strong>Korisničko ime:</strong> @Model.UserName</p>
-        </div>
-
-        <div class="button-container">
-            <button class="edit-button" onclick="location.href='/Profil/Edit'">Uredi Profil</button>
-            <button class="edit-button ms-2" onclick="location.href='/Profil/KupljeniArtikli'">Kupljeni Artikli</button>
-        </div>
-
+<section class="inner-page-header">
+    <div class="container text-center">
+        <p class="section-eyebrow">Korisnički profil</p>
+        <h1>Moj profil</h1>
+        <p>Pregledajte svoje podatke, kupljene artikle i recenzije.</p>
     </div>
-</div>
+</section>
 
-<div class="container">
-    <div class="reviews-section">
-        <h3>Recenzije</h3>
+<section class="profile-section">
+    <div class="container">
+        <div class="row g-4 justify-content-center">
+            <div class="col-lg-5">
+                <div class="profile-card text-center h-100">
+                    <div class="profile-avatar">
+                        <i class="bi bi-person-fill"></i>
+                    </div>
 
-        @if (Model.Recenzije != null && Model.Recenzije.Any())
-        {
-            @foreach (var recenzija in Model.Recenzije)
-            {
-                <div class="review-item">
-                    <h4>Vozilo: @recenzija.VoziloNaziv</h4>
-                    <p class="rating">Ocjena: @recenzija.Ocena/5</p>
-                    <p>@recenzija.Tekst</p>
+                    <h2>@Model.ImePrezime</h2>
+                    <span class="role-badge">@Model.Role</span>
+
+                    <div class="profile-info mt-4">
+                        <div>
+                            <span>Ime i prezime</span>
+                            <strong>@Model.ImePrezime</strong>
+                        </div>
+                        <div>
+                            <span>Email</span>
+                            <strong>@Model.Email</strong>
+                        </div>
+                        <div>
+                            <span>Korisničko ime</span>
+                            <strong>@Model.UserName</strong>
+                        </div>
+                    </div>
                 </div>
-            }
-        }
-        else
-        {
-            <p class="no-reviews">Nema recenzija za prikaz.</p>
-        }
+            </div>
+
+            <div class="col-lg-5">
+                <div class="profile-card h-100">
+                    <h3>Brze akcije</h3>
+                    <p class="text-muted mb-0">Upravljajte profilom, kupovinama i korpom.</p>
+
+                    <div class="d-grid gap-3 mt-4">
+                        <a href="@Url.Action("Edit", "Profil")" class="btn btn-primary btn-lg rounded-4">
+                            <i class="bi bi-pencil-square me-2"></i>Uredi profil
+                        </a>
+                        <a href="@Url.Action("KupljeniArtikli", "Profil")" class="btn btn-outline-primary btn-lg rounded-4">
+                            <i class="bi bi-bag-check me-2"></i>Kupljeni artikli
+                        </a>
+                        <a href="@Url.Action("Edit", "Profil")#password" class="btn btn-outline-secondary btn-lg rounded-4">
+                            <i class="bi bi-key me-2"></i>Promijeni lozinku
+                        </a>
+                        <a href="@Url.Action("Index", "Korpa")" class="btn btn-light border btn-lg rounded-4">
+                            <i class="bi bi-cart-fill me-2"></i>Korpa
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row justify-content-center mt-4">
+            <div class="col-lg-10">
+                <div class="profile-card">
+                    <div class="d-flex justify-content-between align-items-center gap-3 mb-4 flex-wrap">
+                        <div>
+                            <h3 class="mb-1">Recenzije</h3>
+                            <p class="text-muted mb-0">Vaše recenzije vozila.</p>
+                        </div>
+                    </div>
+
+                    @if (Model.Recenzije != null && Model.Recenzije.Any())
+                    {
+                        <div class="profile-review-list">
+                            @foreach (var recenzija in Model.Recenzije)
+                            {
+                                <article class="profile-review-item">
+                                    <div>
+                                        <h4>@recenzija.VoziloNaziv</h4>
+                                        <div class="profile-stars" aria-label="Ocjena @recenzija.Ocena od 5">
+                                            @for (var i = 1; i <= 5; i++)
+                                            {
+                                                <i class="bi @(i <= recenzija.Ocena ? "bi-star-fill" : "bi-star")"></i>
+                                            }
+                                        </div>
+                                    </div>
+                                    <p>@recenzija.Tekst</p>
+                                </article>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="empty-state">
+                            <i class="bi bi-chat-square-text"></i>
+                            <p>Nema recenzija za prikaz.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
     </div>
-</div>
+</section>

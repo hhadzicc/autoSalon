@@ -34,7 +34,7 @@
     {
         <div class="form-group">
             <label asp-for="Password">Lozinka</label>
-            <input asp-for="Password" class="form-control" type="password" required />
+            <input asp-for="Password" class="form-control" type="password" required minlength="8" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}" title="Lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo." />
             <span asp-validation-for="Password" class="text-danger"></span>
         </div>
 
@@ -43,12 +43,17 @@
             <input asp-for="ConfirmPassword" class="form-control" type="password" required />
             <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
         </div>
+
+        <div class="password-hint">
+            <i class="bi bi-info-circle me-2"></i>
+            Napomena: lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo.
+        </div>
     }
     else
     {
         <div class="form-group">
             <label asp-for="Password">Nova lozinka <span class="text-muted fw-normal">(opcionalno)</span></label>
-            <input asp-for="Password" class="form-control" type="password" autocomplete="new-password" placeholder="Unesite novu lozinku samo ako je mijenjate" />
+            <input asp-for="Password" class="form-control" type="password" autocomplete="new-password" placeholder="Unesite novu lozinku samo ako je mijenjate" minlength="8" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}" title="Nova lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo." />
             <small class="form-text text-muted">Ostaviti prazno ako lozinka korisnika ostaje ista.</small>
             <span asp-validation-for="Password" class="text-danger"></span>
         </div>
@@ -57,6 +62,11 @@
             <label asp-for="ConfirmPassword">Potvrda nove lozinke <span class="text-muted fw-normal">(opcionalno)</span></label>
             <input asp-for="ConfirmPassword" class="form-control" type="password" autocomplete="new-password" placeholder="Ponovite novu lozinku" />
             <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+        </div>
+
+        <div class="password-hint">
+            <i class="bi bi-info-circle me-2"></i>
+            Napomena: nova lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo.
         </div>
     }
 
@@ -107,6 +117,16 @@
             }
         });
 
+        if (!$.validator.methods.pattern) {
+            $.validator.addMethod("pattern", function(value, element, param) {
+                if (this.optional(element)) {
+                    return true;
+                }
+
+                return new RegExp(param).test(value);
+            });
+        }
+
         $("#add-profil-form").validate({
             errorElement: "span",
             errorClass: "text-danger",
@@ -146,6 +166,30 @@
             },
             errorPlacement: function (error, element) {
                 error.insertAfter(element);
+            }
+        });
+
+        $("#Password").rules("add", {
+            required: function () {
+                return $("#UserId").val().length === 0;
+            },
+            minlength: 8,
+            pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/,
+            messages: {
+                required: "Lozinka je obavezna.",
+                minlength: "Lozinka mora imati najmanje 8 karaktera.",
+                pattern: "Lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo."
+            }
+        });
+
+        $("#ConfirmPassword").rules("add", {
+            required: function () {
+                return $("#UserId").val().length === 0 || $("#Password").val().length > 0;
+            },
+            equalTo: "#Password",
+            messages: {
+                required: "Potvrda lozinke je obavezna.",
+                equalTo: "Lozinka i potvrda lozinke se ne podudaraju."
             }
         });
     });

@@ -104,7 +104,7 @@
                     <div class="mb-3">
                         <label for="newPassword" class="form-label">Nova lozinka</label>
                         <div class="password-wrapper">
-                            <input type="password" class="form-control password-input" id="newPassword" name="newPassword" required>
+                            <input type="password" class="form-control password-input" id="newPassword" name="newPassword" required minlength="8" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}" title="Nova lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo.">
                             <button type="button" class="password-toggle" aria-label="Prikaži lozinku">
                                 <i class="bi bi-eye"></i>
                             </button>
@@ -125,7 +125,7 @@
 
                     <div class="password-hint">
                         <i class="bi bi-info-circle me-2"></i>
-                        Preporuka: koristite najmanje 8 karaktera, brojeve i velika slova.
+                        Napomena: lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo.
                     </div>
                 </form>
             </div>
@@ -211,11 +211,14 @@
                     $("#currentPassword-error").text("");
                 }
 
-                if ($("#newPassword").val() === "") {
+                const newPasswordValue = $("#newPassword").val();
+                const passwordPolicy = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+
+                if (newPasswordValue === "") {
                     $("#newPassword-error").text("Nova lozinka je obavezna");
                     isValid = false;
-                } else if ($("#newPassword").val().length < 6) {
-                    $("#newPassword-error").text("Lozinka mora biti najmanje 6 karaktera");
+                } else if (!passwordPolicy.test(newPasswordValue)) {
+                    $("#newPassword-error").text("Nova lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo");
                     isValid = false;
                 } else {
                     $("#newPassword-error").text("");
@@ -246,7 +249,7 @@
                     },
                     success: function(response) {
                         bootstrap.Modal.getInstance(document.getElementById('passwordChangeModal')).hide();
-                        alert("Lozinka je uspješno promijenjena!");
+                        window.showAppFlashMessage(response.message || "Lozinka je uspješno promijenjena.", "success");
                     },
                     error: function(xhr) {
                         if (xhr.responseJSON && xhr.responseJSON.errors) {

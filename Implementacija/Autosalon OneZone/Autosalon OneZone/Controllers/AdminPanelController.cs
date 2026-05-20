@@ -24,6 +24,14 @@ namespace Autosalon_OneZone.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
 
+        private static bool MeetsPasswordPolicy(string password)
+        {
+            return password.Length >= 8
+                && password.Any(char.IsDigit)
+                && password.Any(char.IsLower)
+                && password.Any(char.IsUpper);
+        }
+
         public AdminPanelController(
             ApplicationDbContext context,
             IWebHostEnvironment webHostEnvironment,
@@ -700,9 +708,9 @@ namespace Autosalon_OneZone.Controllers
                     {
                         ModelState.AddModelError(nameof(viewModel.ConfirmPassword), "Nova lozinka i potvrda lozinke se ne podudaraju.");
                     }
-                    else if (viewModel.Password.Length < 8)
+                    else if (!MeetsPasswordPolicy(viewModel.Password))
                     {
-                        ModelState.AddModelError(nameof(viewModel.Password), "Nova lozinka mora imati najmanje 8 znakova.");
+                        ModelState.AddModelError(nameof(viewModel.Password), "Nova lozinka mora imati najmanje 8 znakova, jednu cifru, jedno malo i jedno veliko slovo.");
                     }
                 }
                 else if (!string.IsNullOrWhiteSpace(viewModel.ConfirmPassword))
@@ -713,6 +721,10 @@ namespace Autosalon_OneZone.Controllers
             else if (string.IsNullOrWhiteSpace(viewModel.Password))
             {
                 ModelState.AddModelError(nameof(viewModel.Password), "Lozinka je obavezna.");
+            }
+            else if (!MeetsPasswordPolicy(viewModel.Password))
+            {
+                ModelState.AddModelError(nameof(viewModel.Password), "Lozinka mora imati najmanje 8 znakova, jednu cifru, jedno malo i jedno veliko slovo.");
             }
             else if (string.IsNullOrWhiteSpace(viewModel.ConfirmPassword))
             {

@@ -119,7 +119,7 @@ namespace Autosalon_OneZone.Controllers
             if (ModelState.IsValid)
             {
                 var loginIdentifier = model.LoginIdentifier.Trim();
-                var invalidLoginMessage = "Neispravan e-mail, korisničko ime ili šifra.";
+                var invalidLoginMessage = "Neispravan e-mail, korisnicko ime ili lozinka.";
 
                 var user = await _userManager.FindByEmailAsync(loginIdentifier);
                 user ??= await _userManager.FindByNameAsync(loginIdentifier);

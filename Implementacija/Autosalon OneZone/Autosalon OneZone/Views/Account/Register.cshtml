@@ -59,7 +59,7 @@
                             <div class="col-md-6">
                                 <label asp-for="Password" class="form-label">Lozinka</label>
                                 <div class="password-wrapper">
-                                    <input asp-for="Password" type="password" class="form-control password-input" placeholder="Lozinka" required data-val-required="Lozinka je obavezna." />
+                                    <input asp-for="Password" type="password" class="form-control password-input" placeholder="Lozinka" required minlength="8" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}" title="Lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo." data-val-required="Lozinka je obavezna." />
                                     <button type="button" class="password-toggle" aria-label="Prikaži lozinku">
                                         <i class="bi bi-eye"></i>
                                     </button>
@@ -76,6 +76,13 @@
                                     </button>
                                 </div>
                                 <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="password-hint mt-1">
+                                    <i class="bi bi-info-circle me-2"></i>
+                                    Napomena: lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo.
+                                </div>
                             </div>
 
                             <div class="col-12">

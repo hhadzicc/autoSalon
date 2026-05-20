@@ -3444,24 +3444,24 @@ a {
 }
 
 #profili-list-container .admin-table th:nth-child(1) {
-    width: 19%;
+    width: 18%;
 }
 
 #profili-list-container .admin-table th:nth-child(2) {
-    width: 26%;
+    width: 24%;
 }
 
 #profili-list-container .admin-table th:nth-child(3),
 #profili-list-container .admin-table th:nth-child(4) {
-    width: 12%;
+    width: 10%;
 }
 
 #profili-list-container .admin-table th:nth-child(5) {
-    width: 13%;
+    width: 16%;
 }
 
 #profili-list-container .admin-table th:nth-child(6) {
-    width: 18%;
+    width: 22%;
 }
 
 #profili-list-container .admin-table td:nth-child(5) .admin-badge {
@@ -3477,10 +3477,15 @@ a {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
     justify-content: stretch;
+    justify-items: stretch;
+    width: 100%;
     min-width: 0;
 }
 
 #profili-list-container .table-actions .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     width: 100%;
     min-width: 0;
     padding-inline: 10px;

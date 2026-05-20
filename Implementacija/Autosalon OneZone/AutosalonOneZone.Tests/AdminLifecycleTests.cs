@@ -357,6 +357,88 @@ public class AdminLifecycleTests
     }
 
     [Fact]
+    public async Task Admin_support_status_missing_ticket_returns_not_found()
+    {
+        await using var app = await TestApp.CreateAsync();
+
+        var result = await CreateAdminController(app).UpdatePodrskaStatus(404404, "UObradi");
+
+        Assert.IsType<NotFoundResult>(result);
+    }
+
+    [Fact]
+    public async Task Admin_profile_save_rejects_invalid_password_without_creating_user()
+    {
+        await using var app = await TestApp.CreateAsync();
+        var admin = CreateAdminController(app);
+
+        var result = await admin.SaveProfil(new AddProfilViewModel
+        {
+            UserName = "weakpassworduser",
+            Email = "weakpassworduser@example.com",
+            Ime = "Weak",
+            Prezime = "Password",
+            Password = "weak",
+            ConfirmPassword = "weak",
+            OdabraneRole = ["Kupac"]
+        });
+
+        var badRequest = Assert.IsType<BadRequestObjectResult>(result);
+        Assert.Contains("Lozinka mora imati najmanje 8 karaktera", JsonSerializer.Serialize(badRequest.Value));
+        Assert.Null(await app.UserManager.FindByNameAsync("weakpassworduser"));
+    }
+
+    [Fact]
+    public async Task Admin_profile_role_change_replaces_existing_roles()
+    {
+        await using var app = await TestApp.CreateAsync();
+        var user = await CreateUserAsync(app, "rolechange", "rolechange@example.com", "Kupac");
+        await app.UserManager.AddToRoleAsync(user, "Prodavac");
+
+        var result = await CreateAdminController(app).SaveProfil(new AddProfilViewModel
+        {
+            UserId = user.Id,
+            UserName = "rolechange",
+            Email = "rolechange@example.com",
+            Ime = "Role",
+            Prezime = "Change",
+            Password = "",
+            ConfirmPassword = "",
+            OdabraneRole = ["Administrator"]
+        });
+
+        Assert.IsType<OkObjectResult>(result);
+
+        var roles = await app.UserManager.GetRolesAsync(user);
+        Assert.Equal(["Administrator"], roles.OrderBy(role => role).ToArray());
+    }
+
+    [Fact]
+    public async Task Admin_profile_missing_edit_and_delete_return_not_found()
+    {
+        await using var app = await TestApp.CreateAsync();
+        var admin = CreateAdminController(app);
+
+        var editResult = await admin.GetEditProfilForm("missing-user-id");
+        var saveResult = await admin.SaveProfil(new AddProfilViewModel
+        {
+            UserId = "missing-user-id",
+            UserName = "missing",
+            Email = "missing@example.com",
+            Ime = "Missing",
+            Prezime = "User",
+            Password = "",
+            ConfirmPassword = "",
+            OdabraneRole = ["Kupac"]
+        });
+        var deleteResult = await admin.DeleteProfil("missing-user-id");
+
+        Assert.IsType<NotFoundResult>(editResult);
+        Assert.IsType<NotFoundResult>(saveResult);
+        Assert.IsType<NotFoundResult>(deleteResult);
+    }
+
+    [Fact]
     public async Task Admin_support_json_orders_filters_and_never_requires_message_preview_in_table_contract()
     {
         await using var app = await TestApp.CreateAsync();

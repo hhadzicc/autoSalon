@@ -203,95 +203,24 @@ else
             }
         });
 
-        $("input[type=file]").change(function() {
+        $(document).off('change.adminVoziloFile', '#add-edit-vozilo-form input[type=file]').on('change.adminVoziloFile', '#add-edit-vozilo-form input[type=file]', function() {
             var fileInput = $(this)[0];
             if(fileInput.files.length > 0) {
                 var file = fileInput.files[0];
                 var allowedExtensions = /(\.jpg|\.jpeg|\.png|\.gif|\.bmp)$/i;
 
                 if(!allowedExtensions.exec(file.name)) {
-                    alert('Dozvoljena su samo sljedeća proširenja fajlova: .jpg, .jpeg, .png, .gif, .bmp');
+                    window.showAppFlashMessage('Dozvoljena su samo sljedeća proširenja fajlova: .jpg, .jpeg, .png, .gif, .bmp', 'error');
                     $(this).val('');
                     return false;
                 }
 
                 if(file.size > 5 * 1024 * 1024) {
-                    alert('Veličina slike ne smije prelaziti 5MB.');
+                    window.showAppFlashMessage('Veličina slike ne smije prelaziti 5MB.', 'error');
                     $(this).val('');
                     return false;
                 }
             }
-        });
-
-        $(document).on('submit', '#add-edit-vozilo-form', function (e) {
-            e.preventDefault();
-
-            if(!$(this).valid()) {
-                return false;
-            }
-
-            console.log("Form submitted");
-
-            var formData = new FormData(this);
-            console.log("FormData created");
-            for (var pair of formData.entries()) {
-                console.log(pair[0] + ': ' + pair[1]);
-            }
-
-            $.ajax({
-                url: $(this).attr('action'),
-                type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function (data) {
-                    console.log("Success:", data);
-                    $('#add-vozilo-form-container').hide();
-                    $('#add-vozilo-form-placeholder').empty();
-                    if (typeof loadSection === 'function') {
-                        loadSection('Vozila');
-                    }
-                    alert('Vozilo uspješno ' + (@Model.VoziloID > 0 ? 'izmijenjeno' : 'dodano') + '!');
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    console.error('AJAX Error:', textStatus, errorThrown);
-                    console.error('Response:', jqXHR.responseText);
-
-                    var errorMessage = 'Greška prilikom spremanja vozila.';
-
-                    if (jqXHR.status === 400 && jqXHR.responseJSON && jqXHR.responseJSON.errors) {
-                        errorMessage += '\nValidacijske greške:';
-                        $.each(jqXHR.responseJSON.errors, function(key, value) {
-                            if (Array.isArray(value)) {
-                                errorMessage += '\n - ' + key + ': ' + value.join(', ');
-
-                                var fieldErrorSpan = $('span[data-valmsg-for="' + key + '"]');
-                                if (fieldErrorSpan.length) {
-                                    fieldErrorSpan.text(value.join(', ')).show();
-                                }
-                            } else {
-                                errorMessage += '\n - ' + key + ': ' + value;
-
-                                var fieldErrorSpan = $('span[data-valmsg-for="' + key + '"]');
-                                if (fieldErrorSpan.length) {
-                                    fieldErrorSpan.text(value).show();
-                                }
-                            }
-                        });
-                    } else if (jqXHR.responseText) {
-                        errorMessage += '\nDetalji: ' + jqXHR.responseText;
-                    } else {
-                        errorMessage += '\nStatus: ' + jqXHR.status + ', Tekst statusa: ' + textStatus + ', Greška: ' + errorThrown;
-                    }
-
-                    alert(errorMessage);
-                }
-            });
-        });
-
-        $(document).on('click', '#cancel-add-vozilo', function () {
-            $('#add-vozilo-form-container').hide();
-            $('#add-vozilo-form-placeholder').empty();
         });
     });
 </script>

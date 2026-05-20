@@ -153,16 +153,18 @@
             }
 
             $.each(recenzije, function (_, recenzija) {
-                const korisnik = escapeHtml(recenzija.korisnikUserName || recenzija.korisnikIme || 'N/A');
-                const vozilo = escapeHtml(recenzija.voziloNaziv || ((recenzija.voziloMarka || '') + ' ' + (recenzija.voziloModel || '')).trim() || 'N/A');
+                const rawKorisnik = recenzija.korisnikUserName || recenzija.korisnikIme || 'N/A';
+                const rawVozilo = recenzija.voziloNaziv || ((recenzija.voziloMarka || '') + ' ' + (recenzija.voziloModel || '')).trim() || 'N/A';
+                const korisnik = escapeHtml(rawKorisnik);
+                const vozilo = escapeHtml(rawVozilo);
                 const datum = formatDate(recenzija.datumRecenzije);
                 const actions = reviewActions(recenzija);
 
                 recenzijaTableBody.append(
                     '<tr>' +
                         '<td class="date-cell">' + escapeHtml(datum) + '</td>' +
-                        '<td><div class="user-cell"><span class="user-avatar"><i class="bi bi-person-fill"></i></span><strong>' + korisnik + '</strong></div></td>' +
-                        '<td><div class="vehicle-name-cell"><strong>' + vozilo + '</strong></div></td>' +
+                        '<td><div class="user-cell" title="' + escapeAttribute(rawKorisnik) + '"><span class="user-avatar"><i class="bi bi-person-fill"></i></span><strong>' + korisnik + '</strong></div></td>' +
+                        '<td><div class="vehicle-name-cell" title="' + escapeAttribute(rawVozilo) + '"><strong>' + vozilo + '</strong></div></td>' +
                         '<td>' + ratingBadge(recenzija.ocjena) + '</td>' +
                         '<td>' + actions + '</td>' +
                     '</tr>'
@@ -216,7 +218,7 @@
             }
         });
 
-        $(document).on('click', '.view-komentar', function (e) {
+        $(document).off('click.adminRecenzijeView', '.view-komentar').on('click.adminRecenzijeView', '.view-komentar', function (e) {
             e.preventDefault();
             $('#komentarModalText').text(decodeURIComponent($(this).data('komentar') || ''));
             $('#komentarModalKorisnik').text(decodeURIComponent($(this).data('korisnik') || '-'));
@@ -226,7 +228,7 @@
             $('#komentarModal').modal('show');
         });
 
-        $(document).on('app:delete-confirmed', '.delete-recenzija-button', function () {
+        $(document).off('app:delete-confirmed.adminRecenzijeDelete', '.delete-recenzija-button').on('app:delete-confirmed.adminRecenzijeDelete', '.delete-recenzija-button', function () {
             const recenzijaId = $(this).data('id');
 
             $.ajax({
@@ -236,12 +238,12 @@
                 headers: {
                     'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
                 },
-                success: function () {
-                    alert('Recenzija uspješno obrisana.');
+                success: function (response) {
+                    window.showAppFlashMessage(response.successMessage || 'Recenzija uspješno obrisana.', 'success');
                     loadRecenzijeList(getCurrentFilterParams());
                 },
                 error: function () {
-                    alert('Došlo je do greške prilikom brisanja recenzije.');
+                    window.showAppFlashMessage('Došlo je do greške prilikom brisanja recenzije.', 'error');
                 }
             });
         });

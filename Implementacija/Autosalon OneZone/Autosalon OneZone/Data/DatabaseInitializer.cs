@@ -147,12 +147,13 @@ namespace Autosalon_OneZone.Data
                 return null;
             }
 
+            var desiredUserName = BuildSeedUserName(email, roleName);
             var user = await userManager.FindByEmailAsync(email);
             if (user == null)
             {
                 user = new ApplicationUser
                 {
-                    UserName = email,
+                    UserName = desiredUserName,
                     Email = email,
                     EmailConfirmed = true,
                     Ime = firstName,
@@ -190,6 +191,24 @@ namespace Autosalon_OneZone.Data
                     profileChanged = true;
                 }
 
+                if (!string.Equals(user.UserName, desiredUserName, StringComparison.Ordinal))
+                {
+                    var existingUserWithName = await userManager.FindByNameAsync(desiredUserName);
+                    if (existingUserWithName == null || existingUserWithName.Id == user.Id)
+                    {
+                        user.UserName = desiredUserName;
+                        profileChanged = true;
+                    }
+                    else
+                    {
+                        logger.LogWarning(
+                            "Cannot update {RoleName} seed username for {Email} to {UserName} because that username is already taken.",
+                            roleName,
+                            email,
+                            desiredUserName);
+                    }
+                }
+
                 if (profileChanged)
                 {
                     var updateResult = await userManager.UpdateAsync(user);
@@ -219,6 +238,20 @@ namespace Autosalon_OneZone.Data
             }
 
             return user;
+        }
+
+        private static string BuildSeedUserName(string email, string roleName)
+        {
+            var localPart = email.Split('@', 2)[0];
+            var sanitized = new string(localPart.Where(char.IsLetterOrDigit).ToArray());
+
+            if (!string.IsNullOrWhiteSpace(sanitized))
+            {
+                return sanitized;
+            }
+
+            var roleFallback = new string(roleName.Where(char.IsLetterOrDigit).ToArray());
+            return string.IsNullOrWhiteSpace(roleFallback) ? "demo" : roleFallback.ToLowerInvariant();
         }
 
         private static async Task EnsureSeedPasswordAsync(

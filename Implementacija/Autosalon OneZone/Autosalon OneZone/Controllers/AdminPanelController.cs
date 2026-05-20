@@ -244,6 +244,36 @@ namespace Autosalon_OneZone.Controllers
                 return NotFound();
             }
 
+            var stavkeUKorpama = await _context.StavkeKorpe
+                .Where(s => s.VoziloID == id && s.KorpaID != null)
+                .ToListAsync();
+
+            if (stavkeUKorpama.Any())
+            {
+                var korpaIds = stavkeUKorpama
+                    .Where(s => s.KorpaID.HasValue)
+                    .Select(s => s.KorpaID!.Value)
+                    .Distinct()
+                    .ToList();
+
+                var korpe = await _context.Korpe
+                    .Where(k => korpaIds.Contains(k.KorpaID))
+                    .ToListAsync();
+
+                foreach (var korpa in korpe)
+                {
+                    var uklonjenaVrijednost = stavkeUKorpama
+                        .Where(s => s.KorpaID == korpa.KorpaID)
+                        .Sum(s => s.CijenaStavke * s.Kolicina);
+
+                    korpa.UkupnaCijena -= uklonjenaVrijednost;
+                    if (korpa.UkupnaCijena < 0)
+                    {
+                        korpa.UkupnaCijena = 0;
+                    }
+                }
+            }
+
             if (!string.IsNullOrEmpty(vozilo.Slika))
             {
                 var imagePath = Path.Combine(_webHostEnvironment.WebRootPath, "images/vozila", vozilo.Slika);
@@ -364,6 +394,7 @@ namespace Autosalon_OneZone.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Administrator")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeletePodrska(int id)
         {
@@ -380,6 +411,7 @@ namespace Autosalon_OneZone.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Administrator")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdatePodrskaStatus(int id, string status)
         {
@@ -552,9 +584,9 @@ namespace Autosalon_OneZone.Controllers
                     ? query.OrderByDescending(v => v.Kilometraza)
                     : query.OrderBy(v => v.Kilometraza),
                 "cijena" => direction == "asc"
-                    ? query.OrderBy(v => v.Cijena)
-                    : query.OrderByDescending(v => v.Cijena),
-                _ => query.OrderByDescending(v => v.Cijena)
+                    ? query.OrderBy(v => v.Cijena.HasValue ? (double)v.Cijena.Value : 0)
+                    : query.OrderByDescending(v => v.Cijena.HasValue ? (double)v.Cijena.Value : 0),
+                _ => query.OrderByDescending(v => v.Cijena.HasValue ? (double)v.Cijena.Value : 0)
             };
 
             var totalCount = await query.CountAsync();
@@ -583,7 +615,9 @@ namespace Autosalon_OneZone.Controllers
                 totalCount = totalCount,
                 totalPages = totalPages,
                 currentPage = page,
-                pageSize = pageSize
+                pageSize = pageSize,
+                sort = sort,
+                direction = direction
             });
         }
 
@@ -710,7 +744,7 @@ namespace Autosalon_OneZone.Controllers
                     }
                     else if (!MeetsPasswordPolicy(viewModel.Password))
                     {
-                        ModelState.AddModelError(nameof(viewModel.Password), "Nova lozinka mora imati najmanje 8 znakova, jednu cifru, jedno malo i jedno veliko slovo.");
+                        ModelState.AddModelError(nameof(viewModel.Password), "Lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo.");
                     }
                 }
                 else if (!string.IsNullOrWhiteSpace(viewModel.ConfirmPassword))
@@ -724,7 +758,7 @@ namespace Autosalon_OneZone.Controllers
             }
             else if (!MeetsPasswordPolicy(viewModel.Password))
             {
-                ModelState.AddModelError(nameof(viewModel.Password), "Lozinka mora imati najmanje 8 znakova, jednu cifru, jedno malo i jedno veliko slovo.");
+                ModelState.AddModelError(nameof(viewModel.Password), "Lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo.");
             }
             else if (string.IsNullOrWhiteSpace(viewModel.ConfirmPassword))
             {

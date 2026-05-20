@@ -451,7 +451,7 @@
                                 } else if (response.message) {
 
                                     $('#paymentModal').modal('hide');
-                                    alert("Plaćanje nije uspjelo: " + response.message);
+                                    window.showAppFlashMessage("Plaćanje nije uspjelo: " + response.message, "error");
                                 }
 
                                 $("#submitPayment").prop("disabled", false).html('Potvrdi kupovinu');
@@ -460,7 +460,7 @@
                         error: function(xhr, status, error) {
 
                             $('#paymentModal').modal('hide');
-                            alert("Došlo je do greške prilikom obrade zahtjeva. Molimo pokušajte ponovo.");
+                            window.showAppFlashMessage("Došlo je do greške prilikom obrade zahtjeva. Molimo pokušajte ponovo.", "error");
                             $("#submitPayment").prop("disabled", false).html('Potvrdi kupovinu');
                         }
                     });

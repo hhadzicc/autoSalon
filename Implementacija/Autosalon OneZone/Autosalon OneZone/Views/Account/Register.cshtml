@@ -79,13 +79,6 @@
                             </div>
 
                             <div class="col-12">
-                                <div class="password-hint mt-1">
-                                    <i class="bi bi-info-circle me-2"></i>
-                                    Napomena: lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo.
-                                </div>
-                            </div>
-
-                            <div class="col-12">
                                 <button type="submit" class="btn btn-primary btn-lg rounded-4 w-100 mt-2">Registruj se</button>
                             </div>
                         </div>
@@ -163,11 +156,11 @@
 
                     text = text.replace(/Username .* is already taken/i, 'Korisničko ime je već zauzeto.');
                     text = text.replace(/Email .* is already taken/i, 'Email adresa je već zauzeta.');
-                    text = text.replace(/Password must be at least \d+ characters/i, 'Lozinka mora imati najmanje $1 znakova.');
-                    text = text.replace(/Passwords must have at least one non alphanumeric character/i, 'Lozinka mora sadržavati najmanje jedan poseban znak.');
-                    text = text.replace(/Passwords must have at least one lowercase/i, 'Lozinka mora sadržavati najmanje jedno malo slovo.');
-                    text = text.replace(/Passwords must have at least one uppercase/i, 'Lozinka mora sadržavati najmanje jedno veliko slovo.');
-                    text = text.replace(/Passwords must have at least one digit/i, 'Lozinka mora sadržavati najmanje jednu cifru.');
+                    text = text.replace(/Password must be at least \d+ characters/i, 'Lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo.');
+                    text = text.replace(/Passwords must have at least one non alphanumeric character/i, 'Lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo.');
+                    text = text.replace(/Passwords must have at least one lowercase/i, 'Lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo.');
+                    text = text.replace(/Passwords must have at least one uppercase/i, 'Lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo.');
+                    text = text.replace(/Passwords must have at least one digit/i, 'Lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo.');
                     text = text.replace(/User name .* is invalid/i, 'Korisničko ime sadrži nedozvoljene znakove.');
                     text = text.replace(/Email .* is invalid/i, 'Email adresa nije ispravna.');
                     text = text.replace(/The password and confirmation password do not match/i, 'Lozinka i potvrda lozinke se ne podudaraju.');

@@ -16,6 +16,8 @@ namespace Autosalon_OneZone.ViewModels.Admin
         public string? UserId { get; set; }
 
         [Required(ErrorMessage = "Korisničko ime je obavezno.")]
+        [StringLength(100, ErrorMessage = "Korisničko ime ne može biti duže od 100 karaktera.")]
+        [RegularExpression(@"^[a-zA-Z0-9]+$", ErrorMessage = "Korisničko ime može sadržavati samo slova i brojeve.")]
         public string UserName { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Email je obavezan.")]
@@ -23,8 +25,8 @@ namespace Autosalon_OneZone.ViewModels.Admin
         public string Email { get; set; } = string.Empty;
 
         [DataType(DataType.Password)]
-        [StringLength(100, ErrorMessage = "Lozinka mora imati najmanje {2} znakova.", MinimumLength = 8)]
-        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$", ErrorMessage = "Lozinka mora sadržavati najmanje jednu cifru, jedno malo i jedno veliko slovo.")]
+        [StringLength(100, ErrorMessage = "Lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo.", MinimumLength = 8)]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$", ErrorMessage = "Lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo.")]
         public string? Password { get; set; }
 
         [DataType(DataType.Password)]

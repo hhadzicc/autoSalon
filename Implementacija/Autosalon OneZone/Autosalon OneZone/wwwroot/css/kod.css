@@ -2756,9 +2756,18 @@ a {
 }
 
 .admin-table {
+    width: 100%;
+    min-width: 0 !important;
+    table-layout: fixed;
     border-collapse: separate;
     border-spacing: 0;
     overflow: hidden;
+}
+
+.admin-table-wrapper {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: visible;
 }
 
 .admin-table thead th {
@@ -2779,6 +2788,8 @@ a {
     border: 0;
     border-bottom: 1px solid #eef2f7;
     vertical-align: middle;
+    min-width: 0;
+    overflow: hidden;
 }
 
 .admin-table tbody tr:hover {
@@ -2786,8 +2797,14 @@ a {
 }
 
 .vehicle-name-cell strong,
-.user-cell strong {
+.user-cell strong,
+.table-text-truncate {
     display: block;
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     color: #111827;
     font-weight: 900;
 }
@@ -2798,9 +2815,38 @@ a {
 }
 
 .user-cell {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     gap: 10px;
+    width: 100%;
+    min-width: 0;
+}
+
+.admin-email-link {
+    display: block;
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+    color: var(--primary);
+    font-weight: 900;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-decoration: none;
+}
+
+.admin-email-link:hover,
+.admin-email-link:focus {
+    color: var(--primary-dark);
+    text-decoration: underline;
+}
+
+.admin-email-link.is-empty {
+    color: #64748b;
+    text-decoration: none;
+}
+
+.admin-table td:last-child {
+    overflow: visible;
 }
 
 .user-avatar {
@@ -3365,20 +3411,79 @@ a {
     width: 120px;
 }
 
+#recenzije-list-container .admin-table th:nth-child(2) {
+    width: 28%;
+}
+
+#recenzije-list-container .admin-table th:nth-child(3) {
+    width: 32%;
+}
+
 #recenzije-list-container .admin-table th:nth-child(4) {
     width: 105px;
 }
 
-#recenzije-list-container .admin-table th:nth-child(6) {
+#recenzije-list-container .admin-table th:nth-child(5) {
     width: 175px;
 }
 
-#podrska-list-container .admin-table th:nth-child(5) {
+#podrska-list-container .admin-table th:nth-child(2) {
+    width: 28%;
+}
+
+#podrska-list-container .admin-table th:nth-child(3) {
+    width: 30%;
+}
+
+#podrska-list-container .admin-table th:nth-child(4) {
     width: 120px;
 }
 
-#podrska-list-container .admin-table th:nth-child(6) {
-    width: 330px;
+#podrska-list-container .admin-table th:nth-child(5) {
+    width: 230px;
+}
+
+#profili-list-container .admin-table th:nth-child(1) {
+    width: 19%;
+}
+
+#profili-list-container .admin-table th:nth-child(2) {
+    width: 26%;
+}
+
+#profili-list-container .admin-table th:nth-child(3),
+#profili-list-container .admin-table th:nth-child(4) {
+    width: 12%;
+}
+
+#profili-list-container .admin-table th:nth-child(5) {
+    width: 13%;
+}
+
+#profili-list-container .admin-table th:nth-child(6) {
+    width: 18%;
+}
+
+#profili-list-container .admin-table td:nth-child(5) .admin-badge {
+    max-width: 100%;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#profili-list-container .table-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    justify-content: stretch;
+    min-width: 0;
+}
+
+#profili-list-container .table-actions .btn {
+    width: 100%;
+    min-width: 0;
+    padding-inline: 10px;
 }
 
 .date-cell {
@@ -3884,16 +3989,8 @@ a {
 #podrska-list-container .admin-table,
 #podrska-list-container .admin-table tbody,
 #podrska-list-container .admin-table tr,
-#podrska-list-container .admin-table td {
+#podrska-list-container .status-dropdown {
     overflow: visible;
-}
-
-#podrska-list-container .admin-table th:nth-child(4) {
-    width: 120px;
-}
-
-#podrska-list-container .admin-table th:nth-child(5) {
-    width: 230px;
 }
 
 #podrska-list-container .user-cell {
@@ -3924,11 +4021,22 @@ a {
 }
 
 .status-dropdown .dropdown-menu {
-    z-index: 1085;
+    z-index: 2055;
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.18);
 }
 
-#recenzije-list-container .admin-table th:nth-child(5) {
-    width: 175px;
+#podrska-list-container .admin-table td:not(:last-child),
+#recenzije-list-container .admin-table td:not(:last-child),
+#profili-list-container .admin-table td:not(:last-child),
+#vozila-list-container .admin-table td:not(:last-child) {
+    overflow: hidden;
+}
+
+#podrska-list-container .admin-table td:last-child,
+#recenzije-list-container .admin-table td:last-child,
+#profili-list-container .admin-table td:last-child,
+#vozila-list-container .admin-table td:last-child {
+    overflow: visible;
 }
 
 @media (max-width: 1199.98px) {
@@ -3941,6 +4049,10 @@ a {
         width: 100%;
         margin-left: 0;
         flex: 1 1 100%;
+    }
+
+    #profili-list-container .table-actions {
+        grid-template-columns: 1fr;
     }
 }
 

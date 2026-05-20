@@ -21,6 +21,7 @@ namespace Autosalon_OneZone.Models.ViewModels
 
         [Required(ErrorMessage = "Polje Korisničko ime je obavezno.")]
         [StringLength(100, ErrorMessage = "Korisničko ime ne može biti duže od 100 karaktera.")]
+        [RegularExpression(@"^[a-zA-Z0-9]+$", ErrorMessage = "Korisničko ime može sadržavati samo slova i brojeve.")]
         [Display(Name = "Korisničko ime")]
         public string UserName { get; set; }
     }

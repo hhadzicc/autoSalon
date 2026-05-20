@@ -44,17 +44,12 @@
             <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
         </div>
 
-        <div class="password-hint">
-            <i class="bi bi-info-circle me-2"></i>
-            Napomena: lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo.
-        </div>
     }
     else
     {
         <div class="form-group">
             <label asp-for="Password">Nova lozinka <span class="text-muted fw-normal">(opcionalno)</span></label>
-            <input asp-for="Password" class="form-control" type="password" autocomplete="new-password" placeholder="Unesite novu lozinku samo ako je mijenjate" minlength="8" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}" title="Nova lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo." />
-            <small class="form-text text-muted">Ostaviti prazno ako lozinka korisnika ostaje ista.</small>
+            <input asp-for="Password" class="form-control" type="password" autocomplete="new-password" placeholder="Unesite novu lozinku samo ako je mijenjate" minlength="8" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}" title="Lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo." />
             <span asp-validation-for="Password" class="text-danger"></span>
         </div>
 
@@ -64,10 +59,6 @@
             <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
         </div>
 
-        <div class="password-hint">
-            <i class="bi bi-info-circle me-2"></i>
-            Napomena: nova lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo.
-        </div>
     }
 
     @if (Model.DostupneRole != null && Model.DostupneRole.Any())
@@ -177,7 +168,7 @@
             pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/,
             messages: {
                 required: "Lozinka je obavezna.",
-                minlength: "Lozinka mora imati najmanje 8 karaktera.",
+                minlength: "Lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo.",
                 pattern: "Lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo."
             }
         });

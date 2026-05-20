@@ -10,8 +10,8 @@ namespace Autosalon_OneZone.Models.ViewModels
         public string CurrentPassword { get; set; }
 
         [Required(ErrorMessage = "Nova lozinka je obavezna.")]
-        [StringLength(100, ErrorMessage = "Nova lozinka mora imati najmanje {2} karaktera.", MinimumLength = 8)]
-        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$", ErrorMessage = "Nova lozinka mora sadrzavati najmanje jednu cifru, jedno malo i jedno veliko slovo.")]
+        [StringLength(100, ErrorMessage = "Lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo.", MinimumLength = 8)]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$", ErrorMessage = "Lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo.")]
         [DataType(DataType.Password)]
         [Display(Name = "Nova lozinka")]
         public string NewPassword { get; set; }

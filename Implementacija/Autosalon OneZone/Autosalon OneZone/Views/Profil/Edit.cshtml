@@ -104,7 +104,7 @@
                     <div class="mb-3">
                         <label for="newPassword" class="form-label">Nova lozinka</label>
                         <div class="password-wrapper">
-                            <input type="password" class="form-control password-input" id="newPassword" name="newPassword" required minlength="8" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}" title="Nova lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo.">
+                            <input type="password" class="form-control password-input" id="newPassword" name="newPassword" required minlength="8" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}" title="Lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo.">
                             <button type="button" class="password-toggle" aria-label="Prikaži lozinku">
                                 <i class="bi bi-eye"></i>
                             </button>
@@ -123,10 +123,6 @@
                         <div class="password-error" id="confirmPassword-error"></div>
                     </div>
 
-                    <div class="password-hint">
-                        <i class="bi bi-info-circle me-2"></i>
-                        Napomena: lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo.
-                    </div>
                 </form>
             </div>
             <div class="modal-footer modern-modal-footer">
@@ -218,7 +214,7 @@
                     $("#newPassword-error").text("Nova lozinka je obavezna");
                     isValid = false;
                 } else if (!passwordPolicy.test(newPasswordValue)) {
-                    $("#newPassword-error").text("Nova lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo");
+                    $("#newPassword-error").text("Lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo.");
                     isValid = false;
                 } else {
                     $("#newPassword-error").text("");

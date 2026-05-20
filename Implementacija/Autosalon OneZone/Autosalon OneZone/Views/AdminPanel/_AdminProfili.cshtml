@@ -97,6 +97,18 @@
             return escapeHtml(value).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
         }
 
+        function emailLink(value) {
+            const email = value || 'N/A';
+            const safeEmail = escapeHtml(email);
+            const safeAttr = escapeAttribute(email);
+
+            if (!value) {
+                return '<span class="admin-email-link is-empty">N/A</span>';
+            }
+
+            return '<a class="admin-email-link" href="mailto:' + safeAttr + '" title="' + safeAttr + '">' + safeEmail + '</a>';
+        }
+
         let currentRoleFilter = 'all';
 
         function profileActions(id, itemName) {
@@ -118,8 +130,10 @@
 
             $.each(profili, function (_, profil) {
                 const id = profil.id || '';
-                const userName = escapeHtml(profil.userName || 'N/A');
-                const email = escapeHtml(profil.email || 'N/A');
+                const rawUserName = profil.userName || 'N/A';
+                const rawEmail = profil.email || '';
+                const userName = escapeHtml(rawUserName);
+                const email = emailLink(rawEmail);
                 const ime = escapeHtml(profil.ime || '');
                 const prezime = escapeHtml(profil.prezime || '');
                 const uloga = escapeHtml(profil.uloga || 'N/A');
@@ -127,7 +141,7 @@
 
                 profiliTableBody.append(
                     '<tr>' +
-                        '<td><div class="user-cell"><span class="user-avatar"><i class="bi bi-person-fill"></i></span><strong>' + userName + '</strong></div></td>' +
+                        '<td><div class="user-cell" title="' + escapeAttribute(rawUserName) + '"><span class="user-avatar"><i class="bi bi-person-fill"></i></span><strong>' + userName + '</strong></div></td>' +
                         '<td>' + email + '</td>' +
                         '<td>' + ime + '</td>' +
                         '<td>' + prezime + '</td>' +
@@ -139,7 +153,7 @@
                 profiliMobileList.append(
                     '<article class="admin-review-card">' +
                         '<div class="d-flex justify-content-between gap-3 align-items-start">' +
-                            '<div><span class="admin-badge">' + uloga + '</span><h3>' + userName + '</h3></div>' +
+                            '<div class="min-w-0"><span class="admin-badge">' + uloga + '</span><h3 title="' + escapeAttribute(rawUserName) + '">' + userName + '</h3></div>' +
                         '</div>' +
                         '<div class="review-mobile-meta">' +
                             '<div><span>Email</span><strong>' + email + '</strong></div>' +
@@ -177,7 +191,7 @@
             }
         });
 
-        $(document).on('click', '.role-chip', function () {
+        $(document).off('click.adminProfiliRole', '.role-chip').on('click.adminProfiliRole', '.role-chip', function () {
             currentRoleFilter = $(this).data('role-filter') || 'all';
             $('.role-chip').removeClass('active');
             $(this).addClass('active');
@@ -199,7 +213,7 @@
             });
         });
 
-        $(document).on('click', '.edit-profil-button', function () {
+        $(document).off('click.adminProfiliEdit', '.edit-profil-button').on('click.adminProfiliEdit', '.edit-profil-button', function () {
             const profilId = $(this).data('id');
             addFormTitle.text('Izmijeni korisnika');
 
@@ -216,12 +230,12 @@
             });
         });
 
-        $(document).on('click', '#cancel-add-profil', function () {
+        $(document).off('click.adminProfiliCancel', '#cancel-add-profil').on('click.adminProfiliCancel', '#cancel-add-profil', function () {
             addFormContainer.hide();
             addFormPlaceholder.empty();
         });
 
-        $(document).on('submit', '#add-profil-form', function (e) {
+        $(document).off('submit.adminProfiliSave', '#add-profil-form').on('submit.adminProfiliSave', '#add-profil-form', function (e) {
             e.preventDefault();
             const form = $(this);
 
@@ -273,7 +287,7 @@
             });
         });
 
-        $(document).on('app:delete-confirmed', '.delete-profil-button', function () {
+        $(document).off('app:delete-confirmed.adminProfiliDelete', '.delete-profil-button').on('app:delete-confirmed.adminProfiliDelete', '.delete-profil-button', function () {
             const profilId = $(this).data('id');
 
             $.ajax({

@@ -102,6 +102,18 @@
             return escapeHtml(value).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
         }
 
+        function emailLink(value) {
+            const email = value || 'N/A';
+            const safeEmail = escapeHtml(email);
+            const safeAttr = escapeAttribute(email);
+
+            if (!value) {
+                return '<span class="admin-email-link is-empty">N/A</span>';
+            }
+
+            return '<a class="admin-email-link" href="mailto:' + safeAttr + '" title="' + safeAttr + '">' + safeEmail + '</a>';
+        }
+
         function formatDateTime(dateString) {
             if (!dateString) return '';
             const date = new Date(dateString);
@@ -128,7 +140,7 @@
 
         function createStatusDropdown(upitId, currentStatus) {
             return '<div class="dropdown status-dropdown">' +
-                '<button class="btn btn-sm btn-light border rounded-3 dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-boundary="viewport" aria-expanded="false">Status</button>' +
+                '<button class="btn btn-sm btn-light border rounded-3 dropdown-toggle status-dropdown-toggle" type="button" aria-expanded="false">Status</button>' +
                 '<ul class="dropdown-menu dropdown-menu-end">' +
                     '<li><a class="dropdown-item status-option ' + (currentStatus === 'Poslat' ? 'active' : '') + '" href="#" data-status="Poslat" data-upit-id="' + upitId + '">Poslat</a></li>' +
                     '<li><a class="dropdown-item status-option ' + (currentStatus === 'UObradi' ? 'active' : '') + '" href="#" data-status="UObradi" data-upit-id="' + upitId + '">U obradi</a></li>' +
@@ -183,15 +195,16 @@
 
             upiti.forEach(upit => {
                 const datum = formatDateTime(upit.datumUpita);
-                const email = escapeHtml(upit.korisnikEmail || 'N/A');
+                const rawEmail = upit.korisnikEmail || '';
+                const email = emailLink(rawEmail);
                 const naslov = escapeHtml(upit.naslov || 'Bez naslova');
                 const actions = supportActions(upit);
 
                 podrskaTableBody.append(
                     '<tr>' +
                         '<td class="date-cell">' + escapeHtml(datum) + '</td>' +
-                        '<td><div class="user-cell"><span class="user-avatar"><i class="bi bi-envelope-fill"></i></span><strong>' + email + '</strong></div></td>' +
-                        '<td><strong>' + naslov + '</strong></td>' +
+                        '<td><div class="user-cell" title="' + escapeAttribute(rawEmail || 'N/A') + '"><span class="user-avatar"><i class="bi bi-envelope-fill"></i></span><strong>' + email + '</strong></div></td>' +
+                        '<td><strong class="table-text-truncate" title="' + escapeAttribute(upit.naslov || 'Bez naslova') + '">' + naslov + '</strong></td>' +
                         '<td>' + getStatusBadge(upit.status) + '</td>' +
                         '<td>' + actions + '</td>' +
                     '</tr>'
@@ -228,7 +241,41 @@
             });
         }
 
-        $(document).on('click', '.view-message-button', function () {
+        $(document).off('click.adminPodrskaStatusToggle', '.status-dropdown-toggle').on('click.adminPodrskaStatusToggle', '.status-dropdown-toggle', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const dropdown = bootstrap.Dropdown.getOrCreateInstance(this, {
+                boundary: document.body,
+                popperConfig: function (config) {
+                    return {
+                        ...config,
+                        strategy: 'fixed',
+                        modifiers: [
+                            ...(config.modifiers || []),
+                            {
+                                name: 'preventOverflow',
+                                options: {
+                                    boundary: 'viewport',
+                                    rootBoundary: 'viewport'
+                                }
+                            },
+                            {
+                                name: 'flip',
+                                options: {
+                                    boundary: 'viewport',
+                                    rootBoundary: 'viewport'
+                                }
+                            }
+                        ]
+                    };
+                }
+            });
+
+            dropdown.toggle();
+        });
+
+        $(document).off('click.adminPodrskaView', '.view-message-button').on('click.adminPodrskaView', '.view-message-button', function () {
             $('#messageModalBody').text(decodeURIComponent($(this).data('full-text') || ''));
             $('#messageModalEmail').text(decodeURIComponent($(this).data('email') || '-'));
             $('#messageModalTitle').text(decodeURIComponent($(this).data('title') || '-'));
@@ -238,7 +285,7 @@
             $('#messageModal').modal('show');
         });
 
-        $(document).on('click', '.status-option', function (e) {
+        $(document).off('click.adminPodrskaStatus', '.status-option').on('click.adminPodrskaStatus', '.status-option', function (e) {
             e.preventDefault();
             const status = $(this).data('status');
             const upitId = $(this).data('upit-id');
@@ -252,17 +299,17 @@
                 },
                 success: function (response) {
                     if (response.successMessage) {
-                        alert(response.successMessage);
+                        window.showAppFlashMessage(response.successMessage, 'success');
                     }
                     loadUpitiList(searchInput.val());
                 },
                 error: function () {
-                    alert('Došlo je do greške prilikom promjene statusa.');
+                    window.showAppFlashMessage('Došlo je do greške prilikom promjene statusa.', 'error');
                 }
             });
         });
 
-        $(document).on('app:delete-confirmed', '.delete-podrska-button', function () {
+        $(document).off('app:delete-confirmed.adminPodrskaDelete', '.delete-podrska-button').on('app:delete-confirmed.adminPodrskaDelete', '.delete-podrska-button', function () {
             const upitId = $(this).data('id');
 
             $.ajax({
@@ -274,12 +321,12 @@
                 },
                 success: function (response) {
                     if (response.successMessage) {
-                        alert(response.successMessage);
+                        window.showAppFlashMessage(response.successMessage, 'success');
                     }
                     loadUpitiList(searchInput.val());
                 },
                 error: function () {
-                    alert('Došlo je do greške prilikom brisanja upita.');
+                    window.showAppFlashMessage('Došlo je do greške prilikom brisanja upita.', 'error');
                 }
             });
         });

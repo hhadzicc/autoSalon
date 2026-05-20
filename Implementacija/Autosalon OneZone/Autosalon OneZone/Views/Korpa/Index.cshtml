@@ -122,10 +122,15 @@
                                 <button type="button" class="btn btn-success btn-lg rounded-4" id="checkoutButton" data-bs-toggle="modal" data-bs-target="#checkoutModal">
                                     <i class="bi bi-bag-check me-2"></i>Nastavi na checkout
                                 </button>
-                                <form asp-controller="Korpa" asp-action="OcistiKorpu" method="post"
-                                      onsubmit="return confirm('Da li ste sigurni da želite isprazniti korpu?');">
+                                <form asp-controller="Korpa" asp-action="OcistiKorpu" method="post">
                                     @Html.AntiForgeryToken()
-                                    <button type="submit" class="btn btn-outline-danger rounded-4 w-100">
+                                    <button type="submit"
+                                            class="btn btn-outline-danger rounded-4 w-100"
+                                            data-confirm-delete="true"
+                                            data-confirm-title="Isprazniti korpu?"
+                                            data-confirm-message="Da li ste sigurni da želite isprazniti korpu?"
+                                            data-confirm-item="Sva vozila iz korpe"
+                                            data-confirm-action="Da, isprazni korpu">
                                         <i class="bi bi-cart-x me-2"></i>Isprazni korpu
                                     </button>
                                 </form>
@@ -449,7 +454,7 @@
                 var kolicina = $(this).val();
 
                 if (kolicina < 1) {
-                    alert("Količina ne može biti manja od 1.");
+                    window.showAppFlashMessage("Količina ne može biti manja od 1.", "error");
                     $(this).val(1);
                     return;
                 }
@@ -571,7 +576,7 @@
                                 } else if (response.message) {
 
                                     $('#paymentModal').modal('hide');
-                                    alert("Plaćanje nije uspjelo: " + response.message);
+                                    window.showAppFlashMessage("Plaćanje nije uspjelo: " + response.message, "error");
                                 }
 
                                 $("#submitPayment").prop("disabled", false).html('Potvrdi kupovinu');
@@ -580,7 +585,7 @@
                         error: function(xhr, status, error) {
 
                             $('#paymentModal').modal('hide');
-                            alert("Došlo je do greške prilikom obrade zahtjeva. Molimo pokušajte ponovo.");
+                            window.showAppFlashMessage("Došlo je do greške prilikom obrade zahtjeva. Molimo pokušajte ponovo.", "error");
                             $("#submitPayment").prop("disabled", false).html('Potvrdi kupovinu');
                         }
                     });
@@ -711,7 +716,7 @@
             clearAllCheckoutErrors();
 
             if ($('.vozilo-checkbox:checked').length === 0) {
-                alert('Morate odabrati barem jedno vozilo za kupovinu.');
+                window.showAppFlashMessage('Morate odabrati barem jedno vozilo za kupovinu.', 'warning');
                 return;
             }
 
@@ -758,7 +763,7 @@
                             } else if (response.message) {
 
                                 $('#checkoutModal').modal('hide');
-                                alert("Plaćanje nije uspjelo: " + response.message);
+                                window.showAppFlashMessage("Plaćanje nije uspjelo: " + response.message, "error");
                             }
 
                             $('#checkoutSubmitBtn').prop('disabled', false).text('Potvrdi kupovinu');
@@ -766,7 +771,7 @@
                     },
                     error: function(xhr, status, error) {
                         $('#checkoutModal').modal('hide');
-                        alert("Došlo je do greške prilikom obrade zahtjeva: " + error);
+                        window.showAppFlashMessage("Došlo je do greške prilikom obrade zahtjeva: " + error, "error");
                         $('#checkoutSubmitBtn').prop('disabled', false).text('Potvrdi kupovinu');
                     }
                 });
@@ -928,7 +933,7 @@
             });
 
             if (selectedVehicles.length === 0) {
-                alert("Molimo odaberite barem jedno vozilo za kupovinu.");
+                window.showAppFlashMessage("Molimo odaberite barem jedno vozilo za kupovinu.", "warning");
                 return;
             }
 
@@ -968,14 +973,14 @@
                             }
                         } else if (response.message) {
 
-                            alert(response.message);
+                            window.showAppFlashMessage(response.message, "error");
                         }
 
                         $("#submitPayment").prop("disabled", false).html('Potvrdi kupovinu');
                     }
                 },
                 error: function() {
-                    alert("Došlo je do greške prilikom obrade zahtjeva. Molimo pokušajte ponovo.");
+                    window.showAppFlashMessage("Došlo je do greške prilikom obrade zahtjeva. Molimo pokušajte ponovo.", "error");
                     $("#submitPayment").prop("disabled", false).html('Potvrdi kupovinu');
                 }
             });

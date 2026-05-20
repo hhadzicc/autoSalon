@@ -83,7 +83,13 @@
                                         {
                                             <form asp-action="UkloniRecenziju" method="post">
                                                 <input type="hidden" name="recenzijaId" value="@item.Recenzija.RecenzijaID" />
-                                                <button type="submit" class="btn btn-light border rounded-4" onclick="return confirm('Jeste li sigurni da želite ukloniti ovu recenziju?')">
+                                                <button type="submit"
+                                                        class="btn btn-light border rounded-4"
+                                                        data-confirm-delete="true"
+                                                        data-confirm-title="Ukloniti recenziju?"
+                                                        data-confirm-message="Jeste li sigurni da želite ukloniti ovu recenziju?"
+                                                        data-confirm-item="@item.Naziv"
+                                                        data-confirm-action="Da, ukloni recenziju">
                                                     Ukloni
                                                 </button>
                                             </form>

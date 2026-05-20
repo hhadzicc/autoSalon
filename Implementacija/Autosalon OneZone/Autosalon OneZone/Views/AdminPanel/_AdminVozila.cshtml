@@ -273,7 +273,8 @@
 
             $.each(vozila, function (_, vozilo) {
                 const id = vozilo.voziloID;
-                const naziv = escapeHtml(vozilo.naziv || 'Nepoznato vozilo');
+                const rawNaziv = vozilo.naziv || 'Nepoznato vozilo';
+                const naziv = escapeHtml(rawNaziv);
                 const godiste = escapeHtml(vozilo.godiste || 'N/A');
                 const gorivo = escapeHtml(vozilo.gorivo || 'N/A');
                 const kilometraza = formatMileage(vozilo.kilometraza);
@@ -282,7 +283,7 @@
 
                 vozilaTableBody.append(
                     '<tr>' +
-                        '<td><div class="vehicle-name-cell"><strong>' + naziv + '</strong><span>ID #' + id + '</span></div></td>' +
+                        '<td><div class="vehicle-name-cell" title="' + escapeAttribute(rawNaziv) + '"><strong>' + naziv + '</strong><span>ID #' + id + '</span></div></td>' +
                         '<td>' + godiste + '</td>' +
                         '<td><span class="admin-badge">' + gorivo + '</span></td>' +
                         '<td>' + kilometraza + '</td>' +
@@ -335,7 +336,7 @@
             }
         });
 
-        $(document).on('click', '.filter-chip', function () {
+        $(document).off('click.adminVozilaFilter', '.filter-chip').on('click.adminVozilaFilter', '.filter-chip', function () {
             currentFuelFilter = $(this).data('vehicle-fuel') || '';
             $('.filter-chip').removeClass('active');
             $(this).addClass('active');
@@ -343,7 +344,7 @@
             loadVozilaList(searchInput.val(), 1, currentSort, currentDirection, currentFuelFilter);
         });
 
-        $(document).on('click', '.sortable-th', function (e) {
+        $(document).off('click.adminVozilaSort', '.sortable-th').on('click.adminVozilaSort', '.sortable-th', function (e) {
             e.preventDefault();
             const sortKey = $(this).data('sort-key');
 
@@ -380,7 +381,7 @@
             });
         });
 
-        $(document).on('click', '.edit-vozilo-button', function () {
+        $(document).off('click.adminVozilaEdit', '.edit-vozilo-button').on('click.adminVozilaEdit', '.edit-vozilo-button', function () {
             const voziloId = $(this).data('id');
             addFormTitle.text('Izmijeni vozilo');
 
@@ -397,12 +398,12 @@
             });
         });
 
-        $(document).on('click', '#cancel-add-vozilo', function () {
+        $(document).off('click.adminVozilaCancel', '#cancel-add-vozilo').on('click.adminVozilaCancel', '#cancel-add-vozilo', function () {
             addFormContainer.hide();
             addFormPlaceholder.empty();
         });
 
-        $(document).on('submit', '#add-edit-vozilo-form', function (e) {
+        $(document).off('submit.adminVozilaSave', '#add-edit-vozilo-form').on('submit.adminVozilaSave', '#add-edit-vozilo-form', function (e) {
             e.preventDefault();
             const form = $(this);
 
@@ -420,19 +421,19 @@
                     addFormContainer.hide();
                     addFormPlaceholder.empty();
                     loadVozilaList(searchInput.val(), 1, currentSort, currentDirection, currentFuelFilter);
-                    alert('Vozilo uspješno sačuvano.');
+                    window.showAppFlashMessage('Vozilo uspješno sačuvano.', 'success');
                 },
                 error: function (jqXHR) {
                     if (jqXHR.status === 400 && jqXHR.responseJSON) {
-                        alert('Greška prilikom spremanja. Provjerite unesene podatke.');
+                        window.showAppFlashMessage('Greška prilikom spremanja. Provjerite unesene podatke.', 'error');
                     } else {
-                        alert('Došlo je do greške prilikom spremanja vozila. Slika je obavezna za novo vozilo.');
+                        window.showAppFlashMessage('Došlo je do greške prilikom spremanja vozila. Slika je obavezna za novo vozilo.', 'error');
                     }
                 }
             });
         });
 
-        $(document).on('app:delete-confirmed', '.delete-vozilo-button', function () {
+        $(document).off('app:delete-confirmed.adminVozilaDelete', '.delete-vozilo-button').on('app:delete-confirmed.adminVozilaDelete', '.delete-vozilo-button', function () {
             const voziloId = $(this).data('id');
 
             $.ajax({
@@ -442,12 +443,12 @@
                     'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
                 },
                 data: { id: voziloId },
-                success: function () {
-                    alert('Vozilo uspješno obrisano.');
+                success: function (response) {
+                    window.showAppFlashMessage(response.successMessage || 'Vozilo uspješno obrisano.', 'success');
                     loadVozilaList(searchInput.val(), 1, currentSort, currentDirection, currentFuelFilter);
                 },
                 error: function () {
-                    alert('Došlo je do greške prilikom brisanja vozila.');
+                    window.showAppFlashMessage('Došlo je do greške prilikom brisanja vozila.', 'error');
                 }
             });
         });

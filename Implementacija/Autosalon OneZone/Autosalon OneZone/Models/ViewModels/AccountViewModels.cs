@@ -4,10 +4,10 @@ namespace Autosalon_OneZone.Models.ViewModels
 {
     public class RegisterViewModel
     {
-        [Required(ErrorMessage = "Korisnicko ime je obavezno.")]
-        [Display(Name = "Korisnicko ime")]
+        [Required(ErrorMessage = "Korisničko ime je obavezno.")]
+        [Display(Name = "Korisničko ime")]
         [MaxLength(100)]
-        [RegularExpression(@"^[a-zA-Z0-9]+$", ErrorMessage = "Korisnicko ime moze sadrzavati samo slova i brojeve.")]
+        [RegularExpression(@"^[a-zA-Z0-9]+$", ErrorMessage = "Korisničko ime može sadržavati samo slova i brojeve.")]
         public string UserName { get; set; }
 
         [Required(ErrorMessage = "Email adresa je obavezna.")]
@@ -43,9 +43,9 @@ namespace Autosalon_OneZone.Models.ViewModels
 
     public class LoginViewModel
     {
-        [Required(ErrorMessage = "E-mail ili korisnicko ime je obavezno.")]
+        [Required(ErrorMessage = "E-mail ili korisničko ime je obavezno.")]
         [MaxLength(256)]
-        [Display(Name = "E-mail ili korisnicko ime")]
+        [Display(Name = "E-mail ili korisničko ime")]
         public string LoginIdentifier { get; set; }
 
         [Required(ErrorMessage = "Lozinka je obavezna.")]
@@ -55,5 +55,35 @@ namespace Autosalon_OneZone.Models.ViewModels
 
         [Display(Name = "Zapamti me?")]
         public bool RememberMe { get; set; }
+    }
+
+    public class ForgotPasswordViewModel
+    {
+        [Required(ErrorMessage = "Email adresa je obavezna.")]
+        [EmailAddress(ErrorMessage = "Unesite validnu email adresu.")]
+        [Display(Name = "Email adresa")]
+        public string Email { get; set; }
+    }
+
+    public class ResetPasswordViewModel
+    {
+        [Required]
+        public string UserId { get; set; }
+
+        [Required]
+        public string Code { get; set; }
+
+        [Required(ErrorMessage = "Nova lozinka je obavezna.")]
+        [StringLength(100, ErrorMessage = "Lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo.", MinimumLength = 8)]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$", ErrorMessage = "Lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo.")]
+        [DataType(DataType.Password)]
+        [Display(Name = "Nova lozinka")]
+        public string Password { get; set; }
+
+        [Required(ErrorMessage = "Potvrda nove lozinke je obavezna.")]
+        [DataType(DataType.Password)]
+        [Display(Name = "Potvrdi novu lozinku")]
+        [Compare("Password", ErrorMessage = "Nova lozinka i potvrda lozinke se ne podudaraju.")]
+        public string ConfirmPassword { get; set; }
     }
 }

@@ -2,9 +2,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Autosalon_OneZone.Models;
 using System.Threading.Tasks;
+using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Autosalon_OneZone.Models.ViewModels;
+using Autosalon_OneZone.Services;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace Autosalon_OneZone.Controllers
 {
@@ -13,17 +16,20 @@ namespace Autosalon_OneZone.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IEmailSender _emailSender;
         private readonly ILogger<AccountController> _logger;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             RoleManager<IdentityRole> roleManager,
+            IEmailSender emailSender,
             ILogger<AccountController> logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
+            _emailSender = emailSender;
             _logger = logger;
         }
 
@@ -119,7 +125,7 @@ namespace Autosalon_OneZone.Controllers
             if (ModelState.IsValid)
             {
                 var loginIdentifier = model.LoginIdentifier.Trim();
-                var invalidLoginMessage = "Neispravan e-mail, korisnicko ime ili lozinka.";
+                var invalidLoginMessage = "Neispravan e-mail, korisničko ime ili lozinka.";
 
                 var user = await _userManager.FindByEmailAsync(loginIdentifier);
                 user ??= await _userManager.FindByNameAsync(loginIdentifier);
@@ -174,6 +180,127 @@ namespace Autosalon_OneZone.Controllers
             return View(model);
         }
 
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult ForgotPassword()
+        {
+            return View(new ForgotPasswordViewModel());
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var user = await _userManager.FindByEmailAsync(model.Email.Trim());
+            if (user != null)
+            {
+                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
+                var resetLink = Url.Action(
+                    nameof(ResetPassword),
+                    "Account",
+                    new { userId = user.Id, code = encodedToken },
+                    Request.Scheme);
+
+                if (!string.IsNullOrWhiteSpace(resetLink))
+                {
+                    try
+                    {
+                        var displayName = $"{user.Ime} {user.Prezime}".Trim();
+                        await _emailSender.SendPasswordResetEmailAsync(
+                            user.Email!,
+                            string.IsNullOrWhiteSpace(displayName) ? user.UserName ?? user.Email! : displayName,
+                            resetLink,
+                            DateTime.UtcNow.AddMinutes(30));
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Failed to send password reset email for {Email}.", model.Email);
+                    }
+                }
+            }
+
+            return RedirectToAction(nameof(ForgotPasswordConfirmation));
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult ForgotPasswordConfirmation()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult ResetPassword(string userId = null, string code = null)
+        {
+            if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(code))
+            {
+                return RedirectToAction(nameof(Login));
+            }
+
+            return View(new ResetPasswordViewModel
+            {
+                UserId = userId,
+                Code = code
+            });
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var user = await _userManager.FindByIdAsync(model.UserId);
+            if (user == null)
+            {
+                return RedirectToAction(nameof(ResetPasswordConfirmation));
+            }
+
+            string token;
+            try
+            {
+                token = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(model.Code));
+            }
+            catch (FormatException)
+            {
+                ModelState.AddModelError(string.Empty, "Link za resetovanje lozinke nije ispravan ili je istekao.");
+                return View(model);
+            }
+
+            var result = await _userManager.ResetPasswordAsync(user, token, model.Password);
+            if (result.Succeeded)
+            {
+                _logger.LogInformation("Password reset completed for user {UserId}.", user.Id);
+                return RedirectToAction(nameof(ResetPasswordConfirmation));
+            }
+
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, TranslateIdentityError(error.Description));
+            }
+
+            return View(model);
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult ResetPasswordConfirmation()
+        {
+            return View();
+        }
+
         [HttpPost]
 
         [ValidateAntiForgeryToken]
@@ -190,6 +317,25 @@ namespace Autosalon_OneZone.Controllers
         public IActionResult AccessDenied()
         {
             return View();
+        }
+
+        private static string TranslateIdentityError(string error)
+        {
+            if (error.Contains("Invalid token", StringComparison.OrdinalIgnoreCase))
+            {
+                return "Link za resetovanje lozinke nije ispravan ili je istekao.";
+            }
+
+            if (error.Contains("Passwords must be at least", StringComparison.OrdinalIgnoreCase) ||
+                error.Contains("Password must be at least", StringComparison.OrdinalIgnoreCase) ||
+                error.Contains("Passwords must have at least one digit", StringComparison.OrdinalIgnoreCase) ||
+                error.Contains("Passwords must have at least one lowercase", StringComparison.OrdinalIgnoreCase) ||
+                error.Contains("Passwords must have at least one uppercase", StringComparison.OrdinalIgnoreCase))
+            {
+                return "Lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo.";
+            }
+
+            return error;
         }
     }
 }

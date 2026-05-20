@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.DataProtection;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
+builder.Services.Configure<ResendEmailOptions>(builder.Configuration.GetSection("Resend"));
 
 var stripeSettings = builder.Configuration.GetSection("Stripe").Get<StripeSettings>() ?? new StripeSettings();
 if (stripeSettings.UseMockPayments || string.IsNullOrWhiteSpace(stripeSettings.SecretKey))
@@ -74,6 +75,14 @@ builder.Services.AddAuthorization(options =>
 });
 
 builder.Services.AddScoped<IVoziloService, VoziloService>();
+builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
+{
+    options.TokenLifespan = TimeSpan.FromMinutes(30);
+});
+builder.Services.AddHttpClient<IEmailSender, ResendEmailSender>(client =>
+{
+    client.BaseAddress = new Uri("https://api.resend.com/");
+});
 
 builder.Services.AddControllersWithViews();
 

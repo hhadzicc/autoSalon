@@ -78,6 +78,13 @@ Najbitnije varijable su:
 | `DEMO_BUYER_EMAIL` / `DEMO_BUYER_PASSWORD` | Demo kupac |
 | `STRIPE_USE_MOCK_PAYMENTS` | `true` za mock plaćanje, `false` za Stripe test mode |
 | `STRIPE_SECRET_KEY` / `STRIPE_PUBLISHABLE_KEY` | Stripe test ključevi za lokalno testiranje Stripe integracije |
+| `RESEND_API_KEY` / `FROM_EMAIL` | Opcionalno slanje emaila za reset lozinke preko Resend servisa |
+
+## Reset lozinke
+
+Aplikacija podrzava "Zaboravljena lozinka" flow preko ASP.NET Core Identity tokena koji vrijedi 30 minuta.
+
+Ako su `RESEND_API_KEY` i `FROM_EMAIL` podeseni, link za reset lozinke se salje emailom. Ako nisu podeseni i aplikacija radi u Development modu, link se ne salje emailom nego se ispisuje u log, tako da se lokalni demo moze testirati bez javnog API kljuca.
 
 ## Korisne naredbe
 

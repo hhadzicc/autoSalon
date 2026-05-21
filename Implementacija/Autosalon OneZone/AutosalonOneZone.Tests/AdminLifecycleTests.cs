@@ -1,6 +1,7 @@
 #nullable disable
 
 using System.Security.Claims;
+using System.Text;
 using System.Text.Json;
 using Autosalon_OneZone.Controllers;
 using Autosalon_OneZone.Data;
@@ -14,6 +15,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -297,6 +299,68 @@ public class AdminLifecycleTests
 
         Assert.IsType<ViewResult>(duplicateResult);
         Assert.False(account.ModelState.IsValid);
+    }
+
+    [Fact]
+    public async Task Forgot_password_sends_reset_link_without_disclosing_unknown_emails()
+    {
+        await using var app = await TestApp.CreateAsync();
+        var user = await CreateUserAsync(app, "resetuser", "resetuser@example.com", "Kupac");
+        var account = CreateAccountController(app);
+
+        var knownEmailResult = await account.ForgotPassword(new ForgotPasswordViewModel
+        {
+            Email = user.Email!
+        });
+
+        var knownRedirect = Assert.IsType<RedirectToActionResult>(knownEmailResult);
+        Assert.Equal("ForgotPasswordConfirmation", knownRedirect.ActionName);
+        Assert.Single(app.EmailSender.Messages);
+        Assert.Equal("resetuser@example.com", app.EmailSender.Messages[0].ToEmail);
+        Assert.Contains("/Account/ResetPassword", app.EmailSender.Messages[0].ResetLink);
+
+        var unknownEmailResult = await account.ForgotPassword(new ForgotPasswordViewModel
+        {
+            Email = "missing@example.com"
+        });
+
+        var unknownRedirect = Assert.IsType<RedirectToActionResult>(unknownEmailResult);
+        Assert.Equal("ForgotPasswordConfirmation", unknownRedirect.ActionName);
+        Assert.Single(app.EmailSender.Messages);
+    }
+
+    [Fact]
+    public async Task Reset_password_accepts_valid_identity_token_and_rejects_invalid_code()
+    {
+        await using var app = await TestApp.CreateAsync();
+        var user = await CreateUserAsync(app, "resetflow", "resetflow@example.com", "Kupac");
+        var account = CreateAccountController(app);
+        var token = await app.UserManager.GeneratePasswordResetTokenAsync(user);
+        var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
+
+        var resetResult = await account.ResetPassword(new ResetPasswordViewModel
+        {
+            UserId = user.Id,
+            Code = encodedToken,
+            Password = "NewValid123",
+            ConfirmPassword = "NewValid123"
+        });
+
+        var redirect = Assert.IsType<RedirectToActionResult>(resetResult);
+        Assert.Equal("ResetPasswordConfirmation", redirect.ActionName);
+        Assert.True(await app.UserManager.CheckPasswordAsync(user, "NewValid123"));
+
+        var invalidAccount = CreateAccountController(app);
+        var invalidResult = await invalidAccount.ResetPassword(new ResetPasswordViewModel
+        {
+            UserId = user.Id,
+            Code = "not-a-valid-token",
+            Password = "OtherValid123",
+            ConfirmPassword = "OtherValid123"
+        });
+
+        Assert.IsType<ViewResult>(invalidResult);
+        Assert.False(invalidAccount.ModelState.IsValid);
     }
 
     [Fact]
@@ -590,6 +654,7 @@ public class AdminLifecycleTests
             app.UserManager,
             app.SignInManager,
             app.RoleManager,
+            app.EmailSender,
             NullLogger<AccountController>.Instance);
 
         ConfigureController(controller, app.Provider);
@@ -797,6 +862,7 @@ public class AdminLifecycleTests
             UserManager = Provider.GetRequiredService<UserManager<ApplicationUser>>();
             RoleManager = Provider.GetRequiredService<RoleManager<IdentityRole>>();
             SignInManager = Provider.GetRequiredService<SignInManager<ApplicationUser>>();
+            EmailSender = new FakeEmailSender();
             Environment = new TestWebHostEnvironment();
         }
 
@@ -805,6 +871,7 @@ public class AdminLifecycleTests
         public UserManager<ApplicationUser> UserManager { get; }
         public RoleManager<IdentityRole> RoleManager { get; }
         public SignInManager<ApplicationUser> SignInManager { get; }
+        public FakeEmailSender EmailSender { get; }
         public IWebHostEnvironment Environment { get; }
 
         public static async Task<TestApp> CreateAsync()
@@ -869,6 +936,23 @@ public class AdminLifecycleTests
         public IFileProvider WebRootFileProvider { get; set; } = new NullFileProvider();
     }
 
+    private sealed class FakeEmailSender : IEmailSender
+    {
+        public List<PasswordResetMessage> Messages { get; } = new();
+
+        public Task SendPasswordResetEmailAsync(string toEmail, string displayName, string resetLink, DateTime expiresAtUtc)
+        {
+            Messages.Add(new PasswordResetMessage(toEmail, displayName, resetLink, expiresAtUtc));
+            return Task.CompletedTask;
+        }
+    }
+
+    private sealed record PasswordResetMessage(
+        string ToEmail,
+        string DisplayName,
+        string ResetLink,
+        DateTime ExpiresAtUtc);
+
     private sealed class TestTempDataProvider : ITempDataProvider
     {
         public IDictionary<string, object> LoadTempData(HttpContext context) => new Dictionary<string, object>();
@@ -890,7 +974,25 @@ public class AdminLifecycleTests
                 ? "Korpa"
                 : actionContext.Controller;
 
-            return $"/{controller}/{actionContext.Action}";
+            var url = $"/{controller}/{actionContext.Action}";
+            if (actionContext.Values == null)
+            {
+                return url;
+            }
+
+            var query = actionContext.Values
+                .GetType()
+                .GetProperties()
+                .Select(property => new
+                {
+                    property.Name,
+                    Value = property.GetValue(actionContext.Values)?.ToString()
+                })
+                .Where(item => !string.IsNullOrWhiteSpace(item.Value))
+                .Select(item => $"{Uri.EscapeDataString(item.Name)}={Uri.EscapeDataString(item.Value!)}");
+
+            var queryString = string.Join("&", query);
+            return string.IsNullOrWhiteSpace(queryString) ? url : $"{url}?{queryString}";
         }
 
         public string Content(string contentPath) => contentPath;

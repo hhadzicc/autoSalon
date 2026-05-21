@@ -195,10 +195,13 @@
                                 <p class="vehicles-card-meta">@vozilo.Godiste · @vozilo.Boja · @mileageText</p>
 
                                 <dl class="vehicles-spec-grid">
-                                    <div>
-                                        <dt>Kubikaža</dt>
-                                        <dd>@vozilo.Kubikaza</dd>
-                                    </div>
+                                    @if (vozilo.Gorivo != Autosalon_OneZone.Models.TipGoriva.Elektro)
+                                    {
+                                        <div>
+                                            <dt>Kubikaža</dt>
+                                            <dd>@vozilo.Kubikaza</dd>
+                                        </div>
+                                    }
                                     <div>
                                         <dt>Gorivo</dt>
                                         <dd>@vozilo.Gorivo</dd>

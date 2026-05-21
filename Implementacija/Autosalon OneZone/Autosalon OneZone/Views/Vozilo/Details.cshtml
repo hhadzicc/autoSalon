@@ -77,10 +77,13 @@
                                     <span>Boja</span>
                                     <strong>@Model.Boja</strong>
                                 </div>
-                                <div class="spec-item">
-                                    <span>Kubikaža</span>
-                                    <strong>@Model.Kubikaza</strong>
-                                </div>
+                                @if (Model.Gorivo != Autosalon_OneZone.Models.TipGoriva.Elektro)
+                                {
+                                    <div class="spec-item">
+                                        <span>Kubikaža</span>
+                                        <strong>@Model.Kubikaza</strong>
+                                    </div>
+                                }
                                 <div class="spec-item">
                                     <span>Kilometraža</span>
                                     <strong>@Model.Kilometraza km</strong>

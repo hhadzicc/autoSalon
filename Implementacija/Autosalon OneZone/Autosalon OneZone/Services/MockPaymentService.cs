@@ -22,7 +22,7 @@ namespace Autosalon_OneZone.Services
                 {
                     Success = false,
                     TransactionId = "mock_invalid_amount",
-                    Message = "Iznos placanja mora biti veci od nule."
+                    Message = "Iznos plaćanja mora biti veći od nule."
                 });
             }
 
@@ -53,7 +53,7 @@ namespace Autosalon_OneZone.Services
             {
                 Success = true,
                 TransactionId = transactionId,
-                Message = "Placanje uspjesno obradjeno u demo modu."
+                Message = "Plaćanje uspješno obrađeno u demo modu."
             });
         }
     }

@@ -22,6 +22,11 @@
                 </div>
 
                 <nav class="admin-menu" aria-label="Admin meni">
+                    <a href="#" class="admin-menu-link" data-section="Dashboard">
+                        <i class="bi bi-grid-1x2-fill"></i>
+                        Dashboard
+                    </a>
+
                     <a href="#" class="admin-menu-link" data-section="Vozila">
                         <i class="bi bi-car-front-fill"></i>
                         Vozila
@@ -71,6 +76,9 @@
                 let url = '';
 
                 switch (sectionName) {
+                    case 'Dashboard':
+                        url = '@Url.Action("GetDashboardSection", "AdminPanel")';
+                        break;
                     case 'Vozila':
                         url = '@Url.Action("GetVozilaSection", "AdminPanel")';
                         break;
@@ -131,10 +139,10 @@
                 loadSection($(this).data('section'));
             });
 
-            let defaultSection = '@(currentSection ?? "Vozila")';
+            let defaultSection = '@(currentSection ?? "Dashboard")';
 
             if (defaultSection === 'Profili' && !@Json.Serialize(isAdmin)) {
-                defaultSection = 'Vozila';
+                defaultSection = 'Dashboard';
             }
 
             loadSection(defaultSection);

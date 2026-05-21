@@ -1,0 +1,238 @@
+@model Autosalon_OneZone.ViewModels.Admin.AdminDashboardViewModel
+@using Autosalon_OneZone.Models
+@using System.Linq
+
+@functions {
+    private static string FormatDate(DateTime date) => date.ToString("dd-MM-yyyy");
+
+    private static string OrderStatusLabel(StatusNarudzbe status) => status switch
+    {
+        StatusNarudzbe.Placena => "Plaćena",
+        StatusNarudzbe.UObradi => "U obradi",
+        StatusNarudzbe.Isporucena => "Isporučena",
+        StatusNarudzbe.Otkazana => "Otkazana",
+        _ => "Kreirana"
+    };
+
+    private static string OrderStatusClass(StatusNarudzbe status) => status switch
+    {
+        StatusNarudzbe.Placena => "success",
+        StatusNarudzbe.Isporucena => "success",
+        StatusNarudzbe.UObradi => "warning",
+        StatusNarudzbe.Otkazana => "secondary",
+        _ => "info"
+    };
+
+    private static string SupportStatusLabel(StatusUpita status) => status switch
+    {
+        StatusUpita.UObradi => "U obradi",
+        StatusUpita.Odgovoren => "Odgovoren",
+        StatusUpita.Zatvoren => "Zatvoren",
+        _ => "Poslat"
+    };
+
+    private static string SupportStatusClass(StatusUpita status) => status switch
+    {
+        StatusUpita.Poslat => "info",
+        StatusUpita.UObradi => "warning",
+        StatusUpita.Odgovoren => "success",
+        StatusUpita.Zatvoren => "secondary",
+        _ => "secondary"
+    };
+}
+
+<div class="admin-page-header dashboard-page-header">
+    <div>
+        <p class="admin-eyebrow">Admin panel</p>
+        <h1>Dashboard</h1>
+    </div>
+
+    <div class="dashboard-header-actions">
+        <button type="button" class="btn btn-primary rounded-4 dashboard-section-link" data-section="Vozila">
+            <i class="bi bi-car-front-fill me-2"></i>Vozila
+        </button>
+        <button type="button" class="btn btn-light border rounded-4 dashboard-section-link" data-section="Podrska">
+            <i class="bi bi-headset me-2"></i>Upiti
+        </button>
+    </div>
+</div>
+
+<div class="dashboard-stats-grid">
+    <article class="dashboard-stat-card">
+        <span class="dashboard-stat-icon stat-blue"><i class="bi bi-car-front-fill"></i></span>
+        <div>
+            <span>Vozila</span>
+            <strong>@Model.BrojVozila</strong>
+            <p>Ukupno u katalogu</p>
+        </div>
+    </article>
+
+    <article class="dashboard-stat-card">
+        <span class="dashboard-stat-icon stat-cyan"><i class="bi bi-people-fill"></i></span>
+        <div>
+            <span>Korisnici</span>
+            <strong>@Model.BrojKorisnika</strong>
+            <p>Registrovani nalozi</p>
+        </div>
+    </article>
+
+    <article class="dashboard-stat-card">
+        <span class="dashboard-stat-icon stat-green"><i class="bi bi-bag-check-fill"></i></span>
+        <div>
+            <span>Narudžbe</span>
+            <strong>@Model.BrojNarudzbi</strong>
+            <p>Ukupno kupovina</p>
+        </div>
+    </article>
+
+    <article class="dashboard-stat-card">
+        <span class="dashboard-stat-icon stat-amber"><i class="bi bi-headset"></i></span>
+        <div>
+            <span>Aktivni upiti</span>
+            <strong>@Model.BrojAktivnihUpita</strong>
+            <p>Čekaju obradu</p>
+        </div>
+    </article>
+
+    <article class="dashboard-stat-card dashboard-stat-wide">
+        <span class="dashboard-stat-icon stat-emerald"><i class="bi bi-cash-stack"></i></span>
+        <div>
+            <span>Promet</span>
+            <strong>€@Model.UkupanPromet.ToString("N0")</strong>
+            <p>Ukupno evidentirane narudžbe</p>
+        </div>
+    </article>
+</div>
+
+<div class="dashboard-content-grid">
+    <section class="admin-card dashboard-panel dashboard-panel-main">
+        <div class="dashboard-panel-header">
+            <div>
+                <h2>Zadnje kupovine</h2>
+                <p>Najnovije narudžbe i vozila koja su kupci odabrali.</p>
+            </div>
+            <span class="dashboard-count-pill">@Model.ZadnjeKupovine.Count</span>
+        </div>
+
+        @if (!Model.ZadnjeKupovine.Any())
+        {
+            <div class="empty-state dashboard-empty-state">
+                <i class="bi bi-bag"></i>
+                <p>Nema evidentiranih kupovina.</p>
+            </div>
+        }
+        else
+        {
+            <div class="dashboard-timeline">
+                @foreach (var kupovina in Model.ZadnjeKupovine)
+                {
+                    var vozila = kupovina.Vozila.Any() ? string.Join(", ", kupovina.Vozila) : "Vozilo nije dostupno";
+
+                    <article class="dashboard-list-item">
+                        <div class="dashboard-list-icon">
+                            <i class="bi bi-receipt-cutoff"></i>
+                        </div>
+                        <div class="dashboard-list-body">
+                            <div class="dashboard-list-top">
+                                <div>
+                                    <h3>Narudžba #@kupovina.NarudzbaID</h3>
+                                    <p>@FormatDate(kupovina.DatumNarudzbe) · @kupovina.Korisnik</p>
+                                </div>
+                                <strong class="dashboard-price">€@kupovina.UkupanIznos.ToString("N0")</strong>
+                            </div>
+                            <div class="dashboard-list-bottom">
+                                <span title="@vozila">@vozila</span>
+                                <span class="support-status-badge status-@OrderStatusClass(kupovina.Status)">
+                                    @OrderStatusLabel(kupovina.Status)
+                                </span>
+                            </div>
+                        </div>
+                    </article>
+                }
+            </div>
+        }
+    </section>
+
+    <div class="dashboard-side-stack">
+        <section class="admin-card dashboard-panel">
+            <div class="dashboard-panel-header">
+                <div>
+                    <h2>Upiti za podršku</h2>
+                    <p>Najnoviji korisnički upiti.</p>
+                </div>
+                <button type="button" class="btn btn-light border rounded-4 dashboard-section-link" data-section="Podrska">
+                    Otvori
+                </button>
+            </div>
+
+            @if (!Model.ZadnjiUpiti.Any())
+            {
+                <div class="empty-state dashboard-empty-state">
+                    <i class="bi bi-inbox"></i>
+                    <p>Nema novih upita.</p>
+                </div>
+            }
+            else
+            {
+                <div class="dashboard-mini-list">
+                    @foreach (var upit in Model.ZadnjiUpiti)
+                    {
+                        <article class="dashboard-mini-item">
+                            <div>
+                                <h3>@upit.Naslov</h3>
+                                <p>@FormatDate(upit.DatumUpita) · @upit.KorisnikEmail</p>
+                            </div>
+                            <span class="support-status-badge status-@SupportStatusClass(upit.Status)">
+                                @SupportStatusLabel(upit.Status)
+                            </span>
+                        </article>
+                    }
+                </div>
+            }
+        </section>
+
+        <section class="admin-card dashboard-panel">
+            <div class="dashboard-panel-header">
+                <div>
+                    <h2>Recenzije</h2>
+                    <p>Najnovije ocjene vozila.</p>
+                </div>
+                <button type="button" class="btn btn-light border rounded-4 dashboard-section-link" data-section="Recenzije">
+                    Otvori
+                </button>
+            </div>
+
+            @if (!Model.ZadnjeRecenzije.Any())
+            {
+                <div class="empty-state dashboard-empty-state">
+                    <i class="bi bi-star"></i>
+                    <p>Nema novih recenzija.</p>
+                </div>
+            }
+            else
+            {
+                <div class="dashboard-mini-list">
+                    @foreach (var recenzija in Model.ZadnjeRecenzije)
+                    {
+                        <article class="dashboard-mini-item">
+                            <div>
+                                <h3>@recenzija.Vozilo</h3>
+                                <p>@FormatDate(recenzija.DatumRecenzije) · @recenzija.Korisnik</p>
+                            </div>
+                            <span class="rating-badge">@recenzija.Ocjena <i class="bi bi-star-fill"></i></span>
+                        </article>
+                    }
+                </div>
+            }
+        </section>
+    </div>
+</div>
+
+<script>
+    $(document).off('click.adminDashboardShortcut', '.dashboard-section-link').on('click.adminDashboardShortcut', '.dashboard-section-link', function () {
+        const section = $(this).data('section');
+        if (window.loadSection && section) {
+            window.loadSection(section);
+        }
+    });
+</script>

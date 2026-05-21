@@ -50,11 +50,104 @@ namespace Autosalon_OneZone.Controllers
             var currentSection = HttpContext.Request.Query["section"].ToString();
             if (string.IsNullOrEmpty(currentSection))
             {
-                currentSection = "Vozila";
+                currentSection = "Dashboard";
             }
 
             ViewBag.CurrentSection = currentSection;
             return View();
+        }
+
+        public async Task<IActionResult> GetDashboardSection()
+        {
+            var zadnjeKupovine = await _context.Narudzbe
+                .Include(n => n.Korisnik)
+                .Include(n => n.StavkeKorpe)
+                    .ThenInclude(s => s.Vozilo)
+                .OrderByDescending(n => n.DatumNarudzbe)
+                .Take(5)
+                .ToListAsync();
+
+            var zadnjiUpiti = await _context.PodrskaUpiti
+                .Include(p => p.Korisnik)
+                .OrderByDescending(p => p.DatumUpita)
+                .Take(5)
+                .ToListAsync();
+
+            var zadnjeRecenzije = await _context.Recenzije
+                .Include(r => r.Korisnik)
+                .Include(r => r.Vozilo)
+                .OrderByDescending(r => r.DatumRecenzije)
+                .Take(5)
+                .ToListAsync();
+
+            var viewModel = new AdminDashboardViewModel
+            {
+                BrojVozila = await _context.Vozila.CountAsync(),
+                BrojKorisnika = await _context.Users.CountAsync(),
+                BrojNarudzbi = await _context.Narudzbe.CountAsync(),
+                BrojAktivnihUpita = await _context.PodrskaUpiti.CountAsync(p =>
+                    p.Status == StatusUpita.Poslat || p.Status == StatusUpita.UObradi),
+                UkupanPromet = await _context.Narudzbe
+                    .Where(n => n.Status != StatusNarudzbe.Otkazana)
+                    .SumAsync(n => (decimal?)n.UkupnaCijena) ?? 0,
+                ZadnjeKupovine = zadnjeKupovine.Select(n => new DashboardKupovinaViewModel
+                {
+                    NarudzbaID = n.NarudzbaID,
+                    DatumNarudzbe = n.DatumNarudzbe,
+                    Korisnik = GetUserDisplayName(n.Korisnik),
+                    Status = n.Status,
+                    UkupanIznos = n.UkupnaCijena,
+                    Vozila = n.StavkeKorpe
+                        .Select(s => GetVehicleDisplayName(s.Vozilo))
+                        .Where(v => !string.IsNullOrWhiteSpace(v))
+                        .Distinct()
+                        .ToList()
+                }).ToList(),
+                ZadnjiUpiti = zadnjiUpiti.Select(p => new DashboardUpitViewModel
+                {
+                    UpitID = p.UpitID,
+                    DatumUpita = p.DatumUpita,
+                    Naslov = p.Naslov,
+                    KorisnikEmail = p.Korisnik?.Email ?? "N/A",
+                    Status = p.Status
+                }).ToList(),
+                ZadnjeRecenzije = zadnjeRecenzije.Select(r => new DashboardRecenzijaViewModel
+                {
+                    RecenzijaID = r.RecenzijaID,
+                    DatumRecenzije = r.DatumRecenzije,
+                    Korisnik = GetUserDisplayName(r.Korisnik),
+                    Vozilo = GetVehicleDisplayName(r.Vozilo),
+                    Ocjena = r.Ocjena
+                }).ToList()
+            };
+
+            return PartialView("_AdminDashboard", viewModel);
+        }
+
+        private static string GetUserDisplayName(ApplicationUser? user)
+        {
+            if (user == null)
+            {
+                return "N/A";
+            }
+
+            var fullName = $"{user.Ime} {user.Prezime}".Trim();
+            if (!string.IsNullOrWhiteSpace(fullName))
+            {
+                return fullName;
+            }
+
+            return user.Email ?? user.UserName ?? "N/A";
+        }
+
+        private static string GetVehicleDisplayName(Vozilo? vozilo)
+        {
+            if (vozilo == null)
+            {
+                return string.Empty;
+            }
+
+            return $"{vozilo.Marka} {vozilo.Model}".Trim();
         }
 
         #region Vozila sekcija

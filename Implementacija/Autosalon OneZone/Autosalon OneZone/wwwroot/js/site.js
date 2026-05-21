@@ -1,4 +1,3 @@
-
 (() => {
     if (window.deleteConfirmationInitialized) {
         return;
@@ -6,6 +5,7 @@
 
     window.deleteConfirmationInitialized = true;
 
+    const appTexts = window.appTexts || {};
     let pendingTrigger = null;
     let pendingForm = null;
     let pendingLink = null;
@@ -37,9 +37,9 @@
         pendingForm = trigger.closest("form");
         pendingLink = !pendingForm && trigger.tagName === "A" ? trigger.href : null;
 
-        titleElement.textContent = trigger.getAttribute("data-confirm-title") || "Potvrda brisanja";
-        messageElement.textContent = trigger.getAttribute("data-confirm-message") || "Da li ste sigurni da želite obrisati ovu stavku?";
-        confirmButton.textContent = trigger.getAttribute("data-confirm-action") || "Da, obriši";
+        titleElement.textContent = trigger.getAttribute("data-confirm-title") || appTexts.deleteConfirmTitle || "Delete confirmation";
+        messageElement.textContent = trigger.getAttribute("data-confirm-message") || appTexts.deleteConfirmMessage || "Are you sure you want to delete this item?";
+        confirmButton.textContent = trigger.getAttribute("data-confirm-action") || appTexts.deleteConfirmAction || "Yes, delete";
 
         const item = trigger.getAttribute("data-confirm-item") || "";
         if (item.trim()) {
@@ -132,7 +132,7 @@
         closeButton.type = "button";
         closeButton.className = "btn-close";
         closeButton.setAttribute("data-bs-dismiss", "alert");
-        closeButton.setAttribute("aria-label", "Zatvori");
+        closeButton.setAttribute("aria-label", (window.appTexts && window.appTexts.close) || "Close");
         alert.appendChild(closeButton);
 
         wrapper.replaceChildren(alert);
@@ -144,4 +144,35 @@
             }, 4500);
         }
     };
+})();
+
+(() => {
+    if (window.passwordToggleInitialized) {
+        return;
+    }
+
+    window.passwordToggleInitialized = true;
+
+    document.addEventListener("click", function (event) {
+        const button = event.target.closest(".password-toggle");
+        if (!button) {
+            return;
+        }
+
+        const wrapper = button.closest(".password-wrapper");
+        const input = wrapper ? wrapper.querySelector(".password-input") : null;
+        const icon = button.querySelector("i");
+
+        if (!input || !icon) {
+            return;
+        }
+
+        const texts = window.appTexts || {};
+        const isPassword = input.getAttribute("type") === "password";
+
+        input.setAttribute("type", isPassword ? "text" : "password");
+        icon.classList.toggle("bi-eye", !isPassword);
+        icon.classList.toggle("bi-eye-slash", isPassword);
+        button.setAttribute("aria-label", isPassword ? (texts.hidePassword || "Hide password") : (texts.showPassword || "Show password"));
+    });
 })();

@@ -1,0 +1,2068 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:schema id="root">
+    <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xs:element name="root" ns1:IsDataSet="true">
+      <xs:complexType>
+        <xs:choice maxOccurs="unbounded">
+          <xs:element name="metadata">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" />
+              </xs:sequence>
+              <xs:attribute name="name" use="required" type="xsd:string" />
+              <xs:attribute name="type" type="xsd:string" />
+              <xs:attribute name="mimetype" type="xsd:string" />
+              <xs:attribute ref="xml:space" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="assembly">
+            <xs:complexType>
+              <xs:attribute name="alias" type="xsd:string" />
+              <xs:attribute name="name" type="xsd:string" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="data">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+                <xs:element name="comment" type="xsd:string" minOccurs="0" ns1:Ordinal="2" />
+              </xs:sequence>
+              <xs:attribute name="name" type="xsd:string" use="required" ns1:Ordinal="1" />
+              <xs:attribute name="type" type="xsd:string" ns1:Ordinal="3" />
+              <xs:attribute name="mimetype" type="xsd:string" ns1:Ordinal="4" />
+              <xs:attribute ref="xml:space" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="resheader">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+              </xs:sequence>
+              <xs:attribute name="name" type="xsd:string" use="required" />
+            </xs:complexType>
+          </xs:element>
+        </xs:choice>
+      </xs:complexType>
+    </xs:element>
+  </xs:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="LanguageEnglish" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="LanguageBosnian" xml:space="preserve">
+    <value>Bosnian</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="NavAdminPanel" xml:space="preserve">
+    <value>Admin Panel</value>
+  </data>
+  <data name="NavVehicles" xml:space="preserve">
+    <value>Vehicles</value>
+  </data>
+  <data name="NavContact" xml:space="preserve">
+    <value>Contact</value>
+  </data>
+  <data name="NavCart" xml:space="preserve">
+    <value>Cart</value>
+  </data>
+  <data name="NavMyProfile" xml:space="preserve">
+    <value>My profile</value>
+  </data>
+  <data name="NavProfile" xml:space="preserve">
+    <value>Profile</value>
+  </data>
+  <data name="NavPurchasedItems" xml:space="preserve">
+    <value>Purchased items</value>
+  </data>
+  <data name="NavChangePassword" xml:space="preserve">
+    <value>Change password</value>
+  </data>
+  <data name="NavLogout" xml:space="preserve">
+    <value>Log out</value>
+  </data>
+  <data name="NavLogin" xml:space="preserve">
+    <value>Log in</value>
+  </data>
+  <data name="NavRegister" xml:space="preserve">
+    <value>Register</value>
+  </data>
+  <data name="FooterContact" xml:space="preserve">
+    <value>Contact</value>
+  </data>
+  <data name="FooterRights" xml:space="preserve">
+    <value>All rights reserved.</value>
+  </data>
+  <data name="FooterPrivacy" xml:space="preserve">
+    <value>Privacy policy</value>
+  </data>
+  <data name="FooterTerms" xml:space="preserve">
+    <value>Terms of use</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="ShowPassword" xml:space="preserve">
+    <value>Show password</value>
+  </data>
+  <data name="HidePassword" xml:space="preserve">
+    <value>Hide password</value>
+  </data>
+  <data name="DeleteConfirmTitle" xml:space="preserve">
+    <value>Delete confirmation</value>
+  </data>
+  <data name="DeleteConfirmSubtitle" xml:space="preserve">
+    <value>This action cannot be easily undone.</value>
+  </data>
+  <data name="DeleteConfirmMessage" xml:space="preserve">
+    <value>Are you sure you want to delete this item?</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="DeleteConfirmAction" xml:space="preserve">
+    <value>Yes, delete</value>
+  </data>
+  <data name="CommonLoading" xml:space="preserve">
+    <value>Loading...</value>
+  </data>
+  <data name="CommonError" xml:space="preserve">
+    <value>An error occurred. Please try again.</value>
+  </data>
+  <data name="CommonSave" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="CommonBack" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="CommonSearch" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="CommonShow" xml:space="preserve">
+    <value>Show</value>
+  </data>
+  <data name="CommonEdit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="CommonDelete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="AuthAccountEyebrow" xml:space="preserve">
+    <value>User account</value>
+  </data>
+  <data name="AuthLoginTitle" xml:space="preserve">
+    <value>Log in</value>
+  </data>
+  <data name="AuthLoginSubtitle" xml:space="preserve">
+    <value>Log in to continue shopping, track inquiries and use your cart.</value>
+  </data>
+  <data name="AuthLoginHeading" xml:space="preserve">
+    <value>Log in</value>
+  </data>
+  <data name="AuthLoginIdentifier" xml:space="preserve">
+    <value>Email or username</value>
+  </data>
+  <data name="AuthLoginIdentifierPlaceholder" xml:space="preserve">
+    <value>Enter email or username</value>
+  </data>
+  <data name="AuthPassword" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="AuthPasswordPlaceholder" xml:space="preserve">
+    <value>Enter password</value>
+  </data>
+  <data name="AuthRememberMe" xml:space="preserve">
+    <value>Remember me</value>
+  </data>
+  <data name="AuthLoginSubmit" xml:space="preserve">
+    <value>Log me in</value>
+  </data>
+  <data name="AuthNoAccount" xml:space="preserve">
+    <value>Do not have an account?</value>
+  </data>
+  <data name="AuthRegisterLink" xml:space="preserve">
+    <value>Register</value>
+  </data>
+  <data name="AuthForgotPassword" xml:space="preserve">
+    <value>Forgot your password?</value>
+  </data>
+  <data name="AuthRegisterEyebrow" xml:space="preserve">
+    <value>New user</value>
+  </data>
+  <data name="AuthRegisterTitle" xml:space="preserve">
+    <value>Registration</value>
+  </data>
+  <data name="AuthRegisterSubtitle" xml:space="preserve">
+    <value>Create an account and continue browsing vehicles, sending inquiries and shopping.</value>
+  </data>
+  <data name="AuthCreateAccount" xml:space="preserve">
+    <value>Create account</value>
+  </data>
+  <data name="FirstName" xml:space="preserve">
+    <value>First name</value>
+  </data>
+  <data name="LastName" xml:space="preserve">
+    <value>Last name</value>
+  </data>
+  <data name="Username" xml:space="preserve">
+    <value>Username</value>
+  </data>
+  <data name="EmailAddress" xml:space="preserve">
+    <value>Email address</value>
+  </data>
+  <data name="ConfirmPassword" xml:space="preserve">
+    <value>Confirm password</value>
+  </data>
+  <data name="AuthAlreadyHaveAccount" xml:space="preserve">
+    <value>Already have an account?</value>
+  </data>
+  <data name="AuthSignInLink" xml:space="preserve">
+    <value>Log in</value>
+  </data>
+  <data name="ForgotPasswordTitle" xml:space="preserve">
+    <value>Forgot password</value>
+  </data>
+  <data name="ForgotPasswordSubtitle" xml:space="preserve">
+    <value>Enter the email address connected to your account and we will send you a secure password reset link.</value>
+  </data>
+  <data name="ForgotPasswordHeading" xml:space="preserve">
+    <value>Password reset</value>
+  </data>
+  <data name="ForgotPasswordText" xml:space="preserve">
+    <value>If the account exists, we will send instructions for setting a new password.</value>
+  </data>
+  <data name="ForgotPasswordSubmit" xml:space="preserve">
+    <value>Send reset link</value>
+  </data>
+  <data name="BackToLogin" xml:space="preserve">
+    <value>Back to login</value>
+  </data>
+  <data name="ForgotPasswordConfirmationTitle" xml:space="preserve">
+    <value>Link sent</value>
+  </data>
+  <data name="ForgotPasswordConfirmationIntro" xml:space="preserve">
+    <value>If an account with the entered address exists, we sent a password reset link.</value>
+  </data>
+  <data name="ForgotPasswordConfirmationText" xml:space="preserve">
+    <value>The link is valid for 30 minutes. If you do not see the email, check your spam folder or request a new link.</value>
+  </data>
+  <data name="ResetPasswordEyebrow" xml:space="preserve">
+    <value>Account security</value>
+  </data>
+  <data name="ResetPasswordTitle" xml:space="preserve">
+    <value>Set a new password</value>
+  </data>
+  <data name="ResetPasswordSubtitle" xml:space="preserve">
+    <value>Enter a new password for your account and confirm it before saving changes.</value>
+  </data>
+  <data name="NewPassword" xml:space="preserve">
+    <value>New password</value>
+  </data>
+  <data name="NewPasswordPlaceholder" xml:space="preserve">
+    <value>Enter new password</value>
+  </data>
+  <data name="ConfirmNewPassword" xml:space="preserve">
+    <value>Confirm new password</value>
+  </data>
+  <data name="ConfirmNewPasswordPlaceholder" xml:space="preserve">
+    <value>Confirm new password</value>
+  </data>
+  <data name="ResetPasswordSubmit" xml:space="preserve">
+    <value>Reset password</value>
+  </data>
+  <data name="RequestNewLink" xml:space="preserve">
+    <value>Request new link</value>
+  </data>
+  <data name="ResetPasswordConfirmationTitle" xml:space="preserve">
+    <value>Password reset</value>
+  </data>
+  <data name="ResetPasswordConfirmationText" xml:space="preserve">
+    <value>Your password has been changed. You can now log in with the new password.</value>
+  </data>
+  <data name="ResetPasswordDoneHeading" xml:space="preserve">
+    <value>Reset complete</value>
+  </data>
+  <data name="ResetPasswordDoneText" xml:space="preserve">
+    <value>Your account is ready for login with the new password.</value>
+  </data>
+  <data name="AccessDeniedTitle" xml:space="preserve">
+    <value>Access denied</value>
+  </data>
+  <data name="AccessDeniedText" xml:space="preserve">
+    <value>You do not have permission to access this resource.</value>
+  </data>
+  <data name="ValidationRequired" xml:space="preserve">
+    <value>This field is required.</value>
+  </data>
+  <data name="ValidationEmail" xml:space="preserve">
+    <value>Enter a valid email address.</value>
+  </data>
+  <data name="ValidationUrl" xml:space="preserve">
+    <value>Enter a valid URL.</value>
+  </data>
+  <data name="ValidationDate" xml:space="preserve">
+    <value>Enter a valid date.</value>
+  </data>
+  <data name="ValidationDateIso" xml:space="preserve">
+    <value>Enter a valid date (ISO).</value>
+  </data>
+  <data name="ValidationNumber" xml:space="preserve">
+    <value>Enter a valid number.</value>
+  </data>
+  <data name="ValidationDigits" xml:space="preserve">
+    <value>Use digits only.</value>
+  </data>
+  <data name="ValidationCreditCard" xml:space="preserve">
+    <value>Enter a valid credit card number.</value>
+  </data>
+  <data name="ValidationEqualTo" xml:space="preserve">
+    <value>Enter the same value again.</value>
+  </data>
+  <data name="ValidationMaxLength" xml:space="preserve">
+    <value>Enter no more than {0} characters.</value>
+  </data>
+  <data name="ValidationMinLength" xml:space="preserve">
+    <value>Enter at least {0} characters.</value>
+  </data>
+  <data name="ValidationRangeLength" xml:space="preserve">
+    <value>Enter a value between {0} and {1} characters.</value>
+  </data>
+  <data name="ValidationRange" xml:space="preserve">
+    <value>Enter a value between {0} and {1}.</value>
+  </data>
+  <data name="ValidationMax" xml:space="preserve">
+    <value>Enter a value less than or equal to {0}.</value>
+  </data>
+  <data name="ValidationMin" xml:space="preserve">
+    <value>Enter a value greater than or equal to {0}.</value>
+  </data>
+  <data name="PasswordPolicyError" xml:space="preserve">
+    <value>Password must contain at least 8 characters, one digit, one lowercase and one uppercase letter.</value>
+  </data>
+  <data name="InvalidLogin" xml:space="preserve">
+    <value>Invalid email, username or password.</value>
+  </data>
+  <data name="TwoFactorRequired" xml:space="preserve">
+    <value>Two-factor authentication is required.</value>
+  </data>
+  <data name="AccountLocked" xml:space="preserve">
+    <value>The user account is temporarily locked because of too many failed attempts.</value>
+  </data>
+  <data name="LoginNotAllowed" xml:space="preserve">
+    <value>This account is not allowed to sign in.</value>
+  </data>
+  <data name="ResetLinkInvalid" xml:space="preserve">
+    <value>The password reset link is invalid or has expired.</value>
+  </data>
+  <data name="RegisterSuccess" xml:space="preserve">
+    <value>Registration successful. You can now log in.</value>
+  </data>
+  <data name="UsernameTaken" xml:space="preserve">
+    <value>Username '{0}' is already taken.</value>
+  </data>
+  <data name="EmailTaken" xml:space="preserve">
+    <value>Email '{0}' is already taken.</value>
+  </data>
+  <data name="Dashboard" xml:space="preserve">
+    <value>Dashboard</value>
+  </data>
+  <data name="AdminPanel" xml:space="preserve">
+    <value>Admin panel</value>
+  </data>
+  <data name="AdminMenu" xml:space="preserve">
+    <value>Admin menu</value>
+  </data>
+  <data name="DashboardVehicles" xml:space="preserve">
+    <value>Vehicles</value>
+  </data>
+  <data name="DashboardUsers" xml:space="preserve">
+    <value>Users</value>
+  </data>
+  <data name="DashboardOrders" xml:space="preserve">
+    <value>Orders</value>
+  </data>
+  <data name="DashboardActiveInquiries" xml:space="preserve">
+    <value>Active inquiries</value>
+  </data>
+  <data name="DashboardRevenue" xml:space="preserve">
+    <value>Revenue</value>
+  </data>
+  <data name="DashboardTotalCatalog" xml:space="preserve">
+    <value>Total in catalog</value>
+  </data>
+  <data name="DashboardRegisteredAccounts" xml:space="preserve">
+    <value>Registered accounts</value>
+  </data>
+  <data name="DashboardTotalPurchases" xml:space="preserve">
+    <value>Total purchases</value>
+  </data>
+  <data name="DashboardWaitingForReview" xml:space="preserve">
+    <value>Waiting for review</value>
+  </data>
+  <data name="DashboardTotalOrders" xml:space="preserve">
+    <value>Total recorded orders</value>
+  </data>
+  <data name="DashboardLatestPurchases" xml:space="preserve">
+    <value>Latest purchases</value>
+  </data>
+  <data name="DashboardLatestPurchasesDesc" xml:space="preserve">
+    <value>Latest orders and vehicles selected by customers.</value>
+  </data>
+  <data name="DashboardNoPurchases" xml:space="preserve">
+    <value>No purchases recorded.</value>
+  </data>
+  <data name="DashboardOrder" xml:space="preserve">
+    <value>Order</value>
+  </data>
+  <data name="DashboardVehicleUnavailable" xml:space="preserve">
+    <value>Vehicle is not available</value>
+  </data>
+  <data name="DashboardSupportInquiries" xml:space="preserve">
+    <value>Support inquiries</value>
+  </data>
+  <data name="DashboardLatestSupportDesc" xml:space="preserve">
+    <value>Latest customer inquiries.</value>
+  </data>
+  <data name="DashboardOpen" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="DashboardNoInquiries" xml:space="preserve">
+    <value>No new inquiries.</value>
+  </data>
+  <data name="DashboardReviews" xml:space="preserve">
+    <value>Reviews</value>
+  </data>
+  <data name="DashboardLatestReviewsDesc" xml:space="preserve">
+    <value>Latest vehicle ratings.</value>
+  </data>
+  <data name="DashboardNoReviews" xml:space="preserve">
+    <value>No new reviews.</value>
+  </data>
+  <data name="StatusCreated" xml:space="preserve">
+    <value>Created</value>
+  </data>
+  <data name="StatusPaid" xml:space="preserve">
+    <value>Paid</value>
+  </data>
+  <data name="StatusProcessing" xml:space="preserve">
+    <value>Processing</value>
+  </data>
+  <data name="StatusDelivered" xml:space="preserve">
+    <value>Delivered</value>
+  </data>
+  <data name="StatusCanceled" xml:space="preserve">
+    <value>Canceled</value>
+  </data>
+  <data name="StatusSent" xml:space="preserve">
+    <value>Sent</value>
+  </data>
+  <data name="StatusAnswered" xml:space="preserve">
+    <value>Answered</value>
+  </data>
+  <data name="StatusClosed" xml:space="preserve">
+    <value>Closed</value>
+  </data>
+  <data name="Validation.UsernameRequired" xml:space="preserve">
+    <value>Username is required.</value>
+  </data>
+  <data name="Validation.UsernameMaxLength" xml:space="preserve">
+    <value>Username cannot be longer than 100 characters.</value>
+  </data>
+  <data name="Validation.UsernameAlphanumeric" xml:space="preserve">
+    <value>Username can contain only letters and numbers.</value>
+  </data>
+  <data name="Validation.EmailRequired" xml:space="preserve">
+    <value>Email address is required.</value>
+  </data>
+  <data name="Validation.EmailValid" xml:space="preserve">
+    <value>Enter a valid email address.</value>
+  </data>
+  <data name="Validation.PasswordRequired" xml:space="preserve">
+    <value>Password is required.</value>
+  </data>
+  <data name="Validation.ConfirmPasswordRequired" xml:space="preserve">
+    <value>Password confirmation is required.</value>
+  </data>
+  <data name="Validation.PasswordsMatch" xml:space="preserve">
+    <value>Password and confirmation password do not match.</value>
+  </data>
+  <data name="Validation.LoginIdentifierRequired" xml:space="preserve">
+    <value>Email or username is required.</value>
+  </data>
+  <data name="Validation.FirstNameRequired" xml:space="preserve">
+    <value>First name is required.</value>
+  </data>
+  <data name="Validation.FirstNameMaxLength" xml:space="preserve">
+    <value>First name cannot be longer than 100 characters.</value>
+  </data>
+  <data name="Validation.FirstNameLettersOnly" xml:space="preserve">
+    <value>First name can contain only letters.</value>
+  </data>
+  <data name="Validation.LastNameRequired" xml:space="preserve">
+    <value>Last name is required.</value>
+  </data>
+  <data name="Validation.LastNameMaxLength" xml:space="preserve">
+    <value>Last name cannot be longer than 100 characters.</value>
+  </data>
+  <data name="Validation.LastNameLettersOnly" xml:space="preserve">
+    <value>Last name can contain only letters.</value>
+  </data>
+  <data name="Validation.NewPasswordRequired" xml:space="preserve">
+    <value>New password is required.</value>
+  </data>
+  <data name="Validation.ConfirmNewPasswordRequired" xml:space="preserve">
+    <value>New password confirmation is required.</value>
+  </data>
+  <data name="Validation.NewPasswordsMatch" xml:space="preserve">
+    <value>New password and confirmation password do not match.</value>
+  </data>
+  <data name="Validation.CurrentPasswordRequired" xml:space="preserve">
+    <value>Current password is required.</value>
+  </data>
+  <data name="Validation.SubjectRequired" xml:space="preserve">
+    <value>Subject is required.</value>
+  </data>
+  <data name="Validation.SubjectMaxLength" xml:space="preserve">
+    <value>Subject cannot be longer than 200 characters.</value>
+  </data>
+  <data name="Validation.MessageRequired" xml:space="preserve">
+    <value>Message is required.</value>
+  </data>
+  <data name="ContactSubject" xml:space="preserve">
+    <value>Subject</value>
+  </data>
+  <data name="ContactMessage" xml:space="preserve">
+    <value>Message</value>
+  </data>
+  <data name="CurrentPassword" xml:space="preserve">
+    <value>Current password</value>
+  </data>
+  <data name="VehicleMake" xml:space="preserve">
+    <value>Make</value>
+  </data>
+  <data name="VehicleModel" xml:space="preserve">
+    <value>Model</value>
+  </data>
+  <data name="VehicleYear" xml:space="preserve">
+    <value>Year</value>
+  </data>
+  <data name="VehicleFuel" xml:space="preserve">
+    <value>Fuel</value>
+  </data>
+  <data name="VehicleDisplacement" xml:space="preserve">
+    <value>Engine displacement</value>
+  </data>
+  <data name="VehicleColor" xml:space="preserve">
+    <value>Color</value>
+  </data>
+  <data name="VehicleMileage" xml:space="preserve">
+    <value>Mileage</value>
+  </data>
+  <data name="VehiclePrice" xml:space="preserve">
+    <value>Price</value>
+  </data>
+  <data name="VehicleImage" xml:space="preserve">
+    <value>Image</value>
+  </data>
+  <data name="VehicleDescription" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="Validation.VehicleMakeRequired" xml:space="preserve">
+    <value>Vehicle make is required.</value>
+  </data>
+  <data name="Validation.VehicleMakeMaxLength" xml:space="preserve">
+    <value>Make cannot be longer than 100 characters.</value>
+  </data>
+  <data name="Validation.VehicleModelRequired" xml:space="preserve">
+    <value>Vehicle model is required.</value>
+  </data>
+  <data name="Validation.VehicleModelMaxLength" xml:space="preserve">
+    <value>Model cannot be longer than 100 characters.</value>
+  </data>
+  <data name="Validation.VehicleYearRequired" xml:space="preserve">
+    <value>Year is required.</value>
+  </data>
+  <data name="Validation.VehicleYearRange" xml:space="preserve">
+    <value>Year must be between 1900 and 2026.</value>
+  </data>
+  <data name="Validation.VehicleFuelRequired" xml:space="preserve">
+    <value>Fuel type is required.</value>
+  </data>
+  <data name="Validation.VehicleDisplacementPositive" xml:space="preserve">
+    <value>Engine displacement cannot be negative.</value>
+  </data>
+  <data name="Validation.VehicleColorRequired" xml:space="preserve">
+    <value>Color is required.</value>
+  </data>
+  <data name="Validation.VehicleColorMaxLength" xml:space="preserve">
+    <value>Color cannot be longer than 50 characters.</value>
+  </data>
+  <data name="Validation.VehicleColorLettersOnly" xml:space="preserve">
+    <value>Color can contain only letters.</value>
+  </data>
+  <data name="Validation.VehicleMileageRequired" xml:space="preserve">
+    <value>Mileage is required.</value>
+  </data>
+  <data name="Validation.VehicleMileagePositive" xml:space="preserve">
+    <value>Mileage cannot be negative.</value>
+  </data>
+  <data name="Validation.VehiclePriceRequired" xml:space="preserve">
+    <value>Price is required.</value>
+  </data>
+  <data name="Validation.VehiclePricePositive" xml:space="preserve">
+    <value>Price must be greater than zero.</value>
+  </data>
+  <data name="Validation.VehicleDescriptionRequired" xml:space="preserve">
+    <value>Description is required.</value>
+  </data>
+  <data name="Validation.VehicleDescriptionMaxLength" xml:space="preserve">
+    <value>Description cannot be longer than 2000 characters.</value>
+  </data>
+  <data name="HomeTitle" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="HomeFeaturedVehicle" xml:space="preserve">
+    <value>Featured vehicle</value>
+  </data>
+  <data name="PriceOnRequest" xml:space="preserve">
+    <value>Price on request</value>
+  </data>
+  <data name="NotEntered" xml:space="preserve">
+    <value>Not entered</value>
+  </data>
+  <data name="MileageNotEntered" xml:space="preserve">
+    <value>Mileage not entered</value>
+  </data>
+  <data name="ImageUnavailable" xml:space="preserve">
+    <value>Image is not available</value>
+  </data>
+  <data name="VehicleSearchAria" xml:space="preserve">
+    <value>Search vehicles</value>
+  </data>
+  <data name="ViewDetails" xml:space="preserve">
+    <value>View details</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="HomeHeroBadge" xml:space="preserve">
+    <value>Fast purchase, verified vehicles</value>
+  </data>
+  <data name="HomeHeroTitleStart" xml:space="preserve">
+    <value>Find a vehicle that looks good, drives better and</value>
+  </data>
+  <data name="HomeHeroTitleAccent" xml:space="preserve">
+    <value>fits your budget.</value>
+  </data>
+  <data name="HomeHeroText" xml:space="preserve">
+    <value>OneZone brings a clear car offer, simple search, transparent prices and support throughout the entire buying process.</value>
+  </data>
+  <data name="HomeViewOffer" xml:space="preserve">
+    <value>View offer</value>
+  </data>
+  <data name="HomeContactUs" xml:space="preserve">
+    <value>Contact us</value>
+  </data>
+  <data name="HomeSearchPlaceholder" xml:space="preserve">
+    <value>Make, model, year or price...</value>
+  </data>
+  <data name="HomeFindVehicle" xml:space="preserve">
+    <value>Find vehicle</value>
+  </data>
+  <data name="VehicleYearLower" xml:space="preserve">
+    <value>year</value>
+  </data>
+  <data name="VehicleMileageLower" xml:space="preserve">
+    <value>mileage</value>
+  </data>
+  <data name="VehicleFuelLower" xml:space="preserve">
+    <value>fuel</value>
+  </data>
+  <data name="HomeNoFeaturedVehicle" xml:space="preserve">
+    <value>The featured vehicle is currently unavailable</value>
+  </data>
+  <data name="HomeOfferAvailableOnVehicles" xml:space="preserve">
+    <value>You can browse the offer on the vehicles page.</value>
+  </data>
+  <data name="HomeWhyEyebrow" xml:space="preserve">
+    <value>Why OneZone?</value>
+  </data>
+  <data name="HomeWhyTitle" xml:space="preserve">
+    <value>Buying a car should be simple, fast and secure.</value>
+  </data>
+  <data name="HomeWhyText" xml:space="preserve">
+    <value>The offer is organized for quick vehicle comparison, detail review and direct purchase continuation.</value>
+  </data>
+  <data name="HomeFeatureSelectionTitle" xml:space="preserve">
+    <value>Large vehicle selection</value>
+  </data>
+  <data name="HomeFeatureSelectionText" xml:space="preserve">
+    <value>The vehicle overview is filtered, searchable and adapted for quick comparison of key information.</value>
+  </data>
+  <data name="HomeFeaturePricesTitle" xml:space="preserve">
+    <value>Clear prices</value>
+  </data>
+  <data name="HomeFeaturePricesText" xml:space="preserve">
+    <value>The vehicle price is shown in lists, details and the cart without relying on form data.</value>
+  </data>
+  <data name="HomeFeaturePurchaseTitle" xml:space="preserve">
+    <value>Verified purchase flow</value>
+  </data>
+  <data name="HomeFeaturePurchaseText" xml:space="preserve">
+    <value>Orders, cart and payments use database records and guide the user through a clear process.</value>
+  </data>
+  <data name="HomeFeatureSupportTitle" xml:space="preserve">
+    <value>Support</value>
+  </data>
+  <data name="HomeFeatureSupportText" xml:space="preserve">
+    <value>Users can send an inquiry through the contact form and continue communication with the salon team.</value>
+  </data>
+  <data name="HomeFeaturedVehiclesEyebrow" xml:space="preserve">
+    <value>Featured vehicles</value>
+  </data>
+  <data name="HomeFeaturedVehiclesTitle" xml:space="preserve">
+    <value>Current vehicles from the offer</value>
+  </data>
+  <data name="HomeFeaturedVehiclesText" xml:space="preserve">
+    <value>Cards are populated directly from the database, so they show what currently exists in the system.</value>
+  </data>
+  <data name="HomeNoFeaturedVehicles" xml:space="preserve">
+    <value>No featured vehicles at the moment</value>
+  </data>
+  <data name="HomeNoFeaturedVehiclesText" xml:space="preserve">
+    <value>When vehicles are added to the database, this section will fill automatically.</value>
+  </data>
+  <data name="HomeCurrentOfferEyebrow" xml:space="preserve">
+    <value>Current offer</value>
+  </data>
+  <data name="HomeCurrentOfferTitle" xml:space="preserve">
+    <value>Browse vehicles without unnecessary waiting.</value>
+  </data>
+  <data name="HomeCurrentOfferText" xml:space="preserve">
+    <value>The vehicles page leads to real database records with images, filters, details and purchase continuation.</value>
+  </data>
+  <data name="HomeOpenVehicles" xml:space="preserve">
+    <value>Open vehicles</value>
+  </data>
+  <data name="HomeSupportEyebrow" xml:space="preserve">
+    <value>Fast support</value>
+  </data>
+  <data name="HomeSupportTitle" xml:space="preserve">
+    <value>Send an inquiry about a vehicle or purchase process.</value>
+  </data>
+  <data name="HomeSupportText" xml:space="preserve">
+    <value>The contact form is connected to the application workflow, so messages are handled through the real support process.</value>
+  </data>
+  <data name="HomeSupportPointResponse" xml:space="preserve">
+    <value>Response as soon as possible</value>
+  </data>
+  <data name="HomeSupportPointChoice" xml:space="preserve">
+    <value>Help with choosing a vehicle</value>
+  </data>
+  <data name="HomeSupportPointAppointment" xml:space="preserve">
+    <value>Agreement about inspection and purchase</value>
+  </data>
+  <data name="HomeSendMessage" xml:space="preserve">
+    <value>Send message</value>
+  </data>
+  <data name="ContactTitle" xml:space="preserve">
+    <value>Contact support</value>
+  </data>
+  <data name="ContactEyebrow" xml:space="preserve">
+    <value>Support</value>
+  </data>
+  <data name="ContactHeaderTitle" xml:space="preserve">
+    <value>Contact our team</value>
+  </data>
+  <data name="ContactHeaderText" xml:space="preserve">
+    <value>Send an inquiry about a vehicle, purchase process or additional information. The support team will respond as soon as possible.</value>
+  </data>
+  <data name="ContactSendMessageHeading" xml:space="preserve">
+    <value>Send a message</value>
+  </data>
+  <data name="ContactSupportRequestHeading" xml:space="preserve">
+    <value>Send a support inquiry</value>
+  </data>
+  <data name="ContactSignedInText" xml:space="preserve">
+    <value>Write your question and the support team will respond as soon as possible.</value>
+  </data>
+  <data name="ContactGuestText" xml:space="preserve">
+    <value>You need to be logged in to send a message through the application.</value>
+  </data>
+  <data name="ContactSubjectPlaceholder" xml:space="preserve">
+    <value>Enter subject</value>
+  </data>
+  <data name="ContactMessagePlaceholder" xml:space="preserve">
+    <value>Write your message</value>
+  </data>
+  <data name="ContactSendMessage" xml:space="preserve">
+    <value>Send message</value>
+  </data>
+  <data name="ContactGuestDetails" xml:space="preserve">
+    <value>After logging in, you can send an inquiry about a vehicle, purchase or order.</value>
+  </data>
+  <data name="ContactLoginToSend" xml:space="preserve">
+    <value>Log in to send a message</value>
+  </data>
+  <data name="ContactDirectEmail" xml:space="preserve">
+    <value>Send email directly</value>
+  </data>
+  <data name="ContactFooterNote" xml:space="preserve">
+    <value>Support will respond as soon as possible. Thank you for your patience.</value>
+  </data>
+  <data name="ContactInfoTitle" xml:space="preserve">
+    <value>Information</value>
+  </data>
+  <data name="ContactPhone" xml:space="preserve">
+    <value>Phone</value>
+  </data>
+  <data name="ContactResponseTime" xml:space="preserve">
+    <value>Response time</value>
+  </data>
+  <data name="ContactResponseSoon" xml:space="preserve">
+    <value>As soon as possible</value>
+  </data>
+  <data name="ContactInquiries" xml:space="preserve">
+    <value>Inquiries</value>
+  </data>
+  <data name="ContactInquiryTypes" xml:space="preserve">
+    <value>Vehicles, purchase and orders</value>
+  </data>
+  <data name="PrivacyTitle" xml:space="preserve">
+    <value>Privacy policy</value>
+  </data>
+  <data name="PrivacyText" xml:space="preserve">
+    <value>This page summarizes the privacy information for the Autosalon OneZone demo application.</value>
+  </data>
+  <data name="VehiclesTitle" xml:space="preserve">
+    <value>Vehicles</value>
+  </data>
+  <data name="VehiclesOverview" xml:space="preserve">
+    <value>Vehicle overview</value>
+  </data>
+  <data name="VehiclesHeroTitle" xml:space="preserve">
+    <value>Find the vehicle that suits you.</value>
+  </data>
+  <data name="VehiclesHeroText" xml:space="preserve">
+    <value>Search the offer by make, model, price, fuel, mileage and year.</value>
+  </data>
+  <data name="VehiclesSearchPlaceholder" xml:space="preserve">
+    <value>Search make or model...</value>
+  </data>
+  <data name="SearchResultsFor" xml:space="preserve">
+    <value>Search results for:</value>
+  </data>
+  <data name="FiltersAndSorting" xml:space="preserve">
+    <value>Filters and sorting</value>
+  </data>
+  <data name="FiltersText" xml:space="preserve">
+    <value>Narrow the offer by the most important vehicle characteristics.</value>
+  </data>
+  <data name="ShowHideFilters" xml:space="preserve">
+    <value>Show/hide filters</value>
+  </data>
+  <data name="Sorting" xml:space="preserve">
+    <value>Sorting</value>
+  </data>
+  <data name="SortBy" xml:space="preserve">
+    <value>Sort by:</value>
+  </data>
+  <data name="SortNameAsc" xml:space="preserve">
+    <value>Name (A-Z)</value>
+  </data>
+  <data name="SortNameDesc" xml:space="preserve">
+    <value>Name (Z-A)</value>
+  </data>
+  <data name="SortPriceAsc" xml:space="preserve">
+    <value>Price (ascending)</value>
+  </data>
+  <data name="SortPriceDesc" xml:space="preserve">
+    <value>Price (descending)</value>
+  </data>
+  <data name="SortYearAsc" xml:space="preserve">
+    <value>Year (oldest first)</value>
+  </data>
+  <data name="SortYearDesc" xml:space="preserve">
+    <value>Year (newest first)</value>
+  </data>
+  <data name="AllFuelTypes" xml:space="preserve">
+    <value>All fuel types</value>
+  </data>
+  <data name="FuelGasoline" xml:space="preserve">
+    <value>Gasoline</value>
+  </data>
+  <data name="FuelDiesel" xml:space="preserve">
+    <value>Diesel</value>
+  </data>
+  <data name="FuelGas" xml:space="preserve">
+    <value>LPG</value>
+  </data>
+  <data name="FuelElectric" xml:space="preserve">
+    <value>Electric</value>
+  </data>
+  <data name="FuelHybrid" xml:space="preserve">
+    <value>Hybrid</value>
+  </data>
+  <data name="EnterColor" xml:space="preserve">
+    <value>Enter color</value>
+  </data>
+  <data name="YearFrom" xml:space="preserve">
+    <value>Year from</value>
+  </data>
+  <data name="YearTo" xml:space="preserve">
+    <value>Year to</value>
+  </data>
+  <data name="PriceFromEuro" xml:space="preserve">
+    <value>Price from (€)</value>
+  </data>
+  <data name="PriceToEuro" xml:space="preserve">
+    <value>Price to (€)</value>
+  </data>
+  <data name="DisplacementFrom" xml:space="preserve">
+    <value>Displacement from</value>
+  </data>
+  <data name="DisplacementTo" xml:space="preserve">
+    <value>Displacement to</value>
+  </data>
+  <data name="MileageFrom" xml:space="preserve">
+    <value>Mileage from</value>
+  </data>
+  <data name="MileageTo" xml:space="preserve">
+    <value>Mileage to</value>
+  </data>
+  <data name="From" xml:space="preserve">
+    <value>From</value>
+  </data>
+  <data name="To" xml:space="preserve">
+    <value>To</value>
+  </data>
+  <data name="ApplyFilters" xml:space="preserve">
+    <value>Apply filters</value>
+  </data>
+  <data name="ClearAllFilters" xml:space="preserve">
+    <value>Clear all filters</value>
+  </data>
+  <data name="VehiclesFound" xml:space="preserve">
+    <value>Found {0} vehicles</value>
+  </data>
+  <data name="NoVehiclesTitle" xml:space="preserve">
+    <value>No vehicles to display</value>
+  </data>
+  <data name="NoVehiclesText" xml:space="preserve">
+    <value>Change the search term or clear filters and try again.</value>
+  </data>
+  <data name="AddToCart" xml:space="preserve">
+    <value>Add to cart</value>
+  </data>
+  <data name="LoginToBuy" xml:space="preserve">
+    <value>Log in to buy</value>
+  </data>
+  <data name="CreateVehicleTitle" xml:space="preserve">
+    <value>Add new vehicle</value>
+  </data>
+  <data name="CreateVehicleText" xml:space="preserve">
+    <value>Enter basic vehicle information and save it to the offer.</value>
+  </data>
+  <data name="BackToList" xml:space="preserve">
+    <value>Back to list</value>
+  </data>
+  <data name="VehicleDetailsEyebrow" xml:space="preserve">
+    <value>Vehicle details</value>
+  </data>
+  <data name="VehicleDetailsHeaderText" xml:space="preserve">
+    <value>Review specifications, price, description and purchase options for the selected vehicle.</value>
+  </data>
+  <data name="Available" xml:space="preserve">
+    <value>Available</value>
+  </data>
+  <data name="BuyNow" xml:space="preserve">
+    <value>Buy now</value>
+  </data>
+  <data name="Specifications" xml:space="preserve">
+    <value>Specifications</value>
+  </data>
+  <data name="NoVehicleDescription" xml:space="preserve">
+    <value>No description is available for this vehicle.</value>
+  </data>
+  <data name="Reviews" xml:space="preserve">
+    <value>Reviews</value>
+  </data>
+  <data name="UserReviews" xml:space="preserve">
+    <value>User reviews</value>
+  </data>
+  <data name="NoReviewsTitle" xml:space="preserve">
+    <value>There are no reviews yet</value>
+  </data>
+  <data name="NoReviewsPurchasedText" xml:space="preserve">
+    <value>Buy this vehicle to add a review.</value>
+  </data>
+  <data name="NoReviewsLoginText" xml:space="preserve">
+    <value>Log in to buy and review this vehicle.</value>
+  </data>
+  <data name="Vehicle" xml:space="preserve">
+    <value>Vehicle</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="LoanCalculator" xml:space="preserve">
+    <value>Loan calculator</value>
+  </data>
+  <data name="LoanCalculatorText" xml:space="preserve">
+    <value>Calculate an estimated monthly installment.</value>
+  </data>
+  <data name="LoanAmountEuro" xml:space="preserve">
+    <value>Loan amount (€)</value>
+  </data>
+  <data name="EnterAmount" xml:space="preserve">
+    <value>Enter amount</value>
+  </data>
+  <data name="InstallmentCount" xml:space="preserve">
+    <value>Number of installments</value>
+  </data>
+  <data name="MonthsCount" xml:space="preserve">
+    <value>{0} months</value>
+  </data>
+  <data name="InterestRate" xml:space="preserve">
+    <value>Interest rate (%)</value>
+  </data>
+  <data name="Calculate" xml:space="preserve">
+    <value>Calculate</value>
+  </data>
+  <data name="MonthlyInstallment" xml:space="preserve">
+    <value>Monthly installment</value>
+  </data>
+  <data name="LoanCalculatorNote" xml:space="preserve">
+    <value>* The calculator is for informational purposes and does not represent a loan offer.</value>
+  </data>
+  <data name="ReviewComment" xml:space="preserve">
+    <value>Review comment</value>
+  </data>
+  <data name="ReviewCommentFullText" xml:space="preserve">
+    <value>Full user comment preview.</value>
+  </data>
+  <data name="PaymentDetails" xml:space="preserve">
+    <value>Payment details</value>
+  </data>
+  <data name="PaymentDetailsFor" xml:space="preserve">
+    <value>Payment details - {0}</value>
+  </data>
+  <data name="PaymentDetailsText" xml:space="preserve">
+    <value>Enter card details to complete the purchase.</value>
+  </data>
+  <data name="TotalToPay" xml:space="preserve">
+    <value>Total to pay:</value>
+  </data>
+  <data name="CardHolderName" xml:space="preserve">
+    <value>Card holder full name</value>
+  </data>
+  <data name="CardNumber" xml:space="preserve">
+    <value>Card number</value>
+  </data>
+  <data name="ExpiryDate" xml:space="preserve">
+    <value>Expiry date</value>
+  </data>
+  <data name="CvvCode" xml:space="preserve">
+    <value>CVV code</value>
+  </data>
+  <data name="ConfirmPurchase" xml:space="preserve">
+    <value>Confirm purchase</value>
+  </data>
+  <data name="Processing" xml:space="preserve">
+    <value>Processing...</value>
+  </data>
+  <data name="PaymentFailedPrefix" xml:space="preserve">
+    <value>Payment failed: </value>
+  </data>
+  <data name="PaymentRequestError" xml:space="preserve">
+    <value>An error occurred while processing the request. Please try again.</value>
+  </data>
+  <data name="PaymentRequestErrorWithDetail" xml:space="preserve">
+    <value>An error occurred while processing the request: </value>
+  </data>
+  <data name="PaymentHolderRequired" xml:space="preserve">
+    <value>Full name is required.</value>
+  </data>
+  <data name="PaymentHolderFullName" xml:space="preserve">
+    <value>Enter first and last name (must contain a space).</value>
+  </data>
+  <data name="PaymentCardRequired" xml:space="preserve">
+    <value>Card number is required.</value>
+  </data>
+  <data name="PaymentCardLength" xml:space="preserve">
+    <value>Card number must contain exactly 16 digits.</value>
+  </data>
+  <data name="PaymentExpiryRequired" xml:space="preserve">
+    <value>Expiration date is required.</value>
+  </data>
+  <data name="PaymentExpiryFormat" xml:space="preserve">
+    <value>Invalid expiration date format. Use MM/YY.</value>
+  </data>
+  <data name="PaymentCardExpired" xml:space="preserve">
+    <value>The card has expired.</value>
+  </data>
+  <data name="PaymentCvvRequired" xml:space="preserve">
+    <value>CVV code is required.</value>
+  </data>
+  <data name="PaymentCvvLength" xml:space="preserve">
+    <value>CVV code must contain exactly 3 digits.</value>
+  </data>
+  <data name="CartTitle" xml:space="preserve">
+    <value>Cart</value>
+  </data>
+  <data name="Purchase" xml:space="preserve">
+    <value>Purchase</value>
+  </data>
+  <data name="CartHeaderTitle" xml:space="preserve">
+    <value>Your cart</value>
+  </data>
+  <data name="CartHeaderText" xml:space="preserve">
+    <value>Review selected vehicles, calculate a loan installment and continue shopping.</value>
+  </data>
+  <data name="CartEmptyTitle" xml:space="preserve">
+    <value>Your cart is empty</value>
+  </data>
+  <data name="CartEmptyText" xml:space="preserve">
+    <value>Add vehicles from the catalog to see them here and continue shopping.</value>
+  </data>
+  <data name="BrowseVehicles" xml:space="preserve">
+    <value>Browse vehicles</value>
+  </data>
+  <data name="TotalVehicles" xml:space="preserve">
+    <value>Total vehicles:</value>
+  </data>
+  <data name="InCart" xml:space="preserve">
+    <value>In cart</value>
+  </data>
+  <data name="Buy" xml:space="preserve">
+    <value>Buy</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="VehicleCount" xml:space="preserve">
+    <value>Number of vehicles</value>
+  </data>
+  <data name="TotalAmount" xml:space="preserve">
+    <value>Total amount</value>
+  </data>
+  <data name="PaymentDue" xml:space="preserve">
+    <value>Payment due</value>
+  </data>
+  <data name="ContinueToCheckout" xml:space="preserve">
+    <value>Continue to checkout</value>
+  </data>
+  <data name="ClearCart" xml:space="preserve">
+    <value>Clear cart</value>
+  </data>
+  <data name="ClearCartConfirmTitle" xml:space="preserve">
+    <value>Clear cart?</value>
+  </data>
+  <data name="ClearCartConfirmMessage" xml:space="preserve">
+    <value>Are you sure you want to clear the cart?</value>
+  </data>
+  <data name="ClearCartConfirmItem" xml:space="preserve">
+    <value>All vehicles from the cart</value>
+  </data>
+  <data name="ClearCartConfirmAction" xml:space="preserve">
+    <value>Yes, clear cart</value>
+  </data>
+  <data name="CheckoutTitle" xml:space="preserve">
+    <value>Checkout - complete purchase</value>
+  </data>
+  <data name="CheckoutText" xml:space="preserve">
+    <value>Select vehicles and enter payment details.</value>
+  </data>
+  <data name="SelectVehiclesForPurchase" xml:space="preserve">
+    <value>Select vehicles for purchase:</value>
+  </data>
+  <data name="SelectAtLeastOneVehicle" xml:space="preserve">
+    <value>You must select at least one vehicle.</value>
+  </data>
+  <data name="Total" xml:space="preserve">
+    <value>Total:</value>
+  </data>
+  <data name="PurchaseSuccessTitle" xml:space="preserve">
+    <value>Successful purchase</value>
+  </data>
+  <data name="PurchaseCompleted" xml:space="preserve">
+    <value>Purchase completed</value>
+  </data>
+  <data name="PurchaseRecorded" xml:space="preserve">
+    <value>Your order has been successfully recorded.</value>
+  </data>
+  <data name="ThankYouForPurchase" xml:space="preserve">
+    <value>Thank you for your purchase!</value>
+  </data>
+  <data name="PurchaseSuccessText" xml:space="preserve">
+    <value>Your purchase has been completed successfully. You can review the order details below.</value>
+  </data>
+  <data name="OrderNumber" xml:space="preserve">
+    <value>Order number</value>
+  </data>
+  <data name="Date" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="PurchaseDetails" xml:space="preserve">
+    <value>Purchase details</value>
+  </data>
+  <data name="WhatNext" xml:space="preserve">
+    <value>What happens next?</value>
+  </data>
+  <data name="PurchaseNextText" xml:space="preserve">
+    <value>You will receive additional information about vehicle pickup by email. For questions, use the contact page or write directly to</value>
+  </data>
+  <data name="BackToVehicles" xml:space="preserve">
+    <value>Back to vehicles</value>
+  </data>
+  <data name="UserProfileEyebrow" xml:space="preserve">
+    <value>User profile</value>
+  </data>
+  <data name="ProfileHeaderText" xml:space="preserve">
+    <value>Review your information, purchased items and reviews.</value>
+  </data>
+  <data name="FullName" xml:space="preserve">
+    <value>Full name</value>
+  </data>
+  <data name="QuickActions" xml:space="preserve">
+    <value>Quick actions</value>
+  </data>
+  <data name="QuickActionsText" xml:space="preserve">
+    <value>Manage your profile, purchases and cart.</value>
+  </data>
+  <data name="EditProfile" xml:space="preserve">
+    <value>Edit profile</value>
+  </data>
+  <data name="ProfileReviewsText" xml:space="preserve">
+    <value>Your vehicle reviews.</value>
+  </data>
+  <data name="RatingOutOfFive" xml:space="preserve">
+    <value>Rating {0} out of 5</value>
+  </data>
+  <data name="NoReviewsToShow" xml:space="preserve">
+    <value>No reviews to display.</value>
+  </data>
+  <data name="EditProfileHeaderText" xml:space="preserve">
+    <value>Update the basic information of your user account.</value>
+  </data>
+  <data name="EditData" xml:space="preserve">
+    <value>Edit data</value>
+  </data>
+  <data name="EditDataText" xml:space="preserve">
+    <value>Keep accurate login and communication information.</value>
+  </data>
+  <data name="BackToProfile" xml:space="preserve">
+    <value>Back to profile</value>
+  </data>
+  <data name="SaveChanges" xml:space="preserve">
+    <value>Save changes</value>
+  </data>
+  <data name="PasswordChangeTitle" xml:space="preserve">
+    <value>Change password</value>
+  </data>
+  <data name="PasswordChangeText" xml:space="preserve">
+    <value>Enter your current and new password for your account.</value>
+  </data>
+  <data name="PasswordChangedSuccess" xml:space="preserve">
+    <value>Password changed successfully.</value>
+  </data>
+  <data name="Purchases" xml:space="preserve">
+    <value>Purchases</value>
+  </data>
+  <data name="PurchasedItemsHeaderText" xml:space="preserve">
+    <value>Review the vehicles you purchased and add a review.</value>
+  </data>
+  <data name="YourPurchases" xml:space="preserve">
+    <value>Your purchases</value>
+  </data>
+  <data name="YourPurchasesText" xml:space="preserve">
+    <value>List of vehicles purchased through the application.</value>
+  </data>
+  <data name="PurchaseDate" xml:space="preserve">
+    <value>Purchase date</value>
+  </data>
+  <data name="ReviewAdded" xml:space="preserve">
+    <value>Review added</value>
+  </data>
+  <data name="YourReview" xml:space="preserve">
+    <value>Your review</value>
+  </data>
+  <data name="ReviewDate" xml:space="preserve">
+    <value>Review date</value>
+  </data>
+  <data name="EditReview" xml:space="preserve">
+    <value>Edit review</value>
+  </data>
+  <data name="AddReview" xml:space="preserve">
+    <value>Add review</value>
+  </data>
+  <data name="RemoveReviewConfirmTitle" xml:space="preserve">
+    <value>Remove review?</value>
+  </data>
+  <data name="RemoveReviewConfirmMessage" xml:space="preserve">
+    <value>Are you sure you want to remove this review?</value>
+  </data>
+  <data name="RemoveReviewConfirmAction" xml:space="preserve">
+    <value>Yes, remove review</value>
+  </data>
+  <data name="ReviewModalTitle" xml:space="preserve">
+    <value>{0} for {1}</value>
+  </data>
+  <data name="Rating" xml:space="preserve">
+    <value>Rating</value>
+  </data>
+  <data name="RatingRequired" xml:space="preserve">
+    <value>Please select a rating.</value>
+  </data>
+  <data name="Comment" xml:space="preserve">
+    <value>Comment</value>
+  </data>
+  <data name="CommentRequired" xml:space="preserve">
+    <value>Comment cannot be empty.</value>
+  </data>
+  <data name="NoPurchasedItems" xml:space="preserve">
+    <value>There are no purchased items yet.</value>
+  </data>
+  <data name="ViewVehicleCatalog" xml:space="preserve">
+    <value>View vehicle catalog</value>
+  </data>
+  <data name="AdminDashboardTitle" xml:space="preserve">
+    <value>Dashboard</value>
+  </data>
+  <data name="AdminDashboardVehiclesButton" xml:space="preserve">
+    <value>Vehicles</value>
+  </data>
+  <data name="AdminDashboardInquiriesButton" xml:space="preserve">
+    <value>Inquiries</value>
+  </data>
+  <data name="AdminDashboardVehiclesTotal" xml:space="preserve">
+    <value>Total in catalog</value>
+  </data>
+  <data name="AdminDashboardUsersTotal" xml:space="preserve">
+    <value>Registered accounts</value>
+  </data>
+  <data name="AdminDashboardOrdersTotal" xml:space="preserve">
+    <value>Total purchases</value>
+  </data>
+  <data name="AdminDashboardActiveInquiries" xml:space="preserve">
+    <value>Active inquiries</value>
+  </data>
+  <data name="AdminDashboardPendingProcessing" xml:space="preserve">
+    <value>Awaiting review</value>
+  </data>
+  <data name="AdminDashboardRevenue" xml:space="preserve">
+    <value>Revenue</value>
+  </data>
+  <data name="AdminDashboardRevenueDesc" xml:space="preserve">
+    <value>Total recorded orders</value>
+  </data>
+  <data name="AdminDashboardLatestPurchases" xml:space="preserve">
+    <value>Latest purchases</value>
+  </data>
+  <data name="AdminDashboardLatestPurchasesText" xml:space="preserve">
+    <value>Latest orders and vehicles selected by buyers.</value>
+  </data>
+  <data name="AdminDashboardNoPurchases" xml:space="preserve">
+    <value>No purchases recorded.</value>
+  </data>
+  <data name="AdminDashboardVehicleUnavailable" xml:space="preserve">
+    <value>Vehicle unavailable</value>
+  </data>
+  <data name="AdminDashboardOrder" xml:space="preserve">
+    <value>Order</value>
+  </data>
+  <data name="AdminDashboardSupportInquiries" xml:space="preserve">
+    <value>Support inquiries</value>
+  </data>
+  <data name="AdminDashboardLatestInquiriesText" xml:space="preserve">
+    <value>Latest user inquiries.</value>
+  </data>
+  <data name="AdminDashboardOpen" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="AdminDashboardNoInquiries" xml:space="preserve">
+    <value>No new inquiries.</value>
+  </data>
+  <data name="AdminDashboardLatestReviewsText" xml:space="preserve">
+    <value>Latest vehicle ratings.</value>
+  </data>
+  <data name="AdminDashboardNoReviews" xml:space="preserve">
+    <value>No new reviews.</value>
+  </data>
+  <data name="AdminVehiclesTitle" xml:space="preserve">
+    <value>Vehicle overview</value>
+  </data>
+  <data name="AdminVehicle" xml:space="preserve">
+    <value>Vehicle</value>
+  </data>
+  <data name="AdminAddVehicle" xml:space="preserve">
+    <value>Add new vehicle</value>
+  </data>
+  <data name="AdminVehiclesList" xml:space="preserve">
+    <value>Vehicle list</value>
+  </data>
+  <data name="AdminVehiclesListText" xml:space="preserve">
+    <value>Overview of all vehicles in the system.</value>
+  </data>
+  <data name="AdminVehicleFuelFilterAria" xml:space="preserve">
+    <value>Filter vehicles by fuel</value>
+  </data>
+  <data name="AllVehicles" xml:space="preserve">
+    <value>All vehicles</value>
+  </data>
+  <data name="AdminSearchVehiclesPlaceholder" xml:space="preserve">
+    <value>Search by name...</value>
+  </data>
+  <data name="AdminSortBy" xml:space="preserve">
+    <value>Sort by</value>
+  </data>
+  <data name="AdminSortPriceDesc" xml:space="preserve">
+    <value>Price: highest first</value>
+  </data>
+  <data name="AdminSortPriceAsc" xml:space="preserve">
+    <value>Price: lowest first</value>
+  </data>
+  <data name="AdminSortYearDesc" xml:space="preserve">
+    <value>Year: newest first</value>
+  </data>
+  <data name="AdminSortYearAsc" xml:space="preserve">
+    <value>Year: oldest first</value>
+  </data>
+  <data name="AdminSortMileageAsc" xml:space="preserve">
+    <value>Mileage: lowest first</value>
+  </data>
+  <data name="AdminSortMileageDesc" xml:space="preserve">
+    <value>Mileage: highest first</value>
+  </data>
+  <data name="AdminVehicleName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="LoadingVehicles" xml:space="preserve">
+    <value>Loading vehicles...</value>
+  </data>
+  <data name="NoVehiclesAvailable" xml:space="preserve">
+    <value>No vehicles available.</value>
+  </data>
+  <data name="UnknownVehicle" xml:space="preserve">
+    <value>Unknown vehicle</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="DeleteVehicle" xml:space="preserve">
+    <value>Delete vehicle</value>
+  </data>
+  <data name="DeleteVehicleTitle" xml:space="preserve">
+    <value>Delete vehicle?</value>
+  </data>
+  <data name="DeleteVehicleMessage" xml:space="preserve">
+    <value>Are you sure you want to delete this vehicle?</value>
+  </data>
+  <data name="DeleteVehicleAction" xml:space="preserve">
+    <value>Yes, delete vehicle</value>
+  </data>
+  <data name="VehicleSavedSuccess" xml:space="preserve">
+    <value>Vehicle saved successfully.</value>
+  </data>
+  <data name="VehicleDeletedSuccess" xml:space="preserve">
+    <value>Vehicle deleted successfully.</value>
+  </data>
+  <data name="VehicleLoadError" xml:space="preserve">
+    <value>Error loading vehicles:</value>
+  </data>
+  <data name="VehicleAddFormLoadError" xml:space="preserve">
+    <value>Error loading add form.</value>
+  </data>
+  <data name="VehicleEditFormLoadError" xml:space="preserve">
+    <value>Error loading edit form.</value>
+  </data>
+  <data name="VehicleSaveValidationError" xml:space="preserve">
+    <value>Save failed. Please check entered data.</value>
+  </data>
+  <data name="VehicleSaveImageRequiredError" xml:space="preserve">
+    <value>An error occurred while saving the vehicle. Image is required for a new vehicle.</value>
+  </data>
+  <data name="VehicleDeleteError" xml:space="preserve">
+    <value>An error occurred while deleting the vehicle.</value>
+  </data>
+  <data name="FileExtensionsAllowed" xml:space="preserve">
+    <value>Allowed formats: jpg, jpeg, png, gif, bmp</value>
+  </data>
+  <data name="CurrentImage" xml:space="preserve">
+    <value>Current image</value>
+  </data>
+  <data name="AddVehicleSubmit" xml:space="preserve">
+    <value>Add vehicle</value>
+  </data>
+  <data name="AllowedImageExtensionsError" xml:space="preserve">
+    <value>Only these file extensions are allowed: .jpg, .jpeg, .png, .gif, .bmp</value>
+  </data>
+  <data name="ImageSizeLimitError" xml:space="preserve">
+    <value>Image size must not exceed 5MB.</value>
+  </data>
+  <data name="AdminUsersTitle" xml:space="preserve">
+    <value>Users</value>
+  </data>
+  <data name="AdminUser" xml:space="preserve">
+    <value>User</value>
+  </data>
+  <data name="AdminAddUser" xml:space="preserve">
+    <value>Add new user</value>
+  </data>
+  <data name="AdminUsersList" xml:space="preserve">
+    <value>User list</value>
+  </data>
+  <data name="AdminUsersListText" xml:space="preserve">
+    <value>Search users by name, username or email address.</value>
+  </data>
+  <data name="AdminUserRoleFilterAria" xml:space="preserve">
+    <value>Filter users by role</value>
+  </data>
+  <data name="AllUsers" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="Admins" xml:space="preserve">
+    <value>Admins</value>
+  </data>
+  <data name="Sellers" xml:space="preserve">
+    <value>Sellers</value>
+  </data>
+  <data name="Buyers" xml:space="preserve">
+    <value>Buyers</value>
+  </data>
+  <data name="AdminSearchUsersPlaceholder" xml:space="preserve">
+    <value>Search by name or email...</value>
+  </data>
+  <data name="Role" xml:space="preserve">
+    <value>Role</value>
+  </data>
+  <data name="LoadingUsers" xml:space="preserve">
+    <value>Loading users...</value>
+  </data>
+  <data name="NoUsersAvailable" xml:space="preserve">
+    <value>No users available.</value>
+  </data>
+  <data name="DeleteUserTitle" xml:space="preserve">
+    <value>Delete user?</value>
+  </data>
+  <data name="DeleteUserMessage" xml:space="preserve">
+    <value>Are you sure you want to delete this user?</value>
+  </data>
+  <data name="DeleteUserAction" xml:space="preserve">
+    <value>Yes, delete user</value>
+  </data>
+  <data name="UserSavedSuccess" xml:space="preserve">
+    <value>User saved successfully.</value>
+  </data>
+  <data name="UserDeletedSuccess" xml:space="preserve">
+    <value>User deleted successfully.</value>
+  </data>
+  <data name="UsersLoadError" xml:space="preserve">
+    <value>Error loading users:</value>
+  </data>
+  <data name="UserAddFormLoadError" xml:space="preserve">
+    <value>Error loading add form.</value>
+  </data>
+  <data name="UserEditFormLoadError" xml:space="preserve">
+    <value>Error loading edit form.</value>
+  </data>
+  <data name="UserSaveError" xml:space="preserve">
+    <value>An error occurred while saving the user.</value>
+  </data>
+  <data name="IdentityErrors" xml:space="preserve">
+    <value>Identity errors:</value>
+  </data>
+  <data name="UserDeleteError" xml:space="preserve">
+    <value>An error occurred while deleting the user.</value>
+  </data>
+  <data name="AdminNewPasswordPlaceholder" xml:space="preserve">
+    <value>Enter a new password only if you want to change it</value>
+  </data>
+  <data name="AdminConfirmNewPasswordPlaceholder" xml:space="preserve">
+    <value>Repeat the new password</value>
+  </data>
+  <data name="Optional" xml:space="preserve">
+    <value>optional</value>
+  </data>
+  <data name="AdminReviewsTitle" xml:space="preserve">
+    <value>Review overview</value>
+  </data>
+  <data name="AdminReviewsList" xml:space="preserve">
+    <value>Review list</value>
+  </data>
+  <data name="AdminReviewsListText" xml:space="preserve">
+    <value>Filter reviews by user, vehicle or comment content.</value>
+  </data>
+  <data name="FilterByUserPlaceholder" xml:space="preserve">
+    <value>Filter by user...</value>
+  </data>
+  <data name="FilterByVehiclePlaceholder" xml:space="preserve">
+    <value>Filter by vehicle...</value>
+  </data>
+  <data name="SearchByTextPlaceholder" xml:space="preserve">
+    <value>Search by text...</value>
+  </data>
+  <data name="LoadingReviews" xml:space="preserve">
+    <value>Loading reviews...</value>
+  </data>
+  <data name="NoReviewsAvailable" xml:space="preserve">
+    <value>No reviews available.</value>
+  </data>
+  <data name="ReviewCommentTitle" xml:space="preserve">
+    <value>Review comment</value>
+  </data>
+  <data name="ReviewCommentSubtitle" xml:space="preserve">
+    <value>Full user comment preview.</value>
+  </data>
+  <data name="Show" xml:space="preserve">
+    <value>Show</value>
+  </data>
+  <data name="DeleteReviewTitle" xml:space="preserve">
+    <value>Delete review?</value>
+  </data>
+  <data name="DeleteReviewMessage" xml:space="preserve">
+    <value>Are you sure you want to delete this review?</value>
+  </data>
+  <data name="DeleteReviewAction" xml:space="preserve">
+    <value>Yes, delete review</value>
+  </data>
+  <data name="ReviewDeletedSuccess" xml:space="preserve">
+    <value>Review deleted successfully.</value>
+  </data>
+  <data name="ReviewsLoadError" xml:space="preserve">
+    <value>Error loading reviews:</value>
+  </data>
+  <data name="ReviewDeleteError" xml:space="preserve">
+    <value>An error occurred while deleting the review.</value>
+  </data>
+  <data name="RatingWord" xml:space="preserve">
+    <value>rating</value>
+  </data>
+  <data name="AdminSupportTitle" xml:space="preserve">
+    <value>Support inquiries</value>
+  </data>
+  <data name="AdminSupportList" xml:space="preserve">
+    <value>Inquiry list</value>
+  </data>
+  <data name="AdminSupportListText" xml:space="preserve">
+    <value>Search inquiries by email, title or message content.</value>
+  </data>
+  <data name="AdminSearchSupportPlaceholder" xml:space="preserve">
+    <value>Search email, title or content...</value>
+  </data>
+  <data name="UserEmail" xml:space="preserve">
+    <value>User email</value>
+  </data>
+  <data name="InquiryTitle" xml:space="preserve">
+    <value>Inquiry title</value>
+  </data>
+  <data name="LoadingInquiries" xml:space="preserve">
+    <value>Loading inquiries...</value>
+  </data>
+  <data name="NoSupportInquiries" xml:space="preserve">
+    <value>No support inquiries available.</value>
+  </data>
+  <data name="MessageModalTitle" xml:space="preserve">
+    <value>User message</value>
+  </data>
+  <data name="MessageModalSubtitle" xml:space="preserve">
+    <value>Full inquiry content preview.</value>
+  </data>
+  <data name="Reply" xml:space="preserve">
+    <value>Reply</value>
+  </data>
+  <data name="ReplyToInquirySubject" xml:space="preserve">
+    <value>Reply to your inquiry:</value>
+  </data>
+  <data name="ReplyToInquiryGreeting" xml:space="preserve">
+    <value>Dear</value>
+  </data>
+  <data name="ReplyToInquiryBody" xml:space="preserve">
+    <value>Thank you for your inquiry.</value>
+  </data>
+  <data name="DeleteInquiryTitle" xml:space="preserve">
+    <value>Delete inquiry?</value>
+  </data>
+  <data name="DeleteInquiryMessage" xml:space="preserve">
+    <value>Are you sure you want to delete this inquiry?</value>
+  </data>
+  <data name="DeleteInquiryAction" xml:space="preserve">
+    <value>Yes, delete inquiry</value>
+  </data>
+  <data name="InquiryItemPrefix" xml:space="preserve">
+    <value>Inquiry:</value>
+  </data>
+  <data name="Untitled" xml:space="preserve">
+    <value>Untitled</value>
+  </data>
+  <data name="StatusChangedSuccess" xml:space="preserve">
+    <value>Inquiry status changed successfully.</value>
+  </data>
+  <data name="InquiryDeletedSuccess" xml:space="preserve">
+    <value>Support inquiry deleted successfully.</value>
+  </data>
+  <data name="InquiriesLoadError" xml:space="preserve">
+    <value>Error loading inquiries:</value>
+  </data>
+  <data name="StatusChangeError" xml:space="preserve">
+    <value>An error occurred while changing status.</value>
+  </data>
+  <data name="InquiryDeleteError" xml:space="preserve">
+    <value>An error occurred while deleting the inquiry.</value>
+  </data>
+  <data name="NotAvailable" xml:space="preserve">
+    <value>N/A</value>
+  </data>
+  <data name="Customer" xml:space="preserve">
+    <value>Customer</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Required" xml:space="preserve">
+    <value>required</value>
+  </data>
+  <data name="PasswordRequired" xml:space="preserve">
+    <value>Password is required.</value>
+  </data>
+  <data name="ConfirmPasswordRequired" xml:space="preserve">
+    <value>Password confirmation is required.</value>
+  </data>
+  <data name="NewPasswordConfirmationRequired" xml:space="preserve">
+    <value>New password confirmation is required when changing password.</value>
+  </data>
+  <data name="NewPasswordMismatch" xml:space="preserve">
+    <value>New password and confirmation do not match.</value>
+  </data>
+  <data name="PasswordFieldsEitherBothOrEmpty" xml:space="preserve">
+    <value>Enter a new password or leave both password fields empty.</value>
+  </data>
+  <data name="UsernameExists" xml:space="preserve">
+    <value>A user with that username already exists.</value>
+  </data>
+  <data name="EmailExists" xml:space="preserve">
+    <value>A user with that email already exists.</value>
+  </data>
+  <data name="VehicleImageRequiredNew" xml:space="preserve">
+    <value>Image is required for a new vehicle.</value>
+  </data>
+  <data name="InvalidFuelValue" xml:space="preserve">
+    <value>The selected fuel value is invalid.</value>
+  </data>
+  <data name="VehicleCreateSuccess" xml:space="preserve">
+    <value>Vehicle added successfully!</value>
+  </data>
+  <data name="VehicleUpdateSuccess" xml:space="preserve">
+    <value>Vehicle updated successfully!</value>
+  </data>
+  <data name="SupportDeleteSuccess" xml:space="preserve">
+    <value>Support inquiry deleted successfully.</value>
+  </data>
+  <data name="InvalidStatus" xml:space="preserve">
+    <value>Invalid status.</value>
+  </data>
+  <data name="ProfileNotFound" xml:space="preserve">
+    <value>User not found.</value>
+  </data>
+  <data name="UserDeleteFailure" xml:space="preserve">
+    <value>Error deleting user: {0}</value>
+  </data>
+  <data name="CartAddVehicleSuccess" xml:space="preserve">
+    <value>Vehicle was added to cart successfully!</value>
+  </data>
+  <data name="CartVehicleAlreadyAdded" xml:space="preserve">
+    <value>Vehicle is already in the cart.</value>
+  </data>
+  <data name="CartDisplayError" xml:space="preserve">
+    <value>An error occurred while displaying the cart. Please try again.</value>
+  </data>
+  <data name="CartRemoveSuccess" xml:space="preserve">
+    <value>Vehicle was removed from the cart.</value>
+  </data>
+  <data name="CartVehicleNotFoundInCart" xml:space="preserve">
+    <value>Vehicle was not found in the cart.</value>
+  </data>
+  <data name="CartRemoveError" xml:space="preserve">
+    <value>An error occurred while removing the vehicle from the cart. Please try again.</value>
+  </data>
+  <data name="CartQuantityUpdated" xml:space="preserve">
+    <value>Quantity updated.</value>
+  </data>
+  <data name="CartQuantityError" xml:space="preserve">
+    <value>An error occurred while updating quantity.</value>
+  </data>
+  <data name="CartClearedSuccess" xml:space="preserve">
+    <value>Cart cleared successfully.</value>
+  </data>
+  <data name="CartClearError" xml:space="preserve">
+    <value>An error occurred while clearing the cart.</value>
+  </data>
+  <data name="SelectedVehicleMissingFromCart" xml:space="preserve">
+    <value>One or more selected vehicles were not found in your cart.</value>
+  </data>
+  <data name="NoVehiclesSelectedForPurchase" xml:space="preserve">
+    <value>You have not selected any vehicles for purchase.</value>
+  </data>
+  <data name="VehiclePurchaseSuccess" xml:space="preserve">
+    <value>Payment completed successfully. Your order has been recorded.</value>
+  </data>
+  <data name="MultiVehiclePurchaseSuccess" xml:space="preserve">
+    <value>You successfully purchased {0} vehicles!</value>
+  </data>
+  <data name="VehiclePriceInvalid" xml:space="preserve">
+    <value>Vehicle price is invalid.</value>
+  </data>
+  <data name="VehicleNotFound" xml:space="preserve">
+    <value>Vehicle not found.</value>
+  </data>
+  <data name="CartNotFound" xml:space="preserve">
+    <value>Cart not found.</value>
+  </data>
+  <data name="UserNotFound" xml:space="preserve">
+    <value>User not found.</value>
+  </data>
+  <data name="PaymentProcessingError" xml:space="preserve">
+    <value>An error occurred while processing payment. Please try again.</value>
+  </data>
+  <data name="PaymentAmountPositive" xml:space="preserve">
+    <value>Payment amount must be greater than zero.</value>
+  </data>
+  <data name="PaymentSuccessDemo" xml:space="preserve">
+    <value>Payment processed successfully in demo mode.</value>
+  </data>
+  <data name="PaymentInvalidCard" xml:space="preserve">
+    <value>Invalid card number.</value>
+  </data>
+  <data name="PaymentDeclinedDemo" xml:space="preserve">
+    <value>Transaction declined in demo mode.</value>
+  </data>
+  <data name="ContactAccountProblem" xml:space="preserve">
+    <value>There was a problem with your user account.</value>
+  </data>
+  <data name="ContactMessageSent" xml:space="preserve">
+    <value>Your message was sent successfully!</value>
+  </data>
+  <data name="ContactSendError" xml:space="preserve">
+    <value>An error occurred while sending the message. Please try again.</value>
+  </data>
+  <data name="SupportMessageRequired" xml:space="preserve">
+    <value>Please enter a message before sending.</value>
+  </data>
+  <data name="SupportMessageReceived" xml:space="preserve">
+    <value>Your message was received successfully!</value>
+  </data>
+  <data name="ProfileUpdateEmailError" xml:space="preserve">
+    <value>Error setting new email.</value>
+  </data>
+  <data name="ProfileUpdateUsernameError" xml:space="preserve">
+    <value>Error setting new username.</value>
+  </data>
+  <data name="ProfileUpdatedSuccess" xml:space="preserve">
+    <value>Profile updated successfully.</value>
+  </data>
+  <data name="ProfileNoChanges" xml:space="preserve">
+    <value>No profile changes.</value>
+  </data>
+  <data name="ReviewRatingRange" xml:space="preserve">
+    <value>Rating must be between 1 and 5.</value>
+  </data>
+  <data name="ReviewPurchasedOnly" xml:space="preserve">
+    <value>You can add a review only for vehicles you purchased.</value>
+  </data>
+  <data name="ReviewUpdatedSuccess" xml:space="preserve">
+    <value>Review updated successfully.</value>
+  </data>
+  <data name="ReviewAddedSuccess" xml:space="preserve">
+    <value>Review added successfully.</value>
+  </data>
+  <data name="ReviewNotFoundOrNotOwned" xml:space="preserve">
+    <value>Review was not found or does not belong to you.</value>
+  </data>
+  <data name="ReviewRemovedSuccess" xml:space="preserve">
+    <value>Review removed successfully.</value>
+  </data>
+  <data name="EditVehicle" xml:space="preserve">
+    <value>Edit vehicle</value>
+  </data>
+  <data name="EditUser" xml:space="preserve">
+    <value>Edit user</value>
+  </data>
+  <data name="RoleAdministrator" xml:space="preserve">
+    <value>Administrator</value>
+  </data>
+  <data name="RoleSeller" xml:space="preserve">
+    <value>Seller</value>
+  </data>
+  <data name="RoleBuyer" xml:space="preserve">
+    <value>Buyer</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="VehicleMakePlaceholder" xml:space="preserve">
+    <value>Enter make</value>
+  </data>
+  <data name="VehicleModelPlaceholder" xml:space="preserve">
+    <value>Enter model</value>
+  </data>
+  <data name="VehicleDescriptionPlaceholder" xml:space="preserve">
+    <value>Enter vehicle description</value>
+  </data>
+  <data name="SelectFuelType" xml:space="preserve">
+    <value>Select fuel type</value>
+  </data>
+  <data name="VehicleImageRequired" xml:space="preserve">
+    <value>Image is required</value>
+  </data>
+  <data name="VehicleImageOptional" xml:space="preserve">
+    <value>Image is optional when editing</value>
+  </data>
+  <data name="NoCurrentImage" xml:space="preserve">
+    <value>No current image</value>
+  </data>
+  <data name="KeepCurrentImage" xml:space="preserve">
+    <value>Keep current image</value>
+  </data>
+  <data name="Validation.VehicleMakeRequiredClient" xml:space="preserve">
+    <value>Make is required.</value>
+  </data>
+  <data name="Validation.VehicleModelRequiredClient" xml:space="preserve">
+    <value>Model is required.</value>
+  </data>
+  <data name="Validation.VehicleYearMin" xml:space="preserve">
+    <value>Year must be at least 1900.</value>
+  </data>
+  <data name="Validation.VehicleYearMax" xml:space="preserve">
+    <value>Year cannot be greater than 2026.</value>
+  </data>
+  <data name="Validation.VehicleYearDigits" xml:space="preserve">
+    <value>Year must be a whole number.</value>
+  </data>
+  <data name="Validation.VehicleDisplacementNumber" xml:space="preserve">
+    <value>Displacement must be a number.</value>
+  </data>
+  <data name="Validation.VehicleColorRequiredClient" xml:space="preserve">
+    <value>Color is required.</value>
+  </data>
+  <data name="Validation.VehicleMileageNumber" xml:space="preserve">
+    <value>Mileage must be a number.</value>
+  </data>
+  <data name="Validation.VehiclePriceNumber" xml:space="preserve">
+    <value>Price must be a number.</value>
+  </data>
+  <data name="Validation.VehicleImageRequiredClient" xml:space="preserve">
+    <value>Image is required for a new vehicle.</value>
+  </data>
+  <data name="PaymentNameRequired" xml:space="preserve">
+    <value>Full name is required.</value>
+  </data>
+  <data name="PaymentNameFullRequired" xml:space="preserve">
+    <value>Enter first and last name (must contain a space).</value>
+  </data>
+  <data name="PaymentCardDigits" xml:space="preserve">
+    <value>Card number must contain exactly 16 digits.</value>
+  </data>
+  <data name="PaymentExpiryMonth" xml:space="preserve">
+    <value>Month must be between 01 and 12.</value>
+  </data>
+  <data name="PaymentExpiryYear" xml:space="preserve">
+    <value>Year is invalid.</value>
+  </data>
+  <data name="PaymentCvvDigits" xml:space="preserve">
+    <value>CVV code must contain exactly 3 digits.</value>
+  </data>
+  <data name="CartQuantityMin" xml:space="preserve">
+    <value>Quantity cannot be less than 1.</value>
+  </data>
+  <data name="CommonTryAgain" xml:space="preserve">
+    <value>An error occurred. Please try again.</value>
+  </data>
+  <data name="Lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo." xml:space="preserve">
+    <value>Password must have at least 8 characters, one digit, one lowercase and one uppercase letter.</value>
+  </data>
+  <data name="Validation.VehicleDisplacementRequired" xml:space="preserve">
+    <value>Displacement is required for non-electric vehicles.</value>
+  </data>
+  <data name="CartAddError" xml:space="preserve">
+    <value>An error occurred while adding the vehicle to the cart. Please try again.</value>
+  </data>
+  <data name="PaymentOrderRecorded" xml:space="preserve">
+    <value>Payment completed successfully. Your order has been recorded.</value>
+  </data>
+  <data name="PasswordResetEmailSubject" xml:space="preserve">
+    <value>Password reset - Autosalon OneZone</value>
+  </data>
+  <data name="PasswordResetEmailTitle" xml:space="preserve">
+    <value>Password reset</value>
+  </data>
+  <data name="PasswordResetEmailHeroText" xml:space="preserve">
+    <value>We prepared a secure link for setting a new password for your account.</value>
+  </data>
+  <data name="PasswordResetEmailGreetingNameFallback" xml:space="preserve">
+    <value>customer</value>
+  </data>
+  <data name="PasswordResetEmailIntro" xml:space="preserve">
+    <value>We received a request to reset the password for your Autosalon OneZone account. Click the button below to set a new password.</value>
+  </data>
+  <data name="PasswordResetEmailValidityTitle" xml:space="preserve">
+    <value>Link validity</value>
+  </data>
+  <data name="PasswordResetEmailValidityText" xml:space="preserve">
+    <value>The link expires in 30 minutes, at {0}.</value>
+  </data>
+  <data name="PasswordResetEmailButton" xml:space="preserve">
+    <value>Reset password</value>
+  </data>
+  <data name="PasswordResetEmailFallbackLink" xml:space="preserve">
+    <value>If the button does not work, copy and open this link:</value>
+  </data>
+  <data name="PasswordResetEmailIgnore" xml:space="preserve">
+    <value>If you did not request a password reset, you can safely ignore this message.</value>
+  </data>
+  <data name="PasswordResetEmailFooter" xml:space="preserve">
+    <value>This message was automatically generated by the Autosalon OneZone application.</value>
+  </data>
+  <data name="PasswordResetEmailTextTitle" xml:space="preserve">
+    <value>Autosalon OneZone - password reset</value>
+  </data>
+  <data name="PasswordResetEmailGreeting" xml:space="preserve">
+    <value>Dear {0},</value>
+  </data>
+  <data name="AdminSectionLoading" xml:space="preserve">
+    <value>Loading section...</value>
+  </data>
+  <data name="AdminSectionNotFound" xml:space="preserve">
+    <value>Section not found.</value>
+  </data>
+  <data name="AdminSectionLoadError" xml:space="preserve">
+    <value>Unable to load this admin section. Please try again.</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="PurchaseOverview" xml:space="preserve">
+    <value>Purchase overview</value>
+  </data>
+  <data name="StatusInProgress" xml:space="preserve">
+    <value>In progress</value>
+  </data>
+  <data name="Vehicles" xml:space="preserve">
+    <value>Vehicles</value>
+  </data>
+</root>

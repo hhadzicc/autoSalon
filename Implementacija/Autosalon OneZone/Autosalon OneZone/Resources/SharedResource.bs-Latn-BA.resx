@@ -1,0 +1,2068 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:schema id="root">
+    <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xs:element name="root" ns1:IsDataSet="true">
+      <xs:complexType>
+        <xs:choice maxOccurs="unbounded">
+          <xs:element name="metadata">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" />
+              </xs:sequence>
+              <xs:attribute name="name" use="required" type="xsd:string" />
+              <xs:attribute name="type" type="xsd:string" />
+              <xs:attribute name="mimetype" type="xsd:string" />
+              <xs:attribute ref="xml:space" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="assembly">
+            <xs:complexType>
+              <xs:attribute name="alias" type="xsd:string" />
+              <xs:attribute name="name" type="xsd:string" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="data">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+                <xs:element name="comment" type="xsd:string" minOccurs="0" ns1:Ordinal="2" />
+              </xs:sequence>
+              <xs:attribute name="name" type="xsd:string" use="required" ns1:Ordinal="1" />
+              <xs:attribute name="type" type="xsd:string" ns1:Ordinal="3" />
+              <xs:attribute name="mimetype" type="xsd:string" ns1:Ordinal="4" />
+              <xs:attribute ref="xml:space" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="resheader">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+              </xs:sequence>
+              <xs:attribute name="name" type="xsd:string" use="required" />
+            </xs:complexType>
+          </xs:element>
+        </xs:choice>
+      </xs:complexType>
+    </xs:element>
+  </xs:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="LanguageEnglish" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="LanguageBosnian" xml:space="preserve">
+    <value>Bosanski</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Jezik</value>
+  </data>
+  <data name="NavAdminPanel" xml:space="preserve">
+    <value>Admin Panel</value>
+  </data>
+  <data name="NavVehicles" xml:space="preserve">
+    <value>Vozila</value>
+  </data>
+  <data name="NavContact" xml:space="preserve">
+    <value>Piši nam</value>
+  </data>
+  <data name="NavCart" xml:space="preserve">
+    <value>Korpa</value>
+  </data>
+  <data name="NavMyProfile" xml:space="preserve">
+    <value>Moj profil</value>
+  </data>
+  <data name="NavProfile" xml:space="preserve">
+    <value>Profil</value>
+  </data>
+  <data name="NavPurchasedItems" xml:space="preserve">
+    <value>Kupljeni artikli</value>
+  </data>
+  <data name="NavChangePassword" xml:space="preserve">
+    <value>Promijeni lozinku</value>
+  </data>
+  <data name="NavLogout" xml:space="preserve">
+    <value>Odjavi se</value>
+  </data>
+  <data name="NavLogin" xml:space="preserve">
+    <value>Prijavi se</value>
+  </data>
+  <data name="NavRegister" xml:space="preserve">
+    <value>Registruj se</value>
+  </data>
+  <data name="FooterContact" xml:space="preserve">
+    <value>Kontakt</value>
+  </data>
+  <data name="FooterRights" xml:space="preserve">
+    <value>Sva prava zadržana.</value>
+  </data>
+  <data name="FooterPrivacy" xml:space="preserve">
+    <value>Politika privatnosti</value>
+  </data>
+  <data name="FooterTerms" xml:space="preserve">
+    <value>Uslovi korišćenja</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Zatvori</value>
+  </data>
+  <data name="ShowPassword" xml:space="preserve">
+    <value>Prikaži lozinku</value>
+  </data>
+  <data name="HidePassword" xml:space="preserve">
+    <value>Sakrij lozinku</value>
+  </data>
+  <data name="DeleteConfirmTitle" xml:space="preserve">
+    <value>Potvrda brisanja</value>
+  </data>
+  <data name="DeleteConfirmSubtitle" xml:space="preserve">
+    <value>Ova akcija se ne može jednostavno poništiti.</value>
+  </data>
+  <data name="DeleteConfirmMessage" xml:space="preserve">
+    <value>Da li ste sigurni da želite obrisati ovu stavku?</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Odustani</value>
+  </data>
+  <data name="DeleteConfirmAction" xml:space="preserve">
+    <value>Da, obriši</value>
+  </data>
+  <data name="CommonLoading" xml:space="preserve">
+    <value>Učitavanje...</value>
+  </data>
+  <data name="CommonError" xml:space="preserve">
+    <value>Došlo je do greške. Molimo pokušajte ponovo.</value>
+  </data>
+  <data name="CommonSave" xml:space="preserve">
+    <value>Sačuvaj</value>
+  </data>
+  <data name="CommonBack" xml:space="preserve">
+    <value>Nazad</value>
+  </data>
+  <data name="CommonSearch" xml:space="preserve">
+    <value>Pretraži</value>
+  </data>
+  <data name="CommonShow" xml:space="preserve">
+    <value>Prikaži</value>
+  </data>
+  <data name="CommonEdit" xml:space="preserve">
+    <value>Izmijeni</value>
+  </data>
+  <data name="CommonDelete" xml:space="preserve">
+    <value>Obriši</value>
+  </data>
+  <data name="AuthAccountEyebrow" xml:space="preserve">
+    <value>Korisnički nalog</value>
+  </data>
+  <data name="AuthLoginTitle" xml:space="preserve">
+    <value>Prijava</value>
+  </data>
+  <data name="AuthLoginSubtitle" xml:space="preserve">
+    <value>Prijavite se kako biste nastavili kupovinu, pratili upite i koristili korpu.</value>
+  </data>
+  <data name="AuthLoginHeading" xml:space="preserve">
+    <value>Prijava</value>
+  </data>
+  <data name="AuthLoginIdentifier" xml:space="preserve">
+    <value>E-mail ili korisničko ime</value>
+  </data>
+  <data name="AuthLoginIdentifierPlaceholder" xml:space="preserve">
+    <value>Unesite e-mail ili korisničko ime</value>
+  </data>
+  <data name="AuthPassword" xml:space="preserve">
+    <value>Lozinka</value>
+  </data>
+  <data name="AuthPasswordPlaceholder" xml:space="preserve">
+    <value>Unesite lozinku</value>
+  </data>
+  <data name="AuthRememberMe" xml:space="preserve">
+    <value>Zapamti me</value>
+  </data>
+  <data name="AuthLoginSubmit" xml:space="preserve">
+    <value>Prijavi me</value>
+  </data>
+  <data name="AuthNoAccount" xml:space="preserve">
+    <value>Nemate nalog?</value>
+  </data>
+  <data name="AuthRegisterLink" xml:space="preserve">
+    <value>Registrujte se</value>
+  </data>
+  <data name="AuthForgotPassword" xml:space="preserve">
+    <value>Zaboravili ste lozinku?</value>
+  </data>
+  <data name="AuthRegisterEyebrow" xml:space="preserve">
+    <value>Novi korisnik</value>
+  </data>
+  <data name="AuthRegisterTitle" xml:space="preserve">
+    <value>Registracija</value>
+  </data>
+  <data name="AuthRegisterSubtitle" xml:space="preserve">
+    <value>Kreirajte nalog i nastavite sa pregledom vozila, upitima i kupovinom.</value>
+  </data>
+  <data name="AuthCreateAccount" xml:space="preserve">
+    <value>Kreirajte nalog</value>
+  </data>
+  <data name="FirstName" xml:space="preserve">
+    <value>Ime</value>
+  </data>
+  <data name="LastName" xml:space="preserve">
+    <value>Prezime</value>
+  </data>
+  <data name="Username" xml:space="preserve">
+    <value>Korisničko ime</value>
+  </data>
+  <data name="EmailAddress" xml:space="preserve">
+    <value>Email adresa</value>
+  </data>
+  <data name="ConfirmPassword" xml:space="preserve">
+    <value>Potvrdi lozinku</value>
+  </data>
+  <data name="AuthAlreadyHaveAccount" xml:space="preserve">
+    <value>Već imate nalog?</value>
+  </data>
+  <data name="AuthSignInLink" xml:space="preserve">
+    <value>Prijavite se</value>
+  </data>
+  <data name="ForgotPasswordTitle" xml:space="preserve">
+    <value>Zaboravljena lozinka</value>
+  </data>
+  <data name="ForgotPasswordSubtitle" xml:space="preserve">
+    <value>Unesite email adresu povezanu sa vašim nalogom i poslat ćemo vam siguran link za resetovanje lozinke.</value>
+  </data>
+  <data name="ForgotPasswordHeading" xml:space="preserve">
+    <value>Resetovanje lozinke</value>
+  </data>
+  <data name="ForgotPasswordText" xml:space="preserve">
+    <value>Ako nalog postoji, poslat ćemo upute za postavljanje nove lozinke.</value>
+  </data>
+  <data name="ForgotPasswordSubmit" xml:space="preserve">
+    <value>Pošalji link za resetovanje</value>
+  </data>
+  <data name="BackToLogin" xml:space="preserve">
+    <value>Nazad na prijavu</value>
+  </data>
+  <data name="ForgotPasswordConfirmationTitle" xml:space="preserve">
+    <value>Link je poslan</value>
+  </data>
+  <data name="ForgotPasswordConfirmationIntro" xml:space="preserve">
+    <value>Ako nalog sa unesenom adresom postoji, poslali smo link za resetovanje lozinke.</value>
+  </data>
+  <data name="ForgotPasswordConfirmationText" xml:space="preserve">
+    <value>Link vrijedi 30 minuta. Ako ne vidite poruku, provjerite spam folder ili zatražite novi link.</value>
+  </data>
+  <data name="ResetPasswordEyebrow" xml:space="preserve">
+    <value>Sigurnost naloga</value>
+  </data>
+  <data name="ResetPasswordTitle" xml:space="preserve">
+    <value>Postavi novu lozinku</value>
+  </data>
+  <data name="ResetPasswordSubtitle" xml:space="preserve">
+    <value>Unesite novu lozinku za svoj nalog i potvrdite je prije čuvanja promjene.</value>
+  </data>
+  <data name="NewPassword" xml:space="preserve">
+    <value>Nova lozinka</value>
+  </data>
+  <data name="NewPasswordPlaceholder" xml:space="preserve">
+    <value>Unesite novu lozinku</value>
+  </data>
+  <data name="ConfirmNewPassword" xml:space="preserve">
+    <value>Potvrda nove lozinke</value>
+  </data>
+  <data name="ConfirmNewPasswordPlaceholder" xml:space="preserve">
+    <value>Potvrdite novu lozinku</value>
+  </data>
+  <data name="ResetPasswordSubmit" xml:space="preserve">
+    <value>Resetuj lozinku</value>
+  </data>
+  <data name="RequestNewLink" xml:space="preserve">
+    <value>Zatraži novi link</value>
+  </data>
+  <data name="ResetPasswordConfirmationTitle" xml:space="preserve">
+    <value>Lozinka je resetovana</value>
+  </data>
+  <data name="ResetPasswordConfirmationText" xml:space="preserve">
+    <value>Vaša lozinka je promijenjena. Sada se možete prijaviti novom lozinkom.</value>
+  </data>
+  <data name="ResetPasswordDoneHeading" xml:space="preserve">
+    <value>Resetovanje završeno</value>
+  </data>
+  <data name="ResetPasswordDoneText" xml:space="preserve">
+    <value>Vaš nalog je spreman za prijavu sa novom lozinkom.</value>
+  </data>
+  <data name="AccessDeniedTitle" xml:space="preserve">
+    <value>Pristup odbijen</value>
+  </data>
+  <data name="AccessDeniedText" xml:space="preserve">
+    <value>Nemate dozvolu za pristup ovom resursu.</value>
+  </data>
+  <data name="ValidationRequired" xml:space="preserve">
+    <value>Ovo polje je obavezno.</value>
+  </data>
+  <data name="ValidationEmail" xml:space="preserve">
+    <value>Unesite ispravnu email adresu.</value>
+  </data>
+  <data name="ValidationUrl" xml:space="preserve">
+    <value>Unesite ispravnu web adresu.</value>
+  </data>
+  <data name="ValidationDate" xml:space="preserve">
+    <value>Unesite ispravan datum.</value>
+  </data>
+  <data name="ValidationDateIso" xml:space="preserve">
+    <value>Unesite ispravan datum (ISO).</value>
+  </data>
+  <data name="ValidationNumber" xml:space="preserve">
+    <value>Unesite ispravan broj.</value>
+  </data>
+  <data name="ValidationDigits" xml:space="preserve">
+    <value>Unesite samo brojeve.</value>
+  </data>
+  <data name="ValidationCreditCard" xml:space="preserve">
+    <value>Unesite ispravan broj kreditne kartice.</value>
+  </data>
+  <data name="ValidationEqualTo" xml:space="preserve">
+    <value>Unesite ponovo istu vrijednost.</value>
+  </data>
+  <data name="ValidationMaxLength" xml:space="preserve">
+    <value>Unesite najviše {0} znakova.</value>
+  </data>
+  <data name="ValidationMinLength" xml:space="preserve">
+    <value>Unesite najmanje {0} znakova.</value>
+  </data>
+  <data name="ValidationRangeLength" xml:space="preserve">
+    <value>Unesite vrijednost između {0} i {1} znakova.</value>
+  </data>
+  <data name="ValidationRange" xml:space="preserve">
+    <value>Unesite vrijednost između {0} i {1}.</value>
+  </data>
+  <data name="ValidationMax" xml:space="preserve">
+    <value>Unesite vrijednost manju ili jednaku {0}.</value>
+  </data>
+  <data name="ValidationMin" xml:space="preserve">
+    <value>Unesite vrijednost veću ili jednaku {0}.</value>
+  </data>
+  <data name="PasswordPolicyError" xml:space="preserve">
+    <value>Lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo.</value>
+  </data>
+  <data name="InvalidLogin" xml:space="preserve">
+    <value>Neispravan e-mail, korisničko ime ili lozinka.</value>
+  </data>
+  <data name="TwoFactorRequired" xml:space="preserve">
+    <value>Potrebna je dvofaktorska autentifikacija.</value>
+  </data>
+  <data name="AccountLocked" xml:space="preserve">
+    <value>Korisnički nalog je privremeno zaključan zbog previše neuspjelih pokušaja.</value>
+  </data>
+  <data name="LoginNotAllowed" xml:space="preserve">
+    <value>Nalog nije dozvoljen za prijavu.</value>
+  </data>
+  <data name="ResetLinkInvalid" xml:space="preserve">
+    <value>Link za resetovanje lozinke nije ispravan ili je istekao.</value>
+  </data>
+  <data name="RegisterSuccess" xml:space="preserve">
+    <value>Registracija uspješna. Sada se možete prijaviti.</value>
+  </data>
+  <data name="UsernameTaken" xml:space="preserve">
+    <value>Korisničko ime '{0}' je već zauzeto.</value>
+  </data>
+  <data name="EmailTaken" xml:space="preserve">
+    <value>Email '{0}' je već zauzet.</value>
+  </data>
+  <data name="Dashboard" xml:space="preserve">
+    <value>Dashboard</value>
+  </data>
+  <data name="AdminPanel" xml:space="preserve">
+    <value>Admin panel</value>
+  </data>
+  <data name="AdminMenu" xml:space="preserve">
+    <value>Admin meni</value>
+  </data>
+  <data name="DashboardVehicles" xml:space="preserve">
+    <value>Vozila</value>
+  </data>
+  <data name="DashboardUsers" xml:space="preserve">
+    <value>Korisnici</value>
+  </data>
+  <data name="DashboardOrders" xml:space="preserve">
+    <value>Narudžbe</value>
+  </data>
+  <data name="DashboardActiveInquiries" xml:space="preserve">
+    <value>Aktivni upiti</value>
+  </data>
+  <data name="DashboardRevenue" xml:space="preserve">
+    <value>Promet</value>
+  </data>
+  <data name="DashboardTotalCatalog" xml:space="preserve">
+    <value>Ukupno u katalogu</value>
+  </data>
+  <data name="DashboardRegisteredAccounts" xml:space="preserve">
+    <value>Registrovani nalozi</value>
+  </data>
+  <data name="DashboardTotalPurchases" xml:space="preserve">
+    <value>Ukupno kupovina</value>
+  </data>
+  <data name="DashboardWaitingForReview" xml:space="preserve">
+    <value>Čekaju obradu</value>
+  </data>
+  <data name="DashboardTotalOrders" xml:space="preserve">
+    <value>Ukupno evidentirane narudžbe</value>
+  </data>
+  <data name="DashboardLatestPurchases" xml:space="preserve">
+    <value>Zadnje kupovine</value>
+  </data>
+  <data name="DashboardLatestPurchasesDesc" xml:space="preserve">
+    <value>Najnovije narudžbe i vozila koja su kupci odabrali.</value>
+  </data>
+  <data name="DashboardNoPurchases" xml:space="preserve">
+    <value>Nema evidentiranih kupovina.</value>
+  </data>
+  <data name="DashboardOrder" xml:space="preserve">
+    <value>Narudžba</value>
+  </data>
+  <data name="DashboardVehicleUnavailable" xml:space="preserve">
+    <value>Vozilo nije dostupno</value>
+  </data>
+  <data name="DashboardSupportInquiries" xml:space="preserve">
+    <value>Upiti za podršku</value>
+  </data>
+  <data name="DashboardLatestSupportDesc" xml:space="preserve">
+    <value>Najnoviji korisnički upiti.</value>
+  </data>
+  <data name="DashboardOpen" xml:space="preserve">
+    <value>Otvori</value>
+  </data>
+  <data name="DashboardNoInquiries" xml:space="preserve">
+    <value>Nema novih upita.</value>
+  </data>
+  <data name="DashboardReviews" xml:space="preserve">
+    <value>Recenzije</value>
+  </data>
+  <data name="DashboardLatestReviewsDesc" xml:space="preserve">
+    <value>Najnovije ocjene vozila.</value>
+  </data>
+  <data name="DashboardNoReviews" xml:space="preserve">
+    <value>Nema novih recenzija.</value>
+  </data>
+  <data name="StatusCreated" xml:space="preserve">
+    <value>Kreirana</value>
+  </data>
+  <data name="StatusPaid" xml:space="preserve">
+    <value>Plaćena</value>
+  </data>
+  <data name="StatusProcessing" xml:space="preserve">
+    <value>U obradi</value>
+  </data>
+  <data name="StatusDelivered" xml:space="preserve">
+    <value>Isporučena</value>
+  </data>
+  <data name="StatusCanceled" xml:space="preserve">
+    <value>Otkazana</value>
+  </data>
+  <data name="StatusSent" xml:space="preserve">
+    <value>Poslat</value>
+  </data>
+  <data name="StatusAnswered" xml:space="preserve">
+    <value>Odgovoren</value>
+  </data>
+  <data name="StatusClosed" xml:space="preserve">
+    <value>Zatvoren</value>
+  </data>
+  <data name="Validation.UsernameRequired" xml:space="preserve">
+    <value>Korisničko ime je obavezno.</value>
+  </data>
+  <data name="Validation.UsernameMaxLength" xml:space="preserve">
+    <value>Korisničko ime ne može biti duže od 100 karaktera.</value>
+  </data>
+  <data name="Validation.UsernameAlphanumeric" xml:space="preserve">
+    <value>Korisničko ime može sadržavati samo slova i brojeve.</value>
+  </data>
+  <data name="Validation.EmailRequired" xml:space="preserve">
+    <value>Email adresa je obavezna.</value>
+  </data>
+  <data name="Validation.EmailValid" xml:space="preserve">
+    <value>Unesite ispravnu email adresu.</value>
+  </data>
+  <data name="Validation.PasswordRequired" xml:space="preserve">
+    <value>Lozinka je obavezna.</value>
+  </data>
+  <data name="Validation.ConfirmPasswordRequired" xml:space="preserve">
+    <value>Potvrda lozinke je obavezna.</value>
+  </data>
+  <data name="Validation.PasswordsMatch" xml:space="preserve">
+    <value>Lozinka i potvrda lozinke se ne podudaraju.</value>
+  </data>
+  <data name="Validation.LoginIdentifierRequired" xml:space="preserve">
+    <value>E-mail ili korisničko ime je obavezno.</value>
+  </data>
+  <data name="Validation.FirstNameRequired" xml:space="preserve">
+    <value>Ime je obavezno.</value>
+  </data>
+  <data name="Validation.FirstNameMaxLength" xml:space="preserve">
+    <value>Ime ne može biti duže od 100 karaktera.</value>
+  </data>
+  <data name="Validation.FirstNameLettersOnly" xml:space="preserve">
+    <value>Ime može sadržavati samo slova.</value>
+  </data>
+  <data name="Validation.LastNameRequired" xml:space="preserve">
+    <value>Prezime je obavezno.</value>
+  </data>
+  <data name="Validation.LastNameMaxLength" xml:space="preserve">
+    <value>Prezime ne može biti duže od 100 karaktera.</value>
+  </data>
+  <data name="Validation.LastNameLettersOnly" xml:space="preserve">
+    <value>Prezime može sadržavati samo slova.</value>
+  </data>
+  <data name="Validation.NewPasswordRequired" xml:space="preserve">
+    <value>Nova lozinka je obavezna.</value>
+  </data>
+  <data name="Validation.ConfirmNewPasswordRequired" xml:space="preserve">
+    <value>Potvrda nove lozinke je obavezna.</value>
+  </data>
+  <data name="Validation.NewPasswordsMatch" xml:space="preserve">
+    <value>Nova lozinka i potvrda lozinke se ne podudaraju.</value>
+  </data>
+  <data name="Validation.CurrentPasswordRequired" xml:space="preserve">
+    <value>Trenutna lozinka je obavezna.</value>
+  </data>
+  <data name="Validation.SubjectRequired" xml:space="preserve">
+    <value>Naslov je obavezan.</value>
+  </data>
+  <data name="Validation.SubjectMaxLength" xml:space="preserve">
+    <value>Naslov ne može biti duži od 200 karaktera.</value>
+  </data>
+  <data name="Validation.MessageRequired" xml:space="preserve">
+    <value>Poruka je obavezna.</value>
+  </data>
+  <data name="ContactSubject" xml:space="preserve">
+    <value>Naslov</value>
+  </data>
+  <data name="ContactMessage" xml:space="preserve">
+    <value>Poruka</value>
+  </data>
+  <data name="CurrentPassword" xml:space="preserve">
+    <value>Trenutna lozinka</value>
+  </data>
+  <data name="VehicleMake" xml:space="preserve">
+    <value>Marka</value>
+  </data>
+  <data name="VehicleModel" xml:space="preserve">
+    <value>Model</value>
+  </data>
+  <data name="VehicleYear" xml:space="preserve">
+    <value>Godište</value>
+  </data>
+  <data name="VehicleFuel" xml:space="preserve">
+    <value>Gorivo</value>
+  </data>
+  <data name="VehicleDisplacement" xml:space="preserve">
+    <value>Kubikaža</value>
+  </data>
+  <data name="VehicleColor" xml:space="preserve">
+    <value>Boja</value>
+  </data>
+  <data name="VehicleMileage" xml:space="preserve">
+    <value>Kilometraža</value>
+  </data>
+  <data name="VehiclePrice" xml:space="preserve">
+    <value>Cijena</value>
+  </data>
+  <data name="VehicleImage" xml:space="preserve">
+    <value>Slika</value>
+  </data>
+  <data name="VehicleDescription" xml:space="preserve">
+    <value>Opis</value>
+  </data>
+  <data name="Validation.VehicleMakeRequired" xml:space="preserve">
+    <value>Marka vozila je obavezna.</value>
+  </data>
+  <data name="Validation.VehicleMakeMaxLength" xml:space="preserve">
+    <value>Marka ne može biti duža od 100 karaktera.</value>
+  </data>
+  <data name="Validation.VehicleModelRequired" xml:space="preserve">
+    <value>Model vozila je obavezan.</value>
+  </data>
+  <data name="Validation.VehicleModelMaxLength" xml:space="preserve">
+    <value>Model ne može biti duži od 100 karaktera.</value>
+  </data>
+  <data name="Validation.VehicleYearRequired" xml:space="preserve">
+    <value>Godište je obavezno.</value>
+  </data>
+  <data name="Validation.VehicleYearRange" xml:space="preserve">
+    <value>Godište mora biti između 1900 i 2026.</value>
+  </data>
+  <data name="Validation.VehicleFuelRequired" xml:space="preserve">
+    <value>Gorivo je obavezno.</value>
+  </data>
+  <data name="Validation.VehicleDisplacementPositive" xml:space="preserve">
+    <value>Kubikaža ne može biti negativna.</value>
+  </data>
+  <data name="Validation.VehicleColorRequired" xml:space="preserve">
+    <value>Boja je obavezna.</value>
+  </data>
+  <data name="Validation.VehicleColorMaxLength" xml:space="preserve">
+    <value>Boja ne može biti duža od 50 karaktera.</value>
+  </data>
+  <data name="Validation.VehicleColorLettersOnly" xml:space="preserve">
+    <value>Boja može sadržavati samo slova.</value>
+  </data>
+  <data name="Validation.VehicleMileageRequired" xml:space="preserve">
+    <value>Kilometraža je obavezna.</value>
+  </data>
+  <data name="Validation.VehicleMileagePositive" xml:space="preserve">
+    <value>Kilometraža ne može biti negativna.</value>
+  </data>
+  <data name="Validation.VehiclePriceRequired" xml:space="preserve">
+    <value>Cijena je obavezna.</value>
+  </data>
+  <data name="Validation.VehiclePricePositive" xml:space="preserve">
+    <value>Cijena mora biti veća od nule.</value>
+  </data>
+  <data name="Validation.VehicleDescriptionRequired" xml:space="preserve">
+    <value>Opis je obavezan.</value>
+  </data>
+  <data name="Validation.VehicleDescriptionMaxLength" xml:space="preserve">
+    <value>Opis ne može biti duži od 2000 karaktera.</value>
+  </data>
+  <data name="HomeTitle" xml:space="preserve">
+    <value>Početna stranica</value>
+  </data>
+  <data name="HomeFeaturedVehicle" xml:space="preserve">
+    <value>Izdvojeno vozilo</value>
+  </data>
+  <data name="PriceOnRequest" xml:space="preserve">
+    <value>Cijena na upit</value>
+  </data>
+  <data name="NotEntered" xml:space="preserve">
+    <value>Nije uneseno</value>
+  </data>
+  <data name="MileageNotEntered" xml:space="preserve">
+    <value>Kilometraža nije unesena</value>
+  </data>
+  <data name="ImageUnavailable" xml:space="preserve">
+    <value>Slika nije dostupna</value>
+  </data>
+  <data name="VehicleSearchAria" xml:space="preserve">
+    <value>Pretraži vozila</value>
+  </data>
+  <data name="ViewDetails" xml:space="preserve">
+    <value>Pogledaj detalje</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Detalji</value>
+  </data>
+  <data name="HomeHeroBadge" xml:space="preserve">
+    <value>Brza kupovina, provjerena vozila</value>
+  </data>
+  <data name="HomeHeroTitleStart" xml:space="preserve">
+    <value>Pronađite vozilo koje izgleda dobro, vozi bolje i</value>
+  </data>
+  <data name="HomeHeroTitleAccent" xml:space="preserve">
+    <value>odgovara vašem budžetu.</value>
+  </data>
+  <data name="HomeHeroText" xml:space="preserve">
+    <value>OneZone donosi preglednu ponudu automobila, jednostavnu pretragu, transparentne cijene i podršku tokom cijelog procesa kupovine.</value>
+  </data>
+  <data name="HomeViewOffer" xml:space="preserve">
+    <value>Pogledaj ponudu</value>
+  </data>
+  <data name="HomeContactUs" xml:space="preserve">
+    <value>Kontaktiraj nas</value>
+  </data>
+  <data name="HomeSearchPlaceholder" xml:space="preserve">
+    <value>Marka, model, godina ili cijena...</value>
+  </data>
+  <data name="HomeFindVehicle" xml:space="preserve">
+    <value>Pronađi vozilo</value>
+  </data>
+  <data name="VehicleYearLower" xml:space="preserve">
+    <value>godište</value>
+  </data>
+  <data name="VehicleMileageLower" xml:space="preserve">
+    <value>kilometraža</value>
+  </data>
+  <data name="VehicleFuelLower" xml:space="preserve">
+    <value>gorivo</value>
+  </data>
+  <data name="HomeNoFeaturedVehicle" xml:space="preserve">
+    <value>Izdvojeno vozilo trenutno nije dostupno</value>
+  </data>
+  <data name="HomeOfferAvailableOnVehicles" xml:space="preserve">
+    <value>Ponuda se može pregledati na stranici vozila.</value>
+  </data>
+  <data name="HomeWhyEyebrow" xml:space="preserve">
+    <value>Zašto OneZone?</value>
+  </data>
+  <data name="HomeWhyTitle" xml:space="preserve">
+    <value>Kupovina automobila treba biti jednostavna, brza i sigurna.</value>
+  </data>
+  <data name="HomeWhyText" xml:space="preserve">
+    <value>Ponuda je organizovana za brzo poređenje vozila, pregled detalja i direktan nastavak kupovine.</value>
+  </data>
+  <data name="HomeFeatureSelectionTitle" xml:space="preserve">
+    <value>Veliki izbor vozila</value>
+  </data>
+  <data name="HomeFeatureSelectionText" xml:space="preserve">
+    <value>Pregled vozila je filtriran, pretraživ i prilagođen brzom poređenju osnovnih podataka.</value>
+  </data>
+  <data name="HomeFeaturePricesTitle" xml:space="preserve">
+    <value>Jasne cijene</value>
+  </data>
+  <data name="HomeFeaturePricesText" xml:space="preserve">
+    <value>Cijena vozila je prikazana na listi, detaljima i u korpi bez oslanjanja na podatke iz forme.</value>
+  </data>
+  <data name="HomeFeaturePurchaseTitle" xml:space="preserve">
+    <value>Provjeren tok kupovine</value>
+  </data>
+  <data name="HomeFeaturePurchaseText" xml:space="preserve">
+    <value>Narudžba, korpa i plaćanje koriste podatke iz baze i vode korisnika kroz jasan proces.</value>
+  </data>
+  <data name="HomeFeatureSupportTitle" xml:space="preserve">
+    <value>Podrška</value>
+  </data>
+  <data name="HomeFeatureSupportText" xml:space="preserve">
+    <value>Korisnici mogu poslati upit kroz kontakt formu i nastaviti komunikaciju sa timom salona.</value>
+  </data>
+  <data name="HomeFeaturedVehiclesEyebrow" xml:space="preserve">
+    <value>Izdvojena vozila</value>
+  </data>
+  <data name="HomeFeaturedVehiclesTitle" xml:space="preserve">
+    <value>Aktuelna vozila iz ponude</value>
+  </data>
+  <data name="HomeFeaturedVehiclesText" xml:space="preserve">
+    <value>Kartice se popunjavaju direktno iz baze, tako da se prikazuje ono što trenutno postoji u sistemu.</value>
+  </data>
+  <data name="HomeNoFeaturedVehicles" xml:space="preserve">
+    <value>Trenutno nema izdvojenih vozila</value>
+  </data>
+  <data name="HomeNoFeaturedVehiclesText" xml:space="preserve">
+    <value>Kada se vozila dodaju u bazu, ova sekcija će se automatski popuniti.</value>
+  </data>
+  <data name="HomeCurrentOfferEyebrow" xml:space="preserve">
+    <value>Aktuelna ponuda</value>
+  </data>
+  <data name="HomeCurrentOfferTitle" xml:space="preserve">
+    <value>Pregled vozila bez nepotrebnog čekanja.</value>
+  </data>
+  <data name="HomeCurrentOfferText" xml:space="preserve">
+    <value>Stranica vozila vodi prema stvarnim zapisima iz baze, sa slikama, filterima, detaljima i nastavkom kupovine.</value>
+  </data>
+  <data name="HomeOpenVehicles" xml:space="preserve">
+    <value>Otvori vozila</value>
+  </data>
+  <data name="HomeSupportEyebrow" xml:space="preserve">
+    <value>Brza podrška</value>
+  </data>
+  <data name="HomeSupportTitle" xml:space="preserve">
+    <value>Pošaljite upit za vozilo ili proces kupovine.</value>
+  </data>
+  <data name="HomeSupportText" xml:space="preserve">
+    <value>Kontakt forma je povezana sa postojećim dijelom aplikacije, pa se poruke obrađuju kroz realan tok podrške.</value>
+  </data>
+  <data name="HomeSupportPointResponse" xml:space="preserve">
+    <value>Odgovor u najkraćem roku</value>
+  </data>
+  <data name="HomeSupportPointChoice" xml:space="preserve">
+    <value>Pomoć pri izboru vozila</value>
+  </data>
+  <data name="HomeSupportPointAppointment" xml:space="preserve">
+    <value>Dogovor oko pregleda i kupovine</value>
+  </data>
+  <data name="HomeSendMessage" xml:space="preserve">
+    <value>Pošaljite poruku</value>
+  </data>
+  <data name="ContactTitle" xml:space="preserve">
+    <value>Kontaktirajte podršku</value>
+  </data>
+  <data name="ContactEyebrow" xml:space="preserve">
+    <value>Podrška</value>
+  </data>
+  <data name="ContactHeaderTitle" xml:space="preserve">
+    <value>Kontaktirajte naš tim</value>
+  </data>
+  <data name="ContactHeaderText" xml:space="preserve">
+    <value>Pošaljite upit za vozilo, proces kupovine ili dodatne informacije. Tim podrške će odgovoriti u najkraćem roku.</value>
+  </data>
+  <data name="ContactSendMessageHeading" xml:space="preserve">
+    <value>Pošaljite poruku</value>
+  </data>
+  <data name="ContactSupportRequestHeading" xml:space="preserve">
+    <value>Pošaljite upit podršci</value>
+  </data>
+  <data name="ContactSignedInText" xml:space="preserve">
+    <value>Napišite pitanje i tim podrške će odgovoriti u najkraćem roku.</value>
+  </data>
+  <data name="ContactGuestText" xml:space="preserve">
+    <value>Za slanje poruke kroz aplikaciju potrebno je da korisnik bude prijavljen.</value>
+  </data>
+  <data name="ContactSubjectPlaceholder" xml:space="preserve">
+    <value>Unesite naslov</value>
+  </data>
+  <data name="ContactMessagePlaceholder" xml:space="preserve">
+    <value>Napišite vašu poruku</value>
+  </data>
+  <data name="ContactSendMessage" xml:space="preserve">
+    <value>Pošaljite poruku</value>
+  </data>
+  <data name="ContactGuestDetails" xml:space="preserve">
+    <value>Nakon prijave moguće je poslati upit za vozilo, kupovinu ili narudžbu.</value>
+  </data>
+  <data name="ContactLoginToSend" xml:space="preserve">
+    <value>Prijavi se za slanje poruke</value>
+  </data>
+  <data name="ContactDirectEmail" xml:space="preserve">
+    <value>Pošalji email direktno</value>
+  </data>
+  <data name="ContactFooterNote" xml:space="preserve">
+    <value>Podrška će odgovoriti što je prije moguće. Hvala na strpljenju.</value>
+  </data>
+  <data name="ContactInfoTitle" xml:space="preserve">
+    <value>Informacije</value>
+  </data>
+  <data name="ContactPhone" xml:space="preserve">
+    <value>Telefon</value>
+  </data>
+  <data name="ContactResponseTime" xml:space="preserve">
+    <value>Vrijeme odgovora</value>
+  </data>
+  <data name="ContactResponseSoon" xml:space="preserve">
+    <value>U najkraćem mogućem roku</value>
+  </data>
+  <data name="ContactInquiries" xml:space="preserve">
+    <value>Upiti</value>
+  </data>
+  <data name="ContactInquiryTypes" xml:space="preserve">
+    <value>Vozila, kupovina i narudžbe</value>
+  </data>
+  <data name="PrivacyTitle" xml:space="preserve">
+    <value>Politika privatnosti</value>
+  </data>
+  <data name="PrivacyText" xml:space="preserve">
+    <value>Ova stranica sažima informacije o privatnosti za demo aplikaciju Autosalon OneZone.</value>
+  </data>
+  <data name="VehiclesTitle" xml:space="preserve">
+    <value>Vozila</value>
+  </data>
+  <data name="VehiclesOverview" xml:space="preserve">
+    <value>Pregled vozila</value>
+  </data>
+  <data name="VehiclesHeroTitle" xml:space="preserve">
+    <value>Pronađite vozilo koje vam odgovara.</value>
+  </data>
+  <data name="VehiclesHeroText" xml:space="preserve">
+    <value>Pretražite ponudu prema marki, modelu, cijeni, gorivu, kilometraži i godištu.</value>
+  </data>
+  <data name="VehiclesSearchPlaceholder" xml:space="preserve">
+    <value>Pretraži marku ili model...</value>
+  </data>
+  <data name="SearchResultsFor" xml:space="preserve">
+    <value>Rezultati pretrage za:</value>
+  </data>
+  <data name="FiltersAndSorting" xml:space="preserve">
+    <value>Filteri i sortiranje</value>
+  </data>
+  <data name="FiltersText" xml:space="preserve">
+    <value>Suzi ponudu prema najvažnijim karakteristikama vozila.</value>
+  </data>
+  <data name="ShowHideFilters" xml:space="preserve">
+    <value>Prikaži/sakrij filtere</value>
+  </data>
+  <data name="Sorting" xml:space="preserve">
+    <value>Sortiranje</value>
+  </data>
+  <data name="SortBy" xml:space="preserve">
+    <value>Sortiraj po:</value>
+  </data>
+  <data name="SortNameAsc" xml:space="preserve">
+    <value>Naziv (A-Z)</value>
+  </data>
+  <data name="SortNameDesc" xml:space="preserve">
+    <value>Naziv (Z-A)</value>
+  </data>
+  <data name="SortPriceAsc" xml:space="preserve">
+    <value>Cijena (rastuće)</value>
+  </data>
+  <data name="SortPriceDesc" xml:space="preserve">
+    <value>Cijena (opadajuće)</value>
+  </data>
+  <data name="SortYearAsc" xml:space="preserve">
+    <value>Godište (starije prvo)</value>
+  </data>
+  <data name="SortYearDesc" xml:space="preserve">
+    <value>Godište (novije prvo)</value>
+  </data>
+  <data name="AllFuelTypes" xml:space="preserve">
+    <value>Sva goriva</value>
+  </data>
+  <data name="FuelGasoline" xml:space="preserve">
+    <value>Benzin</value>
+  </data>
+  <data name="FuelDiesel" xml:space="preserve">
+    <value>Dizel</value>
+  </data>
+  <data name="FuelGas" xml:space="preserve">
+    <value>Plin</value>
+  </data>
+  <data name="FuelElectric" xml:space="preserve">
+    <value>Elektro</value>
+  </data>
+  <data name="FuelHybrid" xml:space="preserve">
+    <value>Hibrid</value>
+  </data>
+  <data name="EnterColor" xml:space="preserve">
+    <value>Unesite boju</value>
+  </data>
+  <data name="YearFrom" xml:space="preserve">
+    <value>Godište od</value>
+  </data>
+  <data name="YearTo" xml:space="preserve">
+    <value>Godište do</value>
+  </data>
+  <data name="PriceFromEuro" xml:space="preserve">
+    <value>Cijena od (€)</value>
+  </data>
+  <data name="PriceToEuro" xml:space="preserve">
+    <value>Cijena do (€)</value>
+  </data>
+  <data name="DisplacementFrom" xml:space="preserve">
+    <value>Kubikaža od</value>
+  </data>
+  <data name="DisplacementTo" xml:space="preserve">
+    <value>Kubikaža do</value>
+  </data>
+  <data name="MileageFrom" xml:space="preserve">
+    <value>Kilometraža od</value>
+  </data>
+  <data name="MileageTo" xml:space="preserve">
+    <value>Kilometraža do</value>
+  </data>
+  <data name="From" xml:space="preserve">
+    <value>Od</value>
+  </data>
+  <data name="To" xml:space="preserve">
+    <value>Do</value>
+  </data>
+  <data name="ApplyFilters" xml:space="preserve">
+    <value>Primijeni filtere</value>
+  </data>
+  <data name="ClearAllFilters" xml:space="preserve">
+    <value>Očisti sve filtere</value>
+  </data>
+  <data name="VehiclesFound" xml:space="preserve">
+    <value>Pronađeno {0} vozila</value>
+  </data>
+  <data name="NoVehiclesTitle" xml:space="preserve">
+    <value>Nema vozila za prikaz</value>
+  </data>
+  <data name="NoVehiclesText" xml:space="preserve">
+    <value>Promijenite pojam pretrage ili očistite filtere pa pokušajte ponovo.</value>
+  </data>
+  <data name="AddToCart" xml:space="preserve">
+    <value>Dodaj u korpu</value>
+  </data>
+  <data name="LoginToBuy" xml:space="preserve">
+    <value>Prijava za kupovinu</value>
+  </data>
+  <data name="CreateVehicleTitle" xml:space="preserve">
+    <value>Dodaj novo vozilo</value>
+  </data>
+  <data name="CreateVehicleText" xml:space="preserve">
+    <value>Unesite osnovne podatke vozila i sačuvajte ga u ponudu.</value>
+  </data>
+  <data name="BackToList" xml:space="preserve">
+    <value>Nazad na listu</value>
+  </data>
+  <data name="VehicleDetailsEyebrow" xml:space="preserve">
+    <value>Detalji vozila</value>
+  </data>
+  <data name="VehicleDetailsHeaderText" xml:space="preserve">
+    <value>Pregledajte specifikacije, cijenu, opis i opcije kupovine za odabrano vozilo.</value>
+  </data>
+  <data name="Available" xml:space="preserve">
+    <value>Dostupno</value>
+  </data>
+  <data name="BuyNow" xml:space="preserve">
+    <value>Kupi odmah</value>
+  </data>
+  <data name="Specifications" xml:space="preserve">
+    <value>Specifikacije</value>
+  </data>
+  <data name="NoVehicleDescription" xml:space="preserve">
+    <value>Nema dostupnog opisa za ovo vozilo.</value>
+  </data>
+  <data name="Reviews" xml:space="preserve">
+    <value>Recenzije</value>
+  </data>
+  <data name="UserReviews" xml:space="preserve">
+    <value>Recenzije korisnika</value>
+  </data>
+  <data name="NoReviewsTitle" xml:space="preserve">
+    <value>Trenutno nema recenzija</value>
+  </data>
+  <data name="NoReviewsPurchasedText" xml:space="preserve">
+    <value>Kupite ovo vozilo kako biste mogli dodati recenziju.</value>
+  </data>
+  <data name="NoReviewsLoginText" xml:space="preserve">
+    <value>Prijavite se kako biste mogli kupiti i recenzirati ovo vozilo.</value>
+  </data>
+  <data name="Vehicle" xml:space="preserve">
+    <value>Vozilo</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="LoanCalculator" xml:space="preserve">
+    <value>Kalkulator kredita</value>
+  </data>
+  <data name="LoanCalculatorText" xml:space="preserve">
+    <value>Izračunajte okvirnu mjesečnu ratu.</value>
+  </data>
+  <data name="LoanAmountEuro" xml:space="preserve">
+    <value>Visina kredita (€)</value>
+  </data>
+  <data name="EnterAmount" xml:space="preserve">
+    <value>Unesite iznos</value>
+  </data>
+  <data name="InstallmentCount" xml:space="preserve">
+    <value>Broj rata</value>
+  </data>
+  <data name="MonthsCount" xml:space="preserve">
+    <value>{0} mjeseci</value>
+  </data>
+  <data name="InterestRate" xml:space="preserve">
+    <value>Kamatna stopa (%)</value>
+  </data>
+  <data name="Calculate" xml:space="preserve">
+    <value>Izračunaj</value>
+  </data>
+  <data name="MonthlyInstallment" xml:space="preserve">
+    <value>Mjesečna rata</value>
+  </data>
+  <data name="LoanCalculatorNote" xml:space="preserve">
+    <value>* Kalkulator je informativnog karaktera i ne predstavlja ponudu za kredit.</value>
+  </data>
+  <data name="ReviewComment" xml:space="preserve">
+    <value>Komentar recenzije</value>
+  </data>
+  <data name="ReviewCommentFullText" xml:space="preserve">
+    <value>Pregled punog komentara korisnika.</value>
+  </data>
+  <data name="PaymentDetails" xml:space="preserve">
+    <value>Podaci za plaćanje</value>
+  </data>
+  <data name="PaymentDetailsFor" xml:space="preserve">
+    <value>Podaci za plaćanje - {0}</value>
+  </data>
+  <data name="PaymentDetailsText" xml:space="preserve">
+    <value>Unesite podatke kartice za završetak kupovine.</value>
+  </data>
+  <data name="TotalToPay" xml:space="preserve">
+    <value>Ukupno za plaćanje:</value>
+  </data>
+  <data name="CardHolderName" xml:space="preserve">
+    <value>Ime i prezime vlasnika kartice</value>
+  </data>
+  <data name="CardNumber" xml:space="preserve">
+    <value>Broj kartice</value>
+  </data>
+  <data name="ExpiryDate" xml:space="preserve">
+    <value>Datum isteka</value>
+  </data>
+  <data name="CvvCode" xml:space="preserve">
+    <value>CVV kod</value>
+  </data>
+  <data name="ConfirmPurchase" xml:space="preserve">
+    <value>Potvrdi kupovinu</value>
+  </data>
+  <data name="Processing" xml:space="preserve">
+    <value>Obrađivanje...</value>
+  </data>
+  <data name="PaymentFailedPrefix" xml:space="preserve">
+    <value>Plaćanje nije uspjelo: </value>
+  </data>
+  <data name="PaymentRequestError" xml:space="preserve">
+    <value>Došlo je do greške prilikom obrade zahtjeva. Molimo pokušajte ponovo.</value>
+  </data>
+  <data name="PaymentRequestErrorWithDetail" xml:space="preserve">
+    <value>Došlo je do greške prilikom obrade zahtjeva: </value>
+  </data>
+  <data name="PaymentHolderRequired" xml:space="preserve">
+    <value>Ime i prezime su obavezni.</value>
+  </data>
+  <data name="PaymentHolderFullName" xml:space="preserve">
+    <value>Unesite ime i prezime (mora sadržavati razmak).</value>
+  </data>
+  <data name="PaymentCardRequired" xml:space="preserve">
+    <value>Broj kartice je obavezan.</value>
+  </data>
+  <data name="PaymentCardLength" xml:space="preserve">
+    <value>Broj kartice mora sadržavati tačno 16 cifara.</value>
+  </data>
+  <data name="PaymentExpiryRequired" xml:space="preserve">
+    <value>Datum isteka je obavezan.</value>
+  </data>
+  <data name="PaymentExpiryFormat" xml:space="preserve">
+    <value>Neispravan format datuma isteka. Koristite format MM/YY.</value>
+  </data>
+  <data name="PaymentCardExpired" xml:space="preserve">
+    <value>Kartica je istekla.</value>
+  </data>
+  <data name="PaymentCvvRequired" xml:space="preserve">
+    <value>CVV kod je obavezan.</value>
+  </data>
+  <data name="PaymentCvvLength" xml:space="preserve">
+    <value>CVV kod mora sadržavati tačno 3 cifre.</value>
+  </data>
+  <data name="CartTitle" xml:space="preserve">
+    <value>Korpa</value>
+  </data>
+  <data name="Purchase" xml:space="preserve">
+    <value>Kupovina</value>
+  </data>
+  <data name="CartHeaderTitle" xml:space="preserve">
+    <value>Vaša korpa</value>
+  </data>
+  <data name="CartHeaderText" xml:space="preserve">
+    <value>Pregledajte odabrana vozila, izračunajte ratu kredita i nastavite kupovinu.</value>
+  </data>
+  <data name="CartEmptyTitle" xml:space="preserve">
+    <value>Vaša korpa je prazna</value>
+  </data>
+  <data name="CartEmptyText" xml:space="preserve">
+    <value>Dodajte vozila iz kataloga kako biste ih vidjeli ovdje i nastavili kupovinu.</value>
+  </data>
+  <data name="BrowseVehicles" xml:space="preserve">
+    <value>Pregledajte vozila</value>
+  </data>
+  <data name="TotalVehicles" xml:space="preserve">
+    <value>Ukupno vozila:</value>
+  </data>
+  <data name="InCart" xml:space="preserve">
+    <value>U korpi</value>
+  </data>
+  <data name="Buy" xml:space="preserve">
+    <value>Kupi</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Ukloni</value>
+  </data>
+  <data name="VehicleCount" xml:space="preserve">
+    <value>Broj vozila</value>
+  </data>
+  <data name="TotalAmount" xml:space="preserve">
+    <value>Ukupan iznos</value>
+  </data>
+  <data name="PaymentDue" xml:space="preserve">
+    <value>Za plaćanje</value>
+  </data>
+  <data name="ContinueToCheckout" xml:space="preserve">
+    <value>Nastavi na checkout</value>
+  </data>
+  <data name="ClearCart" xml:space="preserve">
+    <value>Isprazni korpu</value>
+  </data>
+  <data name="ClearCartConfirmTitle" xml:space="preserve">
+    <value>Isprazniti korpu?</value>
+  </data>
+  <data name="ClearCartConfirmMessage" xml:space="preserve">
+    <value>Da li ste sigurni da želite isprazniti korpu?</value>
+  </data>
+  <data name="ClearCartConfirmItem" xml:space="preserve">
+    <value>Sva vozila iz korpe</value>
+  </data>
+  <data name="ClearCartConfirmAction" xml:space="preserve">
+    <value>Da, isprazni korpu</value>
+  </data>
+  <data name="CheckoutTitle" xml:space="preserve">
+    <value>Checkout - završi kupovinu</value>
+  </data>
+  <data name="CheckoutText" xml:space="preserve">
+    <value>Odaberite vozila i unesite podatke za plaćanje.</value>
+  </data>
+  <data name="SelectVehiclesForPurchase" xml:space="preserve">
+    <value>Odaberite vozila za kupovinu:</value>
+  </data>
+  <data name="SelectAtLeastOneVehicle" xml:space="preserve">
+    <value>Morate odabrati barem jedno vozilo.</value>
+  </data>
+  <data name="Total" xml:space="preserve">
+    <value>Ukupno:</value>
+  </data>
+  <data name="PurchaseSuccessTitle" xml:space="preserve">
+    <value>Uspješna kupovina</value>
+  </data>
+  <data name="PurchaseCompleted" xml:space="preserve">
+    <value>Kupovina završena</value>
+  </data>
+  <data name="PurchaseRecorded" xml:space="preserve">
+    <value>Vaša narudžba je uspješno evidentirana.</value>
+  </data>
+  <data name="ThankYouForPurchase" xml:space="preserve">
+    <value>Hvala na kupovini!</value>
+  </data>
+  <data name="PurchaseSuccessText" xml:space="preserve">
+    <value>Vaša kupovina je uspješno završena. Detalje narudžbe možete pregledati ispod.</value>
+  </data>
+  <data name="OrderNumber" xml:space="preserve">
+    <value>Broj narudžbe</value>
+  </data>
+  <data name="Date" xml:space="preserve">
+    <value>Datum</value>
+  </data>
+  <data name="PurchaseDetails" xml:space="preserve">
+    <value>Detalji kupovine</value>
+  </data>
+  <data name="WhatNext" xml:space="preserve">
+    <value>Šta slijedi?</value>
+  </data>
+  <data name="PurchaseNextText" xml:space="preserve">
+    <value>Dodatne informacije o preuzimanju vozila dobit ćete putem e-maila. Za pitanja možete koristiti kontakt stranicu ili direktno pisati na</value>
+  </data>
+  <data name="BackToVehicles" xml:space="preserve">
+    <value>Povratak na vozila</value>
+  </data>
+  <data name="UserProfileEyebrow" xml:space="preserve">
+    <value>Korisnički profil</value>
+  </data>
+  <data name="ProfileHeaderText" xml:space="preserve">
+    <value>Pregledajte svoje podatke, kupljene artikle i recenzije.</value>
+  </data>
+  <data name="FullName" xml:space="preserve">
+    <value>Ime i prezime</value>
+  </data>
+  <data name="QuickActions" xml:space="preserve">
+    <value>Brze akcije</value>
+  </data>
+  <data name="QuickActionsText" xml:space="preserve">
+    <value>Upravljajte profilom, kupovinama i korpom.</value>
+  </data>
+  <data name="EditProfile" xml:space="preserve">
+    <value>Uredi profil</value>
+  </data>
+  <data name="ProfileReviewsText" xml:space="preserve">
+    <value>Vaše recenzije vozila.</value>
+  </data>
+  <data name="RatingOutOfFive" xml:space="preserve">
+    <value>Ocjena {0} od 5</value>
+  </data>
+  <data name="NoReviewsToShow" xml:space="preserve">
+    <value>Nema recenzija za prikaz.</value>
+  </data>
+  <data name="EditProfileHeaderText" xml:space="preserve">
+    <value>Ažurirajte osnovne podatke svog korisničkog naloga.</value>
+  </data>
+  <data name="EditData" xml:space="preserve">
+    <value>Uredi podatke</value>
+  </data>
+  <data name="EditDataText" xml:space="preserve">
+    <value>Sačuvajte tačne podatke za prijavu i komunikaciju.</value>
+  </data>
+  <data name="BackToProfile" xml:space="preserve">
+    <value>Nazad na profil</value>
+  </data>
+  <data name="SaveChanges" xml:space="preserve">
+    <value>Sačuvaj izmjene</value>
+  </data>
+  <data name="PasswordChangeTitle" xml:space="preserve">
+    <value>Promjena lozinke</value>
+  </data>
+  <data name="PasswordChangeText" xml:space="preserve">
+    <value>Unesite trenutnu i novu lozinku za svoj nalog.</value>
+  </data>
+  <data name="PasswordChangedSuccess" xml:space="preserve">
+    <value>Lozinka je uspješno promijenjena.</value>
+  </data>
+  <data name="Purchases" xml:space="preserve">
+    <value>Kupovine</value>
+  </data>
+  <data name="PurchasedItemsHeaderText" xml:space="preserve">
+    <value>Pregledajte vozila koja ste kupili i dodajte recenziju.</value>
+  </data>
+  <data name="YourPurchases" xml:space="preserve">
+    <value>Vaše kupovine</value>
+  </data>
+  <data name="YourPurchasesText" xml:space="preserve">
+    <value>Lista vozila kupljenih kroz aplikaciju.</value>
+  </data>
+  <data name="PurchaseDate" xml:space="preserve">
+    <value>Datum kupovine</value>
+  </data>
+  <data name="ReviewAdded" xml:space="preserve">
+    <value>Recenzija dodana</value>
+  </data>
+  <data name="YourReview" xml:space="preserve">
+    <value>Vaša recenzija</value>
+  </data>
+  <data name="ReviewDate" xml:space="preserve">
+    <value>Datum recenzije</value>
+  </data>
+  <data name="EditReview" xml:space="preserve">
+    <value>Izmijeni recenziju</value>
+  </data>
+  <data name="AddReview" xml:space="preserve">
+    <value>Dodaj recenziju</value>
+  </data>
+  <data name="RemoveReviewConfirmTitle" xml:space="preserve">
+    <value>Ukloniti recenziju?</value>
+  </data>
+  <data name="RemoveReviewConfirmMessage" xml:space="preserve">
+    <value>Jeste li sigurni da želite ukloniti ovu recenziju?</value>
+  </data>
+  <data name="RemoveReviewConfirmAction" xml:space="preserve">
+    <value>Da, ukloni recenziju</value>
+  </data>
+  <data name="ReviewModalTitle" xml:space="preserve">
+    <value>{0} za {1}</value>
+  </data>
+  <data name="Rating" xml:space="preserve">
+    <value>Ocjena</value>
+  </data>
+  <data name="RatingRequired" xml:space="preserve">
+    <value>Molimo odaberite ocjenu.</value>
+  </data>
+  <data name="Comment" xml:space="preserve">
+    <value>Komentar</value>
+  </data>
+  <data name="CommentRequired" xml:space="preserve">
+    <value>Komentar ne može biti prazan.</value>
+  </data>
+  <data name="NoPurchasedItems" xml:space="preserve">
+    <value>Još uvijek nema kupljenih artikala.</value>
+  </data>
+  <data name="ViewVehicleCatalog" xml:space="preserve">
+    <value>Pogledaj katalog vozila</value>
+  </data>
+  <data name="AdminDashboardTitle" xml:space="preserve">
+    <value>Dashboard</value>
+  </data>
+  <data name="AdminDashboardVehiclesButton" xml:space="preserve">
+    <value>Vozila</value>
+  </data>
+  <data name="AdminDashboardInquiriesButton" xml:space="preserve">
+    <value>Upiti</value>
+  </data>
+  <data name="AdminDashboardVehiclesTotal" xml:space="preserve">
+    <value>Ukupno u katalogu</value>
+  </data>
+  <data name="AdminDashboardUsersTotal" xml:space="preserve">
+    <value>Registrovani nalozi</value>
+  </data>
+  <data name="AdminDashboardOrdersTotal" xml:space="preserve">
+    <value>Ukupno kupovina</value>
+  </data>
+  <data name="AdminDashboardActiveInquiries" xml:space="preserve">
+    <value>Aktivni upiti</value>
+  </data>
+  <data name="AdminDashboardPendingProcessing" xml:space="preserve">
+    <value>?ekaju obradu</value>
+  </data>
+  <data name="AdminDashboardRevenue" xml:space="preserve">
+    <value>Promet</value>
+  </data>
+  <data name="AdminDashboardRevenueDesc" xml:space="preserve">
+    <value>Ukupno evidentirane narud?be</value>
+  </data>
+  <data name="AdminDashboardLatestPurchases" xml:space="preserve">
+    <value>Zadnje kupovine</value>
+  </data>
+  <data name="AdminDashboardLatestPurchasesText" xml:space="preserve">
+    <value>Najnovije narud?be i vozila koja su kupci odabrali.</value>
+  </data>
+  <data name="AdminDashboardNoPurchases" xml:space="preserve">
+    <value>Nema evidentiranih kupovina.</value>
+  </data>
+  <data name="AdminDashboardVehicleUnavailable" xml:space="preserve">
+    <value>Vozilo nije dostupno</value>
+  </data>
+  <data name="AdminDashboardOrder" xml:space="preserve">
+    <value>Narud?ba</value>
+  </data>
+  <data name="AdminDashboardSupportInquiries" xml:space="preserve">
+    <value>Upiti za podr?ku</value>
+  </data>
+  <data name="AdminDashboardLatestInquiriesText" xml:space="preserve">
+    <value>Najnoviji korisni?ki upiti.</value>
+  </data>
+  <data name="AdminDashboardOpen" xml:space="preserve">
+    <value>Otvori</value>
+  </data>
+  <data name="AdminDashboardNoInquiries" xml:space="preserve">
+    <value>Nema novih upita.</value>
+  </data>
+  <data name="AdminDashboardLatestReviewsText" xml:space="preserve">
+    <value>Najnovije ocjene vozila.</value>
+  </data>
+  <data name="AdminDashboardNoReviews" xml:space="preserve">
+    <value>Nema novih recenzija.</value>
+  </data>
+  <data name="AdminVehiclesTitle" xml:space="preserve">
+    <value>Pregled vozila</value>
+  </data>
+  <data name="AdminVehicle" xml:space="preserve">
+    <value>Vozilo</value>
+  </data>
+  <data name="AdminAddVehicle" xml:space="preserve">
+    <value>Dodaj novo vozilo</value>
+  </data>
+  <data name="AdminVehiclesList" xml:space="preserve">
+    <value>Lista vozila</value>
+  </data>
+  <data name="AdminVehiclesListText" xml:space="preserve">
+    <value>Pregled svih vozila u sistemu.</value>
+  </data>
+  <data name="AdminVehicleFuelFilterAria" xml:space="preserve">
+    <value>Filter vozila po gorivu</value>
+  </data>
+  <data name="AllVehicles" xml:space="preserve">
+    <value>Sva vozila</value>
+  </data>
+  <data name="AdminSearchVehiclesPlaceholder" xml:space="preserve">
+    <value>Pretra?i po nazivu...</value>
+  </data>
+  <data name="AdminSortBy" xml:space="preserve">
+    <value>Sortiraj po</value>
+  </data>
+  <data name="AdminSortPriceDesc" xml:space="preserve">
+    <value>Cijena: najvi?a prvo</value>
+  </data>
+  <data name="AdminSortPriceAsc" xml:space="preserve">
+    <value>Cijena: najni?a prvo</value>
+  </data>
+  <data name="AdminSortYearDesc" xml:space="preserve">
+    <value>Godi?te: najnovije prvo</value>
+  </data>
+  <data name="AdminSortYearAsc" xml:space="preserve">
+    <value>Godi?te: najstarije prvo</value>
+  </data>
+  <data name="AdminSortMileageAsc" xml:space="preserve">
+    <value>Kilometra?a: najmanja prvo</value>
+  </data>
+  <data name="AdminSortMileageDesc" xml:space="preserve">
+    <value>Kilometra?a: najve?a prvo</value>
+  </data>
+  <data name="AdminVehicleName" xml:space="preserve">
+    <value>Naziv</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Akcije</value>
+  </data>
+  <data name="LoadingVehicles" xml:space="preserve">
+    <value>U?itavanje vozila...</value>
+  </data>
+  <data name="NoVehiclesAvailable" xml:space="preserve">
+    <value>Nema dostupnih vozila.</value>
+  </data>
+  <data name="UnknownVehicle" xml:space="preserve">
+    <value>Nepoznato vozilo</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Izmijeni</value>
+  </data>
+  <data name="DeleteVehicle" xml:space="preserve">
+    <value>Obri?i vozilo</value>
+  </data>
+  <data name="DeleteVehicleTitle" xml:space="preserve">
+    <value>Obrisati vozilo?</value>
+  </data>
+  <data name="DeleteVehicleMessage" xml:space="preserve">
+    <value>Da li ste sigurni da ?elite obrisati ovo vozilo?</value>
+  </data>
+  <data name="DeleteVehicleAction" xml:space="preserve">
+    <value>Da, obri?i vozilo</value>
+  </data>
+  <data name="VehicleSavedSuccess" xml:space="preserve">
+    <value>Vozilo uspje?no sa?uvano.</value>
+  </data>
+  <data name="VehicleDeletedSuccess" xml:space="preserve">
+    <value>Vozilo uspje?no obrisano.</value>
+  </data>
+  <data name="VehicleLoadError" xml:space="preserve">
+    <value>Gre?ka prilikom u?itavanja vozila:</value>
+  </data>
+  <data name="VehicleAddFormLoadError" xml:space="preserve">
+    <value>Gre?ka prilikom u?itavanja forme za dodavanje.</value>
+  </data>
+  <data name="VehicleEditFormLoadError" xml:space="preserve">
+    <value>Gre?ka prilikom u?itavanja forme za izmjenu.</value>
+  </data>
+  <data name="VehicleSaveValidationError" xml:space="preserve">
+    <value>Gre?ka prilikom spremanja. Provjerite unesene podatke.</value>
+  </data>
+  <data name="VehicleSaveImageRequiredError" xml:space="preserve">
+    <value>Do?lo je do gre?ke prilikom spremanja vozila. Slika je obavezna za novo vozilo.</value>
+  </data>
+  <data name="VehicleDeleteError" xml:space="preserve">
+    <value>Do?lo je do gre?ke prilikom brisanja vozila.</value>
+  </data>
+  <data name="FileExtensionsAllowed" xml:space="preserve">
+    <value>Dozvoljeni formati: jpg, jpeg, png, gif, bmp</value>
+  </data>
+  <data name="CurrentImage" xml:space="preserve">
+    <value>Trenutna slika</value>
+  </data>
+  <data name="AddVehicleSubmit" xml:space="preserve">
+    <value>Dodaj vozilo</value>
+  </data>
+  <data name="AllowedImageExtensionsError" xml:space="preserve">
+    <value>Dozvoljena su samo sljede?a pro?irenja fajlova: .jpg, .jpeg, .png, .gif, .bmp</value>
+  </data>
+  <data name="ImageSizeLimitError" xml:space="preserve">
+    <value>Veli?ina slike ne smije prelaziti 5MB.</value>
+  </data>
+  <data name="AdminUsersTitle" xml:space="preserve">
+    <value>Korisnici</value>
+  </data>
+  <data name="AdminUser" xml:space="preserve">
+    <value>Korisnik</value>
+  </data>
+  <data name="AdminAddUser" xml:space="preserve">
+    <value>Dodaj novog korisnika</value>
+  </data>
+  <data name="AdminUsersList" xml:space="preserve">
+    <value>Lista korisnika</value>
+  </data>
+  <data name="AdminUsersListText" xml:space="preserve">
+    <value>Pretra?ite korisnike po imenu, korisni?kom imenu ili email adresi.</value>
+  </data>
+  <data name="AdminUserRoleFilterAria" xml:space="preserve">
+    <value>Filter korisnika po ulozi</value>
+  </data>
+  <data name="AllUsers" xml:space="preserve">
+    <value>Svi</value>
+  </data>
+  <data name="Admins" xml:space="preserve">
+    <value>Admini</value>
+  </data>
+  <data name="Sellers" xml:space="preserve">
+    <value>Prodavci</value>
+  </data>
+  <data name="Buyers" xml:space="preserve">
+    <value>Kupci</value>
+  </data>
+  <data name="AdminSearchUsersPlaceholder" xml:space="preserve">
+    <value>Pretra?i po imenu ili email-u...</value>
+  </data>
+  <data name="Role" xml:space="preserve">
+    <value>Uloga</value>
+  </data>
+  <data name="LoadingUsers" xml:space="preserve">
+    <value>U?itavanje korisnika...</value>
+  </data>
+  <data name="NoUsersAvailable" xml:space="preserve">
+    <value>Nema dostupnih korisnika.</value>
+  </data>
+  <data name="DeleteUserTitle" xml:space="preserve">
+    <value>Obrisati korisnika?</value>
+  </data>
+  <data name="DeleteUserMessage" xml:space="preserve">
+    <value>Da li ste sigurni da ?elite obrisati ovog korisnika?</value>
+  </data>
+  <data name="DeleteUserAction" xml:space="preserve">
+    <value>Da, obri?i korisnika</value>
+  </data>
+  <data name="UserSavedSuccess" xml:space="preserve">
+    <value>Korisnik uspje?no sa?uvan.</value>
+  </data>
+  <data name="UserDeletedSuccess" xml:space="preserve">
+    <value>Korisnik uspje?no obrisan.</value>
+  </data>
+  <data name="UsersLoadError" xml:space="preserve">
+    <value>Gre?ka prilikom u?itavanja korisnika:</value>
+  </data>
+  <data name="UserAddFormLoadError" xml:space="preserve">
+    <value>Gre?ka prilikom u?itavanja forme za dodavanje.</value>
+  </data>
+  <data name="UserEditFormLoadError" xml:space="preserve">
+    <value>Gre?ka prilikom u?itavanja forme za izmjenu.</value>
+  </data>
+  <data name="UserSaveError" xml:space="preserve">
+    <value>Do?lo je do gre?ke prilikom spremanja korisnika.</value>
+  </data>
+  <data name="IdentityErrors" xml:space="preserve">
+    <value>Gre?ke identiteta:</value>
+  </data>
+  <data name="UserDeleteError" xml:space="preserve">
+    <value>Do?lo je do gre?ke prilikom brisanja korisnika.</value>
+  </data>
+  <data name="AdminNewPasswordPlaceholder" xml:space="preserve">
+    <value>Unesite novu lozinku samo ako je mijenjate</value>
+  </data>
+  <data name="AdminConfirmNewPasswordPlaceholder" xml:space="preserve">
+    <value>Ponovite novu lozinku</value>
+  </data>
+  <data name="Optional" xml:space="preserve">
+    <value>opcionalno</value>
+  </data>
+  <data name="AdminReviewsTitle" xml:space="preserve">
+    <value>Pregled recenzija</value>
+  </data>
+  <data name="AdminReviewsList" xml:space="preserve">
+    <value>Lista recenzija</value>
+  </data>
+  <data name="AdminReviewsListText" xml:space="preserve">
+    <value>Filtrirajte recenzije prema korisniku, vozilu ili sadr?aju komentara.</value>
+  </data>
+  <data name="FilterByUserPlaceholder" xml:space="preserve">
+    <value>Filtriraj po korisniku...</value>
+  </data>
+  <data name="FilterByVehiclePlaceholder" xml:space="preserve">
+    <value>Filtriraj po vozilu...</value>
+  </data>
+  <data name="SearchByTextPlaceholder" xml:space="preserve">
+    <value>Pretra?i po tekstu...</value>
+  </data>
+  <data name="LoadingReviews" xml:space="preserve">
+    <value>U?itavanje recenzija...</value>
+  </data>
+  <data name="NoReviewsAvailable" xml:space="preserve">
+    <value>Nema dostupnih recenzija.</value>
+  </data>
+  <data name="ReviewCommentTitle" xml:space="preserve">
+    <value>Komentar recenzije</value>
+  </data>
+  <data name="ReviewCommentSubtitle" xml:space="preserve">
+    <value>Pregled punog komentara korisnika.</value>
+  </data>
+  <data name="Show" xml:space="preserve">
+    <value>Prika?i</value>
+  </data>
+  <data name="DeleteReviewTitle" xml:space="preserve">
+    <value>Obrisati recenziju?</value>
+  </data>
+  <data name="DeleteReviewMessage" xml:space="preserve">
+    <value>Da li ste sigurni da ?elite obrisati ovu recenziju?</value>
+  </data>
+  <data name="DeleteReviewAction" xml:space="preserve">
+    <value>Da, obri?i recenziju</value>
+  </data>
+  <data name="ReviewDeletedSuccess" xml:space="preserve">
+    <value>Recenzija uspje?no obrisana.</value>
+  </data>
+  <data name="ReviewsLoadError" xml:space="preserve">
+    <value>Gre?ka prilikom u?itavanja recenzija:</value>
+  </data>
+  <data name="ReviewDeleteError" xml:space="preserve">
+    <value>Do?lo je do gre?ke prilikom brisanja recenzije.</value>
+  </data>
+  <data name="RatingWord" xml:space="preserve">
+    <value>ocjena</value>
+  </data>
+  <data name="AdminSupportTitle" xml:space="preserve">
+    <value>Upiti za podr?ku</value>
+  </data>
+  <data name="AdminSupportList" xml:space="preserve">
+    <value>Lista upita</value>
+  </data>
+  <data name="AdminSupportListText" xml:space="preserve">
+    <value>Pretra?ite upite prema emailu, naslovu ili sadr?aju poruke.</value>
+  </data>
+  <data name="AdminSearchSupportPlaceholder" xml:space="preserve">
+    <value>Pretra?i email, naslov ili sadr?aj...</value>
+  </data>
+  <data name="UserEmail" xml:space="preserve">
+    <value>Email korisnika</value>
+  </data>
+  <data name="InquiryTitle" xml:space="preserve">
+    <value>Naslov upita</value>
+  </data>
+  <data name="LoadingInquiries" xml:space="preserve">
+    <value>U?itavanje upita...</value>
+  </data>
+  <data name="NoSupportInquiries" xml:space="preserve">
+    <value>Nema dostupnih upita za podr?ku.</value>
+  </data>
+  <data name="MessageModalTitle" xml:space="preserve">
+    <value>Poruka korisnika</value>
+  </data>
+  <data name="MessageModalSubtitle" xml:space="preserve">
+    <value>Pregled punog sadr?aja upita.</value>
+  </data>
+  <data name="Reply" xml:space="preserve">
+    <value>Odgovori</value>
+  </data>
+  <data name="ReplyToInquirySubject" xml:space="preserve">
+    <value>Odgovor na va? upit:</value>
+  </data>
+  <data name="ReplyToInquiryGreeting" xml:space="preserve">
+    <value>Po?tovani</value>
+  </data>
+  <data name="ReplyToInquiryBody" xml:space="preserve">
+    <value>Hvala na va?em upitu.</value>
+  </data>
+  <data name="DeleteInquiryTitle" xml:space="preserve">
+    <value>Obrisati upit?</value>
+  </data>
+  <data name="DeleteInquiryMessage" xml:space="preserve">
+    <value>Da li ste sigurni da ?elite obrisati ovaj upit?</value>
+  </data>
+  <data name="DeleteInquiryAction" xml:space="preserve">
+    <value>Da, obri?i upit</value>
+  </data>
+  <data name="InquiryItemPrefix" xml:space="preserve">
+    <value>Upit:</value>
+  </data>
+  <data name="Untitled" xml:space="preserve">
+    <value>Bez naslova</value>
+  </data>
+  <data name="StatusChangedSuccess" xml:space="preserve">
+    <value>Status upita uspje?no promijenjen.</value>
+  </data>
+  <data name="InquiryDeletedSuccess" xml:space="preserve">
+    <value>Upit za podr?ku uspje?no obrisan.</value>
+  </data>
+  <data name="InquiriesLoadError" xml:space="preserve">
+    <value>Gre?ka prilikom u?itavanja upita:</value>
+  </data>
+  <data name="StatusChangeError" xml:space="preserve">
+    <value>Do?lo je do gre?ke prilikom promjene statusa.</value>
+  </data>
+  <data name="InquiryDeleteError" xml:space="preserve">
+    <value>Do?lo je do gre?ke prilikom brisanja upita.</value>
+  </data>
+  <data name="NotAvailable" xml:space="preserve">
+    <value>N/A</value>
+  </data>
+  <data name="Customer" xml:space="preserve">
+    <value>Korisnik</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Sa?uvaj</value>
+  </data>
+  <data name="Required" xml:space="preserve">
+    <value>obavezno</value>
+  </data>
+  <data name="PasswordRequired" xml:space="preserve">
+    <value>Lozinka je obavezna.</value>
+  </data>
+  <data name="ConfirmPasswordRequired" xml:space="preserve">
+    <value>Potvrda lozinke je obavezna.</value>
+  </data>
+  <data name="NewPasswordConfirmationRequired" xml:space="preserve">
+    <value>Potvrda nove lozinke je obavezna kada se mijenja lozinka.</value>
+  </data>
+  <data name="NewPasswordMismatch" xml:space="preserve">
+    <value>Nova lozinka i potvrda lozinke se ne podudaraju.</value>
+  </data>
+  <data name="PasswordFieldsEitherBothOrEmpty" xml:space="preserve">
+    <value>Unesite novu lozinku ili ostavite oba polja za lozinku prazna.</value>
+  </data>
+  <data name="UsernameExists" xml:space="preserve">
+    <value>Korisnik s tim korisni?kim imenom ve? postoji.</value>
+  </data>
+  <data name="EmailExists" xml:space="preserve">
+    <value>Korisnik s tim email-om ve? postoji.</value>
+  </data>
+  <data name="VehicleImageRequiredNew" xml:space="preserve">
+    <value>Slika je obavezna za novo vozilo.</value>
+  </data>
+  <data name="InvalidFuelValue" xml:space="preserve">
+    <value>Odabrana vrijednost za gorivo nije validna.</value>
+  </data>
+  <data name="VehicleCreateSuccess" xml:space="preserve">
+    <value>Vozilo uspje?no dodano!</value>
+  </data>
+  <data name="VehicleUpdateSuccess" xml:space="preserve">
+    <value>Vozilo uspje?no izmijenjeno!</value>
+  </data>
+  <data name="SupportDeleteSuccess" xml:space="preserve">
+    <value>Upit za podr?ku uspje?no obrisan.</value>
+  </data>
+  <data name="InvalidStatus" xml:space="preserve">
+    <value>Neva?e?i status.</value>
+  </data>
+  <data name="ProfileNotFound" xml:space="preserve">
+    <value>Korisnik nije prona?en.</value>
+  </data>
+  <data name="UserDeleteFailure" xml:space="preserve">
+    <value>Gre?ka prilikom brisanja korisnika: {0}</value>
+  </data>
+  <data name="CartAddVehicleSuccess" xml:space="preserve">
+    <value>Vozilo je uspje?no dodato u korpu!</value>
+  </data>
+  <data name="CartVehicleAlreadyAdded" xml:space="preserve">
+    <value>Vozilo je ve? dodato u korpu.</value>
+  </data>
+  <data name="CartDisplayError" xml:space="preserve">
+    <value>Do?lo je do gre?ke pri prikazivanju korpe. Molimo poku?ajte ponovo.</value>
+  </data>
+  <data name="CartRemoveSuccess" xml:space="preserve">
+    <value>Vozilo je uklonjeno iz korpe.</value>
+  </data>
+  <data name="CartVehicleNotFoundInCart" xml:space="preserve">
+    <value>Vozilo nije prona?eno u korpi.</value>
+  </data>
+  <data name="CartRemoveError" xml:space="preserve">
+    <value>Do?lo je do gre?ke pri uklanjanju vozila iz korpe. Molimo poku?ajte ponovo.</value>
+  </data>
+  <data name="CartQuantityUpdated" xml:space="preserve">
+    <value>Koli?ina je a?urirana.</value>
+  </data>
+  <data name="CartQuantityError" xml:space="preserve">
+    <value>Do?lo je do gre?ke pri a?uriranju koli?ine.</value>
+  </data>
+  <data name="CartClearedSuccess" xml:space="preserve">
+    <value>Korpa je uspje?no o?i??ena.</value>
+  </data>
+  <data name="CartClearError" xml:space="preserve">
+    <value>Do?lo je do gre?ke pri ?i??enju korpe.</value>
+  </data>
+  <data name="SelectedVehicleMissingFromCart" xml:space="preserve">
+    <value>Jedno ili vi?e odabranih vozila nije prona?eno u va?oj korpi.</value>
+  </data>
+  <data name="NoVehiclesSelectedForPurchase" xml:space="preserve">
+    <value>Niste odabrali nijedno vozilo za kupovinu.</value>
+  </data>
+  <data name="VehiclePurchaseSuccess" xml:space="preserve">
+    <value>Pla?anje uspje?no izvr?eno. Va?a narud?ba je evidentirana.</value>
+  </data>
+  <data name="MultiVehiclePurchaseSuccess" xml:space="preserve">
+    <value>Uspje?no ste kupili {0} vozila!</value>
+  </data>
+  <data name="VehiclePriceInvalid" xml:space="preserve">
+    <value>Cijena vozila nije validna.</value>
+  </data>
+  <data name="VehicleNotFound" xml:space="preserve">
+    <value>Vozilo nije prona?eno.</value>
+  </data>
+  <data name="CartNotFound" xml:space="preserve">
+    <value>Korpa nije prona?ena.</value>
+  </data>
+  <data name="UserNotFound" xml:space="preserve">
+    <value>Korisnik nije prona?en.</value>
+  </data>
+  <data name="PaymentProcessingError" xml:space="preserve">
+    <value>Do?lo je do gre?ke prilikom obrade pla?anja. Molimo poku?ajte ponovo.</value>
+  </data>
+  <data name="PaymentAmountPositive" xml:space="preserve">
+    <value>Iznos pla?anja mora biti ve?i od nule.</value>
+  </data>
+  <data name="PaymentSuccessDemo" xml:space="preserve">
+    <value>Pla?anje uspje?no obra?eno u demo modu.</value>
+  </data>
+  <data name="PaymentInvalidCard" xml:space="preserve">
+    <value>Neispravan broj kartice.</value>
+  </data>
+  <data name="PaymentDeclinedDemo" xml:space="preserve">
+    <value>Transakcija odbijena u demo modu.</value>
+  </data>
+  <data name="ContactAccountProblem" xml:space="preserve">
+    <value>Do?lo je do problema sa va?im korisni?kim nalogom.</value>
+  </data>
+  <data name="ContactMessageSent" xml:space="preserve">
+    <value>Va?a poruka je uspje?no poslana!</value>
+  </data>
+  <data name="ContactSendError" xml:space="preserve">
+    <value>Do?lo je do gre?ke prilikom slanja poruke. Molimo poku?ajte ponovo.</value>
+  </data>
+  <data name="SupportMessageRequired" xml:space="preserve">
+    <value>Molimo vas unesite tekst poruke prije slanja.</value>
+  </data>
+  <data name="SupportMessageReceived" xml:space="preserve">
+    <value>Va?a poruka je uspje?no primljena!</value>
+  </data>
+  <data name="ProfileUpdateEmailError" xml:space="preserve">
+    <value>Gre?ka pri postavljanju novog emaila.</value>
+  </data>
+  <data name="ProfileUpdateUsernameError" xml:space="preserve">
+    <value>Gre?ka pri postavljanju novog korisni?kog imena.</value>
+  </data>
+  <data name="ProfileUpdatedSuccess" xml:space="preserve">
+    <value>Profil uspje?no a?uriran.</value>
+  </data>
+  <data name="ProfileNoChanges" xml:space="preserve">
+    <value>Nema promjena na profilu.</value>
+  </data>
+  <data name="ReviewRatingRange" xml:space="preserve">
+    <value>Ocjena mora biti izme?u 1 i 5.</value>
+  </data>
+  <data name="ReviewPurchasedOnly" xml:space="preserve">
+    <value>Mo?ete dodati recenziju samo za vozila koja ste kupili.</value>
+  </data>
+  <data name="ReviewUpdatedSuccess" xml:space="preserve">
+    <value>Recenzija je uspje?no a?urirana.</value>
+  </data>
+  <data name="ReviewAddedSuccess" xml:space="preserve">
+    <value>Recenzija je uspje?no dodana.</value>
+  </data>
+  <data name="ReviewNotFoundOrNotOwned" xml:space="preserve">
+    <value>Recenzija nije prona?ena ili ne pripada vama.</value>
+  </data>
+  <data name="ReviewRemovedSuccess" xml:space="preserve">
+    <value>Recenzija je uspje?no uklonjena.</value>
+  </data>
+  <data name="EditVehicle" xml:space="preserve">
+    <value>Izmijeni vozilo</value>
+  </data>
+  <data name="EditUser" xml:space="preserve">
+    <value>Izmijeni korisnika</value>
+  </data>
+  <data name="RoleAdministrator" xml:space="preserve">
+    <value>Administrator</value>
+  </data>
+  <data name="RoleSeller" xml:space="preserve">
+    <value>Prodavac</value>
+  </data>
+  <data name="RoleBuyer" xml:space="preserve">
+    <value>Kupac</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Lozinka</value>
+  </data>
+  <data name="VehicleMakePlaceholder" xml:space="preserve">
+    <value>Unesite marku</value>
+  </data>
+  <data name="VehicleModelPlaceholder" xml:space="preserve">
+    <value>Unesite model</value>
+  </data>
+  <data name="VehicleDescriptionPlaceholder" xml:space="preserve">
+    <value>Unesite opis vozila</value>
+  </data>
+  <data name="SelectFuelType" xml:space="preserve">
+    <value>Odaberite vrstu goriva</value>
+  </data>
+  <data name="VehicleImageRequired" xml:space="preserve">
+    <value>Slika je obavezna</value>
+  </data>
+  <data name="VehicleImageOptional" xml:space="preserve">
+    <value>Slika je opcionalna kod izmjene</value>
+  </data>
+  <data name="NoCurrentImage" xml:space="preserve">
+    <value>Nema trenutne slike</value>
+  </data>
+  <data name="KeepCurrentImage" xml:space="preserve">
+    <value>Zadr?i trenutnu sliku</value>
+  </data>
+  <data name="Validation.VehicleMakeRequiredClient" xml:space="preserve">
+    <value>Marka je obavezna.</value>
+  </data>
+  <data name="Validation.VehicleModelRequiredClient" xml:space="preserve">
+    <value>Model je obavezan.</value>
+  </data>
+  <data name="Validation.VehicleYearMin" xml:space="preserve">
+    <value>Godi?te mora biti najmanje 1900.</value>
+  </data>
+  <data name="Validation.VehicleYearMax" xml:space="preserve">
+    <value>Godi?te ne mo?e biti ve?e od 2026.</value>
+  </data>
+  <data name="Validation.VehicleYearDigits" xml:space="preserve">
+    <value>Godi?te mora biti cijeli broj.</value>
+  </data>
+  <data name="Validation.VehicleDisplacementNumber" xml:space="preserve">
+    <value>Kubika?a mora biti broj.</value>
+  </data>
+  <data name="Validation.VehicleColorRequiredClient" xml:space="preserve">
+    <value>Boja je obavezna.</value>
+  </data>
+  <data name="Validation.VehicleMileageNumber" xml:space="preserve">
+    <value>Kilometra?a mora biti broj.</value>
+  </data>
+  <data name="Validation.VehiclePriceNumber" xml:space="preserve">
+    <value>Cijena mora biti broj.</value>
+  </data>
+  <data name="Validation.VehicleImageRequiredClient" xml:space="preserve">
+    <value>Slika je obavezna za novo vozilo.</value>
+  </data>
+  <data name="PaymentNameRequired" xml:space="preserve">
+    <value>Ime i prezime su obavezni.</value>
+  </data>
+  <data name="PaymentNameFullRequired" xml:space="preserve">
+    <value>Unesite i ime i prezime (mora sadr?avati razmak).</value>
+  </data>
+  <data name="PaymentCardDigits" xml:space="preserve">
+    <value>Broj kartice mora sadr?avati ta?no 16 cifara.</value>
+  </data>
+  <data name="PaymentExpiryMonth" xml:space="preserve">
+    <value>Mjesec mora biti izme?u 01 i 12.</value>
+  </data>
+  <data name="PaymentExpiryYear" xml:space="preserve">
+    <value>Godina nije ispravna.</value>
+  </data>
+  <data name="PaymentCvvDigits" xml:space="preserve">
+    <value>CVV kod mora sadr?avati ta?no 3 cifre.</value>
+  </data>
+  <data name="CartQuantityMin" xml:space="preserve">
+    <value>Koli?ina ne mo?e biti manja od 1.</value>
+  </data>
+  <data name="CommonTryAgain" xml:space="preserve">
+    <value>Do?lo je do gre?ke. Molimo poku?ajte ponovo.</value>
+  </data>
+  <data name="Lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo." xml:space="preserve">
+    <value>Lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo.</value>
+  </data>
+  <data name="Validation.VehicleDisplacementRequired" xml:space="preserve">
+    <value>Kubika?a je obavezna za vozila koja nisu elektri?na.</value>
+  </data>
+  <data name="CartAddError" xml:space="preserve">
+    <value>Do?lo je do gre?ke pri dodavanju vozila u korpu. Molimo poku?ajte ponovo.</value>
+  </data>
+  <data name="PaymentOrderRecorded" xml:space="preserve">
+    <value>Pla?anje je uspje?no izvr?eno. Va?a narud?ba je evidentirana.</value>
+  </data>
+  <data name="PasswordResetEmailSubject" xml:space="preserve">
+    <value>Resetovanje lozinke - Autosalon OneZone</value>
+  </data>
+  <data name="PasswordResetEmailTitle" xml:space="preserve">
+    <value>Resetovanje lozinke</value>
+  </data>
+  <data name="PasswordResetEmailHeroText" xml:space="preserve">
+    <value>Za va? nalog pripremili smo siguran link za postavljanje nove lozinke.</value>
+  </data>
+  <data name="PasswordResetEmailGreetingNameFallback" xml:space="preserve">
+    <value>korisni?e</value>
+  </data>
+  <data name="PasswordResetEmailIntro" xml:space="preserve">
+    <value>Zaprimili smo zahtjev za resetovanje lozinke na va?em Autosalon OneZone nalogu. Kliknite na dugme ispod kako biste postavili novu lozinku.</value>
+  </data>
+  <data name="PasswordResetEmailValidityTitle" xml:space="preserve">
+    <value>Va?enje linka</value>
+  </data>
+  <data name="PasswordResetEmailValidityText" xml:space="preserve">
+    <value>Link isti?e za 30 minuta, odnosno do {0}.</value>
+  </data>
+  <data name="PasswordResetEmailButton" xml:space="preserve">
+    <value>Resetuj lozinku</value>
+  </data>
+  <data name="PasswordResetEmailFallbackLink" xml:space="preserve">
+    <value>Ako dugme ne radi, kopirajte i otvorite sljede?i link:</value>
+  </data>
+  <data name="PasswordResetEmailIgnore" xml:space="preserve">
+    <value>Ako niste zatra?ili resetovanje lozinke, slobodno zanemarite ovu poruku.</value>
+  </data>
+  <data name="PasswordResetEmailFooter" xml:space="preserve">
+    <value>Ova poruka je automatski generisana iz Autosalon OneZone aplikacije.</value>
+  </data>
+  <data name="PasswordResetEmailTextTitle" xml:space="preserve">
+    <value>Autosalon OneZone - resetovanje lozinke</value>
+  </data>
+  <data name="PasswordResetEmailGreeting" xml:space="preserve">
+    <value>Po?tovani/a {0},</value>
+  </data>
+  <data name="AdminSectionLoading" xml:space="preserve">
+    <value>U?itavanje sekcije...</value>
+  </data>
+  <data name="AdminSectionNotFound" xml:space="preserve">
+    <value>Sekcija nije prona?ena.</value>
+  </data>
+  <data name="AdminSectionLoadError" xml:space="preserve">
+    <value>Nije mogu?e u?itati ovu admin sekciju. Molimo poku?ajte ponovo.</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="PurchaseOverview" xml:space="preserve">
+    <value>Pregled kupovine</value>
+  </data>
+  <data name="StatusInProgress" xml:space="preserve">
+    <value>U obradi</value>
+  </data>
+  <data name="Vehicles" xml:space="preserve">
+    <value>Vozila</value>
+  </data>
+</root>

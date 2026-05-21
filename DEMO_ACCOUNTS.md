@@ -14,7 +14,7 @@ Without `.env`, Docker Compose falls back to public demo defaults:
 
 | Role | Email | Password |
 | --- | --- | --- |
-| Administrator | `admin@autosalon.local` | `Admin123!` |
+| Administrator | `runtyfly34@gmail.com` | `Admin123!` |
 | Seller | `prodavac@autosalon.local` | `Prodavac123!` |
 | Buyer | `kupac@autosalon.local` | `Kupac123!` |
 

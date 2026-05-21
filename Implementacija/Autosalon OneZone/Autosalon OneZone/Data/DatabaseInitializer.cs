@@ -51,9 +51,13 @@ namespace Autosalon_OneZone.Data
 
             await EnsureRolesAsync(roleManager, logger);
 
+            ApplicationUser? adminUser = null;
+            ApplicationUser? sellerUser = null;
+            ApplicationUser? buyerUser = null;
+
             if (hasAdminConfig)
             {
-                await EnsureUserAsync(
+                adminUser = await EnsureUserAsync(
                     userManager,
                     dbContext,
                     configuration["AdminUserSecrets:Email"]!,
@@ -66,7 +70,7 @@ namespace Autosalon_OneZone.Data
 
             if (seedDemoData)
             {
-                await EnsureUserAsync(
+                sellerUser = await EnsureUserAsync(
                     userManager,
                     dbContext,
                     configuration["DemoUsers:SellerEmail"] ?? "prodavac@autosalon.local",
@@ -76,7 +80,7 @@ namespace Autosalon_OneZone.Data
                     SellerRole,
                     logger);
 
-                await EnsureUserAsync(
+                buyerUser = await EnsureUserAsync(
                     userManager,
                     dbContext,
                     configuration["DemoUsers:BuyerEmail"] ?? "kupac@autosalon.local",
@@ -87,6 +91,7 @@ namespace Autosalon_OneZone.Data
                     logger);
 
                 await SeedVehiclesAsync(dbContext, logger);
+                await SeedReviewsAndSupportAsync(dbContext, adminUser, sellerUser, buyerUser, logger);
             }
         }
 
@@ -232,12 +237,39 @@ namespace Autosalon_OneZone.Data
                 }
             }
 
+            await EnsureExclusiveSeedRoleAsync(userManager, user, roleName, email, logger);
+
             if (roleName == BuyerRole)
             {
                 await EnsureCartAsync(dbContext, user.Id);
             }
 
             return user;
+        }
+
+        private static async Task EnsureExclusiveSeedRoleAsync(
+            UserManager<ApplicationUser> userManager,
+            ApplicationUser user,
+            string targetRole,
+            string email,
+            ILogger logger)
+        {
+            foreach (var roleName in new[] { AdminRole, SellerRole, BuyerRole }.Where(role => role != targetRole))
+            {
+                if (!await userManager.IsInRoleAsync(user, roleName))
+                {
+                    continue;
+                }
+
+                var removeResult = await userManager.RemoveFromRoleAsync(user, roleName);
+                if (removeResult.Succeeded)
+                {
+                    logger.LogInformation("Removed extra demo role {RoleName} from seed user {Email}.", roleName, email);
+                    continue;
+                }
+
+                logger.LogError("Failed to remove extra demo role {RoleName} from seed user {Email}: {Errors}", roleName, email, FormatErrors(removeResult));
+            }
         }
 
         private static string BuildSeedUserName(string email, string roleName)
@@ -344,7 +376,7 @@ namespace Autosalon_OneZone.Data
                     Kilometraza = 76000,
                     Cijena = 43900m,
                     Slika = "seed-audi-a4-2020.jpg",
-                    Opis = "Pouzdana limuzina za svakodnevnu voznju."
+                    Opis = "Pouzdana limuzina za svakodnevnu vožnju."
                 },
                 new Vozilo
                 {
@@ -365,7 +397,7 @@ namespace Autosalon_OneZone.Data
                     Model = "Model 3",
                     Godiste = 2023,
                     Gorivo = TipGoriva.Elektro,
-                    Kubikaza = 0m,
+                    Kubikaza = null,
                     Boja = "Crvena",
                     Kilometraza = 21400,
                     Cijena = 72800m,
@@ -391,7 +423,7 @@ namespace Autosalon_OneZone.Data
                     Model = "e-tron GT quattro",
                     Godiste = 2022,
                     Gorivo = TipGoriva.Elektro,
-                    Kubikaza = 0m,
+                    Kubikaza = null,
                     Boja = "Bijela",
                     Kilometraza = 28400,
                     Cijena = 129500m,
@@ -423,6 +455,84 @@ namespace Autosalon_OneZone.Data
                     Cijena = 56900m,
                     Slika = "seed-mercedes-glc300-2020.jpg",
                     Opis = "Premium SUV za porodičnu i poslovnu vožnju."
+                },
+                new Vozilo
+                {
+                    Marka = "Toyota",
+                    Model = "Yaris",
+                    Godiste = 2017,
+                    Gorivo = TipGoriva.Benzin,
+                    Kubikaza = 1.3m,
+                    Boja = "Crvena",
+                    Kilometraza = 112000,
+                    Cijena = 16900m,
+                    Slika = "seed-volkswagen-golf8-2021.jpg",
+                    Opis = "Pristupačno gradsko vozilo sa niskom potrošnjom."
+                },
+                new Vozilo
+                {
+                    Marka = "Renault",
+                    Model = "Clio",
+                    Godiste = 2018,
+                    Gorivo = TipGoriva.Dizel,
+                    Kubikaza = 1.5m,
+                    Boja = "Bijela",
+                    Kilometraza = 98500,
+                    Cijena = 14500m,
+                    Slika = "seed-audi-a4-2020.jpg",
+                    Opis = "Ekonomično vozilo za svakodnevnu gradsku vožnju."
+                },
+                new Vozilo
+                {
+                    Marka = "Opel",
+                    Model = "Astra",
+                    Godiste = 2016,
+                    Gorivo = TipGoriva.Benzin,
+                    Kubikaza = 1.4m,
+                    Boja = "Siva",
+                    Kilometraza = 124000,
+                    Cijena = 13500m,
+                    Slika = "seed-mercedes-c220-2019.jpg",
+                    Opis = "Pouzdan hatchback za kupce koji traže niži budžet."
+                },
+                new Vozilo
+                {
+                    Marka = "Ford",
+                    Model = "Fiesta",
+                    Godiste = 2017,
+                    Gorivo = TipGoriva.Benzin,
+                    Kubikaza = 1.25m,
+                    Boja = "Plava",
+                    Kilometraza = 108000,
+                    Cijena = 11900m,
+                    Slika = "seed-bmw-x5-2022.jpg",
+                    Opis = "Kompaktno vozilo za gradsku vožnju i početnike."
+                },
+                new Vozilo
+                {
+                    Marka = "Hyundai",
+                    Model = "i20",
+                    Godiste = 2019,
+                    Gorivo = TipGoriva.Benzin,
+                    Kubikaza = 1.2m,
+                    Boja = "Srebrna",
+                    Kilometraza = 72000,
+                    Cijena = 15500m,
+                    Slika = "seed-tesla-model3-2023.jpg",
+                    Opis = "Dobro očuvano vozilo sa jednostavnim održavanjem."
+                },
+                new Vozilo
+                {
+                    Marka = "Dacia",
+                    Model = "Sandero",
+                    Godiste = 2020,
+                    Gorivo = TipGoriva.Plin,
+                    Kubikaza = 1.0m,
+                    Boja = "Bijela",
+                    Kilometraza = 68000,
+                    Cijena = 12900m,
+                    Slika = "seed-mercedes-glc300-2020.jpg",
+                    Opis = "Povoljan demo model sa plinskim pogonom."
                 }
             };
 
@@ -437,9 +547,8 @@ namespace Autosalon_OneZone.Data
 
                 if (existingVehicle != null)
                 {
-                    if (existingVehicle.Slika != vehicle.Slika)
+                    if (ApplySeedVehicleUpdates(existingVehicle, vehicle))
                     {
-                        existingVehicle.Slika = vehicle.Slika;
                         updatedVehicles++;
                     }
 
@@ -457,6 +566,158 @@ namespace Autosalon_OneZone.Data
 
             await dbContext.SaveChangesAsync();
             logger.LogInformation("Seeded {AddedVehicleCount} and updated {UpdatedVehicleCount} demo vehicles.", addedVehicles, updatedVehicles);
+        }
+
+        private static bool ApplySeedVehicleUpdates(Vozilo existingVehicle, Vozilo seedVehicle)
+        {
+            var changed = false;
+
+            if (existingVehicle.Godiste != seedVehicle.Godiste)
+            {
+                existingVehicle.Godiste = seedVehicle.Godiste;
+                changed = true;
+            }
+
+            if (existingVehicle.Gorivo != seedVehicle.Gorivo)
+            {
+                existingVehicle.Gorivo = seedVehicle.Gorivo;
+                changed = true;
+            }
+
+            if (existingVehicle.Kubikaza != seedVehicle.Kubikaza)
+            {
+                existingVehicle.Kubikaza = seedVehicle.Kubikaza;
+                changed = true;
+            }
+
+            if (existingVehicle.Boja != seedVehicle.Boja)
+            {
+                existingVehicle.Boja = seedVehicle.Boja;
+                changed = true;
+            }
+
+            if (existingVehicle.Kilometraza != seedVehicle.Kilometraza)
+            {
+                existingVehicle.Kilometraza = seedVehicle.Kilometraza;
+                changed = true;
+            }
+
+            if (existingVehicle.Cijena != seedVehicle.Cijena)
+            {
+                existingVehicle.Cijena = seedVehicle.Cijena;
+                changed = true;
+            }
+
+            if (existingVehicle.Slika != seedVehicle.Slika)
+            {
+                existingVehicle.Slika = seedVehicle.Slika;
+                changed = true;
+            }
+
+            if (existingVehicle.Opis != seedVehicle.Opis)
+            {
+                existingVehicle.Opis = seedVehicle.Opis;
+                changed = true;
+            }
+
+            return changed;
+        }
+
+        private static async Task SeedReviewsAndSupportAsync(
+            ApplicationDbContext dbContext,
+            ApplicationUser? adminUser,
+            ApplicationUser? sellerUser,
+            ApplicationUser? buyerUser,
+            ILogger logger)
+        {
+            var reviewUsers = new[] { buyerUser, sellerUser, adminUser }
+                .Where(user => user != null)
+                .Cast<ApplicationUser>()
+                .ToArray();
+
+            if (reviewUsers.Length == 0)
+            {
+                logger.LogWarning("Skipping demo reviews and support inquiries because no seed users are available.");
+                return;
+            }
+
+            var vehicles = await dbContext.Vozila.ToListAsync();
+            if (vehicles.Count == 0)
+            {
+                logger.LogWarning("Skipping demo reviews because no vehicles are available.");
+                return;
+            }
+
+            var vehicleByName = vehicles.ToDictionary(vehicle => $"{vehicle.Marka} {vehicle.Model}", StringComparer.OrdinalIgnoreCase);
+            Vozilo PickVehicle(string name) => vehicleByName.TryGetValue(name, out var vehicle) ? vehicle : vehicles[0];
+
+            var demoReviews = new[]
+            {
+                new { Vehicle = "Porsche Panamera 4 E-Hybrid", User = reviewUsers[0], Rating = 5, Comment = "Izuzetno udobno i brzo vozilo, cijeli proces kupovine je bio profesionalan." },
+                new { Vehicle = "Volkswagen Golf 8", User = reviewUsers[^1], Rating = 4, Comment = "Golf je pregledan, uredan i dobar za svakodnevnu vožnju." },
+                new { Vehicle = "Audi A4", User = reviewUsers[0], Rating = 5, Comment = "Odličan balans cijene, opreme i potrošnje. Preporuka za porodičnu vožnju." },
+                new { Vehicle = "BMW X5", User = reviewUsers[^1], Rating = 4, Comment = "Prostran SUV, dobra oprema i veoma stabilan na otvorenoj cesti." },
+                new { Vehicle = "Tesla Model 3", User = reviewUsers[0], Rating = 5, Comment = "Elektricni pogon je tih i brz, autonomija je odlicna za svakodnevnu upotrebu." },
+                new { Vehicle = "Mercedes-Benz C 220", User = reviewUsers[^1], Rating = 4, Comment = "Pouzdana limuzina, udobna i ekonomična za duže relacije." },
+                new { Vehicle = "Audi e-tron GT quattro", User = reviewUsers[0], Rating = 5, Comment = "Vrhunski izgled i performanse, auto ostavlja premium utisak." },
+                new { Vehicle = "Toyota Yaris", User = reviewUsers[^1], Rating = 4, Comment = "Povoljan i praktičan izbor za gradsku vožnju." },
+                new { Vehicle = "Renault Clio", User = reviewUsers[0], Rating = 3, Comment = "Dobar budžet auto, ekonomičan i jednostavan za održavanje." },
+                new { Vehicle = "Dacia Sandero", User = reviewUsers[^1], Rating = 4, Comment = "Odnos cijene i koristi je jako dobar, posebno za lokalnu vožnju." }
+            };
+
+            var addedReviews = 0;
+            foreach (var review in demoReviews)
+            {
+                if (await dbContext.Recenzije.AnyAsync(r => r.Komentar == review.Comment))
+                {
+                    continue;
+                }
+
+                dbContext.Recenzije.Add(new Recenzija
+                {
+                    VoziloID = PickVehicle(review.Vehicle).VoziloID,
+                    KorisnikId = review.User.Id,
+                    Ocjena = review.Rating,
+                    Komentar = review.Comment,
+                    DatumRecenzije = DateTime.UtcNow.AddDays(-(addedReviews + 1))
+                });
+                addedReviews++;
+            }
+
+            var supportUser = buyerUser ?? reviewUsers[0];
+            var demoInquiries = new[]
+            {
+                new { Title = "Pitanje oko rezervacije vozila", Body = "Zanima me koliko dugo mogu rezervisati vozilo prije kupovine.", Status = StatusUpita.Poslat },
+                new { Title = "Provjera dostupnosti testne vožnje", Body = "Da li je moguće zakazati testnu vožnju za vikend?", Status = StatusUpita.UObradi },
+                new { Title = "Informacije o finansiranju", Body = "Molim vas za više informacija o opcijama plaćanja na rate.", Status = StatusUpita.Odgovoren }
+            };
+
+            var addedInquiries = 0;
+            foreach (var inquiry in demoInquiries)
+            {
+                if (await dbContext.PodrskaUpiti.AnyAsync(p => p.Naslov == inquiry.Title && p.KorisnikId == supportUser.Id))
+                {
+                    continue;
+                }
+
+                dbContext.PodrskaUpiti.Add(new Podrska
+                {
+                    KorisnikId = supportUser.Id,
+                    Naslov = inquiry.Title,
+                    Sadrzaj = inquiry.Body,
+                    Status = inquiry.Status,
+                    DatumUpita = DateTime.UtcNow.AddDays(-(addedInquiries + 1))
+                });
+                addedInquiries++;
+            }
+
+            if (addedReviews == 0 && addedInquiries == 0)
+            {
+                return;
+            }
+
+            await dbContext.SaveChangesAsync();
+            logger.LogInformation("Seeded {ReviewCount} demo reviews and {InquiryCount} support inquiries.", addedReviews, addedInquiries);
         }
 
         private static bool HasCredentials(IConfiguration configuration, string sectionName)

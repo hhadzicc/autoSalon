@@ -30,7 +30,7 @@ services:
       ConnectionStrings__DefaultConnection: Server=db,1433;Database=AutoSalonDb;User Id=sa;Password=${MSSQL_SA_PASSWORD:-AutoSalon_Demo123!};TrustServerCertificate=True;MultipleActiveResultSets=true
       Database__ApplyMigrations: "true"
       Database__SeedDemoData: "true"
-      AdminUserSecrets__Email: ${DEMO_ADMIN_EMAIL:-admin@autosalon.local}
+      AdminUserSecrets__Email: ${DEMO_ADMIN_EMAIL:-runtyfly34@gmail.com}
       AdminUserSecrets__Password: ${DEMO_ADMIN_PASSWORD:-Admin123!}
       AdminUserSecrets__FirstName: ${DEMO_ADMIN_FIRST_NAME:-Demo}
       AdminUserSecrets__LastName: ${DEMO_ADMIN_LAST_NAME:-Admin}
@@ -38,6 +38,8 @@ services:
       DemoUsers__BuyerPassword: ${DEMO_BUYER_PASSWORD:-Kupac123!}
       DemoUsers__SellerEmail: ${DEMO_SELLER_EMAIL:-prodavac@autosalon.local}
       DemoUsers__SellerPassword: ${DEMO_SELLER_PASSWORD:-Prodavac123!}
+      Resend__ApiKey: ${RESEND_API_KEY:-}
+      Resend__FromEmail: ${FROM_EMAIL:-noreply@autosalon.local}
       Stripe__UseMockPayments: ${STRIPE_USE_MOCK_PAYMENTS:-true}
       Stripe__SecretKey: ${STRIPE_SECRET_KEY:-}
       Stripe__PublishableKey: ${STRIPE_PUBLISHABLE_KEY:-}

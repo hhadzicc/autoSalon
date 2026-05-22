@@ -1,19 +1,50 @@
 @model Autosalon_OneZone.ViewModels.Admin.ProfilListViewModel
+@using System.Text.Json
 
 @Html.AntiForgeryToken()
 
+@{
+    var profiliTexts = new Dictionary<string, string>
+    {
+        ["addUser"] = L["AdminAddUser"].Value,
+        ["editUser"] = L["EditUser"].Value,
+        ["edit"] = L["Edit"].Value,
+        ["delete"] = L["CommonDelete"].Value,
+        ["deleteTitle"] = L["DeleteUserTitle"].Value,
+        ["deleteMessage"] = L["DeleteUserMessage"].Value,
+        ["deleteAction"] = L["DeleteUserAction"].Value,
+        ["loading"] = L["LoadingUsers"].Value,
+        ["empty"] = L["NoUsersAvailable"].Value,
+        ["notAvailable"] = L["NotAvailable"].Value,
+        ["email"] = L["Email"].Value,
+        ["fullName"] = L["FullName"].Value,
+        ["customer"] = L["Customer"].Value,
+        ["loadError"] = L["UsersLoadError"].Value,
+        ["addFormLoadError"] = L["UserAddFormLoadError"].Value,
+        ["editFormLoadError"] = L["UserEditFormLoadError"].Value,
+        ["saveSuccess"] = L["UserSavedSuccess"].Value,
+        ["saveError"] = L["UserSaveError"].Value,
+        ["identityErrors"] = L["IdentityErrors"].Value,
+        ["deleteSuccess"] = L["UserDeletedSuccess"].Value,
+        ["deleteError"] = L["UserDeleteError"].Value,
+        ["roleAdministrator"] = L["RoleAdministrator"].Value,
+        ["roleSeller"] = L["RoleSeller"].Value,
+        ["roleBuyer"] = L["RoleBuyer"].Value
+    };
+}
+
 <div class="admin-page-header">
     <div>
-        <p class="admin-eyebrow">Admin panel</p>
-        <h1>Korisnici</h1>
+        <p class="admin-eyebrow">@L["AdminPanel"]</p>
+        <h1>@L["AdminUsersTitle"]</h1>
     </div>
 </div>
 
 <div id="add-profil-form-container" class="admin-form-card" style="display: none;">
     <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
         <div>
-            <p class="admin-eyebrow mb-1">Korisnik</p>
-            <h2 id="add-edit-profil-form-title" class="mb-0">Dodaj novog korisnika</h2>
+            <p class="admin-eyebrow mb-1">@L["AdminUser"]</p>
+            <h2 id="add-edit-profil-form-title" class="mb-0">@L["AdminAddUser"]</h2>
         </div>
     </div>
     <div id="add-profil-form-placeholder"></div>
@@ -22,25 +53,25 @@
 <div class="admin-card" id="profili-list-container">
     <div class="admin-toolbar admin-toolbar-stacked">
         <div>
-            <h2>Lista korisnika</h2>
-            <span>Pretražite korisnike po imenu, korisničkom imenu ili email adresi.</span>
+            <h2>@L["AdminUsersList"]</h2>
+            <span>@L["AdminUsersListText"]</span>
         </div>
 
         <div class="admin-users-toolbar">
             <button id="add-profil-button" class="btn btn-primary rounded-4 add-admin-btn" type="button">
-                <i class="bi bi-person-plus-fill me-2"></i>Dodaj novog korisnika
+                <i class="bi bi-person-plus-fill me-2"></i>@L["AdminAddUser"]
             </button>
 
-            <div class="role-filter-chips" aria-label="Filter korisnika po ulozi">
-                <button type="button" class="role-chip active" data-role-filter="all">Svi</button>
-                <button type="button" class="role-chip" data-role-filter="Administrator">Admini</button>
-                <button type="button" class="role-chip" data-role-filter="Prodavac">Prodavci</button>
-                <button type="button" class="role-chip" data-role-filter="Kupac">Kupci</button>
+            <div class="role-filter-chips" aria-label="@L["AdminUserRoleFilterAria"]">
+                <button type="button" class="role-chip active" data-role-filter="all">@L["AllUsers"]</button>
+                <button type="button" class="role-chip" data-role-filter="Administrator">@L["Admins"]</button>
+                <button type="button" class="role-chip" data-role-filter="Prodavac">@L["Sellers"]</button>
+                <button type="button" class="role-chip" data-role-filter="Kupac">@L["Buyers"]</button>
             </div>
 
             <div class="admin-search-compact">
-                <input type="text" id="profil-search-input" class="form-control" placeholder="Pretraži po imenu ili email-u..." value="@Model.SearchQuery" />
-                <button id="profil-search-button" class="search-submit-btn" type="button" aria-label="Pretraži korisnike">
+                <input type="text" id="profil-search-input" class="form-control" placeholder="@L["AdminSearchUsersPlaceholder"]" value="@Model.SearchQuery" />
+                <button id="profil-search-button" class="search-submit-btn" type="button" aria-label="@L["CommonSearch"]">
                     <i class="bi bi-search"></i>
                 </button>
             </div>
@@ -48,20 +79,20 @@
     </div>
 
     <div class="table-responsive admin-table-wrapper">
-        <table class="table admin-table align-middle mb-0">
+        <table class="table admin-table admin-users-table align-middle mb-0">
             <thead>
                 <tr>
-                    <th>Korisničko ime</th>
-                    <th>Email</th>
-                    <th>Ime</th>
-                    <th>Prezime</th>
-                    <th>Uloga</th>
-                    <th class="text-end">Akcije</th>
+                    <th>@L["Username"]</th>
+                    <th>@L["Email"]</th>
+                    <th>@L["FirstName"]</th>
+                    <th>@L["LastName"]</th>
+                    <th>@L["Role"]</th>
+                    <th class="text-end">@L["Actions"]</th>
                 </tr>
             </thead>
             <tbody id="profili-table-body">
                 <tr>
-                    <td colspan="6">Učitavanje korisnika...</td>
+                    <td colspan="6">@L["LoadingUsers"]</td>
                 </tr>
             </tbody>
         </table>
@@ -73,6 +104,8 @@
 
 <script>
     $(document).ready(function () {
+        const text = @Html.Raw(JsonSerializer.Serialize(profiliTexts));
+
         $(document).off('click', '.edit-profil-button');
         $(document).off('click', '#add-profil-button');
         $(document).off('click', '#profil-search-button');
@@ -88,6 +121,7 @@
         const addFormContainer = $('#add-profil-form-container');
         const addFormPlaceholder = $('#add-profil-form-placeholder');
         const addFormTitle = $('#add-edit-profil-form-title');
+        let currentRoleFilter = 'all';
 
         function escapeHtml(value) {
             return $('<div>').text(value ?? '').html();
@@ -97,24 +131,36 @@
             return escapeHtml(value).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
         }
 
+        function roleLabel(value) {
+            if (!value) {
+                return text.notAvailable;
+            }
+
+            return String(value).split(',').map(function (role) {
+                const trimmed = role.trim();
+                if (trimmed === 'Administrator') return text.roleAdministrator;
+                if (trimmed === 'Prodavac') return text.roleSeller;
+                if (trimmed === 'Kupac') return text.roleBuyer;
+                return trimmed;
+            }).join(', ');
+        }
+
         function emailLink(value) {
-            const email = value || 'N/A';
+            const email = value || text.notAvailable;
             const safeEmail = escapeHtml(email);
             const safeAttr = escapeAttribute(email);
 
             if (!value) {
-                return '<span class="admin-email-link is-empty">N/A</span>';
+                return '<span class="admin-email-link is-empty">' + safeEmail + '</span>';
             }
 
             return '<a class="admin-email-link" href="mailto:' + safeAttr + '" title="' + safeAttr + '">' + safeEmail + '</a>';
         }
 
-        let currentRoleFilter = 'all';
-
         function profileActions(id, itemName) {
             return '<div class="table-actions">' +
-                '<button class="edit-profil-button btn btn-sm btn-outline-primary rounded-3" data-id="' + escapeHtml(id) + '"><i class="bi bi-pencil-square me-1"></i>Izmijeni</button>' +
-                '<button class="delete-profil-button btn btn-sm btn-outline-danger rounded-3" data-id="' + escapeAttribute(id) + '" data-confirm-delete="true" data-confirm-title="Obrisati korisnika?" data-confirm-message="Da li ste sigurni da želite obrisati ovog korisnika?" data-confirm-item="' + escapeAttribute(itemName) + '" data-confirm-action="Da, obriši korisnika"><i class="bi bi-trash me-1"></i>Obriši</button>' +
+                '<button class="edit-profil-button btn btn-sm btn-outline-primary rounded-3" data-id="' + escapeHtml(id) + '"><i class="bi bi-pencil-square me-1"></i>' + escapeHtml(text.edit) + '</button>' +
+                '<button class="delete-profil-button btn btn-sm btn-outline-danger rounded-3" data-id="' + escapeAttribute(id) + '" data-confirm-delete="true" data-confirm-title="' + escapeAttribute(text.deleteTitle) + '" data-confirm-message="' + escapeAttribute(text.deleteMessage) + '" data-confirm-item="' + escapeAttribute(itemName) + '" data-confirm-action="' + escapeAttribute(text.deleteAction) + '"><i class="bi bi-trash me-1"></i>' + escapeHtml(text.delete) + '</button>' +
                 '</div>';
         }
 
@@ -123,29 +169,29 @@
             profiliMobileList.empty();
 
             if (!profili || profili.length === 0) {
-                profiliTableBody.html('<tr><td colspan="6"><div class="empty-state"><i class="bi bi-people"></i><p>Nema dostupnih korisnika.</p></div></td></tr>');
-                profiliMobileList.html('<div class="empty-state"><i class="bi bi-people"></i><p>Nema dostupnih korisnika.</p></div>');
+                profiliTableBody.html('<tr><td colspan="6"><div class="empty-state"><i class="bi bi-people"></i><p>' + escapeHtml(text.empty) + '</p></div></td></tr>');
+                profiliMobileList.html('<div class="empty-state"><i class="bi bi-people"></i><p>' + escapeHtml(text.empty) + '</p></div>');
                 return;
             }
 
             $.each(profili, function (_, profil) {
                 const id = profil.id || '';
-                const rawUserName = profil.userName || 'N/A';
+                const rawUserName = profil.userName || text.notAvailable;
                 const rawEmail = profil.email || '';
                 const userName = escapeHtml(rawUserName);
                 const email = emailLink(rawEmail);
                 const ime = escapeHtml(profil.ime || '');
                 const prezime = escapeHtml(profil.prezime || '');
-                const uloga = escapeHtml(profil.uloga || 'N/A');
-                const actions = profileActions(id, profil.userName || profil.email || 'Korisnik');
+                const uloga = escapeHtml(roleLabel(profil.uloga || text.notAvailable));
+                const actions = profileActions(id, profil.userName || profil.email || text.customer);
 
                 profiliTableBody.append(
                     '<tr>' +
                         '<td><div class="user-cell" title="' + escapeAttribute(rawUserName) + '"><span class="user-avatar"><i class="bi bi-person-fill"></i></span><strong>' + userName + '</strong></div></td>' +
                         '<td>' + email + '</td>' +
-                        '<td>' + ime + '</td>' +
-                        '<td>' + prezime + '</td>' +
-                        '<td><span class="admin-badge">' + uloga + '</span></td>' +
+                        '<td><span class="table-text-truncate" title="' + escapeAttribute(profil.ime || '') + '">' + ime + '</span></td>' +
+                        '<td><span class="table-text-truncate" title="' + escapeAttribute(profil.prezime || '') + '">' + prezime + '</span></td>' +
+                        '<td><span class="admin-badge role-badge-cell">' + uloga + '</span></td>' +
                         '<td>' + actions + '</td>' +
                     '</tr>'
                 );
@@ -156,8 +202,8 @@
                             '<div class="min-w-0"><span class="admin-badge">' + uloga + '</span><h3 title="' + escapeAttribute(rawUserName) + '">' + userName + '</h3></div>' +
                         '</div>' +
                         '<div class="review-mobile-meta">' +
-                            '<div><span>Email</span><strong>' + email + '</strong></div>' +
-                            '<div><span>Ime i prezime</span><strong>' + ime + ' ' + prezime + '</strong></div>' +
+                            '<div><span>' + escapeHtml(text.email) + '</span><strong>' + email + '</strong></div>' +
+                            '<div><span>' + escapeHtml(text.fullName) + '</span><strong>' + ime + ' ' + prezime + '</strong></div>' +
                         '</div>' +
                         '<div class="mobile-actions">' + actions + '</div>' +
                     '</article>'
@@ -166,19 +212,19 @@
         }
 
         function loadProfiliList(searchQuery = '', page = 1, roleFilter = currentRoleFilter) {
-            profiliTableBody.html('<tr><td colspan="6">Učitavanje korisnika...</td></tr>');
-            profiliMobileList.html('<div class="empty-state"><i class="bi bi-hourglass-split"></i><p>Učitavanje korisnika...</p></div>');
+            profiliTableBody.html('<tr><td colspan="6">' + escapeHtml(text.loading) + '</td></tr>');
+            profiliMobileList.html('<div class="empty-state"><i class="bi bi-hourglass-split"></i><p>' + escapeHtml(text.loading) + '</p></div>');
 
             $.get('@Url.Action("GetProfiliJson", "AdminPanel")', { searchQuery: searchQuery, page: page, roleFilter: roleFilter }, function (data) {
                 renderProfiles(data && data.profili ? data.profili : []);
             }).fail(function (jqXHR, textStatus, errorThrown) {
-                const message = escapeHtml(jqXHR.responseText || errorThrown || 'Greška');
-                profiliTableBody.html('<tr><td colspan="6"><div class="alert alert-danger mb-0">Greška prilikom učitavanja korisnika: ' + message + '</div></td></tr>');
-                profiliMobileList.html('<div class="alert alert-danger mb-0">Greška prilikom učitavanja korisnika: ' + message + '</div>');
+                const message = escapeHtml(jqXHR.responseText || errorThrown || window.appTexts?.genericError || 'Error');
+                profiliTableBody.html('<tr><td colspan="6"><div class="alert alert-danger mb-0">' + escapeHtml(text.loadError) + ' ' + message + '</div></td></tr>');
+                profiliMobileList.html('<div class="alert alert-danger mb-0">' + escapeHtml(text.loadError) + ' ' + message + '</div>');
             });
         }
 
-        loadProfiliList(searchInput.val() || '@Model.SearchQuery');
+        loadProfiliList(searchInput.val() || @Html.Raw(JsonSerializer.Serialize(Model.SearchQuery ?? string.Empty)));
 
         searchButton.on('click', function () {
             loadProfiliList(searchInput.val(), 1, currentRoleFilter);
@@ -199,7 +245,7 @@
         });
 
         $('#add-profil-button').on('click', function () {
-            addFormTitle.text('Dodaj novog korisnika');
+            addFormTitle.text(text.addUser);
             $.get('@Url.Action("GetAddProfilForm", "AdminPanel")', function (data) {
                 addFormPlaceholder.html(data);
                 addFormContainer.show();
@@ -208,14 +254,14 @@
                 form.removeData('unobtrusiveValidation');
                 $.validator.unobtrusive.parse(form);
             }).fail(function () {
-                addFormPlaceholder.html('<div class="alert alert-danger mb-0">Greška prilikom učitavanja forme za dodavanje.</div>');
+                addFormPlaceholder.html('<div class="alert alert-danger mb-0">' + escapeHtml(text.addFormLoadError) + '</div>');
                 addFormContainer.show();
             });
         });
 
         $(document).off('click.adminProfiliEdit', '.edit-profil-button').on('click.adminProfiliEdit', '.edit-profil-button', function () {
             const profilId = $(this).data('id');
-            addFormTitle.text('Izmijeni korisnika');
+            addFormTitle.text(text.editUser);
 
             $.get('@Url.Action("GetEditProfilForm", "AdminPanel")', { id: profilId }, function (data) {
                 addFormPlaceholder.html(data);
@@ -225,7 +271,7 @@
                 form.removeData('unobtrusiveValidation');
                 $.validator.unobtrusive.parse(form);
             }).fail(function () {
-                addFormPlaceholder.html('<div class="alert alert-danger mb-0">Greška prilikom učitavanja forme za izmjenu.</div>');
+                addFormPlaceholder.html('<div class="alert alert-danger mb-0">' + escapeHtml(text.editFormLoadError) + '</div>');
                 addFormContainer.show();
             });
         });
@@ -253,10 +299,10 @@
                     addFormContainer.hide();
                     addFormPlaceholder.empty();
                     loadProfiliList(searchInput.val(), 1, currentRoleFilter);
-                    window.showAppFlashMessage('Korisnik uspješno sačuvan.', 'success');
+                    window.showAppFlashMessage(text.saveSuccess, 'success');
                 },
                 error: function (jqXHR, textStatus) {
-                    let errorMessage = 'Došlo je do greške prilikom spremanja korisnika.';
+                    let errorMessage = text.saveError;
 
                     if (jqXHR.status === 400 && jqXHR.responseJSON) {
                         if (jqXHR.responseJSON.errors) {
@@ -271,15 +317,15 @@
                         }
 
                         if (jqXHR.responseJSON.identityErrors) {
-                            errorMessage += '\n\nGreške identiteta:';
+                            errorMessage += '\n\n' + text.identityErrors;
                             $.each(jqXHR.responseJSON.identityErrors, function (_, message) {
                                 errorMessage += '\n- ' + message;
                             });
                         }
                     } else if (jqXHR.responseText) {
-                        errorMessage += '\n\nDetalji: ' + jqXHR.responseText;
+                        errorMessage += '\n\n' + jqXHR.responseText;
                     } else {
-                        errorMessage += '\nStatus: ' + jqXHR.status + ', Tekst: ' + textStatus;
+                        errorMessage += '\n' + jqXHR.status + ' ' + textStatus;
                     }
 
                     window.showAppFlashMessage(errorMessage, 'error');
@@ -297,12 +343,12 @@
                     'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
                 },
                 data: { id: profilId },
-                success: function () {
-                    window.showAppFlashMessage('Korisnik uspješno obrisan.', 'success');
+                success: function (response) {
+                    window.showAppFlashMessage(response.successMessage || text.deleteSuccess, 'success');
                     loadProfiliList(searchInput.val(), 1, currentRoleFilter);
                 },
                 error: function () {
-                    window.showAppFlashMessage('Došlo je do greške prilikom brisanja korisnika.', 'error');
+                    window.showAppFlashMessage(text.deleteError, 'error');
                 }
             });
         });

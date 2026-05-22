@@ -1,4 +1,3 @@
-﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http;
@@ -11,61 +10,78 @@ namespace Autosalon_OneZone.ViewModels.Admin
         public string? SearchQuery { get; set; }
         public string? SortOrder { get; set; }
         public int? CurrentPage { get; set; }
-
         public int TotalPages { get; set; } = 0;
     }
 
-    public class AddVoziloViewModel
+    public class AddVoziloViewModel : IValidatableObject
     {
         public int VoziloID { get; set; }
 
-        [Required(ErrorMessage = "Marka vozila ne smije biti prazna.")]
-        [MaxLength(100, ErrorMessage = "Marka ne može biti duža od 100 karaktera.")]
-        [Display(Name = "Marka")]
+        [Required(ErrorMessage = "Validation.VehicleMakeRequired")]
+        [MaxLength(100, ErrorMessage = "Validation.VehicleMakeMaxLength")]
+        [Display(Name = "VehicleMake")]
         public string Marka { get; set; } = "";
 
-        [Required(ErrorMessage = "Model vozila ne smije biti prazan.")]
-        [MaxLength(100, ErrorMessage = "Model ne može biti duži od 100 karaktera.")]
-        [Display(Name = "Model")]
+        [Required(ErrorMessage = "Validation.VehicleModelRequired")]
+        [MaxLength(100, ErrorMessage = "Validation.VehicleModelMaxLength")]
+        [Display(Name = "VehicleModel")]
         public string Model { get; set; } = "";
 
-        [Required(ErrorMessage = "Godište je obavezno.")]
-        [Range(1900, 2025, ErrorMessage = "Godište mora biti između 1900 i 2025.")]
-        [Display(Name = "Godište")]
+        [Required(ErrorMessage = "Validation.VehicleYearRequired")]
+        [Range(1900, 2026, ErrorMessage = "Validation.VehicleYearRange")]
+        [Display(Name = "VehicleYear")]
         public int? Godiste { get; set; }
 
-        [Required(ErrorMessage = "Gorivo je obavezno.")]
-        [Display(Name = "Gorivo")]
+        [Required(ErrorMessage = "Validation.VehicleFuelRequired")]
+        [Display(Name = "VehicleFuel")]
         public string Gorivo { get; set; } = "";
 
-        [Required(ErrorMessage = "Kubikaža ne smije biti prazna.")]
-        [Range(1, double.MaxValue, ErrorMessage = "Kubikaža mora biti pozitivan broj.")]
-        [Display(Name = "Kubikaža")]
+        [Display(Name = "VehicleDisplacement")]
+        [Range(0, double.MaxValue, ErrorMessage = "Validation.VehicleDisplacementPositive")]
         public decimal? Kubikaza { get; set; }
 
-        [Required(ErrorMessage = "Boja ne smije biti prazna.")]
-        [MaxLength(50, ErrorMessage = "Boja ne može biti duža od 50 karaktera.")]
-        [RegularExpression(@"^[a-zA-ZčćžšđČĆŽŠĐ\s-]+$", ErrorMessage = "Boja može sadržavati samo slova.")]
-        [Display(Name = "Boja")]
+        [Required(ErrorMessage = "Validation.VehicleColorRequired")]
+        [MaxLength(50, ErrorMessage = "Validation.VehicleColorMaxLength")]
+        [RegularExpression(@"^[a-zA-ZčćžšđČĆŽŠĐ\s-]+$", ErrorMessage = "Validation.VehicleColorLettersOnly")]
+        [Display(Name = "VehicleColor")]
         public string? Boja { get; set; }
 
-        [Required(ErrorMessage = "Kilometraža je obavezna.")]
-        [Range(0, double.MaxValue, ErrorMessage = "Kilometraža ne može biti negativna.")]
-        [Display(Name = "Kilometraža")]
+        [Required(ErrorMessage = "Validation.VehicleMileageRequired")]
+        [Range(0, double.MaxValue, ErrorMessage = "Validation.VehicleMileagePositive")]
+        [Display(Name = "VehicleMileage")]
         public double? Kilometraza { get; set; }
 
-        [Required(ErrorMessage = "Cijena je obavezna.")]
-        [Range(0.01, double.MaxValue, ErrorMessage = "Cijena mora biti veća od nule.")]
-        [Display(Name = "Cijena")]
+        [Required(ErrorMessage = "Validation.VehiclePriceRequired")]
+        [Range(0.01, double.MaxValue, ErrorMessage = "Validation.VehiclePricePositive")]
+        [Display(Name = "VehiclePrice")]
         public decimal? Cijena { get; set; }
 
-        [Display(Name = "Slika")]
+        [Display(Name = "VehicleImage")]
         public IFormFile? Slika { get; set; }
 
-        [Required(ErrorMessage = "Opis ne smije biti prazan.")]
-        [MaxLength(2000, ErrorMessage = "Opis ne može biti duži od 2000 karaktera.")]
-        [Display(Name = "Opis")]
+        [Required(ErrorMessage = "Validation.VehicleDescriptionRequired")]
+        [MaxLength(2000, ErrorMessage = "Validation.VehicleDescriptionMaxLength")]
+        [Display(Name = "VehicleDescription")]
         public string? Opis { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (!string.Equals(Gorivo, "Elektro", System.StringComparison.OrdinalIgnoreCase) &&
+                !Kubikaza.HasValue)
+            {
+                yield return new ValidationResult(
+                    "Validation.VehicleDisplacementRequired",
+                    new[] { nameof(Kubikaza) });
+            }
+
+            if (Kubikaza.HasValue && Kubikaza.Value <= 0 &&
+                !string.Equals(Gorivo, "Elektro", System.StringComparison.OrdinalIgnoreCase))
+            {
+                yield return new ValidationResult(
+                    "Validation.VehicleDisplacementPositive",
+                    new[] { nameof(Kubikaza) });
+            }
+        }
     }
 
     public class EditVoziloViewModel : AddVoziloViewModel
@@ -78,7 +94,6 @@ namespace Autosalon_OneZone.ViewModels.Admin
     {
         public Autosalon_OneZone.Models.Vozilo? Vozilo { get; set; }
         public List<Autosalon_OneZone.Models.Recenzija>? Recenzije { get; set; }
-
         public double ProsjecnaOcjena { get; set; } = 0;
     }
 }

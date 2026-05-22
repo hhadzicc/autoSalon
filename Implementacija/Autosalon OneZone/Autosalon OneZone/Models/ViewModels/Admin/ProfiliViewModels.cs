@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Autosalon_OneZone.Models;
 using Microsoft.AspNetCore.Identity;
@@ -15,13 +15,13 @@ namespace Autosalon_OneZone.ViewModels.Admin
     {
         public string? UserId { get; set; }
 
-        [Required(ErrorMessage = "Korisničko ime je obavezno.")]
-        [StringLength(100, ErrorMessage = "Korisničko ime ne može biti duže od 100 karaktera.")]
-        [RegularExpression(@"^[a-zA-Z0-9]+$", ErrorMessage = "Korisničko ime može sadržavati samo slova i brojeve.")]
+        [Required(ErrorMessage = "Validation.UsernameRequired")]
+        [StringLength(100, ErrorMessage = "Validation.UsernameMaxLength")]
+        [RegularExpression(@"^[a-zA-Z0-9]+$", ErrorMessage = "Validation.UsernameAlphanumeric")]
         public string UserName { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Email je obavezan.")]
-        [EmailAddress(ErrorMessage = "Unesite validnu email adresu.")]
+        [Required(ErrorMessage = "Validation.EmailRequired")]
+        [EmailAddress(ErrorMessage = "Validation.EmailValid")]
         public string Email { get; set; } = string.Empty;
 
         [DataType(DataType.Password)]
@@ -30,7 +30,7 @@ namespace Autosalon_OneZone.ViewModels.Admin
         public string? Password { get; set; }
 
         [DataType(DataType.Password)]
-        [Compare("Password", ErrorMessage = "Lozinka i potvrda lozinke se ne podudaraju.")]
+        [Compare("Password", ErrorMessage = "Validation.PasswordsMatch")]
         public string? ConfirmPassword { get; set; }
 
         public string? Ime { get; set; }

@@ -1,19 +1,52 @@
 @model Autosalon_OneZone.ViewModels.Admin.VoziloListViewModel
+@using System.Text.Json
 
 @Html.AntiForgeryToken()
 
+@{
+    var vozilaTexts = new Dictionary<string, string>
+    {
+        ["addVehicle"] = L["AdminAddVehicle"].Value,
+        ["editVehicle"] = L["EditVehicle"].Value,
+        ["edit"] = L["Edit"].Value,
+        ["delete"] = L["CommonDelete"].Value,
+        ["deleteTitle"] = L["DeleteVehicleTitle"].Value,
+        ["deleteMessage"] = L["DeleteVehicleMessage"].Value,
+        ["deleteAction"] = L["DeleteVehicleAction"].Value,
+        ["loading"] = L["LoadingVehicles"].Value,
+        ["empty"] = L["NoVehiclesAvailable"].Value,
+        ["unknownVehicle"] = L["UnknownVehicle"].Value,
+        ["notAvailable"] = L["NotAvailable"].Value,
+        ["year"] = L["VehicleYear"].Value,
+        ["mileage"] = L["VehicleMileage"].Value,
+        ["loadError"] = L["VehicleLoadError"].Value,
+        ["addFormLoadError"] = L["VehicleAddFormLoadError"].Value,
+        ["editFormLoadError"] = L["VehicleEditFormLoadError"].Value,
+        ["saveSuccess"] = L["VehicleSavedSuccess"].Value,
+        ["saveValidationError"] = L["VehicleSaveValidationError"].Value,
+        ["saveImageRequiredError"] = L["VehicleSaveImageRequiredError"].Value,
+        ["deleteSuccess"] = L["VehicleDeletedSuccess"].Value,
+        ["deleteError"] = L["VehicleDeleteError"].Value,
+        ["fuelGasoline"] = L["FuelGasoline"].Value,
+        ["fuelDiesel"] = L["FuelDiesel"].Value,
+        ["fuelHybrid"] = L["FuelHybrid"].Value,
+        ["fuelElectric"] = L["FuelElectric"].Value,
+        ["fuelGas"] = L["FuelGas"].Value
+    };
+}
+
 <div class="admin-page-header">
     <div>
-        <p class="admin-eyebrow">Admin panel</p>
-        <h1>Pregled vozila</h1>
+        <p class="admin-eyebrow">@L["AdminPanel"]</p>
+        <h1>@L["AdminVehiclesTitle"]</h1>
     </div>
 </div>
 
 <div id="add-vozilo-form-container" class="admin-form-card" style="display: none;">
     <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
         <div>
-            <p class="admin-eyebrow mb-1">Vozilo</p>
-            <h2 id="add-edit-form-title" class="mb-0">Dodaj novo vozilo</h2>
+            <p class="admin-eyebrow mb-1">@L["AdminVehicle"]</p>
+            <h2 id="add-edit-form-title" class="mb-0">@L["AdminAddVehicle"]</h2>
         </div>
     </div>
     <div id="add-vozilo-form-placeholder"></div>
@@ -22,42 +55,42 @@
 <div class="admin-card" id="vozila-list-container">
     <div class="admin-card-header">
         <div>
-            <h2>Lista vozila</h2>
-            <p>Pregled svih vozila u sistemu.</p>
+            <h2>@L["AdminVehiclesList"]</h2>
+            <p>@L["AdminVehiclesListText"]</p>
         </div>
     </div>
 
     <div class="admin-list-toolbar">
         <button id="add-vozilo-button" class="btn btn-primary rounded-4 add-admin-btn" type="button">
-            <i class="bi bi-plus-lg me-2"></i>Dodaj novo vozilo
+            <i class="bi bi-plus-lg me-2"></i>@L["AdminAddVehicle"]
         </button>
 
-        <div class="admin-filter-chips" aria-label="Filter vozila po gorivu">
-            <button type="button" class="filter-chip active" data-vehicle-fuel="">Sva vozila</button>
-            <button type="button" class="filter-chip" data-vehicle-fuel="Benzin">Benzin</button>
-            <button type="button" class="filter-chip" data-vehicle-fuel="Dizel">Dizel</button>
-            <button type="button" class="filter-chip" data-vehicle-fuel="Hibrid">Hibrid</button>
-            <button type="button" class="filter-chip" data-vehicle-fuel="Elektro">Elektro</button>
-            <button type="button" class="filter-chip" data-vehicle-fuel="Plin">Plin</button>
+        <div class="admin-filter-chips" aria-label="@L["AdminVehicleFuelFilterAria"]">
+            <button type="button" class="filter-chip active" data-vehicle-fuel="">@L["AllVehicles"]</button>
+            <button type="button" class="filter-chip" data-vehicle-fuel="Benzin">@L["FuelGasoline"]</button>
+            <button type="button" class="filter-chip" data-vehicle-fuel="Dizel">@L["FuelDiesel"]</button>
+            <button type="button" class="filter-chip" data-vehicle-fuel="Hibrid">@L["FuelHybrid"]</button>
+            <button type="button" class="filter-chip" data-vehicle-fuel="Elektro">@L["FuelElectric"]</button>
+            <button type="button" class="filter-chip" data-vehicle-fuel="Plin">@L["FuelGas"]</button>
         </div>
 
         <div class="admin-search-compact">
-            <input type="text" id="vozilo-search-input" class="form-control" placeholder="Pretraži po nazivu..." value="@Model.SearchQuery" />
-            <button id="vozilo-search-button" class="search-submit-btn" type="button" aria-label="Pretraži vozila">
+            <input type="text" id="vozilo-search-input" class="form-control" placeholder="@L["AdminSearchVehiclesPlaceholder"]" value="@Model.SearchQuery" />
+            <button id="vozilo-search-button" class="search-submit-btn" type="button" aria-label="@L["VehicleSearchAria"]">
                 <i class="bi bi-search"></i>
             </button>
         </div>
     </div>
 
     <div class="admin-mobile-sort">
-        <label for="vozilo-sort-select" class="form-label">Sortiraj po</label>
+        <label for="vozilo-sort-select" class="form-label">@L["AdminSortBy"]</label>
         <select id="vozilo-sort-select" class="form-select">
-            <option value="cijena|desc">Cijena: najviša prvo</option>
-            <option value="cijena|asc">Cijena: najniža prvo</option>
-            <option value="godiste|desc">Godište: najnovije prvo</option>
-            <option value="godiste|asc">Godište: najstarije prvo</option>
-            <option value="kilometraza|asc">Kilometraža: najmanja prvo</option>
-            <option value="kilometraza|desc">Kilometraža: najveća prvo</option>
+            <option value="cijena|desc">@L["AdminSortPriceDesc"]</option>
+            <option value="cijena|asc">@L["AdminSortPriceAsc"]</option>
+            <option value="godiste|desc">@L["AdminSortYearDesc"]</option>
+            <option value="godiste|asc">@L["AdminSortYearAsc"]</option>
+            <option value="kilometraza|asc">@L["AdminSortMileageAsc"]</option>
+            <option value="kilometraza|desc">@L["AdminSortMileageDesc"]</option>
         </select>
     </div>
 
@@ -65,32 +98,32 @@
         <table class="table admin-table align-middle mb-0">
             <thead>
                 <tr>
-                    <th>Naziv</th>
+                    <th>@L["AdminVehicleName"]</th>
                     <th>
                         <a href="?sort=godiste&direction=desc" class="sortable-th" data-sort-key="godiste">
-                            Godište
+                            @L["VehicleYear"]
                             <i class="bi bi-arrow-down-up"></i>
                         </a>
                     </th>
-                    <th>Gorivo</th>
+                    <th>@L["VehicleFuel"]</th>
                     <th>
                         <a href="?sort=kilometraza&direction=asc" class="sortable-th" data-sort-key="kilometraza">
-                            Kilometraža
+                            @L["VehicleMileage"]
                             <i class="bi bi-arrow-down-up"></i>
                         </a>
                     </th>
                     <th>
                         <a href="?sort=cijena&direction=desc" class="sortable-th active" data-sort-key="cijena">
-                            Cijena
+                            @L["VehiclePrice"]
                             <i class="bi bi-arrow-down-short"></i>
                         </a>
                     </th>
-                    <th class="text-end">Akcije</th>
+                    <th class="text-end">@L["Actions"]</th>
                 </tr>
             </thead>
             <tbody id="vozila-table-body">
                 <tr>
-                    <td colspan="6">Učitavanje vozila...</td>
+                    <td colspan="6">@L["LoadingVehicles"]</td>
                 </tr>
             </tbody>
         </table>
@@ -102,6 +135,8 @@
 
 <script>
     $(document).ready(function () {
+        const text = @Html.Raw(JsonSerializer.Serialize(vozilaTexts));
+
         $(document).off('click', '.edit-vozilo-button');
         $(document).off('click', '.filter-chip');
         $(document).off('click', '.sortable-th');
@@ -126,12 +161,24 @@
             cijena: 'desc'
         };
 
+        const fuelLabels = {
+            Benzin: text.fuelGasoline,
+            Dizel: text.fuelDiesel,
+            Hibrid: text.fuelHybrid,
+            Elektro: text.fuelElectric,
+            Plin: text.fuelGas
+        };
+
         function escapeHtml(value) {
             return $('<div>').text(value ?? '').html();
         }
 
         function escapeAttribute(value) {
             return escapeHtml(value).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+
+        function labelFuel(value) {
+            return fuelLabels[value] || value || text.notAvailable;
         }
 
         function formatCurrency(value) {
@@ -146,8 +193,8 @@
 
         function vehicleActions(id, naziv) {
             return '<div class="table-actions">' +
-                '<button class="edit-vozilo-button btn btn-sm btn-outline-primary rounded-3" data-id="' + id + '"><i class="bi bi-pencil-square me-1"></i>Izmijeni</button>' +
-                '<button class="delete-vozilo-button btn btn-sm btn-outline-danger rounded-3" data-id="' + id + '" data-confirm-delete="true" data-confirm-title="Obrisati vozilo?" data-confirm-message="Da li ste sigurni da želite obrisati ovo vozilo?" data-confirm-item="' + escapeAttribute(naziv) + '" data-confirm-action="Da, obriši vozilo"><i class="bi bi-trash me-1"></i>Obriši</button>' +
+                '<button class="edit-vozilo-button btn btn-sm btn-outline-primary rounded-3" data-id="' + id + '"><i class="bi bi-pencil-square me-1"></i>' + escapeHtml(text.edit) + '</button>' +
+                '<button class="delete-vozilo-button btn btn-sm btn-outline-danger rounded-3" data-id="' + id + '" data-confirm-delete="true" data-confirm-title="' + escapeAttribute(text.deleteTitle) + '" data-confirm-message="' + escapeAttribute(text.deleteMessage) + '" data-confirm-item="' + escapeAttribute(naziv) + '" data-confirm-action="' + escapeAttribute(text.deleteAction) + '"><i class="bi bi-trash me-1"></i>' + escapeHtml(text.delete) + '</button>' +
                 '</div>';
         }
 
@@ -266,20 +313,20 @@
             vozilaMobileList.empty();
 
             if (!vozila || vozila.length === 0) {
-                vozilaTableBody.html('<tr><td colspan="6"><div class="empty-state"><i class="bi bi-car-front"></i><p>Nema dostupnih vozila.</p></div></td></tr>');
-                vozilaMobileList.html('<div class="empty-state"><i class="bi bi-car-front"></i><p>Nema dostupnih vozila.</p></div>');
+                vozilaTableBody.html('<tr><td colspan="6"><div class="empty-state"><i class="bi bi-car-front"></i><p>' + escapeHtml(text.empty) + '</p></div></td></tr>');
+                vozilaMobileList.html('<div class="empty-state"><i class="bi bi-car-front"></i><p>' + escapeHtml(text.empty) + '</p></div>');
                 return;
             }
 
             $.each(vozila, function (_, vozilo) {
                 const id = vozilo.voziloID;
-                const rawNaziv = vozilo.naziv || 'Nepoznato vozilo';
+                const rawNaziv = vozilo.naziv || text.unknownVehicle;
                 const naziv = escapeHtml(rawNaziv);
-                const godiste = escapeHtml(vozilo.godiste || 'N/A');
-                const gorivo = escapeHtml(vozilo.gorivo || 'N/A');
+                const godiste = escapeHtml(vozilo.godiste || text.notAvailable);
+                const gorivo = escapeHtml(labelFuel(vozilo.gorivo));
                 const kilometraza = formatMileage(vozilo.kilometraza);
                 const cijena = formatCurrency(vozilo.cijena);
-                const actions = vehicleActions(id, naziv);
+                const actions = vehicleActions(id, rawNaziv);
 
                 vozilaTableBody.append(
                     '<tr>' +
@@ -299,8 +346,8 @@
                             '<strong class="price-cell">' + cijena + '</strong>' +
                         '</div>' +
                         '<div class="mobile-specs">' +
-                            '<div><span>Godište</span><strong>' + godiste + '</strong></div>' +
-                            '<div><span>Kilometraža</span><strong>' + kilometraza + '</strong></div>' +
+                            '<div><span>' + escapeHtml(text.year) + '</span><strong>' + godiste + '</strong></div>' +
+                            '<div><span>' + escapeHtml(text.mileage) + '</span><strong>' + kilometraza + '</strong></div>' +
                         '</div>' +
                         '<div class="mobile-actions">' + actions + '</div>' +
                     '</article>'
@@ -309,20 +356,20 @@
         }
 
         function loadVozilaList(searchQuery = '', page = 1, sort = currentSort, direction = currentDirection, gorivoFilter = currentFuelFilter) {
-            vozilaTableBody.html('<tr><td colspan="6">Učitavanje vozila...</td></tr>');
-            vozilaMobileList.html('<div class="empty-state"><i class="bi bi-hourglass-split"></i><p>Učitavanje vozila...</p></div>');
+            vozilaTableBody.html('<tr><td colspan="6">' + escapeHtml(text.loading) + '</td></tr>');
+            vozilaMobileList.html('<div class="empty-state"><i class="bi bi-hourglass-split"></i><p>' + escapeHtml(text.loading) + '</p></div>');
 
             $.get('@Url.Action("GetVozilaJson", "AdminPanel")', { searchQuery: searchQuery, page: page, sort: sort, direction: direction, gorivoFilter: gorivoFilter }, function (data) {
                 renderVehicleRows(data && data.vozila ? data.vozila : []);
             }).fail(function (jqXHR, textStatus, errorThrown) {
-                const message = escapeHtml(jqXHR.responseText || errorThrown || 'Greška');
-                vozilaTableBody.html('<tr><td colspan="6"><div class="alert alert-danger mb-0">Greška prilikom učitavanja vozila: ' + message + '</div></td></tr>');
-                vozilaMobileList.html('<div class="alert alert-danger mb-0">Greška prilikom učitavanja vozila: ' + message + '</div>');
+                const message = escapeHtml(jqXHR.responseText || errorThrown || window.appTexts?.genericError || 'Error');
+                vozilaTableBody.html('<tr><td colspan="6"><div class="alert alert-danger mb-0">' + escapeHtml(text.loadError) + ' ' + message + '</div></td></tr>');
+                vozilaMobileList.html('<div class="alert alert-danger mb-0">' + escapeHtml(text.loadError) + ' ' + message + '</div>');
             });
         }
 
         readInitialState();
-        loadVozilaList(searchInput.val() || '@Model.SearchQuery', 1, currentSort, currentDirection, currentFuelFilter);
+        loadVozilaList(searchInput.val() || @Html.Raw(JsonSerializer.Serialize(Model.SearchQuery ?? string.Empty)), 1, currentSort, currentDirection, currentFuelFilter);
 
         searchButton.on('click', function () {
             updateUrlState();
@@ -367,7 +414,7 @@
         });
 
         $('#add-vozilo-button').on('click', function () {
-            addFormTitle.text('Dodaj novo vozilo');
+            addFormTitle.text(text.addVehicle);
             $.get('@Url.Action("GetAddVoziloForm", "AdminPanel")', function (data) {
                 addFormPlaceholder.html(data);
                 addFormContainer.show();
@@ -376,14 +423,14 @@
                 form.removeData('unobtrusiveValidation');
                 $.validator.unobtrusive.parse(form);
             }).fail(function () {
-                addFormPlaceholder.html('<div class="alert alert-danger mb-0">Greška prilikom učitavanja forme za dodavanje.</div>');
+                addFormPlaceholder.html('<div class="alert alert-danger mb-0">' + escapeHtml(text.addFormLoadError) + '</div>');
                 addFormContainer.show();
             });
         });
 
         $(document).off('click.adminVozilaEdit', '.edit-vozilo-button').on('click.adminVozilaEdit', '.edit-vozilo-button', function () {
             const voziloId = $(this).data('id');
-            addFormTitle.text('Izmijeni vozilo');
+            addFormTitle.text(text.editVehicle);
 
             $.get('@Url.Action("GetEditVoziloForm", "AdminPanel")', { id: voziloId }, function (data) {
                 addFormPlaceholder.html(data);
@@ -393,7 +440,7 @@
                 form.removeData('unobtrusiveValidation');
                 $.validator.unobtrusive.parse(form);
             }).fail(function () {
-                addFormPlaceholder.html('<div class="alert alert-danger mb-0">Greška prilikom učitavanja forme za izmjenu.</div>');
+                addFormPlaceholder.html('<div class="alert alert-danger mb-0">' + escapeHtml(text.editFormLoadError) + '</div>');
                 addFormContainer.show();
             });
         });
@@ -421,13 +468,13 @@
                     addFormContainer.hide();
                     addFormPlaceholder.empty();
                     loadVozilaList(searchInput.val(), 1, currentSort, currentDirection, currentFuelFilter);
-                    window.showAppFlashMessage('Vozilo uspješno sačuvano.', 'success');
+                    window.showAppFlashMessage(text.saveSuccess, 'success');
                 },
                 error: function (jqXHR) {
                     if (jqXHR.status === 400 && jqXHR.responseJSON) {
-                        window.showAppFlashMessage('Greška prilikom spremanja. Provjerite unesene podatke.', 'error');
+                        window.showAppFlashMessage(text.saveValidationError, 'error');
                     } else {
-                        window.showAppFlashMessage('Došlo je do greške prilikom spremanja vozila. Slika je obavezna za novo vozilo.', 'error');
+                        window.showAppFlashMessage(text.saveImageRequiredError, 'error');
                     }
                 }
             });
@@ -444,11 +491,11 @@
                 },
                 data: { id: voziloId },
                 success: function (response) {
-                    window.showAppFlashMessage(response.successMessage || 'Vozilo uspješno obrisano.', 'success');
+                    window.showAppFlashMessage(response.successMessage || text.deleteSuccess, 'success');
                     loadVozilaList(searchInput.val(), 1, currentSort, currentDirection, currentFuelFilter);
                 },
                 error: function () {
-                    window.showAppFlashMessage('Došlo je do greške prilikom brisanja vozila.', 'error');
+                    window.showAppFlashMessage(text.deleteError, 'error');
                 }
             });
         });

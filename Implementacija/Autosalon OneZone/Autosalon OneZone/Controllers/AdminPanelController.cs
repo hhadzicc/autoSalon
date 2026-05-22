@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Localization;
 
 namespace Autosalon_OneZone.Controllers
 {
@@ -20,6 +21,7 @@ namespace Autosalon_OneZone.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IStringLocalizer<SharedResource> _localizer;
 
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
@@ -36,10 +38,12 @@ namespace Autosalon_OneZone.Controllers
             ApplicationDbContext context,
             IWebHostEnvironment webHostEnvironment,
             UserManager<ApplicationUser> userManager,
-            RoleManager<IdentityRole> roleManager)
+            RoleManager<IdentityRole> roleManager,
+            IStringLocalizer<SharedResource>? localizer = null)
         {
             _context = context;
             _webHostEnvironment = webHostEnvironment;
+            _localizer = localizer ?? new FallbackStringLocalizer<SharedResource>();
 
             _userManager = userManager;
             _roleManager = roleManager;
@@ -212,7 +216,7 @@ namespace Autosalon_OneZone.Controllers
         {
             if (viewModel.VoziloID == 0 && viewModel.Slika == null)
             {
-                ModelState.AddModelError("Slika", "Slika je obavezna za novo vozilo.");
+                ModelState.AddModelError("Slika", _localizer["VehicleImageRequiredNew"]);
             }
 
             if (viewModel.VoziloID > 0)
@@ -227,12 +231,12 @@ namespace Autosalon_OneZone.Controllers
 
                 if (!allowedExtensions.Contains(extension))
                 {
-                    ModelState.AddModelError("Slika", "Dozvoljena su samo sljedeća proširenja fajlova: .jpg, .jpeg, .png, .gif, .bmp");
+                    ModelState.AddModelError("Slika", _localizer["AllowedImageExtensionsError"]);
                 }
 
                 if (viewModel.Slika.Length > 5 * 1024 * 1024)
                 {
-                    ModelState.AddModelError("Slika", "Veličina slike ne smije prelaziti 5MB.");
+                    ModelState.AddModelError("Slika", _localizer["ImageSizeLimitError"]);
                 }
             }
 
@@ -288,7 +292,7 @@ namespace Autosalon_OneZone.Controllers
             }
             catch (ArgumentException)
             {
-                ModelState.AddModelError("Gorivo", "Odabrana vrijednost za gorivo nije validna.");
+                ModelState.AddModelError("Gorivo", _localizer["InvalidFuelValue"]);
                 return BadRequest(new
                 {
                     errors = ModelState.ToDictionary(
@@ -323,7 +327,7 @@ namespace Autosalon_OneZone.Controllers
             return Ok(new
             {
                 voziloId = vozilo.VoziloID,
-                successMessage = viewModel.VoziloID > 0 ? "Vozilo uspješno izmijenjeno!" : "Vozilo uspješno dodano!"
+                successMessage = viewModel.VoziloID > 0 ? _localizer["VehicleUpdateSuccess"].Value : _localizer["VehicleCreateSuccess"].Value
             });
         }
 
@@ -379,7 +383,7 @@ namespace Autosalon_OneZone.Controllers
             _context.Vozila.Remove(vozilo);
             await _context.SaveChangesAsync();
 
-            return Ok(new { successMessage = "Vozilo uspješno obrisano." });
+            return Ok(new { successMessage = _localizer["VehicleDeletedSuccess"].Value });
         }
 
         #endregion
@@ -424,7 +428,7 @@ namespace Autosalon_OneZone.Controllers
             return PartialView("_AdminRecenzije", viewModel);
         }
         #endregion
-        #region Podrška sekcija
+        #region Podr�ka sekcija
 
         public IActionResult GetPodrskaSection(string? searchQuery = null)
         {
@@ -500,7 +504,7 @@ namespace Autosalon_OneZone.Controllers
             _context.PodrskaUpiti.Remove(upit);
             await _context.SaveChangesAsync();
 
-            return Ok(new { successMessage = "Upit za podršku uspješno obrisan." });
+            return Ok(new { successMessage = _localizer["SupportDeleteSuccess"].Value });
         }
 
         [HttpPost]
@@ -518,11 +522,11 @@ namespace Autosalon_OneZone.Controllers
             {
                 upit.Status = statusEnum;
                 await _context.SaveChangesAsync();
-                return Ok(new { successMessage = "Status upita uspješno promijenjen." });
+                return Ok(new { successMessage = _localizer["StatusChangedSuccess"].Value });
             }
             else
             {
-                return BadRequest("Nevažeći status.");
+                return BadRequest(_localizer["InvalidStatus"].Value);
             }
         }
 
@@ -609,7 +613,7 @@ namespace Autosalon_OneZone.Controllers
             _context.Recenzije.Remove(recenzija);
             await _context.SaveChangesAsync();
 
-            return Ok(new { successMessage = "Recenzija uspješno obrisana." });
+            return Ok(new { successMessage = _localizer["ReviewDeletedSuccess"].Value });
         }
 
         [HttpGet]
@@ -829,33 +833,33 @@ namespace Autosalon_OneZone.Controllers
                 {
                     if (string.IsNullOrWhiteSpace(viewModel.ConfirmPassword))
                     {
-                        ModelState.AddModelError(nameof(viewModel.ConfirmPassword), "Potvrda nove lozinke je obavezna kada se mijenja lozinka.");
+                        ModelState.AddModelError(nameof(viewModel.ConfirmPassword), _localizer["NewPasswordConfirmationRequired"]);
                     }
                     else if (viewModel.Password != viewModel.ConfirmPassword)
                     {
-                        ModelState.AddModelError(nameof(viewModel.ConfirmPassword), "Nova lozinka i potvrda lozinke se ne podudaraju.");
+                        ModelState.AddModelError(nameof(viewModel.ConfirmPassword), _localizer["NewPasswordMismatch"]);
                     }
                     else if (!MeetsPasswordPolicy(viewModel.Password))
                     {
-                        ModelState.AddModelError(nameof(viewModel.Password), "Lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo.");
+                        ModelState.AddModelError(nameof(viewModel.Password), _localizer["PasswordPolicyError"]);
                     }
                 }
                 else if (!string.IsNullOrWhiteSpace(viewModel.ConfirmPassword))
                 {
-                    ModelState.AddModelError(nameof(viewModel.Password), "Unesite novu lozinku ili ostavite oba polja za lozinku prazna.");
+                    ModelState.AddModelError(nameof(viewModel.Password), _localizer["PasswordFieldsEitherBothOrEmpty"]);
                 }
             }
             else if (string.IsNullOrWhiteSpace(viewModel.Password))
             {
-                ModelState.AddModelError(nameof(viewModel.Password), "Lozinka je obavezna.");
+                ModelState.AddModelError(nameof(viewModel.Password), _localizer["PasswordRequired"]);
             }
             else if (!MeetsPasswordPolicy(viewModel.Password))
             {
-                ModelState.AddModelError(nameof(viewModel.Password), "Lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo.");
+                ModelState.AddModelError(nameof(viewModel.Password), _localizer["PasswordPolicyError"]);
             }
             else if (string.IsNullOrWhiteSpace(viewModel.ConfirmPassword))
             {
-                ModelState.AddModelError(nameof(viewModel.ConfirmPassword), "Potvrda lozinke je obavezna.");
+                ModelState.AddModelError(nameof(viewModel.ConfirmPassword), _localizer["ConfirmPasswordRequired"]);
             }
 
             if (viewModel.OdabraneRole != null && viewModel.OdabraneRole.Count == 0 && Request.Form["OdabraneRole"].Count > 0)
@@ -916,7 +920,7 @@ namespace Autosalon_OneZone.Controllers
                     {
                         return BadRequest(new
                         {
-                            identityErrors = new[] { "Korisnik s tim korisničkim imenom već postoji." }
+                            identityErrors = new[] { _localizer["UsernameExists"].Value }
                         });
                     }
                 }
@@ -928,7 +932,7 @@ namespace Autosalon_OneZone.Controllers
                     {
                         return BadRequest(new
                         {
-                            identityErrors = new[] { "Korisnik s tim email-om već postoji." }
+                            identityErrors = new[] { _localizer["EmailExists"].Value }
                         });
                     }
                 }
@@ -986,7 +990,7 @@ namespace Autosalon_OneZone.Controllers
                 }
             }
 
-            return Ok(new { userId = user.Id, successMessage = "Korisnik uspješno sačuvan!" });
+            return Ok(new { userId = user.Id, successMessage = _localizer["UserSavedSuccess"].Value });
         }
 
         [HttpPost]
@@ -1035,11 +1039,11 @@ namespace Autosalon_OneZone.Controllers
                     return BadRequest(result.Errors.Select(e => e.Description));
                 }
 
-                return Ok(new { successMessage = "Korisnik uspješno obrisan." });
+                return Ok(new { successMessage = _localizer["UserDeletedSuccess"].Value });
             }
             catch (Exception ex)
             {
-                return BadRequest(new { errorMessage = $"Greška prilikom brisanja korisnika: {ex.Message}" });
+                return BadRequest(new { errorMessage = string.Format(_localizer["UserDeleteFailure"].Value, ex.Message) });
             }
         }
     }

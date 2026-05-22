@@ -1,17 +1,18 @@
 @model Autosalon_OneZone.ViewModels.Admin.AdminDashboardViewModel
 @using Autosalon_OneZone.Models
+@using System.Globalization
 @using System.Linq
 
 @functions {
-    private static string FormatDate(DateTime date) => date.ToString("dd-MM-yyyy");
+    private static string FormatDate(DateTime date) => date.ToString("dd-MM-yyyy", CultureInfo.CurrentCulture);
 
-    private static string OrderStatusLabel(StatusNarudzbe status) => status switch
+    private string OrderStatusLabel(StatusNarudzbe status) => status switch
     {
-        StatusNarudzbe.Placena => "Plaćena",
-        StatusNarudzbe.UObradi => "U obradi",
-        StatusNarudzbe.Isporucena => "Isporučena",
-        StatusNarudzbe.Otkazana => "Otkazana",
-        _ => "Kreirana"
+        StatusNarudzbe.Placena => L["StatusPaid"].Value,
+        StatusNarudzbe.UObradi => L["StatusInProgress"].Value,
+        StatusNarudzbe.Isporucena => L["StatusDelivered"].Value,
+        StatusNarudzbe.Otkazana => L["StatusCanceled"].Value,
+        _ => L["StatusCreated"].Value
     };
 
     private static string OrderStatusClass(StatusNarudzbe status) => status switch
@@ -23,12 +24,12 @@
         _ => "info"
     };
 
-    private static string SupportStatusLabel(StatusUpita status) => status switch
+    private string SupportStatusLabel(StatusUpita status) => status switch
     {
-        StatusUpita.UObradi => "U obradi",
-        StatusUpita.Odgovoren => "Odgovoren",
-        StatusUpita.Zatvoren => "Zatvoren",
-        _ => "Poslat"
+        StatusUpita.UObradi => L["StatusInProgress"].Value,
+        StatusUpita.Odgovoren => L["StatusAnswered"].Value,
+        StatusUpita.Zatvoren => L["StatusClosed"].Value,
+        _ => L["StatusSent"].Value
     };
 
     private static string SupportStatusClass(StatusUpita status) => status switch
@@ -43,16 +44,16 @@
 
 <div class="admin-page-header dashboard-page-header">
     <div>
-        <p class="admin-eyebrow">Admin panel</p>
-        <h1>Dashboard</h1>
+        <p class="admin-eyebrow">@L["AdminPanel"]</p>
+        <h1>@L["AdminDashboardTitle"]</h1>
     </div>
 
     <div class="dashboard-header-actions">
         <button type="button" class="btn btn-primary rounded-4 dashboard-section-link" data-section="Vozila">
-            <i class="bi bi-car-front-fill me-2"></i>Vozila
+            <i class="bi bi-car-front-fill me-2"></i>@L["AdminDashboardVehiclesButton"]
         </button>
         <button type="button" class="btn btn-light border rounded-4 dashboard-section-link" data-section="Podrska">
-            <i class="bi bi-headset me-2"></i>Upiti
+            <i class="bi bi-headset me-2"></i>@L["AdminDashboardInquiriesButton"]
         </button>
     </div>
 </div>
@@ -61,45 +62,45 @@
     <article class="dashboard-stat-card">
         <span class="dashboard-stat-icon stat-blue"><i class="bi bi-car-front-fill"></i></span>
         <div>
-            <span>Vozila</span>
+            <span>@L["Vehicles"]</span>
             <strong>@Model.BrojVozila</strong>
-            <p>Ukupno u katalogu</p>
+            <p>@L["AdminDashboardVehiclesTotal"]</p>
         </div>
     </article>
 
     <article class="dashboard-stat-card">
         <span class="dashboard-stat-icon stat-cyan"><i class="bi bi-people-fill"></i></span>
         <div>
-            <span>Korisnici</span>
+            <span>@L["AdminUsersTitle"]</span>
             <strong>@Model.BrojKorisnika</strong>
-            <p>Registrovani nalozi</p>
+            <p>@L["AdminDashboardUsersTotal"]</p>
         </div>
     </article>
 
     <article class="dashboard-stat-card">
         <span class="dashboard-stat-icon stat-green"><i class="bi bi-bag-check-fill"></i></span>
         <div>
-            <span>Narudžbe</span>
+            <span>@L["DashboardOrders"]</span>
             <strong>@Model.BrojNarudzbi</strong>
-            <p>Ukupno kupovina</p>
+            <p>@L["AdminDashboardOrdersTotal"]</p>
         </div>
     </article>
 
     <article class="dashboard-stat-card">
         <span class="dashboard-stat-icon stat-amber"><i class="bi bi-headset"></i></span>
         <div>
-            <span>Aktivni upiti</span>
+            <span>@L["AdminDashboardActiveInquiries"]</span>
             <strong>@Model.BrojAktivnihUpita</strong>
-            <p>Čekaju obradu</p>
+            <p>@L["AdminDashboardPendingProcessing"]</p>
         </div>
     </article>
 
     <article class="dashboard-stat-card dashboard-stat-wide">
         <span class="dashboard-stat-icon stat-emerald"><i class="bi bi-cash-stack"></i></span>
         <div>
-            <span>Promet</span>
-            <strong>€@Model.UkupanPromet.ToString("N0")</strong>
-            <p>Ukupno evidentirane narudžbe</p>
+            <span>@L["AdminDashboardRevenue"]</span>
+            <strong>€@Model.UkupanPromet.ToString("N0", CultureInfo.CurrentCulture)</strong>
+            <p>@L["AdminDashboardRevenueDesc"]</p>
         </div>
     </article>
 </div>
@@ -108,8 +109,8 @@
     <section class="admin-card dashboard-panel dashboard-panel-main">
         <div class="dashboard-panel-header">
             <div>
-                <h2>Zadnje kupovine</h2>
-                <p>Najnovije narudžbe i vozila koja su kupci odabrali.</p>
+                <h2>@L["AdminDashboardLatestPurchases"]</h2>
+                <p>@L["AdminDashboardLatestPurchasesText"]</p>
             </div>
             <span class="dashboard-count-pill">@Model.ZadnjeKupovine.Count</span>
         </div>
@@ -118,7 +119,7 @@
         {
             <div class="empty-state dashboard-empty-state">
                 <i class="bi bi-bag"></i>
-                <p>Nema evidentiranih kupovina.</p>
+                <p>@L["AdminDashboardNoPurchases"]</p>
             </div>
         }
         else
@@ -126,7 +127,7 @@
             <div class="dashboard-timeline">
                 @foreach (var kupovina in Model.ZadnjeKupovine)
                 {
-                    var vozila = kupovina.Vozila.Any() ? string.Join(", ", kupovina.Vozila) : "Vozilo nije dostupno";
+                    var vozila = kupovina.Vozila.Any() ? string.Join(", ", kupovina.Vozila) : L["AdminDashboardVehicleUnavailable"].Value;
 
                     <article class="dashboard-list-item">
                         <div class="dashboard-list-icon">
@@ -135,10 +136,10 @@
                         <div class="dashboard-list-body">
                             <div class="dashboard-list-top">
                                 <div>
-                                    <h3>Narudžba #@kupovina.NarudzbaID</h3>
+                                    <h3>@L["AdminDashboardOrder"] #@kupovina.NarudzbaID</h3>
                                     <p>@FormatDate(kupovina.DatumNarudzbe) · @kupovina.Korisnik</p>
                                 </div>
-                                <strong class="dashboard-price">€@kupovina.UkupanIznos.ToString("N0")</strong>
+                                <strong class="dashboard-price">€@kupovina.UkupanIznos.ToString("N0", CultureInfo.CurrentCulture)</strong>
                             </div>
                             <div class="dashboard-list-bottom">
                                 <span title="@vozila">@vozila</span>
@@ -157,11 +158,11 @@
         <section class="admin-card dashboard-panel">
             <div class="dashboard-panel-header">
                 <div>
-                    <h2>Upiti za podršku</h2>
-                    <p>Najnoviji korisnički upiti.</p>
+                    <h2>@L["AdminDashboardSupportInquiries"]</h2>
+                    <p>@L["AdminDashboardLatestInquiriesText"]</p>
                 </div>
                 <button type="button" class="btn btn-light border rounded-4 dashboard-section-link" data-section="Podrska">
-                    Otvori
+                    @L["AdminDashboardOpen"]
                 </button>
             </div>
 
@@ -169,7 +170,7 @@
             {
                 <div class="empty-state dashboard-empty-state">
                     <i class="bi bi-inbox"></i>
-                    <p>Nema novih upita.</p>
+                    <p>@L["AdminDashboardNoInquiries"]</p>
                 </div>
             }
             else
@@ -194,11 +195,11 @@
         <section class="admin-card dashboard-panel">
             <div class="dashboard-panel-header">
                 <div>
-                    <h2>Recenzije</h2>
-                    <p>Najnovije ocjene vozila.</p>
+                    <h2>@L["Reviews"]</h2>
+                    <p>@L["AdminDashboardLatestReviewsText"]</p>
                 </div>
                 <button type="button" class="btn btn-light border rounded-4 dashboard-section-link" data-section="Recenzije">
-                    Otvori
+                    @L["AdminDashboardOpen"]
                 </button>
             </div>
 
@@ -206,7 +207,7 @@
             {
                 <div class="empty-state dashboard-empty-state">
                     <i class="bi bi-star"></i>
-                    <p>Nema novih recenzija.</p>
+                    <p>@L["AdminDashboardNoReviews"]</p>
                 </div>
             }
             else

@@ -1,25 +1,44 @@
 @model Autosalon_OneZone.ViewModels.Admin.RecenzijaListViewModel
+@using System.Text.Json
+
+@{
+    var recenzijeTexts = new Dictionary<string, string>
+    {
+        ["show"] = L["Show"].Value,
+        ["delete"] = L["CommonDelete"].Value,
+        ["deleteTitle"] = L["DeleteReviewTitle"].Value,
+        ["deleteMessage"] = L["DeleteReviewMessage"].Value,
+        ["deleteAction"] = L["DeleteReviewAction"].Value,
+        ["loading"] = L["LoadingReviews"].Value,
+        ["empty"] = L["NoReviewsAvailable"].Value,
+        ["notAvailable"] = L["NotAvailable"].Value,
+        ["loadError"] = L["ReviewsLoadError"].Value,
+        ["deleteSuccess"] = L["ReviewDeletedSuccess"].Value,
+        ["deleteError"] = L["ReviewDeleteError"].Value,
+        ["ratingWord"] = L["RatingWord"].Value
+    };
+}
 
 <div class="admin-page-header">
     <div>
-        <p class="admin-eyebrow">Admin panel</p>
-        <h1>Pregled recenzija</h1>
+        <p class="admin-eyebrow">@L["AdminPanel"]</p>
+        <h1>@L["AdminReviewsTitle"]</h1>
     </div>
 </div>
 
 <div class="admin-card" id="recenzije-list-container">
     <div class="admin-toolbar admin-toolbar-stacked">
         <div>
-            <h2>Lista recenzija</h2>
-            <span>Filtrirajte recenzije prema korisniku, vozilu ili sadržaju komentara.</span>
+            <h2>@L["AdminReviewsList"]</h2>
+            <span>@L["AdminReviewsListText"]</span>
         </div>
 
         <div class="admin-filter-form review-filter-form">
-            <input type="text" id="recenzija-user-filter" class="form-control" placeholder="Filtriraj po korisniku..." value="@Model.KorisnikFilter" />
-            <input type="text" id="recenzija-vozilo-filter" class="form-control" placeholder="Filtriraj po vozilu..." value="@Model.VoziloFilter" />
-            <input type="text" id="recenzija-text-search" class="form-control" placeholder="Pretraži po tekstu..." value="@Model.SearchQuery" />
+            <input type="text" id="recenzija-user-filter" class="form-control" placeholder="@L["FilterByUserPlaceholder"]" value="@Model.KorisnikFilter" />
+            <input type="text" id="recenzija-vozilo-filter" class="form-control" placeholder="@L["FilterByVehiclePlaceholder"]" value="@Model.VoziloFilter" />
+            <input type="text" id="recenzija-text-search" class="form-control" placeholder="@L["SearchByTextPlaceholder"]" value="@Model.SearchQuery" />
             <button id="recenzija-filter-search-button" class="btn btn-primary" type="button">
-                <i class="bi bi-funnel-fill me-2"></i>Primijeni filtere
+                <i class="bi bi-funnel-fill me-2"></i>@L["ApplyFilters"]
             </button>
         </div>
     </div>
@@ -28,16 +47,16 @@
         <table class="table admin-table align-middle mb-0">
             <thead>
                 <tr>
-                    <th>Datum</th>
-                    <th>Korisnik</th>
-                    <th>Vozilo</th>
-                    <th>Ocjena</th>
-                    <th class="text-end">Akcije</th>
+                    <th>@L["Date"]</th>
+                    <th>@L["Customer"]</th>
+                    <th>@L["AdminVehicle"]</th>
+                    <th>@L["Rating"]</th>
+                    <th class="text-end">@L["Actions"]</th>
                 </tr>
             </thead>
             <tbody id="recenzija-table-body">
                 <tr>
-                    <td colspan="5">Učitavanje recenzija...</td>
+                    <td colspan="5">@L["LoadingReviews"]</td>
                 </tr>
             </tbody>
         </table>
@@ -56,23 +75,23 @@
                         <i class="bi bi-chat-square-text-fill"></i>
                     </div>
                     <div>
-                        <h5 class="modal-title" id="komentarModalLabel">Komentar recenzije</h5>
-                        <p class="mb-0 text-muted small">Pregled punog komentara korisnika.</p>
+                        <h5 class="modal-title" id="komentarModalLabel">@L["ReviewCommentTitle"]</h5>
+                        <p class="mb-0 text-muted small">@L["ReviewCommentSubtitle"]</p>
                     </div>
                 </div>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@L["Close"]"></button>
             </div>
             <div class="modal-body">
                 <div class="review-meta-grid">
-                    <div><span>Korisnik</span><strong id="komentarModalKorisnik">-</strong></div>
-                    <div><span>Vozilo</span><strong id="komentarModalVozilo">-</strong></div>
-                    <div><span>Ocjena</span><strong id="komentarModalOcjena">-</strong></div>
-                    <div><span>Datum</span><strong id="komentarModalDatum">-</strong></div>
+                    <div><span>@L["Customer"]</span><strong id="komentarModalKorisnik">-</strong></div>
+                    <div><span>@L["AdminVehicle"]</span><strong id="komentarModalVozilo">-</strong></div>
+                    <div><span>@L["Rating"]</span><strong id="komentarModalOcjena">-</strong></div>
+                    <div><span>@L["Date"]</span><strong id="komentarModalDatum">-</strong></div>
                 </div>
                 <div class="review-comment-box" id="komentarModalText"></div>
             </div>
             <div class="modal-footer modern-modal-footer">
-                <button type="button" class="btn btn-light border rounded-4" data-bs-dismiss="modal">Zatvori</button>
+                <button type="button" class="btn btn-light border rounded-4" data-bs-dismiss="modal">@L["Close"]</button>
             </div>
         </div>
     </div>
@@ -80,6 +99,8 @@
 
 <script>
     $(document).ready(function () {
+        const text = @Html.Raw(JsonSerializer.Serialize(recenzijeTexts));
+
         $(document).off('click', '.view-komentar');
         $(document).off('app:delete-confirmed', '.delete-recenzija-button');
 
@@ -114,8 +135,8 @@
 
         function reviewDataAttributes(recenzija) {
             const komentar = encodeURIComponent(recenzija.komentar || '');
-            const korisnik = encodeURIComponent(recenzija.korisnikUserName || recenzija.korisnikIme || 'N/A');
-            const vozilo = encodeURIComponent((recenzija.voziloNaziv || ((recenzija.voziloMarka || '') + ' ' + (recenzija.voziloModel || '')).trim()) || 'N/A');
+            const korisnik = encodeURIComponent(recenzija.korisnikUserName || recenzija.korisnikIme || text.notAvailable);
+            const vozilo = encodeURIComponent((recenzija.voziloNaziv || ((recenzija.voziloMarka || '') + ' ' + (recenzija.voziloModel || '')).trim()) || text.notAvailable);
             const datum = encodeURIComponent(formatDate(recenzija.datumRecenzije));
             const ocjena = encodeURIComponent((recenzija.ocjena || '') + ' / 5');
 
@@ -129,16 +150,16 @@
         function viewButton(recenzija) {
             return '<button class="btn btn-sm btn-outline-primary rounded-3 view-komentar" ' +
                 reviewDataAttributes(recenzija) +
-                '><i class="bi bi-eye me-1"></i>Prikaži</button>';
+                '><i class="bi bi-eye me-1"></i>' + escapeHtml(text.show) + '</button>';
         }
 
         function reviewActions(recenzija) {
-            const vozilo = (recenzija.voziloNaziv || ((recenzija.voziloMarka || '') + ' ' + (recenzija.voziloModel || '')).trim()) || 'Recenzija';
-            const item = vozilo + ' · ocjena ' + (recenzija.ocjena || 'N/A');
+            const vozilo = (recenzija.voziloNaziv || ((recenzija.voziloMarka || '') + ' ' + (recenzija.voziloModel || '')).trim()) || text.notAvailable;
+            const item = vozilo + ' · ' + text.ratingWord + ' ' + (recenzija.ocjena || text.notAvailable);
 
             return '<div class="table-actions">' +
                 viewButton(recenzija) +
-                '<button class="delete-recenzija-button btn btn-sm btn-outline-danger rounded-3" data-id="' + recenzija.recenzijaID + '" data-confirm-delete="true" data-confirm-title="Obrisati recenziju?" data-confirm-message="Da li ste sigurni da želite obrisati ovu recenziju?" data-confirm-item="' + escapeAttribute(item) + '" data-confirm-action="Da, obriši recenziju"><i class="bi bi-trash me-1"></i>Obriši</button>' +
+                '<button class="delete-recenzija-button btn btn-sm btn-outline-danger rounded-3" data-id="' + recenzija.recenzijaID + '" data-confirm-delete="true" data-confirm-title="' + escapeAttribute(text.deleteTitle) + '" data-confirm-message="' + escapeAttribute(text.deleteMessage) + '" data-confirm-item="' + escapeAttribute(item) + '" data-confirm-action="' + escapeAttribute(text.deleteAction) + '"><i class="bi bi-trash me-1"></i>' + escapeHtml(text.delete) + '</button>' +
                 '</div>';
         }
 
@@ -147,14 +168,14 @@
             recenzijeMobileList.empty();
 
             if (!recenzije || recenzije.length === 0) {
-                recenzijaTableBody.html('<tr><td colspan="5"><div class="empty-state"><i class="bi bi-star"></i><p>Nema dostupnih recenzija.</p></div></td></tr>');
-                recenzijeMobileList.html('<div class="empty-state"><i class="bi bi-star"></i><p>Nema dostupnih recenzija.</p></div>');
+                recenzijaTableBody.html('<tr><td colspan="5"><div class="empty-state"><i class="bi bi-star"></i><p>' + escapeHtml(text.empty) + '</p></div></td></tr>');
+                recenzijeMobileList.html('<div class="empty-state"><i class="bi bi-star"></i><p>' + escapeHtml(text.empty) + '</p></div>');
                 return;
             }
 
             $.each(recenzije, function (_, recenzija) {
-                const rawKorisnik = recenzija.korisnikUserName || recenzija.korisnikIme || 'N/A';
-                const rawVozilo = recenzija.voziloNaziv || ((recenzija.voziloMarka || '') + ' ' + (recenzija.voziloModel || '')).trim() || 'N/A';
+                const rawKorisnik = recenzija.korisnikUserName || recenzija.korisnikIme || text.notAvailable;
+                const rawVozilo = recenzija.voziloNaziv || ((recenzija.voziloMarka || '') + ' ' + (recenzija.voziloModel || '')).trim() || text.notAvailable;
                 const korisnik = escapeHtml(rawKorisnik);
                 const vozilo = escapeHtml(rawVozilo);
                 const datum = formatDate(recenzija.datumRecenzije);
@@ -193,15 +214,15 @@
         }
 
         function loadRecenzijeList(params = {}) {
-            recenzijaTableBody.html('<tr><td colspan="5">Učitavanje recenzija...</td></tr>');
-            recenzijeMobileList.html('<div class="empty-state"><i class="bi bi-hourglass-split"></i><p>Učitavanje recenzija...</p></div>');
+            recenzijaTableBody.html('<tr><td colspan="5">' + escapeHtml(text.loading) + '</td></tr>');
+            recenzijeMobileList.html('<div class="empty-state"><i class="bi bi-hourglass-split"></i><p>' + escapeHtml(text.loading) + '</p></div>');
 
             $.get('@Url.Action("GetRecenzijeJson", "AdminPanel")', params, function (data) {
                 renderReviews(data && data.recenzije ? data.recenzije : []);
             }).fail(function (jqXHR, textStatus, errorThrown) {
-                const message = escapeHtml(jqXHR.responseText || errorThrown || 'Greška');
-                recenzijaTableBody.html('<tr><td colspan="5"><div class="alert alert-danger mb-0">Greška prilikom učitavanja recenzija: ' + message + '</div></td></tr>');
-                recenzijeMobileList.html('<div class="alert alert-danger mb-0">Greška prilikom učitavanja recenzija: ' + message + '</div>');
+                const message = escapeHtml(jqXHR.responseText || errorThrown || window.appTexts?.genericError || 'Error');
+                recenzijaTableBody.html('<tr><td colspan="5"><div class="alert alert-danger mb-0">' + escapeHtml(text.loadError) + ' ' + message + '</div></td></tr>');
+                recenzijeMobileList.html('<div class="alert alert-danger mb-0">' + escapeHtml(text.loadError) + ' ' + message + '</div>');
             });
         }
 
@@ -239,11 +260,11 @@
                     'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
                 },
                 success: function (response) {
-                    window.showAppFlashMessage(response.successMessage || 'Recenzija uspješno obrisana.', 'success');
+                    window.showAppFlashMessage(response.successMessage || text.deleteSuccess, 'success');
                     loadRecenzijeList(getCurrentFilterParams());
                 },
                 error: function () {
-                    window.showAppFlashMessage('Došlo je do greške prilikom brisanja recenzije.', 'error');
+                    window.showAppFlashMessage(text.deleteError, 'error');
                 }
             });
         });

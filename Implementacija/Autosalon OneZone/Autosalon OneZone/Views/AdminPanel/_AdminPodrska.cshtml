@@ -1,42 +1,74 @@
 @model Autosalon_OneZone.ViewModels.Admin.PodrskaListViewModel
 @using Autosalon_OneZone.Models
+@using System.Text.Json
+
+@{
+    var podrskaTexts = new Dictionary<string, string>
+    {
+        ["show"] = L["Show"].Value,
+        ["reply"] = L["Reply"].Value,
+        ["delete"] = L["CommonDelete"].Value,
+        ["status"] = L["Status"].Value,
+        ["statusSent"] = L["StatusSent"].Value,
+        ["statusInProgress"] = L["StatusInProgress"].Value,
+        ["statusAnswered"] = L["StatusAnswered"].Value,
+        ["statusClosed"] = L["StatusClosed"].Value,
+        ["deleteTitle"] = L["DeleteInquiryTitle"].Value,
+        ["deleteMessage"] = L["DeleteInquiryMessage"].Value,
+        ["deleteAction"] = L["DeleteInquiryAction"].Value,
+        ["loading"] = L["LoadingInquiries"].Value,
+        ["empty"] = L["NoSupportInquiries"].Value,
+        ["notAvailable"] = L["NotAvailable"].Value,
+        ["loadError"] = L["InquiriesLoadError"].Value,
+        ["statusChangeError"] = L["StatusChangeError"].Value,
+        ["deleteSuccess"] = L["InquiryDeletedSuccess"].Value,
+        ["deleteError"] = L["InquiryDeleteError"].Value,
+        ["email"] = L["Email"].Value,
+        ["customer"] = L["Customer"].Value,
+        ["replySubject"] = L["ReplyToInquirySubject"].Value,
+        ["replyGreeting"] = L["ReplyToInquiryGreeting"].Value,
+        ["replyBody"] = L["ReplyToInquiryBody"].Value,
+        ["inquiryPrefix"] = L["InquiryItemPrefix"].Value,
+        ["untitled"] = L["Untitled"].Value
+    };
+}
 
 <div class="admin-page-header">
     <div>
-        <p class="admin-eyebrow">Admin panel</p>
-        <h1>Upiti za podršku</h1>
+        <p class="admin-eyebrow">@L["AdminPanel"]</p>
+        <h1>@L["AdminSupportTitle"]</h1>
     </div>
 </div>
 
 <div class="admin-card" id="podrska-list-container">
     <div class="admin-toolbar">
         <div>
-            <h2>Lista upita</h2>
-            <span>Pretražite upite prema emailu, naslovu ili sadržaju poruke.</span>
+            <h2>@L["AdminSupportList"]</h2>
+            <span>@L["AdminSupportListText"]</span>
         </div>
 
         <div class="admin-search-compact">
-            <input type="text" id="podrska-search-input" class="form-control" placeholder="Pretraži email, naslov ili sadržaj..." value="@Model.SearchQuery" />
-            <button id="podrska-search-button" class="search-submit-btn" type="button" aria-label="Pretraži upite">
+            <input type="text" id="podrska-search-input" class="form-control" placeholder="@L["AdminSearchSupportPlaceholder"]" value="@Model.SearchQuery" />
+            <button id="podrska-search-button" class="search-submit-btn" type="button" aria-label="@L["CommonSearch"]">
                 <i class="bi bi-search"></i>
             </button>
         </div>
     </div>
 
     <div class="table-responsive admin-table-wrapper">
-        <table class="table admin-table align-middle mb-0">
+        <table class="table admin-table admin-support-table align-middle mb-0">
             <thead>
                 <tr>
-                    <th>Datum</th>
-                    <th>Email korisnika</th>
-                    <th>Naslov upita</th>
-                    <th>Status</th>
-                    <th class="text-end">Akcije</th>
+                    <th>@L["Date"]</th>
+                    <th>@L["UserEmail"]</th>
+                    <th>@L["InquiryTitle"]</th>
+                    <th>@L["Status"]</th>
+                    <th class="text-end">@L["Actions"]</th>
                 </tr>
             </thead>
             <tbody id="podrska-table-body">
                 <tr>
-                    <td colspan="5">Učitavanje upita...</td>
+                    <td colspan="5">@L["LoadingInquiries"]</td>
                 </tr>
             </tbody>
         </table>
@@ -55,26 +87,26 @@
                         <i class="bi bi-envelope-open-fill"></i>
                     </div>
                     <div>
-                        <h5 class="modal-title" id="messageModalLabel">Poruka korisnika</h5>
-                        <p class="mb-0 text-muted small">Pregled punog sadržaja upita.</p>
+                        <h5 class="modal-title" id="messageModalLabel">@L["MessageModalTitle"]</h5>
+                        <p class="mb-0 text-muted small">@L["MessageModalSubtitle"]</p>
                     </div>
                 </div>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@L["Close"]"></button>
             </div>
             <div class="modal-body">
                 <div class="support-meta-grid">
-                    <div><span>Email korisnika</span><strong id="messageModalEmail">-</strong></div>
-                    <div><span>Naslov</span><strong id="messageModalTitle">-</strong></div>
-                    <div><span>Datum</span><strong id="messageModalDate">-</strong></div>
-                    <div><span>Status</span><strong id="messageModalStatus">-</strong></div>
+                    <div><span>@L["UserEmail"]</span><strong id="messageModalEmail">-</strong></div>
+                    <div><span>@L["InquiryTitle"]</span><strong id="messageModalTitle">-</strong></div>
+                    <div><span>@L["Date"]</span><strong id="messageModalDate">-</strong></div>
+                    <div><span>@L["Status"]</span><strong id="messageModalStatus">-</strong></div>
                 </div>
                 <div class="message-box" id="messageModalBody"></div>
             </div>
             <div class="modal-footer modern-modal-footer">
                 <a id="messageModalReply" href="#" class="btn btn-primary rounded-4">
-                    <i class="bi bi-reply-fill me-2"></i>Odgovori
+                    <i class="bi bi-reply-fill me-2"></i>@L["Reply"]
                 </a>
-                <button type="button" class="btn btn-light border rounded-4" data-bs-dismiss="modal">Zatvori</button>
+                <button type="button" class="btn btn-light border rounded-4" data-bs-dismiss="modal">@L["Close"]</button>
             </div>
         </div>
     </div>
@@ -82,6 +114,8 @@
 
 <script>
     $(document).ready(function () {
+        const text = @Html.Raw(JsonSerializer.Serialize(podrskaTexts));
+
         $(document).off('click', '.delete-podrska-button');
         $(document).off('click', '.status-option');
         $(document).off('click', '.message-text, .view-message-button');
@@ -103,12 +137,12 @@
         }
 
         function emailLink(value) {
-            const email = value || 'N/A';
+            const email = value || text.notAvailable;
             const safeEmail = escapeHtml(email);
             const safeAttr = escapeAttribute(email);
 
             if (!value) {
-                return '<span class="admin-email-link is-empty">N/A</span>';
+                return '<span class="admin-email-link is-empty">' + safeEmail + '</span>';
             }
 
             return '<a class="admin-email-link" href="mailto:' + safeAttr + '" title="' + safeAttr + '">' + safeEmail + '</a>';
@@ -124,7 +158,13 @@
         }
 
         function statusLabel(status) {
-            return status === 'UObradi' ? 'U obradi' : (status || 'N/A');
+            switch (status) {
+                case 'Poslat': return text.statusSent;
+                case 'UObradi': return text.statusInProgress;
+                case 'Odgovoren': return text.statusAnswered;
+                case 'Zatvoren': return text.statusClosed;
+                default: return status || text.notAvailable;
+            }
         }
 
         function getStatusBadge(status) {
@@ -139,24 +179,36 @@
         }
 
         function createStatusDropdown(upitId, currentStatus) {
+            const statuses = [
+                ['Poslat', text.statusSent],
+                ['UObradi', text.statusInProgress],
+                ['Odgovoren', text.statusAnswered],
+                ['Zatvoren', text.statusClosed]
+            ];
+
+            const options = statuses.map(function (item) {
+                const value = item[0];
+                const label = item[1];
+                return '<li><a class="dropdown-item status-option ' + (currentStatus === value ? 'active' : '') + '" href="#" data-status="' + value + '" data-upit-id="' + upitId + '">' + escapeHtml(label) + '</a></li>';
+            }).join('');
+
             return '<div class="dropdown status-dropdown">' +
-                '<button class="btn btn-sm btn-light border rounded-3 dropdown-toggle status-dropdown-toggle" type="button" aria-expanded="false">Status</button>' +
-                '<ul class="dropdown-menu dropdown-menu-end">' +
-                    '<li><a class="dropdown-item status-option ' + (currentStatus === 'Poslat' ? 'active' : '') + '" href="#" data-status="Poslat" data-upit-id="' + upitId + '">Poslat</a></li>' +
-                    '<li><a class="dropdown-item status-option ' + (currentStatus === 'UObradi' ? 'active' : '') + '" href="#" data-status="UObradi" data-upit-id="' + upitId + '">U obradi</a></li>' +
-                    '<li><a class="dropdown-item status-option ' + (currentStatus === 'Odgovoren' ? 'active' : '') + '" href="#" data-status="Odgovoren" data-upit-id="' + upitId + '">Odgovoren</a></li>' +
-                    '<li><a class="dropdown-item status-option ' + (currentStatus === 'Zatvoren' ? 'active' : '') + '" href="#" data-status="Zatvoren" data-upit-id="' + upitId + '">Zatvoren</a></li>' +
-                '</ul>' +
+                '<button class="btn btn-sm btn-light border rounded-3 dropdown-toggle status-dropdown-toggle" type="button" aria-expanded="false">' + escapeHtml(text.status) + '</button>' +
+                '<ul class="dropdown-menu dropdown-menu-end">' + options + '</ul>' +
             '</div>';
         }
 
+        function buildReplyHref(upit) {
+            const subject = text.replySubject + ' ' + (upit.naslov || '');
+            const body = text.replyGreeting + ' ' + (upit.korisnikIme || '') + ',%0D%0A%0D%0A' + text.replyBody + '%0D%0A%0D%0A';
+            return 'mailto:' + encodeURIComponent(upit.korisnikEmail || '') + '?subject=' + encodeURIComponent(subject) + '&body=' + body;
+        }
+
         function supportDataAttributes(upit) {
-            const mailSubject = 'Odgovor na Vaš upit: ' + encodeURIComponent(upit.naslov || '');
-            const mailBody = 'Poštovani ' + encodeURIComponent(upit.korisnikIme || '') + ',%0D%0A%0D%0AHvala na Vašem upitu.%0D%0A%0D%0A';
-            const replyHref = 'mailto:' + encodeURIComponent(upit.korisnikEmail || '') + '?subject=' + mailSubject + '&body=' + mailBody;
+            const replyHref = buildReplyHref(upit);
 
             return 'data-full-text="' + encodeURIComponent(upit.sadrzaj || '') + '" ' +
-                'data-email="' + encodeURIComponent(upit.korisnikEmail || 'N/A') + '" ' +
+                'data-email="' + encodeURIComponent(upit.korisnikEmail || text.notAvailable) + '" ' +
                 'data-title="' + encodeURIComponent(upit.naslov || '') + '" ' +
                 'data-date="' + encodeURIComponent(formatDateTime(upit.datumUpita)) + '" ' +
                 'data-status="' + encodeURIComponent(statusLabel(upit.status)) + '" ' +
@@ -166,20 +218,18 @@
         function viewMessageButton(upit) {
             return '<button class="btn btn-sm btn-outline-primary rounded-3 view-message-button" ' +
                 supportDataAttributes(upit) +
-                '><i class="bi bi-eye me-1"></i>Prikaži</button>';
+                '><i class="bi bi-eye me-1"></i>' + escapeHtml(text.show) + '</button>';
         }
 
         function supportActions(upit) {
-            const mailSubject = 'Odgovor na Vaš upit: ' + encodeURIComponent(upit.naslov || '');
-            const mailBody = 'Poštovani ' + encodeURIComponent(upit.korisnikIme || '') + ',%0D%0A%0D%0AHvala na Vašem upitu.%0D%0A%0D%0A';
-            const replyHref = 'mailto:' + encodeURIComponent(upit.korisnikEmail || '') + '?subject=' + mailSubject + '&body=' + mailBody;
-            const item = 'Upit: ' + (upit.naslov || 'Bez naslova') + ' · ' + (upit.korisnikEmail || 'N/A');
+            const replyHref = buildReplyHref(upit);
+            const item = text.inquiryPrefix + ' ' + (upit.naslov || text.untitled) + ' · ' + (upit.korisnikEmail || text.notAvailable);
 
             return '<div class="table-actions support-actions-grid">' +
                 viewMessageButton(upit) +
-                '<a href="' + replyHref + '" class="btn btn-sm btn-outline-primary rounded-3"><i class="bi bi-reply me-1"></i>Odgovori</a>' +
+                '<a href="' + replyHref + '" class="btn btn-sm btn-outline-primary rounded-3"><i class="bi bi-reply me-1"></i>' + escapeHtml(text.reply) + '</a>' +
                 createStatusDropdown(upit.upitID, upit.status) +
-                '<button class="delete-podrska-button btn btn-sm btn-outline-danger rounded-3" data-id="' + upit.upitID + '" data-confirm-delete="true" data-confirm-title="Obrisati upit?" data-confirm-message="Da li ste sigurni da želite obrisati ovaj upit?" data-confirm-item="' + escapeAttribute(item) + '" data-confirm-action="Da, obriši upit"><i class="bi bi-trash me-1"></i>Obriši</button>' +
+                '<button class="delete-podrska-button btn btn-sm btn-outline-danger rounded-3" data-id="' + upit.upitID + '" data-confirm-delete="true" data-confirm-title="' + escapeAttribute(text.deleteTitle) + '" data-confirm-message="' + escapeAttribute(text.deleteMessage) + '" data-confirm-item="' + escapeAttribute(item) + '" data-confirm-action="' + escapeAttribute(text.deleteAction) + '"><i class="bi bi-trash me-1"></i>' + escapeHtml(text.delete) + '</button>' +
                 '</div>';
         }
 
@@ -188,8 +238,8 @@
             podrskaMobileList.empty();
 
             if (!upiti || upiti.length === 0) {
-                podrskaTableBody.html('<tr><td colspan="5"><div class="empty-state"><i class="bi bi-inbox"></i><p>Nema dostupnih upita za podršku.</p></div></td></tr>');
-                podrskaMobileList.html('<div class="empty-state"><i class="bi bi-inbox"></i><p>Nema dostupnih upita za podršku.</p></div>');
+                podrskaTableBody.html('<tr><td colspan="5"><div class="empty-state"><i class="bi bi-inbox"></i><p>' + escapeHtml(text.empty) + '</p></div></td></tr>');
+                podrskaMobileList.html('<div class="empty-state"><i class="bi bi-inbox"></i><p>' + escapeHtml(text.empty) + '</p></div>');
                 return;
             }
 
@@ -197,14 +247,15 @@
                 const datum = formatDateTime(upit.datumUpita);
                 const rawEmail = upit.korisnikEmail || '';
                 const email = emailLink(rawEmail);
-                const naslov = escapeHtml(upit.naslov || 'Bez naslova');
+                const rawTitle = upit.naslov || text.untitled;
+                const naslov = escapeHtml(rawTitle);
                 const actions = supportActions(upit);
 
                 podrskaTableBody.append(
                     '<tr>' +
                         '<td class="date-cell">' + escapeHtml(datum) + '</td>' +
-                        '<td><div class="user-cell" title="' + escapeAttribute(rawEmail || 'N/A') + '"><span class="user-avatar"><i class="bi bi-envelope-fill"></i></span><strong>' + email + '</strong></div></td>' +
-                        '<td><strong class="table-text-truncate" title="' + escapeAttribute(upit.naslov || 'Bez naslova') + '">' + naslov + '</strong></td>' +
+                        '<td><div class="user-cell" title="' + escapeAttribute(rawEmail || text.notAvailable) + '"><span class="user-avatar"><i class="bi bi-envelope-fill"></i></span><strong>' + email + '</strong></div></td>' +
+                        '<td><strong class="table-text-truncate" title="' + escapeAttribute(rawTitle) + '">' + naslov + '</strong></td>' +
                         '<td>' + getStatusBadge(upit.status) + '</td>' +
                         '<td>' + actions + '</td>' +
                     '</tr>'
@@ -219,8 +270,8 @@
                         '<h3>' + naslov + '</h3>' +
                         '<p class="mobile-user">' + email + '</p>' +
                         '<div class="review-mobile-meta">' +
-                            '<div><span>Status</span><strong>' + escapeHtml(statusLabel(upit.status)) + '</strong></div>' +
-                            '<div><span>Korisnik</span><strong>' + email + '</strong></div>' +
+                            '<div><span>' + escapeHtml(text.status) + '</span><strong>' + escapeHtml(statusLabel(upit.status)) + '</strong></div>' +
+                            '<div><span>' + escapeHtml(text.customer) + '</span><strong>' + email + '</strong></div>' +
                         '</div>' +
                         '<div class="mobile-actions">' + actions + '</div>' +
                     '</article>'
@@ -229,15 +280,15 @@
         }
 
         function loadUpitiList(searchQuery = '', page = 1) {
-            podrskaTableBody.html('<tr><td colspan="5">Učitavanje upita...</td></tr>');
-            podrskaMobileList.html('<div class="empty-state"><i class="bi bi-hourglass-split"></i><p>Učitavanje upita...</p></div>');
+            podrskaTableBody.html('<tr><td colspan="5">' + escapeHtml(text.loading) + '</td></tr>');
+            podrskaMobileList.html('<div class="empty-state"><i class="bi bi-hourglass-split"></i><p>' + escapeHtml(text.loading) + '</p></div>');
 
             $.get('@Url.Action("GetPodrskaJson", "AdminPanel")', { searchQuery, page }, function (data) {
                 renderTickets(data && data.upiti ? data.upiti : []);
             }).fail(function (jqXHR, textStatus, errorThrown) {
-                const message = escapeHtml(jqXHR.responseText || errorThrown || 'Greška');
-                podrskaTableBody.html('<tr><td colspan="5"><div class="alert alert-danger mb-0">Greška prilikom učitavanja upita: ' + message + '</div></td></tr>');
-                podrskaMobileList.html('<div class="alert alert-danger mb-0">Greška prilikom učitavanja upita: ' + message + '</div>');
+                const message = escapeHtml(jqXHR.responseText || errorThrown || window.appTexts?.genericError || 'Error');
+                podrskaTableBody.html('<tr><td colspan="5"><div class="alert alert-danger mb-0">' + escapeHtml(text.loadError) + ' ' + message + '</div></td></tr>');
+                podrskaMobileList.html('<div class="alert alert-danger mb-0">' + escapeHtml(text.loadError) + ' ' + message + '</div>');
             });
         }
 
@@ -304,7 +355,7 @@
                     loadUpitiList(searchInput.val());
                 },
                 error: function () {
-                    window.showAppFlashMessage('Došlo je do greške prilikom promjene statusa.', 'error');
+                    window.showAppFlashMessage(text.statusChangeError, 'error');
                 }
             });
         });
@@ -322,11 +373,13 @@
                 success: function (response) {
                     if (response.successMessage) {
                         window.showAppFlashMessage(response.successMessage, 'success');
+                    } else {
+                        window.showAppFlashMessage(text.deleteSuccess, 'success');
                     }
                     loadUpitiList(searchInput.val());
                 },
                 error: function () {
-                    window.showAppFlashMessage('Došlo je do greške prilikom brisanja upita.', 'error');
+                    window.showAppFlashMessage(text.deleteError, 'error');
                 }
             });
         });
@@ -342,6 +395,6 @@
             }
         });
 
-        loadUpitiList('@Model.SearchQuery');
+        loadUpitiList(@Html.Raw(JsonSerializer.Serialize(Model.SearchQuery ?? string.Empty)));
     });
 </script>

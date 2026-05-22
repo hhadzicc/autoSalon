@@ -1,19 +1,33 @@
-# AutoSalon OneZone
+# Autosalon OneZone
 
-AutoSalon OneZone je ASP.NET Core MVC aplikacija za upravljanje autosalonom. Aplikacija pokriva pregled vozila, korisničke naloge, role, korpu, narudžbe, plaćanje i administrativni dio.
+Autosalon OneZone is an ASP.NET Core MVC application for managing a car dealership. It includes a public vehicle catalog, user accounts, role-based access, shopping cart, orders, payments, reviews, support inquiries, password recovery, an admin dashboard, and bilingual UI support.
 
-## Tehnologije
+## Highlights
+
+- Public vehicle catalog with search, featured vehicles and detailed vehicle pages.
+- Shopping cart, checkout flow and order confirmation screen.
+- ASP.NET Core Identity authentication with administrator, seller and buyer roles.
+- Admin dashboard for vehicles, users, reviews and support inquiries.
+- Secure password reset flow with optional Resend email delivery.
+- English and Bosnian UI localization.
+- SQL Server persistence through Entity Framework Core.
+- Docker Compose demo environment.
+- Unit and integration tests for core application behavior.
+
+## Tech Stack
 
 - ASP.NET Core 8 MVC
 - Entity Framework Core
 - ASP.NET Core Identity
-- SQL Server
+- SQL Server 2022
 - Docker Compose
-- Stripe integracija, uz mock način plaćanja za lokalni demo
+- Bootstrap 5
+- Resend email integration
+- Stripe-ready payment abstraction with local mock payments
 
-## Brzo pokretanje preko Dockera
+## Quick Start
 
-Preduvjet je instaliran Docker Desktop.
+Prerequisite: Docker Desktop.
 
 ```powershell
 git clone https://github.com/hhadzicc/autoSalon.git
@@ -21,88 +35,80 @@ cd autoSalon
 docker compose up --build
 ```
 
-Nakon pokretanja aplikacija je dostupna na:
+The application will be available at:
 
 ```text
 http://localhost:8080
 ```
 
-Docker Compose diže dvije usluge:
+Docker Compose starts:
 
-- `db`: SQL Server 2022 na lokalnom portu `14333`
-- `web`: ASP.NET Core aplikaciju na lokalnom portu `8080`
+- `db`: SQL Server on local port `14333`
+- `web`: ASP.NET Core application on local port `8080`
 
-Na prvom pokretanju aplikacija automatski primijeni EF Core migracije i ubaci demo podatke.
+On startup, the application applies EF Core migrations and seeds demo data.
 
-## Demo nalozi
+## Demo Accounts
 
-Detaljniji pregled demo naloga je u [DEMO_ACCOUNTS.md](DEMO_ACCOUNTS.md).
+Demo account details are documented in [Dokumentacija/DEMO_ACCOUNTS.md](Dokumentacija/DEMO_ACCOUNTS.md).
 
-Demo nalozi se čitaju iz `.env` fajla ako postoji. Bez `.env` koriste se javne Docker demo vrijednosti navedene u `DEMO_ACCOUNTS.md`.
+If a local `.env` file exists, Docker Compose uses those values. Without `.env`, public demo defaults from the documentation are used.
 
-## Demo plaćanje
+## Demo Payment
 
-Docker demo koristi mock način plaćanja, tako da za pokretanje nisu potrebni Stripe ključevi.
+The Docker demo uses mock payments by default, so Stripe keys are not required.
 
-Za uspješno test plaćanje može se koristiti:
+Successful test payment:
 
 ```text
-Broj kartice: 4242424242424242
-Datum isteka: bilo koji budući datum
-CVV: bilo koje 3 cifre
+Card number: 4242424242424242
+Expiry date: any future date
+CVV: any 3 digits
 ```
 
-Kartica `4000000000000002` simulira odbijenu transakciju.
+The card `4000000000000002` simulates a declined payment.
 
-## Varijable okruženja
+## Password Reset
 
-Repozitorij sadrži `.env.example` kao primjer lokalne konfiguracije. Za lokalne izmjene konfiguracije potrebno je napraviti `.env` fajl:
+The application supports a complete forgot-password flow using ASP.NET Core Identity tokens. Reset links expire after 30 minutes.
+
+If `RESEND_API_KEY` and `FROM_EMAIL` are configured, the reset link is sent by email. In Development mode without Resend configuration, the reset link is written to the application log so the flow can be tested locally without exposing API keys.
+
+## Screenshots
+
+Interface screenshots are available in [Dokumentacija/SCREENSHOTS.md](Dokumentacija/SCREENSHOTS.md).
+
+## Tests
+
+Run the test suite:
 
 ```powershell
-Copy-Item .env.example .env
+dotnet test "Implementacija/Autosalon OneZone/AutosalonOneZone.Tests/AutosalonOneZone.Tests.csproj"
 ```
 
-Zatim izmijeni vrijednosti u `.env` i ponovo pokreni:
+## Documentation
 
-```powershell
-docker compose up --build
-```
+Current project documentation starts in [Dokumentacija/README.md](Dokumentacija/README.md).
 
-Najbitnije varijable su:
+The original MVP/OOAD documentation is archived in [Dokumentacija/Legacy_MVP_Documentation](Dokumentacija/Legacy_MVP_Documentation).
 
-| Varijabla | Opis |
-| --- | --- |
-| `MSSQL_SA_PASSWORD` | Lozinka lokalnog SQL Server containera |
-| `DEMO_ADMIN_EMAIL` / `DEMO_ADMIN_PASSWORD` | Demo administrator |
-| `DEMO_SELLER_EMAIL` / `DEMO_SELLER_PASSWORD` | Demo prodavac |
-| `DEMO_BUYER_EMAIL` / `DEMO_BUYER_PASSWORD` | Demo kupac |
-| `STRIPE_USE_MOCK_PAYMENTS` | `true` za mock plaćanje, `false` za Stripe test mode |
-| `STRIPE_SECRET_KEY` / `STRIPE_PUBLISHABLE_KEY` | Stripe test ključevi za lokalno testiranje Stripe integracije |
-| `RESEND_API_KEY` / `FROM_EMAIL` | Opcionalno slanje emaila za reset lozinke preko Resend servisa |
+## Useful Commands
 
-## Reset lozinke
-
-Aplikacija podrzava "Zaboravljena lozinka" flow preko ASP.NET Core Identity tokena koji vrijedi 30 minuta.
-
-Ako su `RESEND_API_KEY` i `FROM_EMAIL` podeseni, link za reset lozinke se salje emailom. Ako nisu podeseni i aplikacija radi u Development modu, link se ne salje emailom nego se ispisuje u log, tako da se lokalni demo moze testirati bez javnog API kljuca.
-
-## Korisne naredbe
-
-Za gašenje containera:
+Stop containers:
 
 ```powershell
 docker compose down
 ```
 
-Za brisanje lokalne demo baze i potpuno svjež start:
+Reset the local demo database:
 
 ```powershell
 docker compose down -v
 docker compose up --build
 ```
 
-Za lokalni build bez Dockera:
+Build locally without Docker:
 
 ```powershell
-dotnet build "Implementacija/Autosalon OneZone/Autosalon OneZone.sln"
+dotnet build "Implementacija/Autosalon OneZone/Autosalon OneZone/Autosalon OneZone.csproj"
 ```

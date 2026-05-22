@@ -1,80 +1,84 @@
 @model Autosalon_OneZone.Models.Vozilo
 
 @{
-    ViewData["Title"] = "Dodaj Novo Vozilo";
+    ViewData["Title"] = L["CreateVehicleTitle"];
 }
 
-<h1>@ViewData["Title"]</h1>
-
-<h4>Vozilo</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-
-        <form asp-controller="Vozilo" asp-action="Create" method="post">
-
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-            <div class="form-group">
-                <label asp-for="Marka" class="control-label"></label>
-                <input asp-for="Marka" class="form-control" />
-                <span asp-validation-for="Marka" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Model" class="control-label"></label>
-                <input asp-for="Model" class="form-control" />
-                <span asp-validation-for="Model" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Godiste" class="control-label"></label>
-                <input asp-for="Godiste" class="form-control" />
-                <span asp-validation-for="Godiste" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Gorivo" class="control-label"></label>
-
-                <select asp-for="Gorivo" class="form-control" asp-items="Html.GetEnumSelectList<Autosalon_OneZone.Models.TipGoriva>()"></select>
-                <span asp-validation-for="Gorivo" class="text-danger"></span>
-            </div>
-
-             <div class="form-group">
-                <label asp-for="Kubikaza" class="control-label"></label>
-                <input asp-for="Kubikaza" class="form-control" />
-                <span asp-validation-for="Kubikaza" class="text-danger"></span>
-            </div>
-
-             <div class="form-group">
-                <label asp-for="Boja" class="control-label"></label>
-                <input asp-for="Boja" class="form-control" />
-                <span asp-validation-for="Boja" class="text-danger"></span>
-            </div>
-
-             <div class="form-group">
-                <label asp-for="Kilometraza" class="control-label"></label>
-                <input asp-for="Kilometraza" class="form-control" />
-                <span asp-validation-for="Kilometraza" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Cijena" class="control-label"></label>
-                <input asp-for="Cijena" class="form-control" />
-
-            <div class="form-group">
-                <input type="submit" value="Kreiraj" class="btn btn-primary" />
-            </div>
-        </form>
+<section class="inner-page-header">
+    <div class="container text-center">
+        <p class="section-eyebrow">@L["VehiclesOverview"]</p>
+        <h1>@L["CreateVehicleTitle"]</h1>
+        <p>@L["CreateVehicleText"]</p>
     </div>
-</div>
+</section>
 
-<div>
+<section class="auth-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-7">
+                <div class="modern-form-card">
+                    <form asp-controller="Vozilo" asp-action="Create" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-    <a asp-controller="Vozilo" asp-action="Index">Nazad na Listu</a>
-</div>
+                        <div class="mb-3">
+                            <label asp-for="Marka" class="form-label">@L["VehicleMake"]</label>
+                            <input asp-for="Marka" class="form-control" />
+                            <span asp-validation-for="Marka" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Model" class="form-label">@L["VehicleModel"]</label>
+                            <input asp-for="Model" class="form-control" />
+                            <span asp-validation-for="Model" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Godiste" class="form-label">@L["VehicleYear"]</label>
+                            <input asp-for="Godiste" class="form-control" />
+                            <span asp-validation-for="Godiste" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Gorivo" class="form-label">@L["VehicleFuel"]</label>
+                            <select asp-for="Gorivo" class="form-control" asp-items="Html.GetEnumSelectList<Autosalon_OneZone.Models.TipGoriva>()"></select>
+                            <span asp-validation-for="Gorivo" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Kubikaza" class="form-label">@L["VehicleDisplacement"]</label>
+                            <input asp-for="Kubikaza" class="form-control" />
+                            <span asp-validation-for="Kubikaza" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Boja" class="form-label">@L["VehicleColor"]</label>
+                            <input asp-for="Boja" class="form-control" />
+                            <span asp-validation-for="Boja" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Kilometraza" class="form-label">@L["VehicleMileage"]</label>
+                            <input asp-for="Kilometraza" class="form-control" />
+                            <span asp-validation-for="Kilometraza" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Cijena" class="form-label">@L["VehiclePrice"]</label>
+                            <input asp-for="Cijena" class="form-control" />
+                            <span asp-validation-for="Cijena" class="text-danger"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary rounded-4">@L["CommonSave"]</button>
+                        <a asp-controller="Vozilo" asp-action="Index" class="btn btn-light border rounded-4 ms-2">@L["BackToList"]</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
 @section Scripts {
-
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

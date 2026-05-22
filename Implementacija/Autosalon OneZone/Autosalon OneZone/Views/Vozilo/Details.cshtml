@@ -1,4 +1,5 @@
 @using Microsoft.AspNetCore.Identity
+@using System.Globalization
 @inject SignInManager<Autosalon_OneZone.Models.ApplicationUser> SignInManager
 @inject UserManager<Autosalon_OneZone.Models.ApplicationUser> UserManager
 
@@ -6,16 +7,27 @@
 @{
     ViewData["Title"] = $"{Model.Marka} {Model.Model}";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var culture = CultureInfo.CurrentCulture;
     var voziloNaziv = $"{Model.Marka} {Model.Model}".Trim();
     var cijena = Model.Cijena ?? 0;
     var slikaUrl = !string.IsNullOrEmpty(Model.Slika) ? Url.Content($"~/images/vozila/{Model.Slika}") : Url.Content("~/img/no-image.png");
+
+    string FuelLabel(string value) => value switch
+    {
+        "Benzin" => L["FuelGasoline"].Value,
+        "Dizel" => L["FuelDiesel"].Value,
+        "Plin" => L["FuelGas"].Value,
+        "Elektro" => L["FuelElectric"].Value,
+        "Hibrid" => L["FuelHybrid"].Value,
+        _ => value
+    };
 }
 
 <section class="inner-page-header">
     <div class="container text-center">
-        <p class="section-eyebrow">Detalji vozila</p>
+        <p class="section-eyebrow">@L["VehicleDetailsEyebrow"]</p>
         <h1>@voziloNaziv</h1>
-        <p>Pregledajte specifikacije, cijenu, opis i opcije kupovine za odabrano vozilo.</p>
+        <p>@L["VehicleDetailsHeaderText"]</p>
     </div>
 </section>
 
@@ -31,12 +43,12 @@
                     <div class="vehicle-details-body">
                         <div class="vehicle-title-row">
                             <div>
-                                <span class="vehicle-badge">Dostupno</span>
+                                <span class="vehicle-badge">@L["Available"]</span>
                                 <h2>@voziloNaziv</h2>
-                                <p class="vehicle-subtitle">@Model.Godiste · @Model.Gorivo · @Model.Boja</p>
+                                <p class="vehicle-subtitle">@Model.Godiste · @FuelLabel(Model.Gorivo.ToString()) · @Model.Boja</p>
                             </div>
 
-                            <div class="vehicle-price">€@cijena.ToString("N0")</div>
+                            <div class="vehicle-price">€@cijena.ToString("N0", culture)</div>
                         </div>
 
                         <div class="vehicle-actions">
@@ -46,54 +58,54 @@
                                     @Html.AntiForgeryToken()
                                     <input type="hidden" name="id" value="@Model.VoziloID" />
                                     <button type="submit" class="btn btn-success rounded-4">
-                                        <i class="bi bi-cart-plus me-2"></i>Dodaj u korpu
+                                        <i class="bi bi-cart-plus me-2"></i>@L["AddToCart"]
                                     </button>
                                 </form>
                                 <button type="button" class="btn btn-primary rounded-4" data-bs-toggle="modal" data-bs-target="#paymentModal">
-                                    <i class="bi bi-lightning-charge-fill me-2"></i>Kupi odmah
+                                    <i class="bi bi-lightning-charge-fill me-2"></i>@L["BuyNow"]
                                 </button>
                             }
                             else
                             {
                                 <a href="@Url.Action("Login", "Account", new { returnUrl = Context.Request.Path })" class="btn btn-primary rounded-4">
-                                    <i class="bi bi-person-check me-2"></i>Prijavite se za kupovinu
+                                    <i class="bi bi-person-check me-2"></i>@L["LoginToBuy"]
                                 </a>
                             }
                         </div>
 
                         <div class="details-block">
-                            <h3>Specifikacije</h3>
+                            <h3>@L["Specifications"]</h3>
 
                             <div class="spec-grid">
                                 <div class="spec-item">
-                                    <span>Godište</span>
+                                    <span>@L["VehicleYear"]</span>
                                     <strong>@Model.Godiste</strong>
                                 </div>
                                 <div class="spec-item">
-                                    <span>Gorivo</span>
-                                    <strong>@Model.Gorivo</strong>
+                                    <span>@L["VehicleFuel"]</span>
+                                    <strong>@FuelLabel(Model.Gorivo.ToString())</strong>
                                 </div>
                                 <div class="spec-item">
-                                    <span>Boja</span>
+                                    <span>@L["VehicleColor"]</span>
                                     <strong>@Model.Boja</strong>
                                 </div>
                                 @if (Model.Gorivo != Autosalon_OneZone.Models.TipGoriva.Elektro)
                                 {
                                     <div class="spec-item">
-                                        <span>Kubikaža</span>
+                                        <span>@L["VehicleDisplacement"]</span>
                                         <strong>@Model.Kubikaza</strong>
                                     </div>
                                 }
                                 <div class="spec-item">
-                                    <span>Kilometraža</span>
+                                    <span>@L["VehicleMileage"]</span>
                                     <strong>@Model.Kilometraza km</strong>
                                 </div>
                             </div>
                         </div>
 
                         <div class="details-block">
-                            <h3>Opis</h3>
-                            <p>@(Model.Opis ?? "Nema dostupnog opisa za ovo vozilo.")</p>
+                            <h3>@L["VehicleDescription"]</h3>
+                            <p>@(Model.Opis ?? L["NoVehicleDescription"].Value)</p>
                         </div>
                     </div>
                 </article>
@@ -101,8 +113,8 @@
                 <section class="reviews-card">
                     <div class="reviews-header">
                         <div>
-                            <p class="section-eyebrow mb-1">Recenzije</p>
-                            <h2>Recenzije korisnika</h2>
+                            <p class="section-eyebrow mb-1">@L["Reviews"]</p>
+                            <h2>@L["UserReviews"]</h2>
                         </div>
                     </div>
 
@@ -141,14 +153,14 @@
                     {
                         <div class="empty-reviews">
                             <i class="bi bi-chat-square-text"></i>
-                            <h3>Trenutno nema recenzija</h3>
+                            <h3>@L["NoReviewsTitle"]</h3>
                             @if (SignInManager.IsSignedIn(User) && User.Identity != null && User.Identity.IsAuthenticated)
                             {
-                                <p>Kupite ovo vozilo kako biste mogli dodati recenziju.</p>
+                                <p>@L["NoReviewsPurchasedText"]</p>
                             }
                             else
                             {
-                                <p>Prijavite se kako biste mogli kupiti i recenzirati ovo vozilo.</p>
+                                <p>@L["NoReviewsLoginText"]</p>
                             }
                         </div>
                     }
@@ -158,19 +170,19 @@
             <div class="col-lg-4">
                 <aside class="details-sidebar">
                     <div class="summary-card">
-                        <h3>Pregled kupovine</h3>
+                        <h3>@L["PurchaseOverview"]</h3>
 
                         <div class="summary-row">
-                            <span>Vozilo</span>
+                            <span>@L["Vehicle"]</span>
                             <strong>@voziloNaziv</strong>
                         </div>
                         <div class="summary-row">
-                            <span>Cijena</span>
-                            <strong>€@cijena.ToString("N0")</strong>
+                            <span>@L["VehiclePrice"]</span>
+                            <strong>€@cijena.ToString("N0", culture)</strong>
                         </div>
                         <div class="summary-row">
-                            <span>Status</span>
-                            <strong>Dostupno</strong>
+                            <span>@L["Status"]</span>
+                            <strong>@L["Available"]</strong>
                         </div>
                     </div>
 
@@ -180,38 +192,38 @@
                                 <i class="bi bi-calculator"></i>
                             </div>
                             <div>
-                                <h3>Kalkulator kredita</h3>
-                                <p>Izračunajte okvirnu mjesečnu ratu.</p>
+                                <h3>@L["LoanCalculator"]</h3>
+                                <p>@L["LoanCalculatorText"]</p>
                             </div>
                         </div>
 
                         <div class="mb-3">
-                            <label for="loan-amount" class="form-label">Visina kredita (€)</label>
+                            <label for="loan-amount" class="form-label">@L["LoanAmountEuro"]</label>
                             <input type="number" class="form-control" id="loan-amount" value="@cijena">
                         </div>
                         <div class="mb-3">
-                            <label for="loan-period" class="form-label">Broj rata</label>
+                            <label for="loan-period" class="form-label">@L["InstallmentCount"]</label>
                             <select class="form-select" id="loan-period">
-                                <option value="12">12 mjeseci</option>
-                                <option value="24">24 mjeseca</option>
-                                <option value="36" selected>36 mjeseci</option>
-                                <option value="48">48 mjeseci</option>
-                                <option value="60">60 mjeseci</option>
-                                <option value="72">72 mjeseca</option>
+                                <option value="12">@L["MonthsCount", 12]</option>
+                                <option value="24">@L["MonthsCount", 24]</option>
+                                <option value="36" selected>@L["MonthsCount", 36]</option>
+                                <option value="48">@L["MonthsCount", 48]</option>
+                                <option value="60">@L["MonthsCount", 60]</option>
+                                <option value="72">@L["MonthsCount", 72]</option>
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="interest-rate" class="form-label">Kamatna stopa (%)</label>
+                            <label for="interest-rate" class="form-label">@L["InterestRate"]</label>
                             <input type="number" class="form-control" id="interest-rate" value="5.0" step="0.1" min="0">
                         </div>
-                        <button id="calculateBtn" class="btn btn-primary rounded-4 w-100">Izračunaj</button>
+                        <button id="calculateBtn" class="btn btn-primary rounded-4 w-100">@L["Calculate"]</button>
 
                         <div class="loan-result">
-                            <span>Mjesečna rata</span>
+                            <span>@L["MonthlyInstallment"]</span>
                             <strong id="loan-result">€0</strong>
                         </div>
 
-                        <p class="loan-note">* Kalkulator je informativnog karaktera i ne predstavlja ponudu za kredit.</p>
+                        <p class="loan-note">@L["LoanCalculatorNote"]</p>
                     </div>
                 </aside>
             </div>
@@ -228,17 +240,17 @@
                         <i class="bi bi-chat-square-text-fill"></i>
                     </div>
                     <div>
-                        <h5 class="modal-title" id="komentarRecenzijeModalLabel">Komentar recenzije</h5>
-                        <p class="mb-0 text-muted small">Pregled punog komentara korisnika.</p>
+                        <h5 class="modal-title" id="komentarRecenzijeModalLabel">@L["ReviewComment"]</h5>
+                        <p class="mb-0 text-muted small">@L["ReviewCommentFullText"]</p>
                     </div>
                 </div>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@L["Close"]"></button>
             </div>
             <div class="modal-body">
                 <div class="review-comment-box" id="komentarRecenzijeModalText"></div>
             </div>
             <div class="modal-footer modern-modal-footer">
-                <button type="button" class="btn btn-light border rounded-4" data-bs-dismiss="modal">Zatvori</button>
+                <button type="button" class="btn btn-light border rounded-4" data-bs-dismiss="modal">@L["Close"]</button>
             </div>
         </div>
     </div>
@@ -253,60 +265,52 @@
                         <i class="bi bi-credit-card-fill"></i>
                     </div>
                     <div>
-                        <h5 class="modal-title" id="paymentModalLabel">Podaci za plaćanje - @voziloNaziv</h5>
-                        <p class="mb-0 text-muted small">Unesite podatke kartice za završetak kupovine.</p>
+                        <h5 class="modal-title" id="paymentModalLabel">@L["PaymentDetailsFor", voziloNaziv]</h5>
+                        <p class="mb-0 text-muted small">@L["PaymentDetailsText"]</p>
                     </div>
                 </div>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@L["Close"]"></button>
             </div>
             <div class="modal-body">
-
                 <div class="alert alert-info mb-4">
-                    <strong>Ukupno za plaćanje:</strong> €@cijena.ToString("N0")
+                    <strong>@L["TotalToPay"]</strong> €@cijena.ToString("N0", culture)
                 </div>
 
                 <form id="paymentForm" asp-controller="Korpa" asp-action="IzvrsiPlacanje" method="post" novalidate>
                     @Html.AntiForgeryToken()
-
                     <input type="hidden" name="VoziloID" value="@Model.VoziloID" />
 
                     <div class="form-group mb-3">
-                        <label for="imeVlasnika" class="form-label">Ime i prezime vlasnika kartice <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="imeVlasnika" name="ImeVlasnika"
-                               required maxlength="100" autocomplete="off">
+                        <label for="imeVlasnika" class="form-label">@L["CardHolderName"] <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="imeVlasnika" name="ImeVlasnika" required maxlength="100" autocomplete="off">
                         <div class="error-message text-danger mt-1" id="imeVlasnikaError"></div>
                     </div>
 
                     <div class="form-group mb-3">
-                        <label for="brojKartice" class="form-label">Broj kartice <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="brojKartice" name="BrojKartice"
-                               required placeholder="XXXX XXXX XXXX XXXX" autocomplete="off">
+                        <label for="brojKartice" class="form-label">@L["CardNumber"] <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="brojKartice" name="BrojKartice" required placeholder="XXXX XXXX XXXX XXXX" autocomplete="off">
                         <div class="error-message text-danger mt-1" id="brojKarticeError"></div>
                     </div>
 
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group mb-3">
-                                <label for="datumIsteka" class="form-label">Datum isteka <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="datumIsteka" name="DatumIsteka"
-                                       required placeholder="MM/YY" autocomplete="off">
+                                <label for="datumIsteka" class="form-label">@L["ExpiryDate"] <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="datumIsteka" name="DatumIsteka" required placeholder="MM/YY" autocomplete="off">
                                 <div class="error-message text-danger mt-1" id="datumIstekaError"></div>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group mb-3">
-                                <label for="cvv" class="form-label">CVV kod <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="cvv" name="Cvv"
-                                       required placeholder="XXX" autocomplete="off">
+                                <label for="cvv" class="form-label">@L["CvvCode"] <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="cvv" name="Cvv" required placeholder="XXX" autocomplete="off">
                                 <div class="error-message text-danger mt-1" id="cvvError"></div>
                             </div>
                         </div>
                     </div>
 
                     <div class="d-grid gap-2 mt-4">
-                        <button type="submit" class="btn btn-primary" id="submitPayment">
-                            Potvrdi kupovinu
-                        </button>
+                        <button type="submit" class="btn btn-primary" id="submitPayment">@L["ConfirmPurchase"]</button>
                     </div>
                 </form>
             </div>
@@ -316,9 +320,23 @@
 
 @section Scripts {
     <script>
+        const paymentTexts = {
+            processing: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["Processing"].Value)),
+            confirmPurchase: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["ConfirmPurchase"].Value)),
+            paymentFailed: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentFailedPrefix"].Value)),
+            requestError: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentRequestError"].Value)),
+            holderRequired: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentHolderRequired"].Value)),
+            holderFullName: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentHolderFullName"].Value)),
+            cardRequired: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentCardRequired"].Value)),
+            cardLength: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentCardLength"].Value)),
+            expiryRequired: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentExpiryRequired"].Value)),
+            expiryFormat: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentExpiryFormat"].Value)),
+            cardExpired: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentCardExpired"].Value)),
+            cvvRequired: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentCvvRequired"].Value)),
+            cvvLength: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentCvvLength"].Value))
+        };
 
         $(document).ready(function() {
-
             updateCalculation();
 
             $("#calculateBtn").click(function() {
@@ -342,7 +360,6 @@
                 }
 
                 var monthlyRate = (interestRate / 100) / 12;
-
                 var monthlyPayment = loanAmount * monthlyRate * Math.pow(1 + monthlyRate, loanPeriod) /
                                     (Math.pow(1 + monthlyRate, loanPeriod) - 1);
 
@@ -360,7 +377,6 @@
         });
 
         function setupPaymentFormValidation() {
-
             clearAllErrors();
 
             $('#paymentModal').on('show.bs.modal', function() {
@@ -425,81 +441,73 @@
 
             $("#paymentForm").on('submit', function(e) {
                 e.preventDefault();
-
                 clearAllErrors();
 
-                var isValid = validatePaymentForm();
-
-                if (isValid) {
-
-                    $("#submitPayment").prop("disabled", true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Obrađivanje...');
-
-                    var formData = $(this).serialize();
-
-                    $.ajax({
-                        url: $(this).attr('action'),
-                        type: 'POST',
-                        data: formData,
-                        success: function(response) {
-                            if (response.success) {
-
-                                window.location.href = response.redirectUrl;
-                            } else {
-
-                                if (response.errors) {
-
-                                    $.each(response.errors, function(field, message) {
-                                        showError(field, message);
-                                    });
-                                } else if (response.message) {
-
-                                    $('#paymentModal').modal('hide');
-                                    window.showAppFlashMessage("Plaćanje nije uspjelo: " + response.message, "error");
-                                }
-
-                                $("#submitPayment").prop("disabled", false).html('Potvrdi kupovinu');
-                            }
-                        },
-                        error: function(xhr, status, error) {
-
-                            $('#paymentModal').modal('hide');
-                            window.showAppFlashMessage("Došlo je do greške prilikom obrade zahtjeva. Molimo pokušajte ponovo.", "error");
-                            $("#submitPayment").prop("disabled", false).html('Potvrdi kupovinu');
-                        }
-                    });
+                if (!validatePaymentForm()) {
+                    return;
                 }
+
+                $("#submitPayment").prop("disabled", true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> ' + paymentTexts.processing);
+
+                $.ajax({
+                    url: $(this).attr('action'),
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        if (response.success) {
+                            window.location.href = response.redirectUrl;
+                            return;
+                        }
+
+                        if (response.errors) {
+                            $.each(response.errors, function(field, message) {
+                                showError(field, message);
+                            });
+                        } else if (response.message) {
+                            $('#paymentModal').modal('hide');
+                            window.showAppFlashMessage(paymentTexts.paymentFailed + response.message, "error");
+                        }
+
+                        $("#submitPayment").prop("disabled", false).html(paymentTexts.confirmPurchase);
+                    },
+                    error: function() {
+                        $('#paymentModal').modal('hide');
+                        window.showAppFlashMessage(paymentTexts.requestError, "error");
+                        $("#submitPayment").prop("disabled", false).html(paymentTexts.confirmPurchase);
+                    }
+                });
             });
         }
 
         function validatePaymentForm() {
             var isValid = true;
-
             var imePrezime = $("#imeVlasnika").val().trim();
+
             if (!imePrezime) {
-                showError('imeVlasnika', 'Ime i prezime su obavezni.');
+                showError('imeVlasnika', paymentTexts.holderRequired);
                 isValid = false;
             } else if (!imePrezime.includes(' ')) {
-                showError('imeVlasnika', 'Unesite ime i prezime (mora sadržavati razmak).');
+                showError('imeVlasnika', paymentTexts.holderFullName);
                 isValid = false;
             }
 
             var brojKartice = $("#brojKartice").val().replace(/\s+/g, '');
             if (!brojKartice) {
-                showError('brojKartice', 'Broj kartice je obavezan.');
+                showError('brojKartice', paymentTexts.cardRequired);
                 isValid = false;
             } else if (brojKartice.length !== 16) {
-                showError('brojKartice', 'Broj kartice mora sadržavati tačno 16 cifara.');
+                showError('brojKartice', paymentTexts.cardLength);
                 isValid = false;
             }
 
             var datumIsteka = $("#datumIsteka").val().trim();
             if (!datumIsteka) {
-                showError('datumIsteka', 'Datum isteka je obavezan.');
+                showError('datumIsteka', paymentTexts.expiryRequired);
                 isValid = false;
             } else {
                 var parts = datumIsteka.split('/');
                 if (parts.length !== 2 || !/^(0[1-9]|1[0-2])$/.test(parts[0]) || !/^\d{2}$/.test(parts[1])) {
-                    showError('datumIsteka', 'Neispravan format (MM/YY).');
+                    showError('datumIsteka', paymentTexts.expiryFormat);
                     isValid = false;
                 } else {
                     var month = parseInt(parts[0]);
@@ -509,7 +517,7 @@
                     var currentMonth = now.getMonth() + 1;
 
                     if (year < currentYear || (year === currentYear && month < currentMonth)) {
-                        showError('datumIsteka', 'Kartica je istekla.');
+                        showError('datumIsteka', paymentTexts.cardExpired);
                         isValid = false;
                     }
                 }
@@ -517,10 +525,10 @@
 
             var cvv = $("#cvv").val().trim();
             if (!cvv) {
-                showError('cvv', 'CVV kod je obavezan.');
+                showError('cvv', paymentTexts.cvvRequired);
                 isValid = false;
             } else if (cvv.length !== 3) {
-                showError('cvv', 'CVV kod mora sadržavati tačno 3 cifre.');
+                showError('cvv', paymentTexts.cvvLength);
                 isValid = false;
             }
 
@@ -555,87 +563,7 @@
         function resetPaymentForm() {
             $("#paymentForm")[0].reset();
             clearAllErrors();
-            $("#submitPayment").prop("disabled", false).html('Potvrdi kupovinu');
+            $("#submitPayment").prop("disabled", false).html(paymentTexts.confirmPurchase);
         }
     </script>
-
-    <style>
-
-        .form-control.is-invalid {
-            background-image: none;
-        }
-
-        .error-message {
-            font-size: 0.875rem;
-            min-height: 20px;
-        }
-
-        .border-danger {
-            border: 2px solid #dc3545 !important;
-        }
-
-        .form-control:focus {
-            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-        }
-
-        ::placeholder {
-            opacity: 0.6;
-        }
-
-        .reviews-container {
-            max-height: 600px;
-            overflow-y: auto;
-            padding-left: 25px;
-            width: 300px;
-            margin: 0 auto;
-        }
-
-        .bi-star-fill.text-warning {
-            color: #ffc107 !important;
-        }
-
-        .bi-star {
-            color: #ccc;
-        }
-
-        .card-header {
-            background-color: rgba(0, 0, 0, 0.03);
-        }
-
-        .reviews-container::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .reviews-container::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 4px;
-        }
-
-        .reviews-container::-webkit-scrollbar-thumb {
-            background: #ccc;
-            border-radius: 4px;
-        }
-
-            .reviews-container::-webkit-scrollbar-thumb:hover {
-                background: #aaa;
-            }
-
-        .truncated-text {
-            cursor: pointer;
-        }
-
-        .view-komentar-recenzije {
-            color: inherit;
-            text-decoration: none;
-            display: block;
-        }
-
-            .view-komentar-recenzije:hover {
-                text-decoration: none;
-            }
-
-                .view-komentar-recenzije:hover p {
-                    color: #007bff;
-                }
-    </style>
 }

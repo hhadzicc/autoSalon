@@ -1,8 +1,12 @@
-﻿@{
-    ViewData["Title"] = "Pristup Odbijen";
+@{
+    ViewData["Title"] = L["AccessDeniedTitle"];
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<header>
-    <h2 class="text-danger">@ViewData["Title"].</h2>
-    <p class="text-danger">Nemate dozvolu za pristup ovom resursu.</p>
-</header>
+<section class="inner-page-header">
+    <div class="container text-center">
+        <p class="section-eyebrow">@L["AuthAccountEyebrow"]</p>
+        <h1>@L["AccessDeniedTitle"]</h1>
+        <p>@L["AccessDeniedText"]</p>
+    </div>
+</section>

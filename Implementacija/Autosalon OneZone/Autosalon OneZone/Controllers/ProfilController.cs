@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Autosalon_OneZone.Models;
 using System.Threading.Tasks;
@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using Autosalon_OneZone.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
+using Microsoft.Extensions.Localization;
 
 namespace Autosalon_OneZone.Controllers
 {
@@ -20,17 +21,20 @@ namespace Autosalon_OneZone.Controllers
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger<ProfilController> _logger;
         private readonly ApplicationDbContext _context;
+        private readonly IStringLocalizer<SharedResource> _localizer;
 
         public ProfilController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             ILogger<ProfilController> logger,
-            ApplicationDbContext context)
+            ApplicationDbContext context,
+            IStringLocalizer<SharedResource>? localizer = null)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
             _context = context;
+            _localizer = localizer ?? new FallbackStringLocalizer<SharedResource>();
         }
 
         [HttpGet]
@@ -40,12 +44,12 @@ namespace Autosalon_OneZone.Controllers
 
             if (user == null)
             {
-                _logger.LogError($"Korisnik sa ID-om '{_userManager.GetUserId(User)}' nije pronađen.");
-                return NotFound($"Korisnik sa ID-om '{_userManager.GetUserId(User)}' nije pronađen.");
+                _logger.LogError($"Korisnik sa ID-om '{_userManager.GetUserId(User)}' nije pronaden.");
+                return NotFound($"Korisnik sa ID-om '{_userManager.GetUserId(User)}' nije pronaden.");
             }
 
             var roles = await _userManager.GetRolesAsync(user);
-            string role = roles.FirstOrDefault() ?? "Klijent";
+            string role = roles.FirstOrDefault() ?? _localizer["RoleBuyer"].Value;
 
             var userReviews = await _context.Recenzije
                 .Include(r => r.Vozilo)
@@ -77,8 +81,8 @@ namespace Autosalon_OneZone.Controllers
 
             if (user == null)
             {
-                _logger.LogError($"Korisnik sa ID-om '{_userManager.GetUserId(User)}' nije pronađen.");
-                return NotFound($"Korisnik sa ID-om '{_userManager.GetUserId(User)}' nije pronađen.");
+                _logger.LogError($"Korisnik sa ID-om '{_userManager.GetUserId(User)}' nije pronaden.");
+                return NotFound($"Korisnik sa ID-om '{_userManager.GetUserId(User)}' nije pronaden.");
             }
 
             var model = new EditProfileViewModel
@@ -100,8 +104,8 @@ namespace Autosalon_OneZone.Controllers
 
             if (user == null)
             {
-                _logger.LogError($"Korisnik sa ID-om '{_userManager.GetUserId(User)}' nije pronađen.");
-                return NotFound($"Korisnik sa ID-om '{_userManager.GetUserId(User)}' nije pronađen.");
+                _logger.LogError($"Korisnik sa ID-om '{_userManager.GetUserId(User)}' nije pronaden.");
+                return NotFound($"Korisnik sa ID-om '{_userManager.GetUserId(User)}' nije pronaden.");
             }
 
             if (!ModelState.IsValid)
@@ -128,7 +132,7 @@ namespace Autosalon_OneZone.Controllers
                 var setEmailResult = await _userManager.SetEmailAsync(user, model.Email);
                 if (!setEmailResult.Succeeded)
                 {
-                    ModelState.AddModelError(string.Empty, "Greška pri postavljanju novog emaila.");
+                    ModelState.AddModelError(string.Empty, _localizer["ProfileUpdateEmailError"]);
                     foreach (var error in setEmailResult.Errors)
                     {
                         ModelState.AddModelError(string.Empty, error.Description);
@@ -143,7 +147,7 @@ namespace Autosalon_OneZone.Controllers
                 var setUserNameResult = await _userManager.SetUserNameAsync(user, model.UserName);
                 if (!setUserNameResult.Succeeded)
                 {
-                    ModelState.AddModelError(string.Empty, "Greška pri postavljanju novog korisničkog imena.");
+                    ModelState.AddModelError(string.Empty, _localizer["ProfileUpdateUsernameError"]);
                     foreach (var error in setUserNameResult.Errors)
                     {
                         ModelState.AddModelError(string.Empty, error.Description);
@@ -166,11 +170,11 @@ namespace Autosalon_OneZone.Controllers
                 }
                 await _signInManager.RefreshSignInAsync(user);
 
-                TempData["SuccessMessage"] = "Profil uspješno ažuriran.";
+                TempData["SuccessMessage"] = _localizer["ProfileUpdatedSuccess"].Value;
             }
             else
             {
-                TempData["InfoMessage"] = "Nema promjena na profilu.";
+                TempData["InfoMessage"] = _localizer["ProfileNoChanges"].Value;
             }
 
             return RedirectToAction("Index");
@@ -194,7 +198,7 @@ namespace Autosalon_OneZone.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return NotFound("Korisnik nije pronađen.");
+                return NotFound(_localizer["UserNotFound"].Value);
             }
 
             var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
@@ -218,7 +222,7 @@ namespace Autosalon_OneZone.Controllers
             await _signInManager.RefreshSignInAsync(user);
             _logger.LogInformation("User changed their password successfully.");
 
-            return Ok(new { message = "Lozinka uspješno promijenjena." });
+            return Ok(new { message = _localizer["PasswordChangedSuccess"].Value });
         }
 
         [HttpGet]
@@ -227,7 +231,7 @@ namespace Autosalon_OneZone.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return NotFound($"Korisnik sa ID-om '{_userManager.GetUserId(User)}' nije pronađen.");
+                return NotFound($"Korisnik sa ID-om '{_userManager.GetUserId(User)}' nije pronaden.");
             }
 
             var narudzbe = await _context.Narudzbe
@@ -291,14 +295,14 @@ namespace Autosalon_OneZone.Controllers
         {
             if (ocjena < 1 || ocjena > 5)
             {
-                TempData["ErrorMessage"] = "Ocjena mora biti između 1 i 5.";
+                TempData["ErrorMessage"] = _localizer["ReviewRatingRange"].Value;
                 return RedirectToAction("KupljeniArtikli");
             }
 
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return NotFound($"Korisnik sa ID-om '{_userManager.GetUserId(User)}' nije pronađen.");
+                return NotFound($"Korisnik sa ID-om '{_userManager.GetUserId(User)}' nije pronaden.");
             }
 
             var hasPurchased = await _context.Narudzbe
@@ -308,7 +312,7 @@ namespace Autosalon_OneZone.Controllers
 
             if (!hasPurchased)
             {
-                TempData["ErrorMessage"] = "Možete dodati recenziju samo za vozila koja ste kupili.";
+                TempData["ErrorMessage"] = _localizer["ReviewPurchasedOnly"].Value;
                 return RedirectToAction("KupljeniArtikli");
             }
 
@@ -324,7 +328,7 @@ namespace Autosalon_OneZone.Controllers
                 _context.Recenzije.Update(existingReview);
                 await _context.SaveChangesAsync();
 
-                TempData["SuccessMessage"] = "Recenzija je uspješno ažurirana.";
+                TempData["SuccessMessage"] = _localizer["ReviewUpdatedSuccess"].Value;
             }
             else
             {
@@ -340,7 +344,7 @@ namespace Autosalon_OneZone.Controllers
                 _context.Recenzije.Add(recenzija);
                 await _context.SaveChangesAsync();
 
-                TempData["SuccessMessage"] = "Recenzija je uspješno dodana.";
+                TempData["SuccessMessage"] = _localizer["ReviewAddedSuccess"].Value;
             }
 
             return RedirectToAction("KupljeniArtikli");
@@ -353,7 +357,7 @@ namespace Autosalon_OneZone.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return NotFound($"Korisnik sa ID-om '{_userManager.GetUserId(User)}' nije pronađen.");
+                return NotFound($"Korisnik sa ID-om '{_userManager.GetUserId(User)}' nije pronaden.");
             }
 
             var recenzija = await _context.Recenzije
@@ -361,14 +365,14 @@ namespace Autosalon_OneZone.Controllers
 
             if (recenzija == null)
             {
-                TempData["ErrorMessage"] = "Recenzija nije pronađena ili ne pripada vama.";
+                TempData["ErrorMessage"] = _localizer["ReviewNotFoundOrNotOwned"].Value;
                 return RedirectToAction("KupljeniArtikli");
             }
 
             _context.Recenzije.Remove(recenzija);
             await _context.SaveChangesAsync();
 
-            TempData["SuccessMessage"] = "Recenzija je uspješno uklonjena.";
+            TempData["SuccessMessage"] = _localizer["ReviewRemovedSuccess"].Value;
             return RedirectToAction("KupljeniArtikli");
         }
     }

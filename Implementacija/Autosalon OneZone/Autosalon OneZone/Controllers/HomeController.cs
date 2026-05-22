@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Localization;
 
 namespace Autosalon_OneZone.Controllers
 {
@@ -15,15 +16,18 @@ namespace Autosalon_OneZone.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IStringLocalizer<SharedResource> _localizer;
 
         public HomeController(
             ILogger<HomeController> logger,
             ApplicationDbContext context,
-            UserManager<ApplicationUser> userManager)
+            UserManager<ApplicationUser> userManager,
+            IStringLocalizer<SharedResource>? localizer = null)
         {
             _logger = logger;
             _context = context;
             _userManager = userManager;
+            _localizer = localizer ?? new FallbackStringLocalizer<SharedResource>();
         }
 
         public async Task<IActionResult> Index()
@@ -128,7 +132,7 @@ namespace Autosalon_OneZone.Controllers
                     }
                     else
                     {
-                        TempData["ErrorMessage"] = "Došlo je do problema sa vašim korisničkim nalogom.";
+                        TempData["ErrorMessage"] = _localizer["ContactAccountProblem"].Value;
                         return View(model);
                     }
                 }
@@ -143,13 +147,13 @@ namespace Autosalon_OneZone.Controllers
                 _context.PodrskaUpiti.Add(podrska);
                 await _context.SaveChangesAsync();
 
-                TempData["SuccessMessage"] = "Vaša poruka je uspješno poslana!";
+                TempData["SuccessMessage"] = _localizer["ContactMessageSent"].Value;
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error saving support message");
-                TempData["ErrorMessage"] = "Došlo je do greške prilikom slanja poruke. Molimo pokušajte ponovo.";
+                TempData["ErrorMessage"] = _localizer["ContactSendError"].Value;
                 return View(model);
             }
         }

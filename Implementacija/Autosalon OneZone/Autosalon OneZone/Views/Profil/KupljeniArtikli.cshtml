@@ -1,14 +1,14 @@
 @model Autosalon_OneZone.Models.ViewModels.PurchasedItemsViewModel
 @{
-    ViewData["Title"] = "Kupljeni artikli";
+    ViewData["Title"] = L["NavPurchasedItems"];
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <section class="inner-page-header">
     <div class="container text-center">
-        <p class="section-eyebrow">Kupovine</p>
-        <h1>Kupljeni artikli</h1>
-        <p>Pregledajte vozila koja ste kupili i dodajte recenziju.</p>
+        <p class="section-eyebrow">@L["Purchases"]</p>
+        <h1>@L["NavPurchasedItems"]</h1>
+        <p>@L["PurchasedItemsHeaderText"]</p>
     </div>
 </section>
 
@@ -18,11 +18,11 @@
             <div class="col-lg-10">
                 <div class="d-flex justify-content-between align-items-center gap-3 mb-4 flex-wrap">
                     <div>
-                        <h2 class="page-section-title mb-1">Vaše kupovine</h2>
-                        <p class="text-muted mb-0">Lista vozila kupljenih kroz aplikaciju.</p>
+                        <h2 class="page-section-title mb-1">@L["YourPurchases"]</h2>
+                        <p class="text-muted mb-0">@L["YourPurchasesText"]</p>
                     </div>
                     <a href="@Url.Action("Index", "Profil")" class="btn btn-light border rounded-4">
-                        <i class="bi bi-arrow-left me-2"></i>Nazad na profil
+                        <i class="bi bi-arrow-left me-2"></i>@L["BackToProfile"]
                     </a>
                 </div>
 
@@ -31,6 +31,7 @@
                     <div class="purchase-list">
                         @foreach (var item in Model.PurchasedItems)
                         {
+                            var reviewActionText = item.HasReview ? L["EditReview"].Value : L["AddReview"].Value;
                             <article class="purchase-card">
                                 <img src="@item.Slika" alt="@item.Naziv" />
 
@@ -39,14 +40,14 @@
                                         <div class="d-flex align-items-start justify-content-between gap-3 flex-wrap">
                                             <div>
                                                 <h3>@item.Naziv</h3>
-                                                <p class="mb-1"><strong>Cijena:</strong> @item.Cijena.ToString("N2") KM</p>
-                                                <p class="mb-0"><strong>Datum kupovine:</strong> @item.DatumKupovine.ToString("dd.MM.yyyy")</p>
+                                                <p class="mb-1"><strong>@L["VehiclePrice"]:</strong> @item.Cijena.ToString("N2") KM</p>
+                                                <p class="mb-0"><strong>@L["PurchaseDate"]:</strong> @item.DatumKupovine.ToString("dd.MM.yyyy")</p>
                                             </div>
 
                                             @if (item.HasReview)
                                             {
                                                 <span class="review-badge">
-                                                    <i class="bi bi-check-circle-fill me-1"></i>Recenzija dodana
+                                                    <i class="bi bi-check-circle-fill me-1"></i>@L["ReviewAdded"]
                                                 </span>
                                             }
                                         </div>
@@ -55,8 +56,8 @@
                                         {
                                             <div class="purchase-review">
                                                 <div class="d-flex justify-content-between align-items-center gap-3 flex-wrap">
-                                                    <h4>Vaša recenzija</h4>
-                                                    <div class="profile-stars" aria-label="Ocjena @item.Recenzija.Ocjena od 5">
+                                                    <h4>@L["YourReview"]</h4>
+                                                    <div class="profile-stars" aria-label="@L["RatingOutOfFive", item.Recenzija.Ocjena]">
                                                         @for (int i = 1; i <= 5; i++)
                                                         {
                                                             <i class="bi @(i <= item.Recenzija.Ocjena ? "bi-star-fill" : "bi-star")"></i>
@@ -64,7 +65,7 @@
                                                     </div>
                                                 </div>
                                                 <p>@item.Recenzija.Komentar</p>
-                                                <span>Datum recenzije: @item.Recenzija.DatumRecenzije.ToString("dd.MM.yyyy")</span>
+                                                <span>@L["ReviewDate"]: @item.Recenzija.DatumRecenzije.ToString("dd.MM.yyyy")</span>
                                             </div>
                                         }
                                     </div>
@@ -76,21 +77,22 @@
                                                 data-bs-target="#reviewModal-@item.VoziloID"
                                                 data-vozilo-id="@item.VoziloID"
                                                 data-vozilo-naziv="@item.Naziv">
-                                            <i class="bi bi-star-fill me-2"></i>@(item.HasReview ? "Izmijeni recenziju" : "Dodaj recenziju")
+                                            <i class="bi bi-star-fill me-2"></i>@reviewActionText
                                         </button>
 
                                         @if (item.HasReview)
                                         {
                                             <form asp-action="UkloniRecenziju" method="post">
+                                                @Html.AntiForgeryToken()
                                                 <input type="hidden" name="recenzijaId" value="@item.Recenzija.RecenzijaID" />
                                                 <button type="submit"
                                                         class="btn btn-light border rounded-4"
                                                         data-confirm-delete="true"
-                                                        data-confirm-title="Ukloniti recenziju?"
-                                                        data-confirm-message="Jeste li sigurni da želite ukloniti ovu recenziju?"
+                                                        data-confirm-title="@L["RemoveReviewConfirmTitle"]"
+                                                        data-confirm-message="@L["RemoveReviewConfirmMessage"]"
                                                         data-confirm-item="@item.Naziv"
-                                                        data-confirm-action="Da, ukloni recenziju">
-                                                    Ukloni
+                                                        data-confirm-action="@L["RemoveReviewConfirmAction"]">
+                                                    @L["Remove"]
                                                 </button>
                                             </form>
                                         }
@@ -102,17 +104,18 @@
                                 <div class="modal-dialog modal-dialog-centered">
                                     <div class="modal-content profile-modal">
                                         <form asp-action="DodajRecenziju" method="post" class="review-form" id="review-form-@item.VoziloID">
+                                            @Html.AntiForgeryToken()
                                             <div class="modal-header">
                                                 <h5 class="modal-title" id="reviewModalLabel-@item.VoziloID">
-                                                    @(item.HasReview ? "Izmijeni recenziju" : "Dodaj recenziju") za @item.Naziv
+                                                    @L["ReviewModalTitle", reviewActionText, item.Naziv]
                                                 </h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@L["Close"]"></button>
                                             </div>
                                             <div class="modal-body">
                                                 <input type="hidden" name="voziloId" value="@item.VoziloID" />
 
                                                 <div class="mb-3">
-                                                    <label class="form-label required">Ocjena</label>
+                                                    <label class="form-label required">@L["Rating"]</label>
                                                     <div class="rating">
                                                         @for (var i = 1; i <= 5; i++)
                                                         {
@@ -122,22 +125,18 @@
                                                             </div>
                                                         }
                                                     </div>
-                                                    <div class="invalid-feedback" id="ocjena-error-@item.VoziloID">
-                                                        Molimo odaberite ocjenu.
-                                                    </div>
+                                                    <div class="invalid-feedback" id="ocjena-error-@item.VoziloID">@L["RatingRequired"]</div>
                                                 </div>
 
                                                 <div class="mb-3">
-                                                    <label for="komentar-@item.VoziloID" class="form-label required">Komentar</label>
+                                                    <label for="komentar-@item.VoziloID" class="form-label required">@L["Comment"]</label>
                                                     <textarea class="form-control" id="komentar-@item.VoziloID" name="komentar" rows="3" maxlength="1000" required>@(item.HasReview ? item.Recenzija.Komentar : "")</textarea>
-                                                    <div class="invalid-feedback">
-                                                        Komentar ne može biti prazan.
-                                                    </div>
+                                                    <div class="invalid-feedback">@L["CommentRequired"]</div>
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
-                                                <button type="button" class="btn btn-light border rounded-4" data-bs-dismiss="modal">Odustani</button>
-                                                <button type="submit" class="btn btn-primary rounded-4">Sačuvaj</button>
+                                                <button type="button" class="btn btn-light border rounded-4" data-bs-dismiss="modal">@L["Cancel"]</button>
+                                                <button type="submit" class="btn btn-primary rounded-4">@L["CommonSave"]</button>
                                             </div>
                                         </form>
                                     </div>
@@ -151,8 +150,8 @@
                     <div class="profile-card">
                         <div class="empty-state">
                             <i class="bi bi-bag-x"></i>
-                            <p>Još uvijek nema kupljenih artikala.</p>
-                            <a href="@Url.Action("Index", "Vozilo")" class="btn btn-primary rounded-4 mt-2">Pogledaj katalog vozila</a>
+                            <p>@L["NoPurchasedItems"]</p>
+                            <a href="@Url.Action("Index", "Vozilo")" class="btn btn-primary rounded-4 mt-2">@L["ViewVehicleCatalog"]</a>
                         </div>
                     </div>
                 }
@@ -165,7 +164,10 @@
     <script>
         $(document).ready(function() {
             $('.modal').on('hidden.bs.modal', function () {
-                $(this).find('form')[0].reset();
+                const form = $(this).find('form')[0];
+                if (form) {
+                    form.reset();
+                }
 
                 $(this).find('.is-invalid').removeClass('is-invalid');
                 $(this).find('.invalid-feedback').hide();
@@ -210,8 +212,7 @@
             });
 
             $('textarea[name="komentar"]').on('input', function() {
-                const kommentarValue = $(this).val().trim();
-                if (kommentarValue) {
+                if ($(this).val().trim()) {
                     $(this).removeClass('is-invalid');
                     $(this).siblings('.invalid-feedback').hide();
                 }

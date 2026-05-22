@@ -1,6 +1,11 @@
-﻿@{
-    ViewData["Title"] = "Privacy Policy";
+@{
+    ViewData["Title"] = L["PrivacyTitle"];
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<section class="inner-page-header">
+    <div class="container text-center">
+        <p class="section-eyebrow">@L["FooterPrivacy"]</p>
+        <h1>@L["PrivacyTitle"]</h1>
+        <p>@L["PrivacyText"]</p>
+    </div>
+</section>

@@ -5,9 +5,9 @@
 
 @model IEnumerable<Autosalon_OneZone.Models.Vozilo>
 @{
-    ViewData["Title"] = "Vozila";
+    ViewData["Title"] = L["VehiclesTitle"];
     var currentYear = DateTime.Now.Year;
-    var culture = CultureInfo.GetCultureInfo("bs-BA");
+    var culture = CultureInfo.CurrentCulture;
     var searchTerm = ViewData["SearchTerm"]?.ToString();
     var hasActiveFilters =
         ViewData["GodisteOd"] != null ||
@@ -20,21 +20,31 @@
         ViewData["KilometrazaDo"] != null ||
         ViewData["CijenaOd"] != null ||
         ViewData["CijenaDo"] != null;
+
+    string FuelLabel(string value) => value switch
+    {
+        "Benzin" => L["FuelGasoline"].Value,
+        "Dizel" => L["FuelDiesel"].Value,
+        "Plin" => L["FuelGas"].Value,
+        "Elektro" => L["FuelElectric"].Value,
+        "Hibrid" => L["FuelHybrid"].Value,
+        _ => value
+    };
 }
 
 <section class="vehicles-hero">
     <div class="container">
         <div class="row align-items-center g-4">
             <div class="col-lg-7">
-                <p class="section-eyebrow">Pregled vozila</p>
-                <h1>Pronađite vozilo koje vam odgovara.</h1>
-                <p>Pretražite ponudu prema marki, modelu, cijeni, gorivu, kilometraži i godištu.</p>
+                <p class="section-eyebrow">@L["VehiclesOverview"]</p>
+                <h1>@L["VehiclesHeroTitle"]</h1>
+                <p>@L["VehiclesHeroText"]</p>
             </div>
 
             <div class="col-lg-5">
                 <form class="vehicles-search" method="get" action="@Url.Action("Index", "Vozilo")" role="search">
-                    <input type="text" class="form-control" name="searchTerm" value="@searchTerm" placeholder="Pretraži marku ili model..." aria-label="Pretraži vozila">
-                    <button class="btn btn-primary" type="submit">Pretraži</button>
+                    <input type="text" class="form-control" name="searchTerm" value="@searchTerm" placeholder="@L["VehiclesSearchPlaceholder"]" aria-label="@L["VehicleSearchAria"]">
+                    <button class="btn btn-primary" type="submit">@L["CommonSearch"]</button>
                 </form>
             </div>
         </div>
@@ -46,18 +56,18 @@
         @if (!string.IsNullOrWhiteSpace(searchTerm))
         {
             <div class="alert alert-info vehicles-search-alert">
-                Rezultati pretrage za: <strong>@searchTerm</strong>
+                @L["SearchResultsFor"] <strong>@searchTerm</strong>
             </div>
         }
 
         <div class="filters-card">
             <div class="d-flex justify-content-between align-items-center gap-3 mb-3 flex-wrap">
                 <div>
-                    <h2 class="mb-1">Filteri i sortiranje</h2>
-                    <p class="text-secondary mb-0">Suzi ponudu prema najvažnijim karakteristikama vozila.</p>
+                    <h2 class="mb-1">@L["FiltersAndSorting"]</h2>
+                    <p class="text-secondary mb-0">@L["FiltersText"]</p>
                 </div>
                 <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-3" data-bs-toggle="collapse" data-bs-target="#filterCollapse" aria-expanded="@(hasActiveFilters.ToString().ToLowerInvariant())" aria-controls="filterCollapse">
-                    <i class="bi bi-funnel"></i> Prikaži/sakrij filtere
+                    <i class="bi bi-funnel"></i> @L["ShowHideFilters"]
                 </button>
             </div>
 
@@ -70,83 +80,83 @@
 
                     <div class="row g-3">
                         <div class="col-md-6 col-lg-4">
-                            <label for="sortOrder" class="form-label">Sortiranje</label>
+                            <label for="sortOrder" class="form-label">@L["Sorting"]</label>
                             <select class="form-select" id="sortOrder" name="sortOrder">
-                                <option value="" selected="@(ViewData["CurrentSort"] == null)">Naziv (A-Z)</option>
-                                <option value="name_desc" selected="@(ViewData["CurrentSort"]?.ToString() == "name_desc")">Naziv (Z-A)</option>
-                                <option value="price" selected="@(ViewData["CurrentSort"]?.ToString() == "price")">Cijena (rastuće)</option>
-                                <option value="price_desc" selected="@(ViewData["CurrentSort"]?.ToString() == "price_desc")">Cijena (opadajuće)</option>
-                                <option value="year" selected="@(ViewData["CurrentSort"]?.ToString() == "year")">Godište (starije prvo)</option>
-                                <option value="year_desc" selected="@(ViewData["CurrentSort"]?.ToString() == "year_desc")">Godište (novije prvo)</option>
+                                <option value="" selected="@(ViewData["CurrentSort"] == null)">@L["SortNameAsc"]</option>
+                                <option value="name_desc" selected="@(ViewData["CurrentSort"]?.ToString() == "name_desc")">@L["SortNameDesc"]</option>
+                                <option value="price" selected="@(ViewData["CurrentSort"]?.ToString() == "price")">@L["SortPriceAsc"]</option>
+                                <option value="price_desc" selected="@(ViewData["CurrentSort"]?.ToString() == "price_desc")">@L["SortPriceDesc"]</option>
+                                <option value="year" selected="@(ViewData["CurrentSort"]?.ToString() == "year")">@L["SortYearAsc"]</option>
+                                <option value="year_desc" selected="@(ViewData["CurrentSort"]?.ToString() == "year_desc")">@L["SortYearDesc"]</option>
                             </select>
                         </div>
 
                         <div class="col-md-6 col-lg-4">
-                            <label for="gorivo" class="form-label">Gorivo</label>
+                            <label for="gorivo" class="form-label">@L["VehicleFuel"]</label>
                             <select class="form-select" id="gorivo" name="gorivo">
-                                <option value="">Sva goriva</option>
+                                <option value="">@L["AllFuelTypes"]</option>
                                 @{
                                     var gorivoOptions = new[] { "Benzin", "Dizel", "Plin", "Elektro", "Hibrid" };
                                     foreach (var option in gorivoOptions)
                                     {
-                                        <option value="@option" selected="@(ViewData["Gorivo"]?.ToString() == option)">@option</option>
+                                        <option value="@option" selected="@(ViewData["Gorivo"]?.ToString() == option)">@FuelLabel(option)</option>
                                     }
                                 }
                             </select>
                         </div>
 
                         <div class="col-md-6 col-lg-4">
-                            <label for="boja" class="form-label">Boja</label>
-                            <input type="text" class="form-control" id="boja" name="boja" placeholder="Unesite boju" value="@ViewData["Boja"]">
+                            <label for="boja" class="form-label">@L["VehicleColor"]</label>
+                            <input type="text" class="form-control" id="boja" name="boja" placeholder="@L["EnterColor"]" value="@ViewData["Boja"]">
                         </div>
 
                         <div class="col-md-6 col-lg-3">
-                            <label for="godisteOd" class="form-label">Godište od</label>
-                            <input type="number" class="form-control" placeholder="Od" id="godisteOd" name="godisteOd" min="1900" max="@currentYear" value="@ViewData["GodisteOd"]">
+                            <label for="godisteOd" class="form-label">@L["YearFrom"]</label>
+                            <input type="number" class="form-control" placeholder="@L["From"]" id="godisteOd" name="godisteOd" min="1900" max="@currentYear" value="@ViewData["GodisteOd"]">
                         </div>
 
                         <div class="col-md-6 col-lg-3">
-                            <label for="godisteDo" class="form-label">Godište do</label>
-                            <input type="number" class="form-control" placeholder="Do" id="godisteDo" name="godisteDo" min="1900" max="@currentYear" value="@ViewData["GodisteDo"]">
+                            <label for="godisteDo" class="form-label">@L["YearTo"]</label>
+                            <input type="number" class="form-control" placeholder="@L["To"]" id="godisteDo" name="godisteDo" min="1900" max="@currentYear" value="@ViewData["GodisteDo"]">
                         </div>
 
                         <div class="col-md-6 col-lg-3">
-                            <label for="cijenaOd" class="form-label">Cijena od (€)</label>
-                            <input type="number" min="0" class="form-control" placeholder="Od" id="cijenaOd" name="cijenaOd" value="@ViewData["CijenaOd"]">
+                            <label for="cijenaOd" class="form-label">@L["PriceFromEuro"]</label>
+                            <input type="number" min="0" class="form-control" placeholder="@L["From"]" id="cijenaOd" name="cijenaOd" value="@ViewData["CijenaOd"]">
                         </div>
 
                         <div class="col-md-6 col-lg-3">
-                            <label for="cijenaDo" class="form-label">Cijena do (€)</label>
-                            <input type="number" min="0" class="form-control" placeholder="Do" id="cijenaDo" name="cijenaDo" value="@ViewData["CijenaDo"]">
+                            <label for="cijenaDo" class="form-label">@L["PriceToEuro"]</label>
+                            <input type="number" min="0" class="form-control" placeholder="@L["To"]" id="cijenaDo" name="cijenaDo" value="@ViewData["CijenaDo"]">
                         </div>
 
                         <div class="col-md-6 col-lg-3">
-                            <label for="kubikazaOd" class="form-label">Kubikaža od</label>
-                            <input type="number" step="0.1" min="0" class="form-control" placeholder="Od" id="kubikazaOd" name="kubikazaOd" value="@ViewData["KubikazaOd"]">
+                            <label for="kubikazaOd" class="form-label">@L["DisplacementFrom"]</label>
+                            <input type="number" step="0.1" min="0" class="form-control" placeholder="@L["From"]" id="kubikazaOd" name="kubikazaOd" value="@ViewData["KubikazaOd"]">
                         </div>
 
                         <div class="col-md-6 col-lg-3">
-                            <label for="kubikazaDo" class="form-label">Kubikaža do</label>
-                            <input type="number" step="0.1" min="0" class="form-control" placeholder="Do" id="kubikazaDo" name="kubikazaDo" value="@ViewData["KubikazaDo"]">
+                            <label for="kubikazaDo" class="form-label">@L["DisplacementTo"]</label>
+                            <input type="number" step="0.1" min="0" class="form-control" placeholder="@L["To"]" id="kubikazaDo" name="kubikazaDo" value="@ViewData["KubikazaDo"]">
                         </div>
 
                         <div class="col-md-6 col-lg-3">
-                            <label for="kilometrazaOd" class="form-label">Kilometraža od</label>
-                            <input type="number" min="0" class="form-control" placeholder="Od" id="kilometrazaOd" name="kilometrazaOd" value="@ViewData["KilometrazaOd"]">
+                            <label for="kilometrazaOd" class="form-label">@L["MileageFrom"]</label>
+                            <input type="number" min="0" class="form-control" placeholder="@L["From"]" id="kilometrazaOd" name="kilometrazaOd" value="@ViewData["KilometrazaOd"]">
                         </div>
 
                         <div class="col-md-6 col-lg-3">
-                            <label for="kilometrazaDo" class="form-label">Kilometraža do</label>
-                            <input type="number" min="0" class="form-control" placeholder="Do" id="kilometrazaDo" name="kilometrazaDo" value="@ViewData["KilometrazaDo"]">
+                            <label for="kilometrazaDo" class="form-label">@L["MileageTo"]</label>
+                            <input type="number" min="0" class="form-control" placeholder="@L["To"]" id="kilometrazaDo" name="kilometrazaDo" value="@ViewData["KilometrazaDo"]">
                         </div>
                     </div>
 
                     <div class="filters-actions">
                         <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-funnel-fill"></i> Primijeni filtere
+                            <i class="bi bi-funnel-fill"></i> @L["ApplyFilters"]
                         </button>
                         <button type="button" id="clearAllFilters" class="btn btn-outline-danger">
-                            Očisti sve filtere
+                            @L["ClearAllFilters"]
                         </button>
                     </div>
                 </form>
@@ -154,15 +164,15 @@
         </div>
 
         <div class="vehicles-results-header">
-            <p class="results-count mb-0">Pronađeno @Model.Count() vozila</p>
+            <p class="results-count mb-0">@L["VehiclesFound", Model.Count()]</p>
         </div>
 
         @if (!Model.Any())
         {
             <div class="vehicles-empty-state">
                 <i class="bi bi-search"></i>
-                <h2>Nema vozila za prikaz</h2>
-                <p>Promijenite pojam pretrage ili očistite filtere pa pokušajte ponovo.</p>
+                <h2>@L["NoVehiclesTitle"]</h2>
+                <p>@L["NoVehiclesText"]</p>
             </div>
         }
         else
@@ -175,10 +185,10 @@
                         : Url.Content("~/img/no-image.png");
                     var priceText = vozilo.Cijena.HasValue
                         ? $"€{vozilo.Cijena.Value.ToString("N0", culture)}"
-                        : "Cijena na upit";
+                        : L["PriceOnRequest"].Value;
                     var mileageText = vozilo.Kilometraza.HasValue
                         ? $"{vozilo.Kilometraza.Value.ToString("N0", culture)} km"
-                        : "Kilometraža nije unesena";
+                        : L["MileageNotEntered"].Value;
 
                     <div class="col-md-6 col-xl-4">
                         <article class="vehicles-card h-100">
@@ -189,7 +199,7 @@
                             <div class="vehicles-card-body">
                                 <div class="d-flex justify-content-between align-items-start gap-3 mb-2">
                                     <h2 class="vehicles-card-title">@vozilo.Marka @vozilo.Model</h2>
-                                    <span class="vehicles-card-tag">@vozilo.Gorivo</span>
+                                    <span class="vehicles-card-tag">@FuelLabel(vozilo.Gorivo.ToString())</span>
                                 </div>
 
                                 <p class="vehicles-card-meta">@vozilo.Godiste · @vozilo.Boja · @mileageText</p>
@@ -198,32 +208,32 @@
                                     @if (vozilo.Gorivo != Autosalon_OneZone.Models.TipGoriva.Elektro)
                                     {
                                         <div>
-                                            <dt>Kubikaža</dt>
+                                            <dt>@L["VehicleDisplacement"]</dt>
                                             <dd>@vozilo.Kubikaza</dd>
                                         </div>
                                     }
                                     <div>
-                                        <dt>Gorivo</dt>
-                                        <dd>@vozilo.Gorivo</dd>
+                                        <dt>@L["VehicleFuel"]</dt>
+                                        <dd>@FuelLabel(vozilo.Gorivo.ToString())</dd>
                                     </div>
                                 </dl>
 
                                 <div class="vehicles-card-footer">
                                     <span class="vehicles-card-price">@priceText</span>
                                     <div class="vehicles-card-actions">
-                                        <a href="@Url.Action("Details", "Vozilo", new { id = vozilo.VoziloID })" class="btn btn-primary">Detalji</a>
+                                        <a href="@Url.Action("Details", "Vozilo", new { id = vozilo.VoziloID })" class="btn btn-primary">@L["Details"]</a>
 
                                         @if (SignInManager.IsSignedIn(User) && User.Identity != null && User.Identity.IsAuthenticated)
                                         {
                                             <form asp-controller="Korpa" asp-action="DodajUKorpu" method="post">
                                                 @Html.AntiForgeryToken()
                                                 <input type="hidden" name="id" value="@vozilo.VoziloID" />
-                                                <button type="submit" class="btn btn-outline-primary">Dodaj u korpu</button>
+                                                <button type="submit" class="btn btn-outline-primary">@L["AddToCart"]</button>
                                             </form>
                                         }
                                         else
                                         {
-                                            <a href="@Url.Action("Login", "Account", new { returnUrl = Context.Request.Path })" class="btn btn-outline-primary">Prijava za kupovinu</a>
+                                            <a href="@Url.Action("Login", "Account", new { returnUrl = Context.Request.Path })" class="btn btn-outline-primary">@L["LoginToBuy"]</a>
                                         }
                                     </div>
                                 </div>
@@ -238,15 +248,6 @@
 
 @section Scripts {
     <script>
-        function clearFilter(...fields) {
-            fields.forEach(field => {
-                const element = document.getElementById(field);
-                if (element) {
-                    element.value = '';
-                }
-            });
-        }
-
         $(document).ready(function() {
             $('#clearAllFilters').click(function() {
                 var searchTerm = '@searchTerm';

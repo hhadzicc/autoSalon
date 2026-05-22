@@ -1,14 +1,14 @@
 @model Autosalon_OneZone.Models.ViewModels.EditProfileViewModel
 @{
-    ViewData["Title"] = "Uredi profil";
+    ViewData["Title"] = L["EditProfile"];
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <section class="inner-page-header">
     <div class="container text-center">
-        <p class="section-eyebrow">Korisnički profil</p>
-        <h1>Uredi profil</h1>
-        <p>Ažurirajte osnovne podatke svog korisničkog naloga.</p>
+        <p class="section-eyebrow">@L["UserProfileEyebrow"]</p>
+        <h1>@L["EditProfile"]</h1>
+        <p>@L["EditProfileHeaderText"]</p>
     </div>
 </section>
 
@@ -21,8 +21,8 @@
                         <div class="profile-avatar small-avatar">
                             <i class="bi bi-pencil-square"></i>
                         </div>
-                        <h2>Uredi podatke</h2>
-                        <p class="text-muted mb-0">Sačuvajte tačne podatke za prijavu i komunikaciju.</p>
+                        <h2>@L["EditData"]</h2>
+                        <p class="text-muted mb-0">@L["EditDataText"]</p>
                     </div>
 
                     <div asp-validation-summary="All" class="text-danger validation-summary mb-3"></div>
@@ -30,39 +30,39 @@
                     <form asp-controller="Profil" asp-action="Edit" method="post">
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label asp-for="Ime" class="form-label"></label>
-                                <input asp-for="Ime" type="text" class="form-control" placeholder="Ime" required pattern="[A-Za-z\s]+" data-val-regex="Ime može sadržavati samo slova." data-val-required="Ime je obavezno." />
+                                <label asp-for="Ime" class="form-label">@L["FirstName"]</label>
+                                <input asp-for="Ime" type="text" class="form-control" placeholder="@L["FirstName"]" required pattern="[A-Za-z\s]+" />
                                 <span asp-validation-for="Ime" class="text-danger"></span>
                             </div>
 
                             <div class="col-md-6">
-                                <label asp-for="Prezime" class="form-label"></label>
-                                <input asp-for="Prezime" type="text" class="form-control" placeholder="Prezime" required pattern="[A-Za-z\s]+" data-val-regex="Prezime može sadržavati samo slova." data-val-required="Prezime je obavezno." />
+                                <label asp-for="Prezime" class="form-label">@L["LastName"]</label>
+                                <input asp-for="Prezime" type="text" class="form-control" placeholder="@L["LastName"]" required pattern="[A-Za-z\s]+" />
                                 <span asp-validation-for="Prezime" class="text-danger"></span>
                             </div>
 
                             <div class="col-12">
-                                <label asp-for="Email" class="form-label"></label>
-                                <input asp-for="Email" type="email" class="form-control" placeholder="Email adresa" required data-val-required="Email adresa je obavezna." data-val-email="Unesite ispravnu email adresu." />
+                                <label asp-for="Email" class="form-label">@L["EmailAddress"]</label>
+                                <input asp-for="Email" type="email" class="form-control" placeholder="@L["EmailAddress"]" required />
                                 <span asp-validation-for="Email" class="text-danger"></span>
                             </div>
 
                             <div class="col-12">
-                                <label asp-for="UserName" class="form-label"></label>
-                                <input asp-for="UserName" type="text" class="form-control" placeholder="Korisničko ime" required pattern="[A-Za-z0-9]+" data-val-regex="Korisničko ime može sadržavati samo slova i brojeve." data-val-required="Korisničko ime je obavezno." />
+                                <label asp-for="UserName" class="form-label">@L["Username"]</label>
+                                <input asp-for="UserName" type="text" class="form-control" placeholder="@L["Username"]" required pattern="[A-Za-z0-9]+" />
                                 <span asp-validation-for="UserName" class="text-danger"></span>
                             </div>
                         </div>
 
                         <div class="profile-actions">
                             <div class="profile-actions-left">
-                                <a asp-controller="Profil" asp-action="Index" class="btn btn-light border rounded-4">Nazad na profil</a>
+                                <a asp-controller="Profil" asp-action="Index" class="btn btn-light border rounded-4">@L["BackToProfile"]</a>
                                 <button type="button" class="btn btn-outline-secondary rounded-4" id="change-password-btn">
-                                    <i class="bi bi-key me-2"></i>Promijeni lozinku
+                                    <i class="bi bi-key me-2"></i>@L["NavChangePassword"]
                                 </button>
                             </div>
 
-                            <button type="submit" class="btn btn-primary rounded-4">Sačuvaj izmjene</button>
+                            <button type="submit" class="btn btn-primary rounded-4">@L["SaveChanges"]</button>
                         </div>
                     </form>
                 </div>
@@ -80,21 +80,22 @@
                         <i class="bi bi-shield-lock-fill"></i>
                     </div>
                     <div>
-                        <h5 class="modal-title" id="passwordChangeModalLabel">Promjena lozinke</h5>
-                        <p class="mb-0 text-muted small">Unesite trenutnu i novu lozinku za svoj nalog.</p>
+                        <h5 class="modal-title" id="passwordChangeModalLabel">@L["PasswordChangeTitle"]</h5>
+                        <p class="mb-0 text-muted small">@L["PasswordChangeText"]</p>
                     </div>
                 </div>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@L["Close"]"></button>
             </div>
             <div class="modal-body">
                 <form id="change-password-form" class="password-form">
+                    @Html.AntiForgeryToken()
                     <div id="password-errors" class="text-danger mb-3"></div>
 
                     <div class="mb-3">
-                        <label for="currentPassword" class="form-label">Trenutna lozinka</label>
+                        <label for="currentPassword" class="form-label">@L["CurrentPassword"]</label>
                         <div class="password-wrapper">
                             <input type="password" class="form-control password-input" id="currentPassword" name="currentPassword" required>
-                            <button type="button" class="password-toggle" aria-label="Prikaži lozinku">
+                            <button type="button" class="password-toggle" aria-label="@L["ShowPassword"]">
                                 <i class="bi bi-eye"></i>
                             </button>
                         </div>
@@ -102,10 +103,10 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="newPassword" class="form-label">Nova lozinka</label>
+                        <label for="newPassword" class="form-label">@L["NewPassword"]</label>
                         <div class="password-wrapper">
-                            <input type="password" class="form-control password-input" id="newPassword" name="newPassword" required minlength="8" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}" title="Lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo.">
-                            <button type="button" class="password-toggle" aria-label="Prikaži lozinku">
+                            <input type="password" class="form-control password-input" id="newPassword" name="newPassword" required minlength="8" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}" title="@L["PasswordPolicyError"]">
+                            <button type="button" class="password-toggle" aria-label="@L["ShowPassword"]">
                                 <i class="bi bi-eye"></i>
                             </button>
                         </div>
@@ -113,21 +114,20 @@
                     </div>
 
                     <div class="mb-2">
-                        <label for="confirmPassword" class="form-label">Potvrdite novu lozinku</label>
+                        <label for="confirmPassword" class="form-label">@L["ConfirmNewPassword"]</label>
                         <div class="password-wrapper">
                             <input type="password" class="form-control password-input" id="confirmPassword" name="confirmPassword" required>
-                            <button type="button" class="password-toggle" aria-label="Prikaži lozinku">
+                            <button type="button" class="password-toggle" aria-label="@L["ShowPassword"]">
                                 <i class="bi bi-eye"></i>
                             </button>
                         </div>
                         <div class="password-error" id="confirmPassword-error"></div>
                     </div>
-
                 </form>
             </div>
             <div class="modal-footer modern-modal-footer">
-                <button type="button" class="btn btn-light border rounded-4" data-bs-dismiss="modal">Odustani</button>
-                <button type="button" class="btn btn-primary rounded-4" id="submit-password-change">Postavi novu lozinku</button>
+                <button type="button" class="btn btn-light border rounded-4" data-bs-dismiss="modal">@L["Cancel"]</button>
+                <button type="button" class="btn btn-primary rounded-4" id="submit-password-change">@L["ResetPasswordSubmit"]</button>
             </div>
         </div>
     </div>
@@ -139,15 +139,23 @@
     }
 
     <script>
-        $(document).ready(function() {
+        const profileTexts = {
+            currentRequired: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["Validation.CurrentPasswordRequired"].Value)),
+            newRequired: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["Validation.NewPasswordRequired"].Value)),
+            confirmRequired: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["Validation.ConfirmNewPasswordRequired"].Value)),
+            passwordPolicy: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PasswordPolicyError"].Value)),
+            passwordsMatch: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["Validation.NewPasswordsMatch"].Value)),
+            passwordChanged: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PasswordChangedSuccess"].Value)),
+            genericError: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["CommonError"].Value))
+        };
 
+        $(document).ready(function() {
             $("#Ime, #Prezime").on("input", function() {
                 var value = $(this).val();
                 var lettersOnly = /^[A-Za-z\s]*$/;
 
                 if (!lettersOnly.test(value)) {
-                    var cleanValue = value.replace(/[^A-Za-z\s]/g, '');
-                    $(this).val(cleanValue);
+                    $(this).val(value.replace(/[^A-Za-z\s]/g, ''));
                 }
             });
 
@@ -156,40 +164,15 @@
                 var alphanumericOnly = /^[A-Za-z0-9]*$/;
 
                 if (!alphanumericOnly.test(value)) {
-                    var cleanValue = value.replace(/[^A-Za-z0-9]/g, '');
-                    $(this).val(cleanValue);
+                    $(this).val(value.replace(/[^A-Za-z0-9]/g, ''));
                 }
             });
 
-            $.extend($.validator.messages, {
-                required: "Ovo polje je obavezno.",
-                email: "Unesite ispravnu email adresu.",
-                regex: "Unesite vrijednost u ispravnom formatu.",
-                pattern: "Unesite vrijednost u ispravnom formatu."
-            });
-
-            function translateValidationMessages() {
-                $('.validation-summary ul li').each(function() {
-                    var text = $(this).text();
-
-                    text = text.replace(/The field [A-Za-z]+ must match the regular expression/i, 'Polje mora biti u ispravnom formatu.');
-                    text = text.replace(/Username .* is already taken/i, 'Korisničko ime je već zauzeto.');
-                    text = text.replace(/Email .* is already taken/i, 'Email adresa je već zauzeta.');
-
-                    $(this).text(text);
-                });
-            }
-
-            translateValidationMessages();
-
             $("#change-password-btn").click(function() {
-
                 $("#change-password-form")[0].reset();
                 $("#password-errors").html("");
                 $(".password-error").html("");
-
-                const passwordModal = new bootstrap.Modal(document.getElementById('passwordChangeModal'));
-                passwordModal.show();
+                bootstrap.Modal.getOrCreateInstance(document.getElementById("passwordChangeModal")).show();
             });
 
             if (window.location.hash === "#password") {
@@ -197,11 +180,10 @@
             }
 
             $("#submit-password-change").click(function() {
-
                 let isValid = true;
 
                 if ($("#currentPassword").val() === "") {
-                    $("#currentPassword-error").text("Trenutna lozinka je obavezna");
+                    $("#currentPassword-error").text(profileTexts.currentRequired);
                     isValid = false;
                 } else {
                     $("#currentPassword-error").text("");
@@ -211,20 +193,20 @@
                 const passwordPolicy = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
 
                 if (newPasswordValue === "") {
-                    $("#newPassword-error").text("Nova lozinka je obavezna");
+                    $("#newPassword-error").text(profileTexts.newRequired);
                     isValid = false;
                 } else if (!passwordPolicy.test(newPasswordValue)) {
-                    $("#newPassword-error").text("Lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo.");
+                    $("#newPassword-error").text(profileTexts.passwordPolicy);
                     isValid = false;
                 } else {
                     $("#newPassword-error").text("");
                 }
 
                 if ($("#confirmPassword").val() === "") {
-                    $("#confirmPassword-error").text("Potvrda lozinke je obavezna");
+                    $("#confirmPassword-error").text(profileTexts.confirmRequired);
                     isValid = false;
                 } else if ($("#confirmPassword").val() !== $("#newPassword").val()) {
-                    $("#confirmPassword-error").text("Lozinke se ne podudaraju");
+                    $("#confirmPassword-error").text(profileTexts.passwordsMatch);
                     isValid = false;
                 } else {
                     $("#confirmPassword-error").text("");
@@ -241,45 +223,28 @@
                         currentPassword: $("#currentPassword").val(),
                         newPassword: $("#newPassword").val(),
                         confirmPassword: $("#confirmPassword").val(),
-                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                        __RequestVerificationToken: $('#change-password-form input[name="__RequestVerificationToken"]').val() || $('input[name="__RequestVerificationToken"]').val()
                     },
                     success: function(response) {
-                        bootstrap.Modal.getInstance(document.getElementById('passwordChangeModal')).hide();
-                        window.showAppFlashMessage(response.message || "Lozinka je uspješno promijenjena.", "success");
+                        bootstrap.Modal.getInstance(document.getElementById("passwordChangeModal")).hide();
+                        window.showAppFlashMessage(response.message || profileTexts.passwordChanged, "success");
                     },
                     error: function(xhr) {
                         if (xhr.responseJSON && xhr.responseJSON.errors) {
-
-                            $("#password-errors").html("");
-                            const errors = xhr.responseJSON.errors;
-
                             let errorHtml = "";
-                            Object.keys(errors).forEach(function(key) {
-                                errors[key].forEach(function(error) {
+                            Object.keys(xhr.responseJSON.errors).forEach(function(key) {
+                                xhr.responseJSON.errors[key].forEach(function(error) {
                                     errorHtml += `<div>${error}</div>`;
                                 });
                             });
 
                             $("#password-errors").html(errorHtml);
-                        } else {
-
-                            $("#password-errors").html("<div>Došlo je do greške. Pokušajte ponovo.</div>");
+                            return;
                         }
+
+                        $("#password-errors").html(`<div>${profileTexts.genericError}</div>`);
                     }
                 });
-            });
-
-            $(".password-toggle").on("click", function() {
-                const button = $(this);
-                const wrapper = button.closest(".password-wrapper");
-                const input = wrapper.find(".password-input")[0];
-                const icon = button.find("i");
-                const isPassword = input.type === "password";
-
-                input.type = isPassword ? "text" : "password";
-                icon.toggleClass("bi-eye", !isPassword);
-                icon.toggleClass("bi-eye-slash", isPassword);
-                button.attr("aria-label", isPassword ? "Sakrij lozinku" : "Prikaži lozinku");
             });
         });
     </script>

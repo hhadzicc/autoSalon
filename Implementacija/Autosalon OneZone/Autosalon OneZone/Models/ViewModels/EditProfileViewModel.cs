@@ -4,25 +4,25 @@ namespace Autosalon_OneZone.Models.ViewModels
 {
     public class EditProfileViewModel
     {
-        [Required(ErrorMessage = "Polje Ime je obavezno.")]
-        [StringLength(100, ErrorMessage = "Ime ne može biti duže od 100 karaktera.")]
-        [Display(Name = "Ime")]
+        [Required(ErrorMessage = "Validation.FirstNameRequired")]
+        [StringLength(100, ErrorMessage = "Validation.FirstNameMaxLength")]
+        [Display(Name = "FirstName")]
         public string Ime { get; set; }
 
-        [Required(ErrorMessage = "Polje Prezime je obavezno.")]
-        [StringLength(100, ErrorMessage = "Prezime ne može biti duže od 100 karaktera.")]
-        [Display(Name = "Prezime")]
+        [Required(ErrorMessage = "Validation.LastNameRequired")]
+        [StringLength(100, ErrorMessage = "Validation.LastNameMaxLength")]
+        [Display(Name = "LastName")]
         public string Prezime { get; set; }
 
-        [Required(ErrorMessage = "Polje Email je obavezno.")]
-        [EmailAddress(ErrorMessage = "Unesite validnu email adresu.")]
-        [Display(Name = "Email adresa")]
+        [Required(ErrorMessage = "Validation.EmailRequired")]
+        [EmailAddress(ErrorMessage = "Validation.EmailValid")]
+        [Display(Name = "EmailAddress")]
         public string Email { get; set; }
 
-        [Required(ErrorMessage = "Polje Korisničko ime je obavezno.")]
-        [StringLength(100, ErrorMessage = "Korisničko ime ne može biti duže od 100 karaktera.")]
-        [RegularExpression(@"^[a-zA-Z0-9]+$", ErrorMessage = "Korisničko ime može sadržavati samo slova i brojeve.")]
-        [Display(Name = "Korisničko ime")]
+        [Required(ErrorMessage = "Validation.UsernameRequired")]
+        [StringLength(100, ErrorMessage = "Validation.UsernameMaxLength")]
+        [RegularExpression(@"^[a-zA-Z0-9]+$", ErrorMessage = "Validation.UsernameAlphanumeric")]
+        [Display(Name = "Username")]
         public string UserName { get; set; }
     }
 }

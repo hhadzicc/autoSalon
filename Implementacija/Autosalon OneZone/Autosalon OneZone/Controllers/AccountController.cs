@@ -1,13 +1,15 @@
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Autosalon_OneZone.Models;
-using System.Threading.Tasks;
+using System;
 using System.Text;
-using Microsoft.AspNetCore.Authorization;
+using System.Threading.Tasks;
+using Autosalon_OneZone.Models;
 using Autosalon_OneZone.Models.ViewModels;
 using Autosalon_OneZone.Services;
-using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Logging;
 
 namespace Autosalon_OneZone.Controllers
 {
@@ -18,19 +20,22 @@ namespace Autosalon_OneZone.Controllers
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IEmailSender _emailSender;
         private readonly ILogger<AccountController> _logger;
+        private readonly IStringLocalizer<SharedResource> _localizer;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             RoleManager<IdentityRole> roleManager,
             IEmailSender emailSender,
-            ILogger<AccountController> logger)
+            ILogger<AccountController> logger,
+            IStringLocalizer<SharedResource>? localizer = null)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
             _emailSender = emailSender;
             _logger = logger;
+            _localizer = localizer ?? new FallbackStringLocalizer<SharedResource>();
         }
 
         [HttpGet]
@@ -38,7 +43,6 @@ namespace Autosalon_OneZone.Controllers
         public IActionResult Register(string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
-
             return View(new RegisterViewModel());
         }
 
@@ -54,7 +58,7 @@ namespace Autosalon_OneZone.Controllers
                 var existingUserByUsername = await _userManager.FindByNameAsync(model.UserName);
                 if (existingUserByUsername != null)
                 {
-                    ModelState.AddModelError(string.Empty, $"Korisničko ime '{model.UserName}' je već zauzeto.");
+                    ModelState.AddModelError(string.Empty, _localizer["UsernameTaken", model.UserName]);
                     ViewData["ReturnUrl"] = returnUrl;
                     return View(model);
                 }
@@ -62,7 +66,7 @@ namespace Autosalon_OneZone.Controllers
                 var existingUserByEmail = await _userManager.FindByEmailAsync(model.Email);
                 if (existingUserByEmail != null)
                 {
-                    ModelState.AddModelError(string.Empty, $"Email '{model.Email}' je već zauzet.");
+                    ModelState.AddModelError(string.Empty, _localizer["EmailTaken", model.Email]);
                     ViewData["ReturnUrl"] = returnUrl;
                     return View(model);
                 }
@@ -79,26 +83,25 @@ namespace Autosalon_OneZone.Controllers
 
                 if (result.Succeeded)
                 {
-                    _logger?.LogInformation("User created a new account with password.");
+                    _logger.LogInformation("User created a new account with password.");
 
                     const string kupacRoleName = "Kupac";
                     if (!await _roleManager.RoleExistsAsync(kupacRoleName))
                     {
                         await _roleManager.CreateAsync(new IdentityRole(kupacRoleName));
-                        _logger?.LogInformation($"Rola '{kupacRoleName}' kreirana.");
+                        _logger.LogInformation("Role '{Role}' created.", kupacRoleName);
                     }
 
                     await _userManager.AddToRoleAsync(user, kupacRoleName);
-                    _logger?.LogInformation($"Korisnik '{user.UserName}' dodan u rolu '{kupacRoleName}'.");
+                    _logger.LogInformation("User '{UserName}' added to role '{Role}'.", user.UserName, kupacRoleName);
 
-                    TempData["SuccessMessage"] = "Registracija uspješna! Sada se možete prijaviti.";
-
+                    TempData["SuccessMessage"] = _localizer["RegisterSuccess"].Value;
                     return RedirectToAction("Login", "Account");
                 }
 
                 foreach (var error in result.Errors)
                 {
-                    ModelState.AddModelError(string.Empty, error.Description);
+                    ModelState.AddModelError(string.Empty, TranslateIdentityError(error.Description));
                 }
             }
 
@@ -111,7 +114,6 @@ namespace Autosalon_OneZone.Controllers
         public IActionResult Login(string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
-
             return View(new LoginViewModel());
         }
 
@@ -125,7 +127,7 @@ namespace Autosalon_OneZone.Controllers
             if (ModelState.IsValid)
             {
                 var loginIdentifier = model.LoginIdentifier.Trim();
-                var invalidLoginMessage = "Neispravan e-mail, korisničko ime ili lozinka.";
+                var invalidLoginMessage = _localizer["InvalidLogin"];
 
                 var user = await _userManager.FindByEmailAsync(loginIdentifier);
                 user ??= await _userManager.FindByNameAsync(loginIdentifier);
@@ -136,34 +138,29 @@ namespace Autosalon_OneZone.Controllers
                         user.UserName!,
                         model.Password,
                         model.RememberMe,
-                        lockoutOnFailure: false
-                    );
+                        lockoutOnFailure: false);
 
                     if (result.Succeeded)
                     {
-                        _logger?.LogInformation("User logged in.");
-                        if (Url.IsLocalUrl(returnUrl))
-                        {
-                            return Redirect(returnUrl);
-                        }
-                        else
-                        {
-                            return RedirectToAction("Index", "Home");
-                        }
+                        _logger.LogInformation("User logged in.");
+
+                        return Url.IsLocalUrl(returnUrl)
+                            ? Redirect(returnUrl)
+                            : RedirectToAction("Index", "Home");
                     }
 
                     if (result.RequiresTwoFactor)
                     {
-                        ModelState.AddModelError(string.Empty, "Potrebna je dvofaktorska autentifikacija.");
+                        ModelState.AddModelError(string.Empty, _localizer["TwoFactorRequired"]);
                     }
                     else if (result.IsLockedOut)
                     {
-                        _logger?.LogWarning("User account locked out.");
-                        ModelState.AddModelError(string.Empty, "Korisnički nalog je privremeno zaključan zbog previše neuspjelih pokušaja.");
+                        _logger.LogWarning("User account locked out.");
+                        ModelState.AddModelError(string.Empty, _localizer["AccountLocked"]);
                     }
                     else if (result.IsNotAllowed)
                     {
-                        ModelState.AddModelError(string.Empty, "Nalog nije dozvoljen za prijavu (npr. email nije potvrđen).");
+                        ModelState.AddModelError(string.Empty, _localizer["LoginNotAllowed"]);
                     }
                     else
                     {
@@ -275,7 +272,7 @@ namespace Autosalon_OneZone.Controllers
             }
             catch (FormatException)
             {
-                ModelState.AddModelError(string.Empty, "Link za resetovanje lozinke nije ispravan ili je istekao.");
+                ModelState.AddModelError(string.Empty, _localizer["ResetLinkInvalid"]);
                 return View(model);
             }
 
@@ -302,12 +299,11 @@ namespace Autosalon_OneZone.Controllers
         }
 
         [HttpPost]
-
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
-            _logger?.LogInformation("User logged out.");
+            _logger.LogInformation("User logged out.");
 
             return RedirectToAction("Index", "Home");
         }
@@ -319,20 +315,33 @@ namespace Autosalon_OneZone.Controllers
             return View();
         }
 
-        private static string TranslateIdentityError(string error)
+        private string TranslateIdentityError(string error)
         {
             if (error.Contains("Invalid token", StringComparison.OrdinalIgnoreCase))
             {
-                return "Link za resetovanje lozinke nije ispravan ili je istekao.";
+                return _localizer["ResetLinkInvalid"];
             }
 
             if (error.Contains("Passwords must be at least", StringComparison.OrdinalIgnoreCase) ||
                 error.Contains("Password must be at least", StringComparison.OrdinalIgnoreCase) ||
                 error.Contains("Passwords must have at least one digit", StringComparison.OrdinalIgnoreCase) ||
                 error.Contains("Passwords must have at least one lowercase", StringComparison.OrdinalIgnoreCase) ||
-                error.Contains("Passwords must have at least one uppercase", StringComparison.OrdinalIgnoreCase))
+                error.Contains("Passwords must have at least one uppercase", StringComparison.OrdinalIgnoreCase) ||
+                error.Contains("Passwords must have at least one non alphanumeric character", StringComparison.OrdinalIgnoreCase))
             {
-                return "Lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo.";
+                return _localizer["PasswordPolicyError"];
+            }
+
+            if (error.Contains("User name", StringComparison.OrdinalIgnoreCase) &&
+                error.Contains("is invalid", StringComparison.OrdinalIgnoreCase))
+            {
+                return _localizer["Validation.UsernameAlphanumeric"];
+            }
+
+            if (error.Contains("Email", StringComparison.OrdinalIgnoreCase) &&
+                error.Contains("is invalid", StringComparison.OrdinalIgnoreCase))
+            {
+                return _localizer["Validation.EmailValid"];
             }
 
             return error;

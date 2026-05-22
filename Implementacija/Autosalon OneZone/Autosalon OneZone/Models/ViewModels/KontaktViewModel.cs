@@ -4,13 +4,13 @@ namespace Autosalon_OneZone.ViewModels
 {
     public class KontaktViewModel
     {
-        [Required(ErrorMessage = "Naslov je obavezan")]
-        [StringLength(200, ErrorMessage = "Naslov ne može biti duži od 200 karaktera")]
-        [Display(Name = "Naslov")]
+        [Required(ErrorMessage = "Validation.SubjectRequired")]
+        [StringLength(200, ErrorMessage = "Validation.SubjectMaxLength")]
+        [Display(Name = "ContactSubject")]
         public string Naslov { get; set; }
 
-        [Required(ErrorMessage = "Poruka je obavezna")]
-        [Display(Name = "Poruka")]
+        [Required(ErrorMessage = "Validation.MessageRequired")]
+        [Display(Name = "ContactMessage")]
         public string Sadrzaj { get; set; }
     }
 }

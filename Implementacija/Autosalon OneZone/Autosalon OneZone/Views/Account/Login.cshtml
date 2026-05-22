@@ -1,6 +1,6 @@
 @model Autosalon_OneZone.Models.ViewModels.LoginViewModel
 @{
-    ViewData["Title"] = "Prijava";
+    ViewData["Title"] = L["AuthLoginTitle"];
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -8,9 +8,9 @@
     <div class="container">
         <div class="row justify-content-center text-center">
             <div class="col-lg-8">
-                <p class="section-eyebrow">Korisnički nalog</p>
-                <h1>Prijava</h1>
-                <p>Prijavite se kako biste nastavili kupovinu, pratili upite i koristili korpu.</p>
+                <p class="section-eyebrow">@L["AuthAccountEyebrow"]</p>
+                <h1>@L["AuthLoginTitle"]</h1>
+                <p>@L["AuthLoginSubtitle"]</p>
             </div>
         </div>
     </div>
@@ -25,23 +25,23 @@
                         <div class="form-icon mx-auto">
                             <i class="bi bi-person-circle"></i>
                         </div>
-                        <h2>Prijava</h2>
+                        <h2>@L["AuthLoginHeading"]</h2>
                     </div>
 
                     <div asp-validation-summary="All" class="text-danger validation-summary mb-3"></div>
 
                     <form asp-controller="Account" asp-action="Login" method="post">
                         <div class="mb-3">
-                            <label asp-for="LoginIdentifier" class="form-label">E-mail ili korisničko ime</label>
-                            <input asp-for="LoginIdentifier" type="text" class="form-control" placeholder="Unesite e-mail ili korisničko ime" autocomplete="username" required data-val-required="E-mail ili korisničko ime je obavezno." />
+                            <label asp-for="LoginIdentifier" class="form-label">@L["AuthLoginIdentifier"]</label>
+                            <input asp-for="LoginIdentifier" type="text" class="form-control" placeholder="@L["AuthLoginIdentifierPlaceholder"]" autocomplete="username" required data-val-required="@L["ValidationRequired"]" />
                             <span asp-validation-for="LoginIdentifier" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
-                            <label asp-for="Password" class="form-label">Lozinka</label>
+                            <label asp-for="Password" class="form-label">@L["AuthPassword"]</label>
                             <div class="password-wrapper">
-                                <input asp-for="Password" type="password" class="form-control password-input" placeholder="Unesite lozinku" autocomplete="current-password" required data-val-required="Lozinka je obavezna." />
-                                <button type="button" class="password-toggle" aria-label="Prikaži lozinku">
+                                <input asp-for="Password" type="password" class="form-control password-input" placeholder="@L["AuthPasswordPlaceholder"]" autocomplete="current-password" required data-val-required="@L["ValidationRequired"]" />
+                                <button type="button" class="password-toggle" aria-label="@L["ShowPassword"]">
                                     <i class="bi bi-eye"></i>
                                 </button>
                             </div>
@@ -50,18 +50,18 @@
 
                         <div class="form-check mb-4">
                             <input asp-for="RememberMe" type="checkbox" class="form-check-input" />
-                            <label asp-for="RememberMe" class="form-check-label">Zapamti me</label>
+                            <label asp-for="RememberMe" class="form-check-label">@L["AuthRememberMe"]</label>
                             <span asp-validation-for="RememberMe" class="text-danger d-block"></span>
                         </div>
 
-                        <button type="submit" class="btn btn-primary btn-lg rounded-4 w-100">Prijavi me</button>
+                        <button type="submit" class="btn btn-primary btn-lg rounded-4 w-100">@L["AuthLoginSubmit"]</button>
 
                         <div class="text-center mt-4">
                             <p class="mb-2">
-                                Nemate nalog?
-                                <a href="/Account/Register" class="fw-bold">Registrujte se</a>
+                                @L["AuthNoAccount"]
+                                <a href="/Account/Register" class="fw-bold">@L["AuthRegisterLink"]</a>
                             </p>
-                            <a href="/Account/ForgotPassword" class="small">Zaboravili ste lozinku?</a>
+                            <a href="/Account/ForgotPassword" class="small">@L["AuthForgotPassword"]</a>
                         </div>
                     </form>
                 </div>
@@ -74,64 +74,4 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-
-    <script>
-        $(document).ready(function () {
-            $.extend($.validator.messages, {
-                required: "Ovo polje je obavezno.",
-                email: "Unesite ispravnu email adresu.",
-                url: "Unesite ispravnu web adresu.",
-                date: "Unesite ispravan datum.",
-                dateISO: "Unesite ispravan datum (ISO).",
-                number: "Unesite ispravan broj.",
-                digits: "Unesite samo brojeve.",
-                creditcard: "Unesite ispravan broj kreditne kartice.",
-                equalTo: "Unesite ponovo istu vrijednost.",
-                maxlength: $.validator.format("Unesite najviše {0} znakova."),
-                minlength: $.validator.format("Unesite najmanje {0} znakova."),
-                rangelength: $.validator.format("Unesite vrijednost između {0} i {1} znakova."),
-                range: $.validator.format("Unesite vrijednost između {0} i {1}."),
-                max: $.validator.format("Unesite vrijednost manju ili jednaku {0}."),
-                min: $.validator.format("Unesite vrijednost veću ili jednaku {0}.")
-            });
-
-            $('.password-toggle').on('click', function() {
-                var button = $(this);
-                var input = button.closest('.password-wrapper').find('.password-input');
-                var icon = button.find('i');
-                var isPassword = input.attr('type') === 'password';
-
-                input.attr('type', isPassword ? 'text' : 'password');
-                icon.toggleClass('bi-eye', !isPassword);
-                icon.toggleClass('bi-eye-slash', isPassword);
-                button.attr('aria-label', isPassword ? 'Sakrij lozinku' : 'Prikaži lozinku');
-            });
-
-            function translateIdentityErrors() {
-                $('.validation-summary ul li').each(function() {
-                    var text = $(this).text();
-
-                    text = text.replace(/Invalid login attempt/i, 'Neuspješan pokušaj prijave. Provjerite e-mail, korisničko ime i lozinku.');
-                    text = text.replace(/Username .* is already taken/i, 'Korisničko ime je već zauzeto.');
-                    text = text.replace(/Email .* is already taken/i, 'Email adresa je već zauzeta.');
-                    text = text.replace(/Password must be at least \d+ characters/i, 'Lozinka mora imati najmanje $1 znakova.');
-                    text = text.replace(/Passwords must have at least one non alphanumeric character/i, 'Lozinka mora sadržavati najmanje jedan poseban znak.');
-                    text = text.replace(/Passwords must have at least one lowercase/i, 'Lozinka mora sadržavati najmanje jedno malo slovo.');
-                    text = text.replace(/Passwords must have at least one uppercase/i, 'Lozinka mora sadržavati najmanje jedno veliko slovo.');
-                    text = text.replace(/Passwords must have at least one digit/i, 'Lozinka mora sadržavati najmanje jednu cifru.');
-                    text = text.replace(/User name .* is invalid/i, 'Korisničko ime sadrži nedozvoljene znakove.');
-                    text = text.replace(/Email .* is invalid/i, 'Email adresa nije ispravna.');
-                    text = text.replace(/Incorrect password/i, 'Pogrešna lozinka.');
-                    text = text.replace(/Your account has been locked out/i, 'Vaš račun je privremeno zaključan. Pokušajte kasnije.');
-
-                    $(this).text(text);
-                });
-            }
-
-            translateIdentityErrors();
-            $('form').on('submit', function() {
-                setTimeout(translateIdentityErrors, 100);
-            });
-        });
-    </script>
 }

@@ -3,17 +3,18 @@
 @inject UserManager<Autosalon_OneZone.Models.ApplicationUser> UserManager
 @model Autosalon_OneZone.ViewModels.KontaktViewModel
 @{
-    ViewData["Title"] = "Kontaktirajte podršku";
+    ViewData["Title"] = L["ContactTitle"];
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var isSignedIn = SignInManager.IsSignedIn(User) && User.Identity != null && User.Identity.IsAuthenticated;
 }
 
 <section class="inner-page-header">
     <div class="container">
         <div class="row justify-content-center text-center">
             <div class="col-lg-8">
-                <p class="section-eyebrow">Podrška</p>
-                <h1>Kontaktirajte naš tim</h1>
-                <p>Pošaljite upit za vozilo, proces kupovine ili dodatne informacije. Tim podrške će odgovoriti u najkraćem roku.</p>
+                <p class="section-eyebrow">@L["ContactEyebrow"]</p>
+                <h1>@L["ContactHeaderTitle"]</h1>
+                <p>@L["ContactHeaderText"]</p>
             </div>
         </div>
     </div>
@@ -26,62 +27,56 @@
                 <div class="modern-form-card">
                     <div class="text-center mb-4">
                         <div class="form-icon mx-auto">
-                            <i class="bi @(SignInManager.IsSignedIn(User) && User.Identity != null && User.Identity.IsAuthenticated ? "bi-chat-dots-fill" : "bi-envelope-paper-fill")"></i>
+                            <i class="bi @(isSignedIn ? "bi-chat-dots-fill" : "bi-envelope-paper-fill")"></i>
                         </div>
-                        <h2>@(SignInManager.IsSignedIn(User) && User.Identity != null && User.Identity.IsAuthenticated ? "Pošaljite poruku" : "Pošaljite upit podršci")</h2>
-                        <p class="text-muted mb-0">
-                            @(SignInManager.IsSignedIn(User) && User.Identity != null && User.Identity.IsAuthenticated
-                                ? "Napišite pitanje i tim podrške će odgovoriti u najkraćem roku."
-                                : "Za slanje poruke kroz aplikaciju potrebno je da korisnik bude prijavljen.")
-                        </p>
+                        <h2>@(isSignedIn ? L["ContactSendMessageHeading"] : L["ContactSupportRequestHeading"])</h2>
+                        <p class="text-muted mb-0">@(isSignedIn ? L["ContactSignedInText"] : L["ContactGuestText"])</p>
                     </div>
 
-                    @if (SignInManager.IsSignedIn(User) && User.Identity != null && User.Identity.IsAuthenticated)
+                    @if (isSignedIn)
                     {
                         <form asp-controller="Home" asp-action="Kontakt" method="post" id="contact-form">
                             @Html.AntiForgeryToken()
 
                             <div class="mb-3">
-                                <label asp-for="Naslov" class="form-label">Naslov</label>
-                                <input asp-for="Naslov" class="form-control" placeholder="Unesite naslov" />
+                                <label asp-for="Naslov" class="form-label">@L["ContactSubject"]</label>
+                                <input asp-for="Naslov" class="form-control" placeholder="@L["ContactSubjectPlaceholder"]" />
                                 <span asp-validation-for="Naslov" class="text-danger"></span>
                             </div>
 
                             <div class="mb-4">
-                                <label asp-for="Sadrzaj" class="form-label">Poruka</label>
-                                <textarea asp-for="Sadrzaj" class="form-control" rows="6" placeholder="Napišite vašu poruku"></textarea>
+                                <label asp-for="Sadrzaj" class="form-label">@L["ContactMessage"]</label>
+                                <textarea asp-for="Sadrzaj" class="form-control" rows="6" placeholder="@L["ContactMessagePlaceholder"]"></textarea>
                                 <span asp-validation-for="Sadrzaj" class="text-danger"></span>
                             </div>
 
-                            <button type="submit" id="send-message" class="btn btn-primary btn-lg rounded-4 w-100">Pošaljite poruku</button>
+                            <button type="submit" id="send-message" class="btn btn-primary btn-lg rounded-4 w-100">@L["ContactSendMessage"]</button>
                         </form>
                     }
                     else
                     {
                         <div class="contact-choice text-center">
-                            <p class="text-muted mb-4">
-                                Nakon prijave moguće je poslati upit za vozilo, kupovinu ili narudžbu.
-                            </p>
+                            <p class="text-muted mb-4">@L["ContactGuestDetails"]</p>
                             <div class="d-grid gap-3">
-                                <a href="/Account/Login" class="btn btn-primary btn-lg rounded-4">Prijavi se za slanje poruke</a>
-                                <a href="/Account/Register" class="btn btn-outline-primary btn-lg rounded-4">Registruj se</a>
-                                <a href="mailto:autosalon@autosalon.com" class="btn btn-light border btn-lg rounded-4">Pošalji email direktno</a>
+                                <a asp-controller="Account" asp-action="Login" class="btn btn-primary btn-lg rounded-4">@L["ContactLoginToSend"]</a>
+                                <a asp-controller="Account" asp-action="Register" class="btn btn-outline-primary btn-lg rounded-4">@L["NavRegister"]</a>
+                                <a href="mailto:autosalon@autosalon.com" class="btn btn-light border btn-lg rounded-4">@L["ContactDirectEmail"]</a>
                             </div>
                         </div>
                     }
 
-                    <p class="small text-muted text-center mt-4 mb-0">Podrška će odgovoriti što je prije moguće. Hvala na strpljenju.</p>
+                    <p class="small text-muted text-center mt-4 mb-0">@L["ContactFooterNote"]</p>
                 </div>
             </div>
 
             <div class="col-lg-5 col-xl-4">
                 <aside class="info-card">
-                    <h3>Informacije</h3>
+                    <h3>@L["ContactInfoTitle"]</h3>
 
                     <div class="info-item">
                         <i class="bi bi-envelope-fill"></i>
                         <div>
-                            <strong>Email</strong>
+                            <strong>@L["EmailAddress"]</strong>
                             <span>autosalon@autosalon.com</span>
                         </div>
                     </div>
@@ -89,7 +84,7 @@
                     <div class="info-item">
                         <i class="bi bi-telephone-fill"></i>
                         <div>
-                            <strong>Telefon</strong>
+                            <strong>@L["ContactPhone"]</strong>
                             <span>+387 000 000 000</span>
                         </div>
                     </div>
@@ -97,16 +92,16 @@
                     <div class="info-item">
                         <i class="bi bi-clock-fill"></i>
                         <div>
-                            <strong>Vrijeme odgovora</strong>
-                            <span>U najkraćem mogućem roku</span>
+                            <strong>@L["ContactResponseTime"]</strong>
+                            <span>@L["ContactResponseSoon"]</span>
                         </div>
                     </div>
 
                     <div class="info-item">
                         <i class="bi bi-car-front-fill"></i>
                         <div>
-                            <strong>Upiti</strong>
-                            <span>Vozila, kupovina i narudžbe</span>
+                            <strong>@L["ContactInquiries"]</strong>
+                            <span>@L["ContactInquiryTypes"]</span>
                         </div>
                     </div>
                 </aside>
@@ -116,6 +111,7 @@
 </section>
 
 @section Scripts {
-    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
-    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

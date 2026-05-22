@@ -1,6 +1,6 @@
 @model Autosalon_OneZone.Models.ViewModels.RegisterViewModel
 @{
-    ViewData["Title"] = "Registracija";
+    ViewData["Title"] = L["AuthRegisterTitle"];
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -8,9 +8,9 @@
     <div class="container">
         <div class="row justify-content-center text-center">
             <div class="col-lg-8">
-                <p class="section-eyebrow">Novi korisnik</p>
-                <h1>Registracija</h1>
-                <p>Kreirajte nalog i nastavite sa pregledom vozila, upitima i kupovinom.</p>
+                <p class="section-eyebrow">@L["AuthRegisterEyebrow"]</p>
+                <h1>@L["AuthRegisterTitle"]</h1>
+                <p>@L["AuthRegisterSubtitle"]</p>
             </div>
         </div>
     </div>
@@ -25,7 +25,7 @@
                         <div class="form-icon mx-auto">
                             <i class="bi bi-person-plus-fill"></i>
                         </div>
-                        <h2>Kreirajte nalog</h2>
+                        <h2>@L["AuthCreateAccount"]</h2>
                     </div>
 
                     <div asp-validation-summary="All" class="text-danger validation-summary mb-3"></div>
@@ -33,34 +33,34 @@
                     <form asp-controller="Account" asp-action="Register" method="post">
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label asp-for="Ime" class="form-label">Ime</label>
-                                <input asp-for="Ime" type="text" class="form-control" placeholder="Ime" required data-val-required="Ime je obavezno." pattern="[A-Za-z\s]+" data-val-regex="Ime može sadržavati samo slova." />
+                                <label asp-for="Ime" class="form-label">@L["FirstName"]</label>
+                                <input asp-for="Ime" type="text" class="form-control" placeholder="@L["FirstName"]" required pattern="[A-Za-z\s]+" />
                                 <span asp-validation-for="Ime" class="text-danger"></span>
                             </div>
 
                             <div class="col-md-6">
-                                <label asp-for="Prezime" class="form-label">Prezime</label>
-                                <input asp-for="Prezime" type="text" class="form-control" placeholder="Prezime" required data-val-required="Prezime je obavezno." pattern="[A-Za-z\s]+" data-val-regex="Prezime može sadržavati samo slova." />
+                                <label asp-for="Prezime" class="form-label">@L["LastName"]</label>
+                                <input asp-for="Prezime" type="text" class="form-control" placeholder="@L["LastName"]" required pattern="[A-Za-z\s]+" />
                                 <span asp-validation-for="Prezime" class="text-danger"></span>
                             </div>
 
                             <div class="col-12">
-                                <label asp-for="UserName" class="form-label">Korisničko ime</label>
-                                <input asp-for="UserName" type="text" class="form-control" placeholder="Korisničko ime" required data-val-required="Korisničko ime je obavezno." pattern="[A-Za-z0-9]+" data-val-regex="Korisničko ime može sadržavati samo slova i brojeve." />
+                                <label asp-for="UserName" class="form-label">@L["Username"]</label>
+                                <input asp-for="UserName" type="text" class="form-control" placeholder="@L["Username"]" required pattern="[A-Za-z0-9]+" />
                                 <span asp-validation-for="UserName" class="text-danger"></span>
                             </div>
 
                             <div class="col-12">
-                                <label asp-for="Email" class="form-label">Email adresa</label>
-                                <input asp-for="Email" type="email" class="form-control" placeholder="Email adresa" required data-val-required="Email adresa je obavezna." data-val-email="Unesite ispravnu email adresu." />
+                                <label asp-for="Email" class="form-label">@L["EmailAddress"]</label>
+                                <input asp-for="Email" type="email" class="form-control" placeholder="@L["EmailAddress"]" autocomplete="email" required />
                                 <span asp-validation-for="Email" class="text-danger"></span>
                             </div>
 
                             <div class="col-md-6">
-                                <label asp-for="Password" class="form-label">Lozinka</label>
+                                <label asp-for="Password" class="form-label">@L["AuthPassword"]</label>
                                 <div class="password-wrapper">
-                                    <input asp-for="Password" type="password" class="form-control password-input" placeholder="Lozinka" required minlength="8" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}" title="Lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo." data-val-required="Lozinka je obavezna." />
-                                    <button type="button" class="password-toggle" aria-label="Prikaži lozinku">
+                                    <input asp-for="Password" type="password" class="form-control password-input" placeholder="@L["AuthPassword"]" autocomplete="new-password" required minlength="8" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}" title="@L["PasswordPolicyError"]" />
+                                    <button type="button" class="password-toggle" aria-label="@L["ShowPassword"]">
                                         <i class="bi bi-eye"></i>
                                     </button>
                                 </div>
@@ -68,10 +68,10 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label asp-for="ConfirmPassword" class="form-label">Potvrdi lozinku</label>
+                                <label asp-for="ConfirmPassword" class="form-label">@L["ConfirmPassword"]</label>
                                 <div class="password-wrapper">
-                                    <input asp-for="ConfirmPassword" type="password" class="form-control password-input" placeholder="Potvrdi lozinku" required data-val-required="Potvrda lozinke je obavezna." data-val-equalto="Lozinke se ne podudaraju." />
-                                    <button type="button" class="password-toggle" aria-label="Prikaži lozinku">
+                                    <input asp-for="ConfirmPassword" type="password" class="form-control password-input" placeholder="@L["ConfirmPassword"]" autocomplete="new-password" required />
+                                    <button type="button" class="password-toggle" aria-label="@L["ShowPassword"]">
                                         <i class="bi bi-eye"></i>
                                     </button>
                                 </div>
@@ -79,14 +79,14 @@
                             </div>
 
                             <div class="col-12">
-                                <button type="submit" class="btn btn-primary btn-lg rounded-4 w-100 mt-2">Registruj se</button>
+                                <button type="submit" class="btn btn-primary btn-lg rounded-4 w-100 mt-2">@L["NavRegister"]</button>
                             </div>
                         </div>
 
                         <div class="text-center mt-4">
                             <p class="mb-0">
-                                Već imate nalog?
-                                <a href="/Account/Login" class="fw-bold">Prijavite se</a>
+                                @L["AuthAlreadyHaveAccount"]
+                                <a asp-controller="Account" asp-action="Login" class="fw-bold">@L["AuthSignInLink"]</a>
                             </p>
                         </div>
                     </form>
@@ -100,80 +100,4 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-
-    <script>
-        $(document).ready(function () {
-            $.extend($.validator.messages, {
-                required: "Ovo polje je obavezno.",
-                email: "Unesite ispravnu email adresu.",
-                equalto: "Unesite istu vrijednost ponovo.",
-                regex: "Unesite vrijednost u ispravnom formatu.",
-                maxlength: $.validator.format("Unesite najviše {0} znakova."),
-                minlength: $.validator.format("Unesite najmanje {0} znakova."),
-                rangelength: $.validator.format("Unesite vrijednost između {0} i {1} znakova."),
-                range: $.validator.format("Unesite vrijednost između {0} i {1}."),
-                max: $.validator.format("Unesite vrijednost manju ili jednaku {0}."),
-                min: $.validator.format("Unesite vrijednost veću ili jednaku {0}.")
-            });
-
-            $('.password-toggle').on('click', function() {
-                var button = $(this);
-                var input = button.closest('.password-wrapper').find('.password-input');
-                var icon = button.find('i');
-                var isPassword = input.attr('type') === 'password';
-
-                input.attr('type', isPassword ? 'text' : 'password');
-                icon.toggleClass('bi-eye', !isPassword);
-                icon.toggleClass('bi-eye-slash', isPassword);
-                button.attr('aria-label', isPassword ? 'Sakrij lozinku' : 'Prikaži lozinku');
-            });
-
-            function validateFields() {
-                $("#Ime, #Prezime").on("input", function() {
-                    var value = $(this).val();
-                    var lettersOnly = /^[A-Za-z\s]*$/;
-
-                    if (!lettersOnly.test(value)) {
-                        var cleanValue = value.replace(/[^A-Za-z\s]/g, '');
-                        $(this).val(cleanValue);
-                    }
-                });
-
-                $("#UserName").on("input", function() {
-                    var value = $(this).val();
-                    var alphanumericOnly = /^[A-Za-z0-9]*$/;
-
-                    if (!alphanumericOnly.test(value)) {
-                        var cleanValue = value.replace(/[^A-Za-z0-9]/g, '');
-                        $(this).val(cleanValue);
-                    }
-                });
-            }
-
-            function translateIdentityErrors() {
-                $('.validation-summary ul li').each(function() {
-                    var text = $(this).text();
-
-                    text = text.replace(/Username .* is already taken/i, 'Korisničko ime je već zauzeto.');
-                    text = text.replace(/Email .* is already taken/i, 'Email adresa je već zauzeta.');
-                    text = text.replace(/Password must be at least \d+ characters/i, 'Lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo.');
-                    text = text.replace(/Passwords must have at least one non alphanumeric character/i, 'Lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo.');
-                    text = text.replace(/Passwords must have at least one lowercase/i, 'Lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo.');
-                    text = text.replace(/Passwords must have at least one uppercase/i, 'Lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo.');
-                    text = text.replace(/Passwords must have at least one digit/i, 'Lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo.');
-                    text = text.replace(/User name .* is invalid/i, 'Korisničko ime sadrži nedozvoljene znakove.');
-                    text = text.replace(/Email .* is invalid/i, 'Email adresa nije ispravna.');
-                    text = text.replace(/The password and confirmation password do not match/i, 'Lozinka i potvrda lozinke se ne podudaraju.');
-
-                    $(this).text(text);
-                });
-            }
-
-            validateFields();
-            translateIdentityErrors();
-            $('form').on('submit', function() {
-                setTimeout(translateIdentityErrors, 100);
-            });
-        });
-    </script>
 }

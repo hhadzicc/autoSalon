@@ -15,6 +15,7 @@ using System.Text.Json;
 using Autosalon_OneZone.Services;
 using Microsoft.Extensions.Options;
 using System.Text.Json.Serialization;
+using Microsoft.Extensions.Localization;
 
 namespace Autosalon_OneZone.Controllers
 {
@@ -26,17 +27,22 @@ namespace Autosalon_OneZone.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<KorpaController> _logger;
+        private readonly IStringLocalizer<SharedResource> _localizer;
 
         public KorpaController(
             ApplicationDbContext context,
             UserManager<ApplicationUser> userManager,
-            ILogger<KorpaController> logger, IPaymentService paymentService, IOptions<StripeSettings> stripeSettings)
+            ILogger<KorpaController> logger,
+            IPaymentService paymentService,
+            IOptions<StripeSettings> stripeSettings,
+            IStringLocalizer<SharedResource>? localizer = null)
         {
             _paymentService = paymentService;
             _stripeSettings = stripeSettings.Value;
             _context = context;
             _userManager = userManager;
             _logger = logger;
+            _localizer = localizer ?? new FallbackStringLocalizer<SharedResource>();
         }
 
         [HttpPost]
@@ -51,7 +57,7 @@ namespace Autosalon_OneZone.Controllers
                 if (vozilo == null)
                 {
                     _logger.LogWarning($"Vozilo sa ID: {id} nije pronađeno");
-                    TempData["ErrorMessage"] = "Vozilo nije pronađeno.";
+                    TempData["ErrorMessage"] = _localizer["VehicleNotFound"].Value;
                     return Redirect(Request.Headers["Referer"].ToString() ?? "/Vozilo");
                 }
 
@@ -112,12 +118,12 @@ namespace Autosalon_OneZone.Controllers
                     await _context.SaveChangesAsync();
                     _logger.LogInformation($"Vozilo dodano u korpu, nova ukupna cijena: {korpa.UkupnaCijena}");
 
-                    TempData["SuccessMessage"] = "Vozilo je uspješno dodato u korpu!";
+                    TempData["SuccessMessage"] = _localizer["CartAddVehicleSuccess"].Value;
                 }
                 else
                 {
                     _logger.LogInformation("Vozilo je već u korpi");
-                    TempData["SuccessMessage"] = "Vozilo je već dodato u korpu.";
+                    TempData["SuccessMessage"] = _localizer["CartVehicleAlreadyAdded"].Value;
                 }
 
                 return Redirect(Request.Headers["Referer"].ToString() ?? "/Vozilo");
@@ -125,7 +131,7 @@ namespace Autosalon_OneZone.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Greška pri dodavanju vozila u korpu: {ex.Message}");
-                TempData["SuccessMessage"] = "Došlo je do greške pri dodavanju vozila u korpu. Molimo pokušajte ponovo.";
+                TempData["ErrorMessage"] = _localizer["CartAddError"].Value;
                 return Redirect(Request.Headers["Referer"].ToString() ?? "/Vozilo");
             }
         }
@@ -174,7 +180,7 @@ namespace Autosalon_OneZone.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Greška pri prikazivanju korpe: {ex.Message}");
-                TempData["ErrorMessage"] = "Došlo je do greške pri prikazivanju korpe. Molimo pokušajte ponovo.";
+                TempData["ErrorMessage"] = _localizer["CartDisplayError"].Value;
                 return RedirectToAction("Index", "Home");
             }
         }
@@ -189,44 +195,44 @@ namespace Autosalon_OneZone.Controllers
             {
                 if (string.IsNullOrWhiteSpace(ImeVlasnika))
                 {
-                    errors.Add("imeVlasnika", "Ime i prezime su obavezni.");
+                    errors.Add("imeVlasnika", _localizer["PaymentNameRequired"].Value);
                 }
                 else if (!ImeVlasnika.Contains(" "))
                 {
-                    errors.Add("imeVlasnika", "Unesite i ime i prezime (mora sadržavati razmak).");
+                    errors.Add("imeVlasnika", _localizer["PaymentNameFullRequired"].Value);
                 }
 
                 string cleanCardNumber = new string(BrojKartice.Where(char.IsDigit).ToArray());
                 if (string.IsNullOrWhiteSpace(cleanCardNumber))
                 {
-                    errors.Add("brojKartice", "Broj kartice je obavezan.");
+                    errors.Add("brojKartice", _localizer["PaymentCardRequired"].Value);
                 }
                 else if (cleanCardNumber.Length != 16)
                 {
-                    errors.Add("brojKartice", "Broj kartice mora sadržavati tačno 16 cifara.");
+                    errors.Add("brojKartice", _localizer["PaymentCardLength"].Value);
                 }
 
                 if (string.IsNullOrWhiteSpace(DatumIsteka))
                 {
-                    errors.Add("datumIsteka", "Datum isteka je obavezan.");
+                    errors.Add("datumIsteka", _localizer["PaymentExpiryRequired"].Value);
                 }
                 else
                 {
                     var dateParts = DatumIsteka.Split('/');
                     if (dateParts.Length != 2)
                     {
-                        errors.Add("datumIsteka", "Neispravan format datuma isteka. Koristite format MM/YY.");
+                        errors.Add("datumIsteka", _localizer["PaymentExpiryFormat"].Value);
                     }
                     else
                     {
                         if (!int.TryParse(dateParts[0], out int monthVal) || monthVal < 1 || monthVal > 12)
                         {
-                            errors.Add("datumIsteka", "Mjesec mora biti između 01 i 12.");
+                            errors.Add("datumIsteka", _localizer["PaymentExpiryMonth"].Value);
                         }
 
                         if (!int.TryParse(dateParts[1], out int yearVal))
                         {
-                            errors.Add("datumIsteka", "Godina nije ispravna.");
+                            errors.Add("datumIsteka", _localizer["PaymentExpiryYear"].Value);
                         }
                         else
                         {
@@ -234,7 +240,7 @@ namespace Autosalon_OneZone.Controllers
                             var now = DateTime.Now;
                             if (fullYear < now.Year || (fullYear == now.Year && monthVal < now.Month))
                             {
-                                errors.Add("datumIsteka", "Kartica je istekla.");
+                                errors.Add("datumIsteka", _localizer["PaymentCardExpired"].Value);
                             }
                         }
                     }
@@ -243,11 +249,11 @@ namespace Autosalon_OneZone.Controllers
                 string cleanCvv = new string(Cvv.Where(char.IsDigit).ToArray());
                 if (string.IsNullOrWhiteSpace(cleanCvv))
                 {
-                    errors.Add("cvv", "CVV kod je obavezan.");
+                    errors.Add("cvv", _localizer["PaymentCvvRequired"].Value);
                 }
                 else if (cleanCvv.Length != 3)
                 {
-                    errors.Add("cvv", "CVV kod mora sadržavati tačno 3 cifre.");
+                    errors.Add("cvv", _localizer["PaymentCvvLength"].Value);
                 }
 
                 if (errors.Any())
@@ -262,19 +268,19 @@ namespace Autosalon_OneZone.Controllers
                 var vozilo = await _context.Vozila.FindAsync(VoziloID);
                 if (vozilo == null)
                 {
-                    return Json(new { success = false, message = "Vozilo nije pronađeno." });
+                    return Json(new { success = false, message = _localizer["VehicleNotFound"].Value });
                 }
 
                 var user = await _userManager.GetUserAsync(User);
                 if (user == null)
                 {
-                    return Json(new { success = false, message = "Korisnik nije pronađen." });
+                    return Json(new { success = false, message = _localizer["UserNotFound"].Value });
                 }
 
                 var cijenaVozila = vozilo.Cijena ?? 0;
                 if (cijenaVozila <= 0)
                 {
-                    return Json(new { success = false, message = "Cijena vozila nije validna." });
+                    return Json(new { success = false, message = _localizer["VehiclePriceInvalid"].Value });
                 }
 
                 var paymentRequest = new PaymentRequest
@@ -352,7 +358,7 @@ namespace Autosalon_OneZone.Controllers
                     return Json(new
                     {
                         success = true,
-                        message = "Plaćanje uspješno izvršeno. Vaša narudžba je evidentirana.",
+                        message = _localizer["PaymentOrderRecorded"].Value,
                         redirectUrl = Url.Action("Uspjeh", "Korpa", new { id = narudzba.NarudzbaID })
                     });
                 }
@@ -366,7 +372,7 @@ namespace Autosalon_OneZone.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Greška prilikom izvršavanja plaćanja: {ex.Message}");
-                return Json(new { success = false, message = "Došlo je do greške prilikom obrade plaćanja. Molimo pokušajte ponovo." });
+                return Json(new { success = false, message = _localizer["PaymentProcessingError"].Value });
             }
         }
 
@@ -392,51 +398,51 @@ namespace Autosalon_OneZone.Controllers
 
                 if (odabranaVozila == null || !odabranaVozila.Any())
                 {
-                    return Json(new { success = false, message = "Niste odabrali nijedno vozilo za kupovinu." });
+                    return Json(new { success = false, message = _localizer["NoVehiclesSelectedForPurchase"].Value });
                 }
 
                 _logger.LogInformation("Broj odabranih vozila: {Count}", odabranaVozila.Count);
 
                 if (string.IsNullOrWhiteSpace(ImeVlasnika))
                 {
-                    errors.Add("checkoutImeVlasnika", "Ime i prezime su obavezni.");
+                    errors.Add("checkoutImeVlasnika", _localizer["PaymentNameRequired"].Value);
                 }
                 else if (!ImeVlasnika.Contains(" "))
                 {
-                    errors.Add("checkoutImeVlasnika", "Unesite i ime i prezime (mora sadržavati razmak).");
+                    errors.Add("checkoutImeVlasnika", _localizer["PaymentNameFullRequired"].Value);
                 }
 
                 string cleanCardNumber = new string(BrojKartice.Where(char.IsDigit).ToArray());
                 if (string.IsNullOrWhiteSpace(cleanCardNumber))
                 {
-                    errors.Add("checkoutBrojKartice", "Broj kartice je obavezan.");
+                    errors.Add("checkoutBrojKartice", _localizer["PaymentCardRequired"].Value);
                 }
                 else if (cleanCardNumber.Length != 16)
                 {
-                    errors.Add("checkoutBrojKartice", "Broj kartice mora sadržavati tačno 16 cifara.");
+                    errors.Add("checkoutBrojKartice", _localizer["PaymentCardLength"].Value);
                 }
 
                 if (string.IsNullOrWhiteSpace(DatumIsteka))
                 {
-                    errors.Add("checkoutDatumIsteka", "Datum isteka je obavezan.");
+                    errors.Add("checkoutDatumIsteka", _localizer["PaymentExpiryRequired"].Value);
                 }
                 else
                 {
                     var dateParts = DatumIsteka.Split('/');
                     if (dateParts.Length != 2)
                     {
-                        errors.Add("checkoutDatumIsteka", "Neispravan format datuma isteka. Koristite format MM/YY.");
+                        errors.Add("checkoutDatumIsteka", _localizer["PaymentExpiryFormat"].Value);
                     }
                     else
                     {
                         if (!int.TryParse(dateParts[0], out int monthVal) || monthVal < 1 || monthVal > 12)
                         {
-                            errors.Add("checkoutDatumIsteka", "Mjesec mora biti između 01 i 12.");
+                            errors.Add("checkoutDatumIsteka", _localizer["PaymentExpiryMonth"].Value);
                         }
 
                         if (!int.TryParse(dateParts[1], out int yearVal))
                         {
-                            errors.Add("checkoutDatumIsteka", "Godina nije ispravna.");
+                            errors.Add("checkoutDatumIsteka", _localizer["PaymentExpiryYear"].Value);
                         }
                         else
                         {
@@ -444,7 +450,7 @@ namespace Autosalon_OneZone.Controllers
                             var now = DateTime.Now;
                             if (fullYear < now.Year || (fullYear == now.Year && monthVal < now.Month))
                             {
-                                errors.Add("checkoutDatumIsteka", "Kartica je istekla.");
+                                errors.Add("checkoutDatumIsteka", _localizer["PaymentCardExpired"].Value);
                             }
                         }
                     }
@@ -453,11 +459,11 @@ namespace Autosalon_OneZone.Controllers
                 string cleanCvv = new string(Cvv.Where(char.IsDigit).ToArray());
                 if (string.IsNullOrWhiteSpace(cleanCvv))
                 {
-                    errors.Add("checkoutCvv", "CVV kod je obavezan.");
+                    errors.Add("checkoutCvv", _localizer["PaymentCvvRequired"].Value);
                 }
                 else if (cleanCvv.Length != 3)
                 {
-                    errors.Add("checkoutCvv", "CVV kod mora sadržavati tačno 3 cifre.");
+                    errors.Add("checkoutCvv", _localizer["PaymentCvvLength"].Value);
                 }
 
                 if (errors.Any())
@@ -472,7 +478,7 @@ namespace Autosalon_OneZone.Controllers
                 var user = await _userManager.GetUserAsync(User);
                 if (user == null)
                 {
-                    return Json(new { success = false, message = "Korisnik nije pronađen." });
+                    return Json(new { success = false, message = _localizer["UserNotFound"].Value });
                 }
 
                 var korpa = await _context.Korpe
@@ -482,7 +488,7 @@ namespace Autosalon_OneZone.Controllers
 
                 if (korpa == null)
                 {
-                    return Json(new { success = false, message = "Korpa nije pronađena." });
+                    return Json(new { success = false, message = _localizer["CartNotFound"].Value });
                 }
 
                 var odabraniVozilaIds = odabranaVozila.Select(v => v.id).ToHashSet();
@@ -492,7 +498,7 @@ namespace Autosalon_OneZone.Controllers
                 {
                     if (!korpa.StavkeKorpe.Any(s => s.VoziloID == voziloId))
                     {
-                        return Json(new { success = false, message = "Jedno ili više odabranih vozila nije pronađeno u vašoj korpi." });
+                        return Json(new { success = false, message = _localizer["SelectedVehicleMissingFromCart"].Value });
                     }
                 }
 
@@ -594,7 +600,7 @@ namespace Autosalon_OneZone.Controllers
                     return Json(new
                     {
                         success = true,
-                        message = $"Uspješno ste kupili {kupljenaVozilaIds.Count} vozila!",
+                        message = string.Format(_localizer["MultiVehiclePurchaseSuccess"].Value, kupljenaVozilaIds.Count),
                         redirectUrl = Url.Action("Uspjeh", "Korpa", new { id = narudzba.NarudzbaID })
                     });
                 }
@@ -607,7 +613,7 @@ namespace Autosalon_OneZone.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Stvarna greška prilikom obrade grupnog plaćanja: {Message}", ex.Message);
-                return Json(new { success = false, message = "Došlo je do greške prilikom obrade plaćanja. Molimo pokušajte ponovo." });
+                return Json(new { success = false, message = _localizer["PaymentProcessingError"].Value });
             }
         }
 
@@ -697,12 +703,12 @@ namespace Autosalon_OneZone.Controllers
                         await _context.SaveChangesAsync();
                         _logger.LogInformation($"Stavka uklonjena, nova ukupna cijena: {korpa.UkupnaCijena}");
 
-                        TempData["SuccessMessage"] = "Vozilo je uklonjeno iz korpe.";
+                        TempData["SuccessMessage"] = _localizer["CartRemoveSuccess"].Value;
                     }
                     else
                     {
                         _logger.LogWarning($"Stavka nije pronađena za VoziloID: {id} u KorpaID: {korpa.KorpaID}");
-                        TempData["InfoMessage"] = "Vozilo nije pronađeno u korpi.";
+                        TempData["InfoMessage"] = _localizer["CartVehicleNotFoundInCart"].Value;
                     }
                 }
 
@@ -711,7 +717,7 @@ namespace Autosalon_OneZone.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Greška pri uklanjanju vozila iz korpe: {ex.Message}");
-                TempData["ErrorMessage"] = "Došlo je do greške pri uklanjanju vozila iz korpe. Molimo pokušajte ponovo.";
+                TempData["ErrorMessage"] = _localizer["CartRemoveError"].Value;
                 return RedirectToAction("Index");
             }
         }
@@ -724,7 +730,7 @@ namespace Autosalon_OneZone.Controllers
             {
                 if (kolicina < 1)
                 {
-                    TempData["ErrorMessage"] = "Količina ne može biti manja od 1.";
+                    TempData["ErrorMessage"] = _localizer["CartQuantityMin"].Value;
                     return RedirectToAction("Index");
                 }
 
@@ -752,7 +758,7 @@ namespace Autosalon_OneZone.Controllers
 
                         await _context.SaveChangesAsync();
 
-                        TempData["SuccessMessage"] = "Količina je ažurirana.";
+                        TempData["SuccessMessage"] = _localizer["CartQuantityUpdated"].Value;
                     }
                 }
 
@@ -761,7 +767,7 @@ namespace Autosalon_OneZone.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Greška pri ažuriranju količine: {ex.Message}");
-                TempData["ErrorMessage"] = "Došlo je do greške pri ažuriranju količine.";
+                TempData["ErrorMessage"] = _localizer["CartQuantityError"].Value;
                 return RedirectToAction("Index");
             }
         }
@@ -776,7 +782,7 @@ namespace Autosalon_OneZone.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Greška pri prikazivanju checkout stranice: {ex.Message}");
-                TempData["ErrorMessage"] = "Došlo je do greške. Molimo pokušajte ponovo.";
+                TempData["ErrorMessage"] = _localizer["CommonError"].Value;
                 return RedirectToAction("Index");
             }
         }
@@ -803,13 +809,13 @@ namespace Autosalon_OneZone.Controllers
                     await _context.SaveChangesAsync();
                 }
 
-                TempData["SuccessMessage"] = "Korpa je uspješno očišćena.";
+                TempData["SuccessMessage"] = _localizer["CartClearedSuccess"].Value;
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Greška pri čišćenju korpe: {ex.Message}");
-                TempData["ErrorMessage"] = "Došlo je do greške pri čišćenju korpe.";
+                TempData["ErrorMessage"] = _localizer["CartClearError"].Value;
                 return RedirectToAction("Index");
             }
         }

@@ -1,14 +1,17 @@
 using Autosalon_OneZone.Models;
+using Microsoft.Extensions.Localization;
 
 namespace Autosalon_OneZone.Services
 {
     public class MockPaymentService : IPaymentService
     {
         private readonly ILogger<MockPaymentService> _logger;
+        private readonly IStringLocalizer<SharedResource> _localizer;
 
-        public MockPaymentService(ILogger<MockPaymentService> logger)
+        public MockPaymentService(ILogger<MockPaymentService> logger, IStringLocalizer<SharedResource>? localizer = null)
         {
             _logger = logger;
+            _localizer = localizer ?? new FallbackStringLocalizer<SharedResource>();
         }
 
         public Task<PaymentResult> ProcessPaymentAsync(PaymentRequest paymentRequest)
@@ -22,7 +25,7 @@ namespace Autosalon_OneZone.Services
                 {
                     Success = false,
                     TransactionId = "mock_invalid_amount",
-                    Message = "Iznos plaćanja mora biti veći od nule."
+                    Message = _localizer["PaymentAmountPositive"].Value
                 });
             }
 
@@ -32,7 +35,7 @@ namespace Autosalon_OneZone.Services
                 {
                     Success = false,
                     TransactionId = "mock_invalid_card",
-                    Message = "Neispravan broj kartice."
+                    Message = _localizer["PaymentInvalidCard"].Value
                 });
             }
 
@@ -42,7 +45,7 @@ namespace Autosalon_OneZone.Services
                 {
                     Success = false,
                     TransactionId = "mock_card_declined",
-                    Message = "Transakcija odbijena u demo modu."
+                    Message = _localizer["PaymentDeclinedDemo"].Value
                 });
             }
 
@@ -53,7 +56,7 @@ namespace Autosalon_OneZone.Services
             {
                 Success = true,
                 TransactionId = transactionId,
-                Message = "Plaćanje uspješno obrađeno u demo modu."
+                Message = _localizer["PaymentSuccessDemo"].Value
             });
         }
     }

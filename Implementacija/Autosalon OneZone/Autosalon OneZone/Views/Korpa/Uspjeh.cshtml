@@ -1,14 +1,14 @@
 @model Autosalon_OneZone.Models.Narudzba
 @{
-    ViewData["Title"] = "Uspješna kupovina";
+    ViewData["Title"] = L["PurchaseSuccessTitle"];
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <section class="inner-page-header">
     <div class="container text-center">
-        <p class="section-eyebrow">Kupovina</p>
-        <h1>Kupovina završena</h1>
-        <p>Vaša narudžba je uspješno evidentirana.</p>
+        <p class="section-eyebrow">@L["Purchase"]</p>
+        <h1>@L["PurchaseCompleted"]</h1>
+        <p>@L["PurchaseRecorded"]</p>
     </div>
 </section>
 
@@ -21,34 +21,32 @@
                         <i class="bi bi-check-lg"></i>
                     </div>
 
-                    <h2>Hvala na kupovini!</h2>
-                    <p class="success-text">
-                        Vaša kupovina je uspješno završena. Detalje narudžbe možete pregledati ispod.
-                    </p>
+                    <h2>@L["ThankYouForPurchase"]</h2>
+                    <p class="success-text">@L["PurchaseSuccessText"]</p>
 
                     <div class="order-summary">
                         <div>
-                            <span>Broj narudžbe</span>
+                            <span>@L["OrderNumber"]</span>
                             <strong>#@Model.NarudzbaID</strong>
                         </div>
 
                         <div>
-                            <span>Datum</span>
+                            <span>@L["Date"]</span>
                             <strong>@Model.DatumNarudzbe.ToString("dd.MM.yyyy. HH:mm")</strong>
                         </div>
 
                         <div>
-                            <span>Ukupan iznos</span>
+                            <span>@L["TotalAmount"]</span>
                             <strong>€@Model.UkupnaCijena.ToString("N2")</strong>
                         </div>
                     </div>
 
                     <div class="purchase-details">
-                        <h3>Detalji kupovine</h3>
+                        <h3>@L["PurchaseDetails"]</h3>
 
                         <div class="purchase-row purchase-head">
-                            <span>Vozilo</span>
-                            <span>Cijena</span>
+                            <span>@L["Vehicle"]</span>
+                            <span>@L["VehiclePrice"]</span>
                         </div>
 
                         @foreach (var stavka in Model.StavkeKorpe)
@@ -63,26 +61,22 @@
                     <div class="success-note">
                         <i class="bi bi-info-circle-fill"></i>
                         <div>
-                            <strong>Šta slijedi?</strong>
-                            <p>
-                                Dodatne informacije o preuzimanju vozila dobit ćete putem e-maila.
-                                Za pitanja možete koristiti kontakt stranicu ili direktno pisati na
-                                <strong>autosalon@autosalon.com</strong>.
-                            </p>
+                            <strong>@L["WhatNext"]</strong>
+                            <p>@L["PurchaseNextText"] <strong>autosalon@autosalon.com</strong>.</p>
                         </div>
                     </div>
 
                     <div class="success-actions">
                         <a href="@Url.Action("Index", "Vozilo")" class="btn btn-primary rounded-4">
-                            <i class="bi bi-car-front-fill me-2"></i>Povratak na vozila
+                            <i class="bi bi-car-front-fill me-2"></i>@L["BackToVehicles"]
                         </a>
 
                         <a href="@Url.Action("KupljeniArtikli", "Profil")" class="btn btn-outline-primary rounded-4">
-                            <i class="bi bi-bag-check me-2"></i>Moji kupljeni artikli
+                            <i class="bi bi-bag-check me-2"></i>@L["NavPurchasedItems"]
                         </a>
 
                         <a href="@Url.Action("Index", "Profil")" class="btn btn-light border rounded-4">
-                            <i class="bi bi-person-fill me-2"></i>Moj profil
+                            <i class="bi bi-person-fill me-2"></i>@L["NavMyProfile"]
                         </a>
                     </div>
                 </div>

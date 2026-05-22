@@ -1,0 +1,42 @@
+<div class="loan-card mt-4">
+    <div class="loan-card-header">
+        <div class="loan-icon">
+            <i class="bi bi-calculator"></i>
+        </div>
+        <div>
+            <h3>@L["LoanCalculator"]</h3>
+            <p>@L["LoanCalculatorText"]</p>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label for="loan-amount" class="form-label">@L["LoanAmountEuro"]</label>
+        <input type="number" class="form-control" id="loan-amount" placeholder="@L["EnterAmount"]">
+    </div>
+
+    <div class="mb-3">
+        <label for="loan-period" class="form-label">@L["InstallmentCount"]</label>
+        <select class="form-select" id="loan-period">
+            <option value="12">@L["MonthsCount", 12]</option>
+            <option value="24">@L["MonthsCount", 24]</option>
+            <option value="36" selected>@L["MonthsCount", 36]</option>
+            <option value="48">@L["MonthsCount", 48]</option>
+            <option value="60">@L["MonthsCount", 60]</option>
+            <option value="72">@L["MonthsCount", 72]</option>
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label for="interest-rate" class="form-label">@L["InterestRate"]</label>
+        <input type="number" class="form-control" id="interest-rate" value="5.0" step="0.1" min="0">
+    </div>
+
+    <button id="calculateBtn" class="btn btn-primary rounded-4 w-100">@L["Calculate"]</button>
+
+    <div class="loan-result">
+        <span>@L["MonthlyInstallment"]</span>
+        <strong id="loan-result">€0</strong>
+    </div>
+
+    <p class="loan-note">@L["LoanCalculatorNote"]</p>
+</div>

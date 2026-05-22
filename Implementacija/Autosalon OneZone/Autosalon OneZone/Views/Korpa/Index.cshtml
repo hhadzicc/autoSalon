@@ -1,13 +1,16 @@
+@using System.Globalization
 @model Autosalon_OneZone.Models.ViewModels.CartViewModel
 @{
-    ViewData["Title"] = "Korpa";
+    ViewData["Title"] = L["CartTitle"];
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var culture = CultureInfo.CurrentCulture;
 }
+
 <section class="inner-page-header">
     <div class="container text-center">
-        <p class="section-eyebrow">Kupovina</p>
-        <h1>Vaša korpa</h1>
-        <p>Pregledajte odabrana vozila, izračunajte ratu kredita i nastavite kupovinu.</p>
+        <p class="section-eyebrow">@L["Purchase"]</p>
+        <h1>@L["CartHeaderTitle"]</h1>
+        <p>@L["CartHeaderText"]</p>
     </div>
 </section>
 
@@ -21,12 +24,11 @@
                         <i class="bi bi-cart-x"></i>
                     </div>
 
-                    <h2>Vaša korpa je prazna</h2>
-
-                    <p>Dodajte vozila iz kataloga kako biste ih vidjeli ovdje i nastavili kupovinu.</p>
+                    <h2>@L["CartEmptyTitle"]</h2>
+                    <p>@L["CartEmptyText"]</p>
 
                     <a href="@Url.Action("Index", "Vozilo")" class="btn btn-primary btn-lg rounded-4">
-                        <i class="bi bi-car-front-fill me-2"></i>Pregledajte vozila
+                        <i class="bi bi-car-front-fill me-2"></i>@L["BrowseVehicles"]
                     </a>
                 </div>
             </div>
@@ -37,19 +39,19 @@
                 <div class="col-lg-8">
                     <div class="cart-toolbar d-flex justify-content-between align-items-center flex-wrap gap-3">
                         <div class="fw-bold">
-                            Ukupno vozila:
+                            @L["TotalVehicles"]
                             <span class="badge rounded-pill text-bg-primary">@Model.VozilaUKorpi.Count</span>
                         </div>
 
                         <div class="cart-sort d-flex align-items-center gap-2">
-                            <label for="sortOptions" class="fw-bold text-secondary">Sortiraj po:</label>
+                            <label for="sortOptions" class="fw-bold text-secondary">@L["SortBy"]</label>
                             <select id="sortOptions" class="form-select">
-                                <option value="naziv_asc">Naziv (A-Z)</option>
-                                <option value="naziv_desc">Naziv (Z-A)</option>
-                                <option value="cijena_asc">Cijena (rastuće)</option>
-                                <option value="cijena_desc">Cijena (opadajuće)</option>
-                                <option value="godiste_asc">Godište (rastuće)</option>
-                                <option value="godiste_desc">Godište (opadajuće)</option>
+                                <option value="naziv_asc">@L["SortNameAsc"]</option>
+                                <option value="naziv_desc">@L["SortNameDesc"]</option>
+                                <option value="cijena_asc">@L["SortPriceAsc"]</option>
+                                <option value="cijena_desc">@L["SortPriceDesc"]</option>
+                                <option value="godiste_asc">@L["SortYearAsc"]</option>
+                                <option value="godiste_desc">@L["SortYearDesc"]</option>
                             </select>
                         </div>
                     </div>
@@ -57,38 +59,41 @@
                     <div id="stavkeKorpe" class="cart-items-list">
                         @foreach (var vozilo in Model.VozilaUKorpi)
                         {
-                            <article class="cart-item-card stavka-korpe">
+                            <article class="cart-item-card stavka-korpe"
+                                     data-naziv="@vozilo.Naziv"
+                                     data-cijena="@vozilo.Cijena"
+                                     data-godiste="@vozilo.Godiste">
                                 <div class="cart-item-image">
                                     <img src="@vozilo.SlikaUrl" alt="@vozilo.Naziv">
                                 </div>
 
                                 <div class="cart-item-content">
                                     <div>
-                                        <span class="cart-item-badge">U korpi</span>
+                                        <span class="cart-item-badge">@L["InCart"]</span>
                                         <h3 class="card-title">@vozilo.Naziv</h3>
 
                                         <div class="cart-meta">
-                                            <span class="text-muted"><i class="bi bi-calendar3"></i>Godište: @vozilo.Godiste</span>
-                                            <span class="text-muted"><i class="bi bi-fuel-pump"></i>Gorivo: @vozilo.Gorivo</span>
+                                            <span class="text-muted"><i class="bi bi-calendar3"></i>@L["VehicleYear"]: @vozilo.Godiste</span>
+                                            <span class="text-muted"><i class="bi bi-fuel-pump"></i>@L["VehicleFuel"]: @vozilo.Gorivo</span>
                                         </div>
 
-                                        <div class="cart-price text-success">€@vozilo.Cijena.ToString("N0")</div>
+                                        <div class="cart-price text-success">€@vozilo.Cijena.ToString("N0", culture)</div>
                                     </div>
 
                                     <div class="cart-actions">
                                         <a href="@Url.Action("Details", "Vozilo", new { id = vozilo.Id })" class="btn btn-light border rounded-4">
-                                            <i class="bi bi-info-circle me-2"></i>Detalji
+                                            <i class="bi bi-info-circle me-2"></i>@L["Details"]
                                         </a>
                                         <button type="button" class="btn btn-primary rounded-4 buy-now-btn"
                                                 data-bs-toggle="modal" data-bs-target="#paymentModal"
                                                 data-id="@vozilo.Id" data-cijena="@vozilo.Cijena" data-naziv="@vozilo.Naziv">
-                                            <i class="bi bi-credit-card me-2"></i>Kupi
+                                            <i class="bi bi-credit-card me-2"></i>@L["Buy"]
                                         </button>
                                         <form asp-controller="Korpa" asp-action="UkloniIzKorpe" method="post">
                                             @Html.AntiForgeryToken()
                                             <input type="hidden" name="id" value="@vozilo.Id">
                                             <button type="submit" class="btn btn-outline-danger rounded-4 w-100">
-                                                <i class="bi bi-trash me-2"></i>Ukloni
+                                                <i class="bi bi-trash me-2"></i>@L["Remove"]
                                             </button>
                                         </form>
                                     </div>
@@ -101,84 +106,43 @@
                 <div class="col-lg-4">
                     <aside class="cart-sidebar">
                         <div class="checkout-card">
-                            <h3>Pregled kupovine</h3>
+                            <h3>@L["PurchaseOverview"]</h3>
 
                             <div class="summary-row">
-                                <span>Broj vozila</span>
+                                <span>@L["VehicleCount"]</span>
                                 <strong>@Model.VozilaUKorpi.Count</strong>
                             </div>
 
                             <div class="summary-row">
-                                <span>Ukupan iznos</span>
-                                <strong>€@Model.UkupnaCijena.ToString("N0")</strong>
+                                <span>@L["TotalAmount"]</span>
+                                <strong>€@Model.UkupnaCijena.ToString("N0", culture)</strong>
                             </div>
 
                             <div class="summary-total">
-                                <span>Za plaćanje</span>
-                                <strong>€@Model.UkupnaCijena.ToString("N0")</strong>
+                                <span>@L["PaymentDue"]</span>
+                                <strong>€@Model.UkupnaCijena.ToString("N0", culture)</strong>
                             </div>
 
                             <div class="d-grid gap-2 mt-4">
                                 <button type="button" class="btn btn-success btn-lg rounded-4" id="checkoutButton" data-bs-toggle="modal" data-bs-target="#checkoutModal">
-                                    <i class="bi bi-bag-check me-2"></i>Nastavi na checkout
+                                    <i class="bi bi-bag-check me-2"></i>@L["ContinueToCheckout"]
                                 </button>
                                 <form asp-controller="Korpa" asp-action="OcistiKorpu" method="post">
                                     @Html.AntiForgeryToken()
                                     <button type="submit"
                                             class="btn btn-outline-danger rounded-4 w-100"
                                             data-confirm-delete="true"
-                                            data-confirm-title="Isprazniti korpu?"
-                                            data-confirm-message="Da li ste sigurni da želite isprazniti korpu?"
-                                            data-confirm-item="Sva vozila iz korpe"
-                                            data-confirm-action="Da, isprazni korpu">
-                                        <i class="bi bi-cart-x me-2"></i>Isprazni korpu
+                                            data-confirm-title="@L["ClearCartConfirmTitle"]"
+                                            data-confirm-message="@L["ClearCartConfirmMessage"]"
+                                            data-confirm-item="@L["ClearCartConfirmItem"]"
+                                            data-confirm-action="@L["ClearCartConfirmAction"]">
+                                        <i class="bi bi-cart-x me-2"></i>@L["ClearCart"]
                                     </button>
                                 </form>
                             </div>
                         </div>
 
-                        <div class="loan-card mt-4">
-                            <div class="loan-card-header">
-                                <div class="loan-icon">
-                                    <i class="bi bi-calculator"></i>
-                                </div>
-                                <div>
-                                    <h3>Kalkulator kredita</h3>
-                                    <p>Izračunajte okvirnu mjesečnu ratu.</p>
-                                </div>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="loan-amount" class="form-label">Visina kredita (€)</label>
-                                <input type="number" class="form-control" id="loan-amount" placeholder="Unesite iznos">
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="loan-period" class="form-label">Broj rata</label>
-                                <select class="form-select" id="loan-period">
-                                    <option value="12">12 mjeseci</option>
-                                    <option value="24">24 mjeseca</option>
-                                    <option value="36" selected>36 mjeseci</option>
-                                    <option value="48">48 mjeseci</option>
-                                    <option value="60">60 mjeseci</option>
-                                    <option value="72">72 mjeseca</option>
-                                </select>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="interest-rate" class="form-label">Kamatna stopa (%)</label>
-                                <input type="number" class="form-control" id="interest-rate" value="5.0" step="0.1" min="0">
-                            </div>
-
-                            <button id="calculateBtn" class="btn btn-primary rounded-4 w-100">Izračunaj</button>
-
-                            <div class="loan-result">
-                                <span>Mjesečna rata</span>
-                                <strong id="loan-result">€0</strong>
-                            </div>
-
-                            <p class="loan-note">* Kalkulator je informativnog karaktera i ne predstavlja ponudu za kredit.</p>
-                        </div>
+                        @await Html.PartialAsync("_LoanCalculator")
                     </aside>
                 </div>
             </div>
@@ -186,834 +150,417 @@
     </div>
 </section>
 
-<div class="modal fade" id="checkoutModal" tabindex="-1" aria-labelledby="checkoutModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content modern-modal">
-            <div class="modal-header modern-modal-header">
-                <div class="d-flex align-items-center gap-3">
-                    <div class="modal-icon">
-                        <i class="bi bi-bag-check-fill"></i>
+@if (Model.VozilaUKorpi.Count > 0)
+{
+    <div class="modal fade" id="checkoutModal" tabindex="-1" aria-labelledby="checkoutModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content modern-modal">
+                <div class="modal-header modern-modal-header">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="modal-icon">
+                            <i class="bi bi-bag-check-fill"></i>
+                        </div>
+                        <div>
+                            <h5 class="modal-title" id="checkoutModalLabel">@L["CheckoutTitle"]</h5>
+                            <p class="mb-0 text-muted small">@L["CheckoutText"]</p>
+                        </div>
                     </div>
-                    <div>
-                        <h5 class="modal-title" id="checkoutModalLabel">Checkout - završi kupovinu</h5>
-                        <p class="mb-0 text-muted small">Odaberite vozila i unesite podatke za plaćanje.</p>
-                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@L["Close"]"></button>
                 </div>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-
-                <div class="mb-4">
-                    <h6>Odaberite vozila za kupovinu:</h6>
-                    <div class="alert alert-info small">
-                        <i class="bi bi-info-circle-fill"></i> Morate odabrati barem jedno vozilo.
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th width="5%">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="selectAll">
-                                        </div>
-                                    </th>
-                                    <th>Vozilo</th>
-                                    <th class="text-end">Cijena</th>
-                                </tr>
-                            </thead>
-
-                            <tbody>
-                                @foreach (var vozilo in Model.VozilaUKorpi)
-                                {
+                <div class="modal-body">
+                    <div class="mb-4">
+                        <h6>@L["SelectVehiclesForPurchase"]</h6>
+                        <div class="alert alert-info small">
+                            <i class="bi bi-info-circle-fill"></i> @L["SelectAtLeastOneVehicle"]
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
                                     <tr>
-                                        <td>
+                                        <th width="5%">
                                             <div class="form-check">
-                                                <input class="form-check-input vozilo-checkbox" type="checkbox"
-                                                       data-id="@vozilo.Id"
-                                                       data-naziv="@vozilo.Naziv"
-                                                       data-cijena="@vozilo.Cijena.ToString(System.Globalization.CultureInfo.InvariantCulture)"
-                                                       checked>
+                                                <input class="form-check-input" type="checkbox" id="selectAll" checked>
                                             </div>
-                                        </td>
-                                        <td>@vozilo.Naziv (@vozilo.Godiste)</td>
-                                        <td class="text-end">€@vozilo.Cijena.ToString("N0")</td>
+                                        </th>
+                                        <th>@L["Vehicle"]</th>
+                                        <th class="text-end">@L["VehiclePrice"]</th>
                                     </tr>
-                                }
-                            </tbody>
-
-                            <tfoot>
-                                <tr class="table-active">
-                                    <th colspan="2" class="text-end">Ukupno:</th>
-                                    <th class="text-end" id="checkoutTotal">€@Model.UkupnaCijena.ToString("N0")</th>
-                                </tr>
-                            </tfoot>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    @foreach (var vozilo in Model.VozilaUKorpi)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <div class="form-check">
+                                                    <input class="form-check-input vozilo-checkbox" type="checkbox"
+                                                           data-id="@vozilo.Id"
+                                                           data-naziv="@vozilo.Naziv"
+                                                           data-cijena="@vozilo.Cijena.ToString(CultureInfo.InvariantCulture)"
+                                                           checked>
+                                                </div>
+                                            </td>
+                                            <td>@vozilo.Naziv (@vozilo.Godiste)</td>
+                                            <td class="text-end">€@vozilo.Cijena.ToString("N0", culture)</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                                <tfoot>
+                                    <tr class="table-active">
+                                        <th colspan="2" class="text-end">@L["Total"]</th>
+                                        <th class="text-end" id="checkoutTotal">€@Model.UkupnaCijena.ToString("N0", culture)</th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
                     </div>
+
+                    <form id="checkoutForm" asp-controller="Korpa" asp-action="IzvrsiPlacanjeSvih" method="post" novalidate>
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="OdabranaVozilaJSON" id="odabranaVozilaJSON" value="" />
+                        @await Html.PartialAsync("_PaymentFields", "checkout")
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-success" id="checkoutSubmitBtn">@L["ConfirmPurchase"]</button>
+                        </div>
+                    </form>
                 </div>
-
-                <form id="checkoutForm" asp-controller="Korpa" asp-action="IzvrsiPlacanjeSvih" method="post" novalidate>
-                    @Html.AntiForgeryToken()
-
-                    <input type="hidden" name="OdabranaVozilaJSON" id="odabranaVozilaJSON" value="" />
-
-                    <div class="form-group mb-3">
-                        <label for="checkoutImeVlasnika" class="form-label">Ime i prezime vlasnika kartice <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="checkoutImeVlasnika" name="ImeVlasnika"
-                               required maxlength="100" autocomplete="off">
-                        <div class="error-message text-danger mt-1" id="checkoutImeVlasnikaError"></div>
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label for="checkoutBrojKartice" class="form-label">Broj kartice <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="checkoutBrojKartice" name="BrojKartice"
-                               required placeholder="XXXX XXXX XXXX XXXX" autocomplete="off">
-                        <div class="error-message text-danger mt-1" id="checkoutBrojKarticeError"></div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group mb-3">
-                                <label for="checkoutDatumIsteka" class="form-label">Datum isteka <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="checkoutDatumIsteka" name="DatumIsteka"
-                                       required placeholder="MM/YY" autocomplete="off">
-                                <div class="error-message text-danger mt-1" id="checkoutDatumIstekaError"></div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group mb-3">
-                                <label for="checkoutCvv" class="form-label">CVV kod <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="checkoutCvv" name="Cvv"
-                                       required placeholder="XXX" autocomplete="off">
-                                <div class="error-message text-danger mt-1" id="checkoutCvvError"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="d-grid gap-2 mt-4">
-                        <button type="submit" class="btn btn-success" id="checkoutSubmitBtn">
-                            Potvrdi kupovinu
-                        </button>
-                    </div>
-                </form>
             </div>
         </div>
     </div>
-</div>
 
-<div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content modern-modal">
-            <div class="modal-header modern-modal-header">
-                <div class="d-flex align-items-center gap-3">
-                    <div class="modal-icon">
-                        <i class="bi bi-credit-card-fill"></i>
-                    </div>
-                    <div>
-                        <h5 class="modal-title" id="paymentModalLabel">Podaci za plaćanje</h5>
-                        <p class="mb-0 text-muted small">Unesite podatke kartice za završetak kupovine.</p>
-                    </div>
-                </div>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-
-                <div class="alert alert-info mb-4">
-                    <strong>Ukupno za plaćanje:</strong> <span id="modalUkupnaCijena"></span>
-                </div>
-
-                <form id="paymentForm" asp-controller="Korpa" asp-action="IzvrsiPlacanje" method="post" novalidate>
-                    @Html.AntiForgeryToken()
-
-                    <input type="hidden" name="VoziloID" id="modalVoziloID" value="" />
-
-                    <div class="form-group mb-3">
-                        <label for="imeVlasnika" class="form-label">Ime i prezime vlasnika kartice <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="imeVlasnika" name="ImeVlasnika"
-                               required maxlength="100" autocomplete="off">
-                        <div class="error-message text-danger mt-1" id="imeVlasnikaError"></div>
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label for="brojKartice" class="form-label">Broj kartice <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="brojKartice" name="BrojKartice"
-                               required placeholder="XXXX XXXX XXXX XXXX" autocomplete="off">
-                        <div class="error-message text-danger mt-1" id="brojKarticeError"></div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group mb-3">
-                                <label for="datumIsteka" class="form-label">Datum isteka <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="datumIsteka" name="DatumIsteka"
-                                       required placeholder="MM/YY" autocomplete="off">
-                                <div class="error-message text-danger mt-1" id="datumIstekaError"></div>
-                            </div>
+    <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content modern-modal">
+                <div class="modal-header modern-modal-header">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="modal-icon">
+                            <i class="bi bi-credit-card-fill"></i>
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-group mb-3">
-                                <label for="cvv" class="form-label">CVV kod <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="cvv" name="Cvv"
-                                       required placeholder="XXX" autocomplete="off">
-                                <div class="error-message text-danger mt-1" id="cvvError"></div>
-                            </div>
+                        <div>
+                            <h5 class="modal-title" id="paymentModalLabel">@L["PaymentDetails"]</h5>
+                            <p class="mb-0 text-muted small">@L["PaymentDetailsText"]</p>
                         </div>
                     </div>
-
-                    <div class="d-grid gap-2 mt-4">
-                        <button type="submit" class="btn btn-primary" id="submitPayment">
-                            Potvrdi kupovinu
-                        </button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@L["Close"]"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info mb-4">
+                        <strong>@L["TotalToPay"]</strong> <span id="modalUkupnaCijena"></span>
                     </div>
-                </form>
+
+                    <form id="paymentForm" asp-controller="Korpa" asp-action="IzvrsiPlacanje" method="post" novalidate>
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="VoziloID" id="modalVoziloID" value="" />
+                        @await Html.PartialAsync("_PaymentFields", "")
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary" id="submitPayment">@L["ConfirmPurchase"]</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
+}
 
 @section Scripts {
     <script>
-        $(document).ready(function() {
+        const cartTexts = {
+            processing: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["Processing"].Value)),
+            confirmPurchase: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["ConfirmPurchase"].Value)),
+            selectOne: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["SelectAtLeastOneVehicle"].Value)),
+            paymentFailed: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentFailedPrefix"].Value)),
+            requestError: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentRequestError"].Value)),
+            requestErrorWithDetail: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentRequestErrorWithDetail"].Value)),
+            holderRequired: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentHolderRequired"].Value)),
+            holderFullName: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentHolderFullName"].Value)),
+            cardRequired: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentCardRequired"].Value)),
+            cardLength: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentCardLength"].Value)),
+            expiryRequired: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentExpiryRequired"].Value)),
+            expiryFormat: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentExpiryFormat"].Value)),
+            cardExpired: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentCardExpired"].Value)),
+            cvvRequired: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentCvvRequired"].Value)),
+            cvvLength: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentCvvLength"].Value))
+        };
 
+        $(document).ready(function() {
+            initializeCartSorting();
+            initializeLoanCalculator();
+            initializePaymentModal();
+            initializeCheckoutModal();
+        });
+
+        function initializeCartSorting() {
             $("#sortOptions").change(function() {
                 var sortType = $(this).val();
                 var stavke = $(".stavka-korpe").get();
 
                 stavke.sort(function(a, b) {
-                    var aValue, bValue;
+                    var $a = $(a);
+                    var $b = $(b);
 
-                    if (sortType.startsWith("naziv_")) {
-                        aValue = $(a).find(".card-title").text();
-                        bValue = $(b).find(".card-title").text();
-
-                        if (sortType === "naziv_asc") {
-                            return aValue.localeCompare(bValue);
-                        } else {
-                            return bValue.localeCompare(aValue);
-                        }
+                    switch (sortType) {
+                        case "naziv_asc":
+                            return $a.data("naziv").localeCompare($b.data("naziv"));
+                        case "naziv_desc":
+                            return $b.data("naziv").localeCompare($a.data("naziv"));
+                        case "cijena_asc":
+                            return parseFloat($a.data("cijena")) - parseFloat($b.data("cijena"));
+                        case "cijena_desc":
+                            return parseFloat($b.data("cijena")) - parseFloat($a.data("cijena"));
+                        case "godiste_asc":
+                            return parseInt($a.data("godiste")) - parseInt($b.data("godiste"));
+                        case "godiste_desc":
+                            return parseInt($b.data("godiste")) - parseInt($a.data("godiste"));
+                        default:
+                            return 0;
                     }
-                    else if (sortType.startsWith("cijena_")) {
-                        aValue = parseFloat($(a).find(".text-success").text().replace("€", "").replace(".", "").replace(",", "."));
-                        bValue = parseFloat($(b).find(".text-success").text().replace("€", "").replace(".", "").replace(",", "."));
-
-                        if (sortType === "cijena_asc") {
-                            return aValue - bValue;
-                        } else {
-                            return bValue - aValue;
-                        }
-                    }
-                    else if (sortType.startsWith("godiste_")) {
-                        aValue = parseInt($(a).find(".text-muted").first().text().replace("Godište: ", ""));
-                        bValue = parseInt($(b).find(".text-muted").first().text().replace("Godište: ", ""));
-
-                        if (sortType === "godiste_asc") {
-                            return aValue - bValue;
-                        } else {
-                            return bValue - aValue;
-                        }
-                    }
-
-                    return 0;
                 });
 
-                $("#stavkeKorpe").empty();
-                $.each(stavke, function(index, item) {
-                    $("#stavkeKorpe").append(item);
-                });
+                $("#stavkeKorpe").append(stavke);
             });
+        }
 
-            $("#calculateBtn").click(function() {
-                updateCalculation();
-            });
+        function initializeLoanCalculator() {
+            updateLoanCalculation();
+            $("#calculateBtn").click(updateLoanCalculation);
+            $("#loan-amount, #loan-period, #interest-rate").on("change input", updateLoanCalculation);
+        }
 
-            $("#loan-amount, #loan-period, #interest-rate").on('change input', function() {
-                updateCalculation();
-            });
+        function updateLoanCalculation() {
+            var loanAmount = parseFloat($("#loan-amount").val());
+            var loanPeriod = parseInt($("#loan-period").val());
+            var interestRate = parseFloat($("#interest-rate").val());
 
-            function updateCalculation() {
-                var loanAmount = parseFloat($("#loan-amount").val());
-                var loanPeriod = parseInt($("#loan-period").val());
-                var interestRate = parseFloat($("#interest-rate").val());
-
-                if (isNaN(loanAmount) || loanAmount <= 0 ||
-                    isNaN(loanPeriod) || loanPeriod <= 0 ||
-                    isNaN(interestRate) || interestRate < 0) {
-                    $("#loan-result").text("€0");
-                    return;
-                }
-
-                var monthlyRate = (interestRate / 100) / 12;
-
-                var monthlyPayment = loanAmount * monthlyRate * Math.pow(1 + monthlyRate, loanPeriod) /
-                                    (Math.pow(1 + monthlyRate, loanPeriod) - 1);
-
-                $("#loan-result").text("€" + monthlyPayment.toFixed(2));
+            if (isNaN(loanAmount) || loanAmount <= 0 || isNaN(loanPeriod) || loanPeriod <= 0 || isNaN(interestRate) || interestRate < 0) {
+                $("#loan-result").text("€0");
+                return;
             }
 
-            $(".quantity-input").change(function() {
-                var stavkaId = $(this).data("stavka-id");
-                var kolicina = $(this).val();
+            var monthlyRate = (interestRate / 100) / 12;
+            var monthlyPayment = loanAmount * monthlyRate * Math.pow(1 + monthlyRate, loanPeriod) /
+                (Math.pow(1 + monthlyRate, loanPeriod) - 1);
 
-                if (kolicina < 1) {
-                    window.showAppFlashMessage("Količina ne može biti manja od 1.", "error");
-                    $(this).val(1);
+            $("#loan-result").text("€" + monthlyPayment.toFixed(2));
+        }
+
+        function initializePaymentModal() {
+            $(".buy-now-btn").on("click", function() {
+                var button = $(this);
+                $("#modalVoziloID").val(button.data("id"));
+                $("#modalUkupnaCijena").text("€" + Number(button.data("cijena")).toLocaleString());
+            });
+
+            $("#paymentModal").on("show.bs.modal", function() {
+                resetPaymentForm("#paymentForm", "#submitPayment");
+            });
+
+            bindPaymentFields("");
+
+            $("#paymentForm").on("submit", function(e) {
+                e.preventDefault();
+                submitPaymentForm($(this), "#submitPayment");
+            });
+        }
+
+        function initializeCheckoutModal() {
+            $("#selectAll").on("change", function() {
+                $(".vozilo-checkbox").prop("checked", $(this).is(":checked"));
+                updateCheckoutTotal();
+            });
+
+            $(".vozilo-checkbox").on("change", updateCheckoutTotal);
+
+            $("#checkoutModal").on("show.bs.modal", updateCheckoutTotal);
+            bindPaymentFields("checkout");
+
+            $("#checkoutForm").on("submit", function(e) {
+                e.preventDefault();
+
+                var selected = getSelectedVehicles();
+                if (!selected.length) {
+                    window.showAppFlashMessage(cartTexts.selectOne, "warning");
                     return;
                 }
 
-                var form = $('<form action="/Korpa/AzurirajKolicinu" method="post"></form>');
-
-                form.append('@Html.AntiForgeryToken()');
-                form.append('<input type="hidden" name="stavkaId" value="' + stavkaId + '">');
-                form.append('<input type="hidden" name="kolicina" value="' + kolicina + '">');
-
-                $('body').append(form);
-                form.submit();
+                $("#odabranaVozilaJSON").val(JSON.stringify(selected));
+                submitPaymentForm($(this), "#checkoutSubmitBtn");
             });
+        }
 
-            $('.buy-now-btn').click(function() {
-                var id = $(this).data('id');
-                var cijena = $(this).data('cijena');
-                var naziv = $(this).data('naziv');
+        function getSelectedVehicles() {
+            return $(".vozilo-checkbox:checked").map(function() {
+                return {
+                    VoziloID: $(this).data("id"),
+                    Naziv: $(this).data("naziv"),
+                    Cijena: parseFloat($(this).data("cijena"))
+                };
+            }).get();
+        }
 
-                $('#modalVoziloID').val(id);
-                $('#modalUkupnaCijena').text('€' + cijena.toLocaleString());
-                $('#paymentModalLabel').text('Podaci za plaćanje - ' + naziv);
-            });
+        function updateCheckoutTotal() {
+            var total = getSelectedVehicles().reduce(function(sum, item) {
+                return sum + item.Cijena;
+            }, 0);
 
-            setupPaymentFormValidation();
+            $("#checkoutTotal").text("€" + total.toLocaleString(undefined, { maximumFractionDigits: 0 }));
+            $("#selectAll").prop("checked", $(".vozilo-checkbox").length === $(".vozilo-checkbox:checked").length);
+        }
 
-        function setupPaymentFormValidation() {
+        function bindPaymentFields(prefix) {
+            var idPrefix = prefix || "";
+            var holder = "#" + idPrefix + "ImeVlasnika";
+            var card = "#" + idPrefix + "BrojKartice";
+            var expiry = "#" + idPrefix + "DatumIsteka";
+            var cvv = "#" + idPrefix + "Cvv";
 
-            clearAllErrors();
-
-            $('#paymentModal').on('show.bs.modal', function() {
-                resetPaymentForm();
-            });
-
-            $("#imeVlasnika").on('input', function() {
+            $(holder).on("input", function() {
                 var value = $(this).val();
-                var filteredValue = value.replace(/[^A-Za-z ]/g, '');
-
+                var filteredValue = value.replace(/[^A-Za-z ]/g, "");
                 if (value !== filteredValue) {
                     $(this).val(filteredValue);
                 }
-
-                clearError('imeVlasnika');
+                clearError(idPrefix + "ImeVlasnika");
             });
 
-            $("#brojKartice").on('input', function() {
-                var value = $(this).val().replace(/\D/g, '');
-
-                if (value.length > 16) {
-                    value = value.substring(0, 16);
-                }
-
-                var formattedValue = '';
-                for (var i = 0; i < value.length; i++) {
-                    if (i > 0 && i % 4 === 0) {
-                        formattedValue += ' ';
-                    }
-                    formattedValue += value[i];
-                }
-
+            $(card).on("input", function() {
+                var value = $(this).val().replace(/\D/g, "").substring(0, 16);
+                var formattedValue = value.replace(/(.{4})/g, "$1 ").trim();
                 $(this).val(formattedValue);
-                clearError('brojKartice');
+                clearError(idPrefix + "BrojKartice");
             });
 
-            $("#datumIsteka").on('input', function() {
-                var value = $(this).val().replace(/\D/g, '');
-
-                if (value.length > 4) {
-                    value = value.substring(0, 4);
-                }
-
+            $(expiry).on("input", function() {
+                var value = $(this).val().replace(/\D/g, "").substring(0, 4);
                 if (value.length > 2) {
-                    value = value.substring(0, 2) + '/' + value.substring(2);
+                    value = value.substring(0, 2) + "/" + value.substring(2);
                 }
-
                 $(this).val(value);
-                clearError('datumIsteka');
+                clearError(idPrefix + "DatumIsteka");
             });
 
-            $("#cvv").on('input', function() {
-                var value = $(this).val().replace(/\D/g, '');
-
-                if (value.length > 3) {
-                    value = value.substring(0, 3);
-                }
-
-                $(this).val(value);
-                clearError('cvv');
-            });
-
-            $("#paymentForm").on('submit', function(e) {
-                e.preventDefault();
-
-                clearAllErrors();
-
-                var isValid = validatePaymentForm();
-
-                if (isValid) {
-
-                    $("#submitPayment").prop("disabled", true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Obrađivanje...');
-
-                    var formData = $(this).serialize();
-
-                    $.ajax({
-                        url: $(this).attr('action'),
-                        type: 'POST',
-                        data: formData,
-                        success: function(response) {
-                            if (response.success) {
-
-                                window.location.href = response.redirectUrl;
-                            } else {
-
-                                if (response.errors) {
-
-                                    $.each(response.errors, function(field, message) {
-                                        showError(field, message);
-                                    });
-                                } else if (response.message) {
-
-                                    $('#paymentModal').modal('hide');
-                                    window.showAppFlashMessage("Plaćanje nije uspjelo: " + response.message, "error");
-                                }
-
-                                $("#submitPayment").prop("disabled", false).html('Potvrdi kupovinu');
-                            }
-                        },
-                        error: function(xhr, status, error) {
-
-                            $('#paymentModal').modal('hide');
-                            window.showAppFlashMessage("Došlo je do greške prilikom obrade zahtjeva. Molimo pokušajte ponovo.", "error");
-                            $("#submitPayment").prop("disabled", false).html('Potvrdi kupovinu');
-                        }
-                    });
-                }
+            $(cvv).on("input", function() {
+                $(this).val($(this).val().replace(/\D/g, "").substring(0, 3));
+                clearError(idPrefix + "Cvv");
             });
         }
 
-        function validatePaymentForm() {
-            var isValid = true;
+        function submitPaymentForm(form, buttonSelector) {
+            var prefix = form.attr("id") === "checkoutForm" ? "checkout" : "";
+            clearAllErrors(form);
 
-            var imePrezime = $("#imeVlasnika").val().trim();
-            if (!imePrezime) {
-                showError('imeVlasnika', 'Ime i prezime su obavezni.');
-                isValid = false;
-            } else if (!imePrezime.includes(' ')) {
-                showError('imeVlasnika', 'Unesite ime i prezime (mora sadržavati razmak).');
-                isValid = false;
-            }
-
-            var brojKartice = $("#brojKartice").val().replace(/\s+/g, '');
-            if (!brojKartice) {
-                showError('brojKartice', 'Broj kartice je obavezan.');
-                isValid = false;
-            } else if (brojKartice.length !== 16) {
-                showError('brojKartice', 'Broj kartice mora sadržavati tačno 16 cifara.');
-                isValid = false;
-            }
-
-            var datumIsteka = $("#datumIsteka").val().trim();
-            if (!datumIsteka) {
-                showError('datumIsteka', 'Datum isteka je obavezan.');
-                isValid = false;
-            } else {
-                var parts = datumIsteka.split('/');
-                if (parts.length !== 2 || !/^(0[1-9]|1[0-2])$/.test(parts[0]) || !/^\d{2}$/.test(parts[1])) {
-                    showError('datumIsteka', 'Neispravan format (MM/YY).');
-                    isValid = false;
-                } else {
-                    var month = parseInt(parts[0]);
-                    var year = parseInt("20" + parts[1]);
-                    var now = new Date();
-                    var currentYear = now.getFullYear();
-                    var currentMonth = now.getMonth() + 1;
-
-                    if (year < currentYear || (year === currentYear && month < currentMonth)) {
-                        showError('datumIsteka', 'Kartica je istekla.');
-                        isValid = false;
-                    }
-                }
-            }
-
-            var cvv = $("#cvv").val().trim();
-            if (!cvv) {
-                showError('cvv', 'CVV kod je obavezan.');
-                isValid = false;
-            } else if (cvv.length !== 3) {
-                showError('cvv', 'CVV kod mora sadržavati tačno 3 cifre.');
-                isValid = false;
-            }
-
-            if (!isValid) {
-                $(".form-control").each(function() {
-                    var id = $(this).attr("id");
-                    if ($("#" + id + "Error").text()) {
-                        $(this).focus();
-                        return false;
-                    }
-                });
-            }
-
-            return isValid;
-        }
-
-            function showError(fieldId, message) {
-                $("#" + fieldId).addClass("is-invalid border-danger");
-                $("#" + fieldId + "Error").text(message);
-            }
-
-            function clearError(fieldId) {
-                $("#" + fieldId).removeClass("is-invalid border-danger");
-                $("#" + fieldId + "Error").text("");
-            }
-
-            function clearAllErrors() {
-                $(".form-control").removeClass("is-invalid border-danger");
-                $(".error-message").text("");
-            }
-
-            function resetPaymentForm() {
-                $("#paymentForm")[0].reset();
-                clearAllErrors();
-                $("#submitPayment").prop("disabled", false).html('Potvrdi kupovinu');
-            }
-        });
-
-        $('#selectAll').change(function() {
-            $('.vozilo-checkbox').prop('checked', $(this).is(':checked'));
-            updateCheckoutTotal();
-        });
-
-        $('.vozilo-checkbox').change(function() {
-            updateCheckoutTotal();
-
-            if ($('.vozilo-checkbox:checked').length === 0) {
-                $('#selectAll').prop('checked', false);
-            }
-
-            if ($('.vozilo-checkbox:checked').length === $('.vozilo-checkbox').length) {
-                $('#selectAll').prop('checked', true);
-            }
-        });
-
-        function updateCheckoutTotal() {
-            var total = 0;
-            $('.vozilo-checkbox:checked').each(function() {
-                total += parseFloat($(this).data('cijena'));
-            });
-            $('#checkoutTotal').text('€' + total.toLocaleString());
-        }
-
-        $('#checkoutButton').click(function() {
-            updateCheckoutTotal();
-        });
-
-        $('#checkoutForm').on('submit', function(e) {
-            e.preventDefault();
-
-            clearAllCheckoutErrors();
-
-            if ($('.vozilo-checkbox:checked').length === 0) {
-                window.showAppFlashMessage('Morate odabrati barem jedno vozilo za kupovinu.', 'warning');
+            if (!validatePaymentForm(prefix)) {
                 return;
             }
 
-            var isValid = validateCheckoutForm();
-
-            if (isValid) {
-
-                var odabranaVozila = [];
-                $('.vozilo-checkbox:checked').each(function() {
-                    odabranaVozila.push({
-                        id: parseInt($(this).data('id')),
-                        naziv: $(this).data('naziv'),
-                        cijena: parseFloat($(this).data('cijena'))
-                    });
-                });
-
-                $('#odabranaVozilaJSON').val(JSON.stringify(odabranaVozila));
-
-                $('#checkoutSubmitBtn').prop('disabled', true)
-                    .html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Obrađivanje...');
-
-                $.ajax({
-                    url: '@Url.Action("IzvrsiPlacanjeSvih", "Korpa")',
-                    type: 'POST',
-                    data: {
-                        OdabranaVozilaJSON: JSON.stringify(odabranaVozila),
-                        ImeVlasnika: $("#checkoutImeVlasnika").val(),
-                        BrojKartice: $("#checkoutBrojKartice").val(),
-                        DatumIsteka: $("#checkoutDatumIsteka").val(),
-                        Cvv: $("#checkoutCvv").val(),
-                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
-                    },
-                    success: function(response) {
-                        if (response.success) {
-
-                            window.location.href = response.redirectUrl;
-                        } else {
-
-                            if (response.errors) {
-
-                                $.each(response.errors, function(field, message) {
-                                    showCheckoutError(field, message);
-                                });
-                            } else if (response.message) {
-
-                                $('#checkoutModal').modal('hide');
-                                window.showAppFlashMessage("Plaćanje nije uspjelo: " + response.message, "error");
-                            }
-
-                            $('#checkoutSubmitBtn').prop('disabled', false).text('Potvrdi kupovinu');
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        $('#checkoutModal').modal('hide');
-                        window.showAppFlashMessage("Došlo je do greške prilikom obrade zahtjeva: " + error, "error");
-                        $('#checkoutSubmitBtn').prop('disabled', false).text('Potvrdi kupovinu');
-                    }
-                });
-            }
-        });
-
-        function validateCheckoutForm() {
-            var isValid = true;
-
-            var imePrezime = $("#checkoutImeVlasnika").val().trim();
-            if (!imePrezime) {
-                showCheckoutError('ImeVlasnika', 'Ime i prezime su obavezni.');
-                isValid = false;
-            } else if (!imePrezime.includes(' ')) {
-                showCheckoutError('ImeVlasnika', 'Unesite ime i prezime (mora sadržavati razmak).');
-                isValid = false;
-            } else if (imePrezime.length < 5) {
-                showCheckoutError('ImeVlasnika', 'Ime i prezime moraju sadržavati najmanje 5 karaktera.');
-                isValid = false;
-            }
-
-            var brojKartice = $("#checkoutBrojKartice").val().replace(/\s+/g, '');
-            if (!brojKartice) {
-                showCheckoutError('BrojKartice', 'Broj kartice je obavezan.');
-                isValid = false;
-            } else if (brojKartice.length !== 16) {
-                showCheckoutError('BrojKartice', 'Broj kartice mora sadržavati tačno 16 cifara.');
-                isValid = false;
-            }
-
-            var datumIsteka = $("#checkoutDatumIsteka").val().trim();
-            if (!datumIsteka) {
-                showCheckoutError('DatumIsteka', 'Datum isteka je obavezan.');
-                isValid = false;
-            } else {
-                var parts = datumIsteka.split('/');
-                if (parts.length !== 2 || !/^(0[1-9]|1[0-2])$/.test(parts[0]) || !/^\d{2}$/.test(parts[1])) {
-                    showCheckoutError('DatumIsteka', 'Neispravan format (MM/YY).');
-                    isValid = false;
-                } else {
-                    var month = parseInt(parts[0]);
-                    var year = parseInt("20" + parts[1]);
-                    var now = new Date();
-                    var currentYear = now.getFullYear();
-                    var currentMonth = now.getMonth() + 1;
-
-                    if (year < currentYear || (year === currentYear && month < currentMonth)) {
-                        showCheckoutError('DatumIsteka', 'Kartica je istekla.');
-                        isValid = false;
-                    }
-                }
-            }
-
-            var cvv = $("#checkoutCvv").val().trim();
-            if (!cvv) {
-                showCheckoutError('Cvv', 'CVV kod je obavezan.');
-                isValid = false;
-            } else if (cvv.length !== 3) {
-                showCheckoutError('Cvv', 'CVV kod mora sadržavati tačno 3 cifre.');
-                isValid = false;
-            }
-
-            if (!isValid) {
-                $('#checkout' + $('.checkout-error:first').attr('id').replace('Error', '')).focus();
-            }
-
-            return isValid;
-        }
-
-        $("#checkoutImeVlasnika").on('input', function() {
-            var value = $(this).val();
-            var filteredValue = value.replace(/[^A-Za-z ]/g, '');
-            if (value !== filteredValue) {
-                $(this).val(filteredValue);
-            }
-            clearCheckoutError('ImeVlasnika');
-        });
-
-        $("#checkoutBrojKartice").on('input', function() {
-            var value = $(this).val().replace(/\D/g, '');
-
-            if (value.length > 16) {
-                value = value.substring(0, 16);
-            }
-
-            var formattedValue = '';
-            for (var i = 0; i < value.length; i++) {
-                if (i > 0 && i % 4 === 0) {
-                    formattedValue += ' ';
-                }
-                formattedValue += value[i];
-            }
-
-            $(this).val(formattedValue);
-            clearCheckoutError('BrojKartice');
-        });
-
-        $("#checkoutDatumIsteka").on('input', function() {
-            var value = $(this).val().replace(/\D/g, '');
-
-            if (value.length > 4) {
-                value = value.substring(0, 4);
-            }
-
-            if (value.length > 2) {
-                value = value.substring(0, 2) + '/' + value.substring(2);
-            }
-
-            $(this).val(value);
-            clearCheckoutError('DatumIsteka');
-        });
-
-        $("#checkoutCvv").on('input', function() {
-            var value = $(this).val().replace(/\D/g, '');
-
-            if (value.length > 3) {
-                value = value.substring(0, 3);
-            }
-
-            $(this).val(value);
-            clearCheckoutError('Cvv');
-        });
-
-        function showCheckoutError(field, message) {
-            $('#checkout' + field).addClass('is-invalid border-danger');
-            $('#checkout' + field + 'Error').text(message).addClass('checkout-error');
-        }
-
-        function clearCheckoutError(field) {
-            $('#checkout' + field).removeClass('is-invalid border-danger');
-            $('#checkout' + field + 'Error').text('').removeClass('checkout-error');
-        }
-
-        function clearAllCheckoutErrors() {
-            $('#checkoutForm .form-control').removeClass('is-invalid border-danger');
-            $('#checkoutForm .error-message').text('').removeClass('checkout-error');
-        }
-
-        $('#checkoutModal').on('hidden.bs.modal', function() {
-            $('#checkoutForm')[0].reset();
-            clearAllCheckoutErrors();
-            $('#checkoutSubmitBtn').prop('disabled', false).text('Potvrdi kupovinu');
-        });
-
-        $("#groupPaymentForm").submit(function(e) {
-            e.preventDefault();
-
-            var selectedVehicles = [];
-            $(".vehicle-checkbox:checked").each(function() {
-                var vehicleId = $(this).val();
-                var vehicleName = $(this).data("name");
-                var vehiclePrice = $(this).data("price");
-
-                selectedVehicles.push({
-                    id: parseInt(vehicleId),
-                    naziv: vehicleName,
-                    cijena: vehiclePrice
-                });
-            });
-
-            if (selectedVehicles.length === 0) {
-                window.showAppFlashMessage("Molimo odaberite barem jedno vozilo za kupovinu.", "warning");
-                return;
-            }
-
-            var cardData = {
-                OdabranaVozilaJSON: JSON.stringify(selectedVehicles),
-                ImeVlasnika: $("#imeVlasnika").val(),
-                BrojKartice: $("#brojKartice").val(),
-                DatumIsteka: $("#datumIsteka").val(),
-                Cvv: $("#cvv").val()
-            };
-
-            $("#submitPayment").prop("disabled", true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Obrađivanje...');
-
-            $(".error-message").text("");
-            $(".form-control").removeClass("is-invalid");
+            var button = $(buttonSelector);
+            button.prop("disabled", true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> ' + cartTexts.processing);
 
             $.ajax({
-                url: '@Url.Action("IzvrsiPlacanjeSvih", "Korpa")',
-                type: 'POST',
-                data: cardData,
+                url: form.attr("action"),
+                type: "POST",
+                data: form.serialize(),
                 success: function(response) {
                     if (response.success) {
-
                         window.location.href = response.redirectUrl;
-                    } else {
-
-                        if (response.errors) {
-
-                            $.each(response.errors, function(field, message) {
-                                $("#" + field).addClass("is-invalid");
-                                $("#" + field + "Error").text(message);
-                            });
-
-                            for (var field in response.errors) {
-                                $("#" + field).focus();
-                                break;
-                            }
-                        } else if (response.message) {
-
-                            window.showAppFlashMessage(response.message, "error");
-                        }
-
-                        $("#submitPayment").prop("disabled", false).html('Potvrdi kupovinu');
+                        return;
                     }
+
+                    if (response.errors) {
+                        $.each(response.errors, function(field, message) {
+                            showError(prefix + field, message);
+                        });
+                    } else if (response.message) {
+                        $(".modal.show").modal("hide");
+                        window.showAppFlashMessage(cartTexts.paymentFailed + response.message, "error");
+                    }
+
+                    button.prop("disabled", false).html(cartTexts.confirmPurchase);
                 },
-                error: function() {
-                    window.showAppFlashMessage("Došlo je do greške prilikom obrade zahtjeva. Molimo pokušajte ponovo.", "error");
-                    $("#submitPayment").prop("disabled", false).html('Potvrdi kupovinu');
+                error: function(xhr, status, error) {
+                    $(".modal.show").modal("hide");
+                    var message = error ? cartTexts.requestErrorWithDetail + error : cartTexts.requestError;
+                    window.showAppFlashMessage(message, "error");
+                    button.prop("disabled", false).html(cartTexts.confirmPurchase);
                 }
             });
-        });
-
-    </script>
-
-    <style>
-
-        .form-control.is-invalid {
-            background-image: none;
         }
 
-        .error-message {
-            font-size: 0.875rem;
-            min-height: 20px;
-        }
+        function validatePaymentForm(prefix) {
+            var idPrefix = prefix || "";
+            var isValid = true;
+            var holderValue = $("#" + idPrefix + "ImeVlasnika").val().trim();
 
-        .border-danger {
-            border: 2px solid #dc3545 !important;
-        }
-
-        .form-control:focus {
-            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-        }
-
-        .stavka-korpe {
-            transition: transform 0.2s;
-        }
-
-            .stavka-korpe:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            if (!holderValue) {
+                showError(idPrefix + "ImeVlasnika", cartTexts.holderRequired);
+                isValid = false;
+            } else if (!holderValue.includes(" ")) {
+                showError(idPrefix + "ImeVlasnika", cartTexts.holderFullName);
+                isValid = false;
             }
-    </style>
+
+            var cardValue = $("#" + idPrefix + "BrojKartice").val().replace(/\s+/g, "");
+            if (!cardValue) {
+                showError(idPrefix + "BrojKartice", cartTexts.cardRequired);
+                isValid = false;
+            } else if (cardValue.length !== 16) {
+                showError(idPrefix + "BrojKartice", cartTexts.cardLength);
+                isValid = false;
+            }
+
+            var expiryValue = $("#" + idPrefix + "DatumIsteka").val().trim();
+            if (!expiryValue) {
+                showError(idPrefix + "DatumIsteka", cartTexts.expiryRequired);
+                isValid = false;
+            } else {
+                var parts = expiryValue.split("/");
+                if (parts.length !== 2 || !/^(0[1-9]|1[0-2])$/.test(parts[0]) || !/^\d{2}$/.test(parts[1])) {
+                    showError(idPrefix + "DatumIsteka", cartTexts.expiryFormat);
+                    isValid = false;
+                } else {
+                    var month = parseInt(parts[0]);
+                    var year = parseInt("20" + parts[1]);
+                    var now = new Date();
+                    if (year < now.getFullYear() || (year === now.getFullYear() && month < now.getMonth() + 1)) {
+                        showError(idPrefix + "DatumIsteka", cartTexts.cardExpired);
+                        isValid = false;
+                    }
+                }
+            }
+
+            var cvvValue = $("#" + idPrefix + "Cvv").val().trim();
+            if (!cvvValue) {
+                showError(idPrefix + "Cvv", cartTexts.cvvRequired);
+                isValid = false;
+            } else if (cvvValue.length !== 3) {
+                showError(idPrefix + "Cvv", cartTexts.cvvLength);
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        function showError(fieldId, message) {
+            $("#" + fieldId).addClass("is-invalid border-danger");
+            $("#" + fieldId + "Error").text(message);
+        }
+
+        function clearError(fieldId) {
+            $("#" + fieldId).removeClass("is-invalid border-danger");
+            $("#" + fieldId + "Error").text("");
+        }
+
+        function clearAllErrors(scope) {
+            var root = scope || $(document);
+            root.find(".form-control").removeClass("is-invalid border-danger");
+            root.find(".error-message").text("");
+        }
+
+        function resetPaymentForm(formSelector, buttonSelector) {
+            var form = $(formSelector);
+            if (form.length) {
+                form[0].reset();
+            }
+            clearAllErrors(form);
+            $(buttonSelector).prop("disabled", false).html(cartTexts.confirmPurchase);
+        }
+    </script>
 }

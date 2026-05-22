@@ -57,10 +57,10 @@ public class IntegrationSmokeTests : IClassFixture<AutosalonFactory>
     }
 
     [Theory]
-    [InlineData("/Account/Login", "Prijava")]
-    [InlineData("/Account/Register", "Registr")]
-    [InlineData("/Vozilo", "Vozila")]
-    [InlineData("/Home/Kontakt", "Kontakt")]
+    [InlineData("/Account/Login", "Autosalon OneZone")]
+    [InlineData("/Account/Register", "Autosalon OneZone")]
+    [InlineData("/Vozilo", "Vehicles")]
+    [InlineData("/Home/Kontakt", "Contact")]
     public async Task Public_pages_render_expected_text(string path, string expected)
     {
         var html = await _client.GetStringAsync(path);

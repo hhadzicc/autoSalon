@@ -188,7 +188,7 @@ public class ViewModelValidationTests
         yield return ["long model", Mutate(ValidVehicle(), x => x.Model = new string('a', 101)), nameof(AddVoziloViewModel.Model)];
         yield return ["missing year", Mutate(ValidVehicle(), x => x.Godiste = null), nameof(AddVoziloViewModel.Godiste)];
         yield return ["year too old", Mutate(ValidVehicle(), x => x.Godiste = 1899), nameof(AddVoziloViewModel.Godiste)];
-        yield return ["year too new", Mutate(ValidVehicle(), x => x.Godiste = 2026), nameof(AddVoziloViewModel.Godiste)];
+        yield return ["year too new", Mutate(ValidVehicle(), x => x.Godiste = 2027), nameof(AddVoziloViewModel.Godiste)];
         yield return ["missing fuel", Mutate(ValidVehicle(), x => x.Gorivo = ""), nameof(AddVoziloViewModel.Gorivo)];
         yield return ["missing engine", Mutate(ValidVehicle(), x => x.Kubikaza = null), nameof(AddVoziloViewModel.Kubikaza)];
         yield return ["negative engine", Mutate(ValidVehicle(), x => x.Kubikaza = 0), nameof(AddVoziloViewModel.Kubikaza)];

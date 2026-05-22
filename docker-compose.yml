@@ -30,7 +30,7 @@ services:
       ConnectionStrings__DefaultConnection: Server=db,1433;Database=AutoSalonDb;User Id=sa;Password=${MSSQL_SA_PASSWORD:-AutoSalon_Demo123!};TrustServerCertificate=True;MultipleActiveResultSets=true
       Database__ApplyMigrations: "true"
       Database__SeedDemoData: "true"
-      AdminUserSecrets__Email: ${DEMO_ADMIN_EMAIL:-runtyfly34@gmail.com}
+      AdminUserSecrets__Email: ${DEMO_ADMIN_EMAIL:-admin@autosalon.local}
       AdminUserSecrets__Password: ${DEMO_ADMIN_PASSWORD:-Admin123!}
       AdminUserSecrets__FirstName: ${DEMO_ADMIN_FIRST_NAME:-Demo}
       AdminUserSecrets__LastName: ${DEMO_ADMIN_LAST_NAME:-Admin}

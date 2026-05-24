@@ -3831,6 +3831,16 @@ a {
     padding-inline: 10px;
 }
 
+#profili-list-container .admin-self-action,
+#profili-list-container .admin-self-action:disabled {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    color: #64748b;
+    cursor: not-allowed;
+    opacity: 1;
+    box-shadow: none;
+}
+
 .date-cell {
     color: #334155;
     font-weight: 900;

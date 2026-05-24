@@ -20,7 +20,6 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.Extensions.Options;
 using Microsoft.Extensions.FileProviders;
 
 namespace AutosalonOneZone.Tests;
@@ -224,6 +223,53 @@ public class AdminLifecycleTests
     }
 
     [Fact]
+    public async Task Admin_vehicle_save_rejects_uploaded_file_with_invalid_image_signature()
+    {
+        await using var app = await TestApp.CreateAsync();
+        var admin = CreateAdminController(app);
+        var model = CreateVehicleForm("BMW", "M5", 2024, 145000, "Benzin");
+        model.Slika = CreateFile("fake.png", "image/png", [0x41, 0x42, 0x43, 0x44]);
+
+        var result = await admin.SaveVozilo(model);
+
+        var badRequest = Assert.IsType<BadRequestObjectResult>(result);
+        Assert.Contains("validna slika", JsonSerializer.Serialize(badRequest.Value));
+        Assert.False(await app.Db.Vozila.AnyAsync(v => v.Marka == "BMW" && v.Model == "M5"));
+    }
+
+    [Fact]
+    public async Task Admin_vehicle_save_rejects_invalid_image_content_type_without_inserting_vehicle()
+    {
+        await using var app = await TestApp.CreateAsync();
+        var admin = CreateAdminController(app);
+        var model = CreateVehicleForm("Porsche", "Panamera", 2024, 155000, "Benzin");
+        model.Slika = CreateImageFile("panamera.png", "application/octet-stream");
+
+        var result = await admin.SaveVozilo(model);
+
+        var badRequest = Assert.IsType<BadRequestObjectResult>(result);
+        Assert.Contains("validna slika", JsonSerializer.Serialize(badRequest.Value));
+        Assert.False(await app.Db.Vozila.AnyAsync(v => v.Marka == "Porsche" && v.Model == "Panamera"));
+    }
+
+    [Fact]
+    public async Task Admin_vehicle_save_rejects_invalid_fuel_before_file_is_persisted()
+    {
+        await using var app = await TestApp.CreateAsync();
+        var admin = CreateAdminController(app);
+        var model = CreateVehicleForm("Rimac", "Nevera", 2024, 2400000, "Steam");
+        model.Slika = CreateImageFile("nevera.png", "image/png");
+        var uploadFolder = Path.Combine(app.Environment.WebRootPath, "images/vozila");
+
+        var result = await admin.SaveVozilo(model);
+
+        var badRequest = Assert.IsType<BadRequestObjectResult>(result);
+        Assert.Contains("Gorivo", JsonSerializer.Serialize(badRequest.Value));
+        Assert.False(await app.Db.Vozila.AnyAsync(v => v.Marka == "Rimac" && v.Model == "Nevera"));
+        Assert.False(Directory.Exists(uploadFolder));
+    }
+
+    [Fact]
     public async Task Customer_flow_can_register_login_add_to_cart_buy_review_and_admin_delete_cleans_everything()
     {
         await using var app = await TestApp.CreateAsync();
@@ -239,8 +285,8 @@ public class AdminLifecycleTests
         Assert.Single(cart.StavkeKorpe);
         Assert.Equal(56900, cart.UkupnaCijena);
 
-        await cartController.IzvrsiPlacanje(
-            vehicle.VoziloID,
+        await cartController.IzvrsiPlacanjeSvih(
+            JsonSerializer.Serialize(new[] { new { id = vehicle.VoziloID, naziv = "Mercedes GLC", cijena = 56900m } }),
             "Demo Kupac",
             "4242424242424242",
             "12/30",
@@ -263,6 +309,60 @@ public class AdminLifecycleTests
         Assert.False(await app.Db.Recenzije.AnyAsync(r => r.KorisnikId == user.Id));
         Assert.False(await app.Db.Narudzbe.AnyAsync(n => n.KorisnikId == user.Id));
         Assert.False(await app.Db.Placanja.AnyAsync());
+    }
+
+    [Fact]
+    public async Task Buy_now_payment_validates_missing_fields_and_cleans_existing_cart_item_on_success()
+    {
+        await using var app = await TestApp.CreateAsync();
+        var user = await CreateUserAsync(app, "singlebuyer", "singlebuyer@example.com", "Kupac");
+        var vehicle = await AddVehicleAsync(app.Db, "Audi", "Q8", 112000);
+        var controller = CreateKorpaController(app, user);
+
+        var invalidResult = await controller.IzvrsiPlacanje(vehicle.VoziloID, "", null!, null!, null!);
+
+        var invalidJson = ToJson(Assert.IsType<JsonResult>(invalidResult));
+        Assert.False(invalidJson.GetProperty("success").GetBoolean());
+        var errors = invalidJson.GetProperty("errors");
+        Assert.True(errors.TryGetProperty("imeVlasnika", out _));
+        Assert.True(errors.TryGetProperty("brojKartice", out _));
+        Assert.True(errors.TryGetProperty("datumIsteka", out _));
+        Assert.True(errors.TryGetProperty("cvv", out _));
+        Assert.False(await app.Db.Narudzbe.AnyAsync(n => n.KorisnikId == user.Id));
+
+        await controller.DodajUKorpu(vehicle.VoziloID);
+        var cart = await app.Db.Korpe.Include(k => k.StavkeKorpe).SingleAsync(k => k.KorisnikId == user.Id);
+        Assert.Single(cart.StavkeKorpe);
+
+        var validResult = await controller.IzvrsiPlacanje(vehicle.VoziloID, "Demo Kupac", "4242424242424242", "12/30", "123");
+
+        var validJson = ToJson(Assert.IsType<JsonResult>(validResult));
+        Assert.True(validJson.GetProperty("success").GetBoolean());
+        Assert.Contains("/Korpa/Uspjeh", validJson.GetProperty("redirectUrl").GetString());
+        Assert.True(await app.Db.Narudzbe.AnyAsync(n => n.KorisnikId == user.Id));
+        Assert.True(await app.Db.Placanja.AnyAsync());
+        Assert.True(await app.Db.StavkeKorpe.AnyAsync(s => s.VoziloID == vehicle.VoziloID && s.NarudzbaID != null));
+        Assert.False(await app.Db.StavkeKorpe.AnyAsync(s => s.KorpaID == cart.KorpaID && s.VoziloID == vehicle.VoziloID));
+        Assert.Equal(0, (await app.Db.Korpe.SingleAsync(k => k.KorpaID == cart.KorpaID)).UkupnaCijena);
+    }
+
+    [Fact]
+    public async Task Purchased_vehicle_review_rejects_empty_and_overlong_comments_without_creating_review()
+    {
+        await using var app = await TestApp.CreateAsync();
+        var user = await CreateUserAsync(app, "reviewbuyer", "reviewbuyer@example.com", "Kupac");
+        var vehicle = await AddVehicleAsync(app.Db, "Volkswagen", "Golf", 28900);
+        await AddPurchasedVehicleAsync(app.Db, user, vehicle);
+        var controller = CreateProfilController(app, user);
+
+        await controller.DodajRecenziju(vehicle.VoziloID, 5, "   ");
+        Assert.False(await app.Db.Recenzije.AnyAsync(r => r.KorisnikId == user.Id && r.VoziloID == vehicle.VoziloID));
+
+        await controller.DodajRecenziju(vehicle.VoziloID, 5, new string('a', 1001));
+        Assert.False(await app.Db.Recenzije.AnyAsync(r => r.KorisnikId == user.Id && r.VoziloID == vehicle.VoziloID));
+
+        await controller.DodajRecenziju(vehicle.VoziloID, 5, "Korektan automobil.");
+        Assert.True(await app.Db.Recenzije.AnyAsync(r => r.KorisnikId == user.Id && r.VoziloID == vehicle.VoziloID));
     }
 
     [Fact]
@@ -418,6 +518,28 @@ public class AdminLifecycleTests
 
         Assert.IsType<BadRequestObjectResult>(invalidResult);
         Assert.Equal(StatusUpita.UObradi, (await app.Db.PodrskaUpiti.FindAsync(ticket.UpitID)).Status);
+    }
+
+    [Fact]
+    public async Task Admin_support_status_rejects_undefined_numeric_enum_value()
+    {
+        await using var app = await TestApp.CreateAsync();
+        var user = await CreateUserAsync(app, "numericstatus", "numericstatus@example.com", "Kupac");
+        var ticket = new Podrska
+        {
+            KorisnikId = user.Id,
+            Naslov = "Numeric status",
+            Sadrzaj = "Status ne smije prihvatiti nepoznat broj.",
+            DatumUpita = DateTime.UtcNow,
+            Status = StatusUpita.Poslat
+        };
+        app.Db.PodrskaUpiti.Add(ticket);
+        await app.Db.SaveChangesAsync();
+
+        var result = await CreateAdminController(app).UpdatePodrskaStatus(ticket.UpitID, "999");
+
+        Assert.IsType<BadRequestObjectResult>(result);
+        Assert.Equal(StatusUpita.Poslat, (await app.Db.PodrskaUpiti.FindAsync(ticket.UpitID)).Status);
     }
 
     [Fact]
@@ -640,8 +762,7 @@ public class AdminLifecycleTests
             app.Db,
             app.UserManager,
             NullLogger<KorpaController>.Instance,
-            new MockPaymentService(NullLogger<MockPaymentService>.Instance),
-            Options.Create(new StripeSettings { UseMockPayments = true }));
+            new MockPaymentService(NullLogger<MockPaymentService>.Instance));
 
         ConfigureController(controller, app.Provider, user);
         controller.Url = new TestUrlHelper(controller.ControllerContext);
@@ -767,7 +888,12 @@ public class AdminLifecycleTests
 
     private static IFormFile CreateImageFile(string fileName, string contentType)
     {
-        var content = new byte[] { 0x89, 0x50, 0x4E, 0x47 };
+        var content = new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
+        return CreateFile(fileName, contentType, content);
+    }
+
+    private static IFormFile CreateFile(string fileName, string contentType, byte[] content)
+    {
         var stream = new MemoryStream(content);
         return new FormFile(stream, 0, content.Length, "Slika", fileName)
         {
@@ -841,6 +967,30 @@ public class AdminLifecycleTests
             DatumPlacanja = DateTime.UtcNow,
             Iznos = vehicle.Cijena ?? 0,
             Status = StatusPlacanja.Uspjesno
+        });
+
+        await db.SaveChangesAsync();
+    }
+
+    private static async Task AddPurchasedVehicleAsync(ApplicationDbContext db, ApplicationUser user, Vozilo vehicle)
+    {
+        var order = new Narudzba
+        {
+            KorisnikId = user.Id,
+            DatumNarudzbe = DateTime.UtcNow,
+            Status = StatusNarudzbe.Placena,
+            UkupnaCijena = vehicle.Cijena ?? 0
+        };
+
+        db.Narudzbe.Add(order);
+        await db.SaveChangesAsync();
+
+        db.StavkeKorpe.Add(new StavkaKorpe
+        {
+            VoziloID = vehicle.VoziloID,
+            Kolicina = 1,
+            CijenaStavke = vehicle.Cijena ?? 0,
+            NarudzbaID = order.NarudzbaID
         });
 
         await db.SaveChangesAsync();

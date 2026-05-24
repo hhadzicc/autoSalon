@@ -1,9 +1,12 @@
 @model Autosalon_OneZone.ViewModels.Admin.ProfilListViewModel
+@using System.Security.Claims
 @using System.Text.Json
 
 @Html.AntiForgeryToken()
 
 @{
+    var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
+    var currentUserIsAdmin = User.IsInRole("Administrator");
     var profiliTexts = new Dictionary<string, string>
     {
         ["addUser"] = L["AdminAddUser"].Value,
@@ -105,6 +108,8 @@
 <script>
     $(document).ready(function () {
         const text = @Html.Raw(JsonSerializer.Serialize(profiliTexts));
+        const currentUserId = @Html.Raw(JsonSerializer.Serialize(currentUserId));
+        const currentUserIsAdmin = @Html.Raw(JsonSerializer.Serialize(currentUserIsAdmin));
 
         $(document).off('click', '.edit-profil-button');
         $(document).off('click', '#add-profil-button');
@@ -158,6 +163,17 @@
         }
 
         function profileActions(id, itemName) {
+            const isOwnAdminRow = currentUserIsAdmin &&
+                id &&
+                String(id).toLowerCase() === String(currentUserId).toLowerCase();
+
+            if (isOwnAdminRow) {
+                return '<div class="table-actions">' +
+                    '<button type="button" class="btn btn-sm btn-outline-secondary rounded-3 admin-self-action" disabled aria-disabled="true"><i class="bi bi-pencil-square me-1"></i>' + escapeHtml(text.edit) + '</button>' +
+                    '<button type="button" class="btn btn-sm btn-outline-secondary rounded-3 admin-self-action" disabled aria-disabled="true"><i class="bi bi-trash me-1"></i>' + escapeHtml(text.delete) + '</button>' +
+                    '</div>';
+            }
+
             return '<div class="table-actions">' +
                 '<button class="edit-profil-button btn btn-sm btn-outline-primary rounded-3" data-id="' + escapeHtml(id) + '"><i class="bi bi-pencil-square me-1"></i>' + escapeHtml(text.edit) + '</button>' +
                 '<button class="delete-profil-button btn btn-sm btn-outline-danger rounded-3" data-id="' + escapeAttribute(id) + '" data-confirm-delete="true" data-confirm-title="' + escapeAttribute(text.deleteTitle) + '" data-confirm-message="' + escapeAttribute(text.deleteMessage) + '" data-confirm-item="' + escapeAttribute(itemName) + '" data-confirm-action="' + escapeAttribute(text.deleteAction) + '"><i class="bi bi-trash me-1"></i>' + escapeHtml(text.delete) + '</button>' +

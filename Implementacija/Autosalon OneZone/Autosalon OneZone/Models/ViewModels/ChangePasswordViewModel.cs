@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Autosalon_OneZone.Validation;
 
 namespace Autosalon_OneZone.Models.ViewModels
 {
@@ -10,8 +11,8 @@ namespace Autosalon_OneZone.Models.ViewModels
         public string CurrentPassword { get; set; }
 
         [Required(ErrorMessage = "Validation.NewPasswordRequired")]
-        [StringLength(100, ErrorMessage = "Lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo.", MinimumLength = 8)]
-        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$", ErrorMessage = "Lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo.")]
+        [StringLength(100, ErrorMessage = PasswordPolicy.ErrorMessage, MinimumLength = PasswordPolicy.RequiredLength)]
+        [RegularExpression(PasswordPolicy.Pattern, ErrorMessage = PasswordPolicy.ErrorMessage)]
         [DataType(DataType.Password)]
         [Display(Name = "NewPassword")]
         public string NewPassword { get; set; }

@@ -176,3 +176,30 @@
         button.setAttribute("aria-label", isPassword ? (texts.hidePassword || "Hide password") : (texts.showPassword || "Show password"));
     });
 })();
+
+(() => {
+    if (window.validationMessagesInitialized || !window.jQuery || !window.jQuery.validator || !window.appTexts) {
+        return;
+    }
+
+    window.validationMessagesInitialized = true;
+
+    const texts = window.appTexts;
+    $.extend($.validator.messages, {
+        required: texts.validationRequired,
+        email: texts.validationEmail,
+        url: texts.validationUrl,
+        date: texts.validationDate,
+        dateISO: texts.validationDateIso,
+        number: texts.validationNumber,
+        digits: texts.validationDigits,
+        creditcard: texts.validationCreditCard,
+        equalTo: texts.validationEqualTo,
+        maxlength: $.validator.format(texts.validationMaxLength),
+        minlength: $.validator.format(texts.validationMinLength),
+        rangelength: $.validator.format(texts.validationRangeLength),
+        range: $.validator.format(texts.validationRange),
+        max: $.validator.format(texts.validationMax),
+        min: $.validator.format(texts.validationMin)
+    });
+})();

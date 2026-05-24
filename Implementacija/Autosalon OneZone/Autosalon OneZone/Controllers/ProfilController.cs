@@ -299,6 +299,20 @@ namespace Autosalon_OneZone.Controllers
                 return RedirectToAction("KupljeniArtikli");
             }
 
+            komentar = komentar?.Trim() ?? string.Empty;
+
+            if (string.IsNullOrWhiteSpace(komentar))
+            {
+                TempData["ErrorMessage"] = _localizer["CommentRequired"].Value;
+                return RedirectToAction("KupljeniArtikli");
+            }
+
+            if (komentar.Length > 1000)
+            {
+                TempData["ErrorMessage"] = _localizer["CommentMaxLength"].Value;
+                return RedirectToAction("KupljeniArtikli");
+            }
+
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {

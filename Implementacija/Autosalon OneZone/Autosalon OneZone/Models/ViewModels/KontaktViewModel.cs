@@ -10,6 +10,7 @@ namespace Autosalon_OneZone.ViewModels
         public string Naslov { get; set; }
 
         [Required(ErrorMessage = "Validation.MessageRequired")]
+        [StringLength(5000, ErrorMessage = "Validation.MessageMaxLength")]
         [Display(Name = "ContactMessage")]
         public string Sadrzaj { get; set; }
     }

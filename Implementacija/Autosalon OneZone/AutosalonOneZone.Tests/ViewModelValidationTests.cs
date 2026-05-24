@@ -1,5 +1,6 @@
 using Autosalon_OneZone.Models;
 using Autosalon_OneZone.Models.ViewModels;
+using Autosalon_OneZone.Validation;
 using Autosalon_OneZone.ViewModels;
 using Autosalon_OneZone.ViewModels.Admin;
 
@@ -7,7 +8,7 @@ namespace AutosalonOneZone.Tests;
 
 public class ViewModelValidationTests
 {
-    private const string PasswordPolicyMessage = "Lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo.";
+    private const string PasswordPolicyMessage = PasswordPolicy.ErrorMessage;
 
     private static RegisterViewModel ValidRegister() => new()
     {
@@ -74,10 +75,12 @@ public class ViewModelValidationTests
     {
         yield return ["missing username", Mutate(ValidRegister(), x => x.UserName = ""), nameof(RegisterViewModel.UserName)];
         yield return ["username with at sign", Mutate(ValidRegister(), x => x.UserName = "hamza@example"), nameof(RegisterViewModel.UserName)];
+        yield return ["username with local letters", Mutate(ValidRegister(), x => x.UserName = "hamzaš"), nameof(RegisterViewModel.UserName)];
         yield return ["username with dash", Mutate(ValidRegister(), x => x.UserName = "hamza-h"), nameof(RegisterViewModel.UserName)];
         yield return ["username with space", Mutate(ValidRegister(), x => x.UserName = "hamza h"), nameof(RegisterViewModel.UserName)];
         yield return ["missing email", Mutate(ValidRegister(), x => x.Email = ""), nameof(RegisterViewModel.Email)];
         yield return ["bad email", Mutate(ValidRegister(), x => x.Email = "not-email"), nameof(RegisterViewModel.Email)];
+        yield return ["email with local letters", Mutate(ValidRegister(), x => x.Email = "korisnik\u0161@example.com"), nameof(RegisterViewModel.Email)];
         yield return ["missing password", Mutate(ValidRegister(), x => x.Password = ""), nameof(RegisterViewModel.Password)];
         yield return ["short password", Mutate(ValidRegister(), x => x.Password = "Aa1"), nameof(RegisterViewModel.Password)];
         yield return ["password without digit", Mutate(ValidRegister(), x => x.Password = "ValidPass"), nameof(RegisterViewModel.Password)];
@@ -102,6 +105,8 @@ public class ViewModelValidationTests
         yield return ["numeric username", Mutate(ValidRegister(), x => x.UserName = "hamza123")];
         yield return ["spaced first name", Mutate(ValidRegister(), x => x.Ime = "Hamza Harun")];
         yield return ["spaced last name", Mutate(ValidRegister(), x => x.Prezime = "Hodzic Test")];
+        yield return ["local letters in name", Mutate(ValidRegister(), x => { x.Ime = "Željko"; x.Prezime = "Hadžić"; })];
+        yield return ["hyphenated name", Mutate(ValidRegister(), x => { x.Ime = "Ana-Marija"; x.Prezime = "Kovač"; })];
         yield return ["long valid password", Mutate(ValidRegister(), x => { x.Password = "StrongPass123"; x.ConfirmPassword = "StrongPass123"; })];
         yield return ["different email domain", Mutate(ValidRegister(), x => x.Email = "user@test.ba")];
         yield return ["max username", Mutate(ValidRegister(), x => x.UserName = new string('a', 100))];
@@ -117,6 +122,14 @@ public class ViewModelValidationTests
         yield return ["empty both", new LoginViewModel { LoginIdentifier = "", Password = "" }, nameof(LoginViewModel.LoginIdentifier)];
         yield return ["empty both password field", new LoginViewModel { LoginIdentifier = "", Password = "" }, nameof(LoginViewModel.Password)];
         yield return ["overlong email", Mutate(ValidLogin(), x => x.LoginIdentifier = new string('b', 300)), nameof(LoginViewModel.LoginIdentifier)];
+    }
+
+    public static IEnumerable<object[]> InvalidForgotPasswordCases()
+    {
+        yield return ["missing email", new ForgotPasswordViewModel { Email = "" }, nameof(ForgotPasswordViewModel.Email)];
+        yield return ["bad email", new ForgotPasswordViewModel { Email = "not-email" }, nameof(ForgotPasswordViewModel.Email)];
+        yield return ["email with local letters", new ForgotPasswordViewModel { Email = "korisnik\u0107@example.com" }, nameof(ForgotPasswordViewModel.Email)];
+        yield return ["null email", new ForgotPasswordViewModel { Email = null! }, nameof(ForgotPasswordViewModel.Email)];
     }
 
     public static IEnumerable<object[]> InvalidChangePasswordCases()
@@ -141,8 +154,12 @@ public class ViewModelValidationTests
         yield return ["missing last name", Mutate(ValidEditProfile(), x => x.Prezime = ""), nameof(EditProfileViewModel.Prezime)];
         yield return ["missing email", Mutate(ValidEditProfile(), x => x.Email = ""), nameof(EditProfileViewModel.Email)];
         yield return ["bad email", Mutate(ValidEditProfile(), x => x.Email = "bad"), nameof(EditProfileViewModel.Email)];
+        yield return ["email with local letters", Mutate(ValidEditProfile(), x => x.Email = "hamza\u0111@example.com"), nameof(EditProfileViewModel.Email)];
         yield return ["missing username", Mutate(ValidEditProfile(), x => x.UserName = ""), nameof(EditProfileViewModel.UserName)];
         yield return ["username with at sign", Mutate(ValidEditProfile(), x => x.UserName = "hamza@example"), nameof(EditProfileViewModel.UserName)];
+        yield return ["username with local letters", Mutate(ValidEditProfile(), x => x.UserName = "hamzaš"), nameof(EditProfileViewModel.UserName)];
+        yield return ["first name with digit", Mutate(ValidEditProfile(), x => x.Ime = "Hamza1"), nameof(EditProfileViewModel.Ime)];
+        yield return ["last name with digit", Mutate(ValidEditProfile(), x => x.Prezime = "Hodzic2"), nameof(EditProfileViewModel.Prezime)];
         yield return ["long first name", Mutate(ValidEditProfile(), x => x.Ime = new string('a', 101)), nameof(EditProfileViewModel.Ime)];
         yield return ["long last name", Mutate(ValidEditProfile(), x => x.Prezime = new string('a', 101)), nameof(EditProfileViewModel.Prezime)];
         yield return ["long username", Mutate(ValidEditProfile(), x => x.UserName = new string('a', 101)), nameof(EditProfileViewModel.UserName)];
@@ -154,8 +171,10 @@ public class ViewModelValidationTests
     {
         yield return ["missing username", Mutate(ValidAdminProfile(), x => x.UserName = ""), nameof(AddProfilViewModel.UserName)];
         yield return ["username with at sign", Mutate(ValidAdminProfile(), x => x.UserName = "admin@example"), nameof(AddProfilViewModel.UserName)];
+        yield return ["username with local letters", Mutate(ValidAdminProfile(), x => x.UserName = "prodavacš"), nameof(AddProfilViewModel.UserName)];
         yield return ["missing email", Mutate(ValidAdminProfile(), x => x.Email = ""), nameof(AddProfilViewModel.Email)];
         yield return ["bad email", Mutate(ValidAdminProfile(), x => x.Email = "bad"), nameof(AddProfilViewModel.Email)];
+        yield return ["email with local letters", Mutate(ValidAdminProfile(), x => x.Email = "prodavac\u017e@example.com"), nameof(AddProfilViewModel.Email)];
         yield return ["short password", Mutate(ValidAdminProfile(), x => x.Password = "Aa1"), nameof(AddProfilViewModel.Password)];
         yield return ["without digit", Mutate(ValidAdminProfile(), x => x.Password = "ValidPass"), nameof(AddProfilViewModel.Password)];
         yield return ["without uppercase", Mutate(ValidAdminProfile(), x => x.Password = "valid123"), nameof(AddProfilViewModel.Password)];
@@ -164,6 +183,10 @@ public class ViewModelValidationTests
         yield return ["overlong password", Mutate(ValidAdminProfile(), x => x.Password = "Aa1" + new string('a', 100)), nameof(AddProfilViewModel.Password)];
         yield return ["null username", Mutate(ValidAdminProfile(), x => x.UserName = null!), nameof(AddProfilViewModel.UserName)];
         yield return ["null email", Mutate(ValidAdminProfile(), x => x.Email = null!), nameof(AddProfilViewModel.Email)];
+        yield return ["missing first name", Mutate(ValidAdminProfile(), x => x.Ime = ""), nameof(AddProfilViewModel.Ime)];
+        yield return ["missing last name", Mutate(ValidAdminProfile(), x => x.Prezime = ""), nameof(AddProfilViewModel.Prezime)];
+        yield return ["first name with digit", Mutate(ValidAdminProfile(), x => x.Ime = "Demo1"), nameof(AddProfilViewModel.Ime)];
+        yield return ["last name with digit", Mutate(ValidAdminProfile(), x => x.Prezime = "Seller2"), nameof(AddProfilViewModel.Prezime)];
         yield return ["invalid optional edit password", Mutate(ValidAdminProfile(), x => { x.UserId = "1"; x.Password = "weak"; x.ConfirmPassword = "weak"; }), nameof(AddProfilViewModel.Password)];
         yield return ["valid optional edit empty confirm only mismatch", Mutate(ValidAdminProfile(), x => { x.UserId = "1"; x.Password = ""; x.ConfirmPassword = "Something123"; }), nameof(AddProfilViewModel.ConfirmPassword)];
         yield return ["too long password edit", Mutate(ValidAdminProfile(), x => { x.UserId = "1"; x.Password = "Aa1" + new string('a', 100); }), nameof(AddProfilViewModel.Password)];
@@ -174,6 +197,7 @@ public class ViewModelValidationTests
         yield return ["missing title", new KontaktViewModel { Naslov = "", Sadrzaj = "Poruka" }, nameof(KontaktViewModel.Naslov)];
         yield return ["missing content", new KontaktViewModel { Naslov = "Naslov", Sadrzaj = "" }, nameof(KontaktViewModel.Sadrzaj)];
         yield return ["long title", new KontaktViewModel { Naslov = new string('a', 201), Sadrzaj = "Poruka" }, nameof(KontaktViewModel.Naslov)];
+        yield return ["long content", new KontaktViewModel { Naslov = "Naslov", Sadrzaj = new string('a', 5001) }, nameof(KontaktViewModel.Sadrzaj)];
         yield return ["null title", new KontaktViewModel { Naslov = null!, Sadrzaj = "Poruka" }, nameof(KontaktViewModel.Naslov)];
         yield return ["null content", new KontaktViewModel { Naslov = "Naslov", Sadrzaj = null! }, nameof(KontaktViewModel.Sadrzaj)];
         yield return ["both empty title", new KontaktViewModel { Naslov = "", Sadrzaj = "" }, nameof(KontaktViewModel.Naslov)];
@@ -190,6 +214,7 @@ public class ViewModelValidationTests
         yield return ["year too old", Mutate(ValidVehicle(), x => x.Godiste = 1899), nameof(AddVoziloViewModel.Godiste)];
         yield return ["year too new", Mutate(ValidVehicle(), x => x.Godiste = 2027), nameof(AddVoziloViewModel.Godiste)];
         yield return ["missing fuel", Mutate(ValidVehicle(), x => x.Gorivo = ""), nameof(AddVoziloViewModel.Gorivo)];
+        yield return ["invalid fuel", Mutate(ValidVehicle(), x => x.Gorivo = "Steam"), nameof(AddVoziloViewModel.Gorivo)];
         yield return ["missing engine", Mutate(ValidVehicle(), x => x.Kubikaza = null), nameof(AddVoziloViewModel.Kubikaza)];
         yield return ["negative engine", Mutate(ValidVehicle(), x => x.Kubikaza = 0), nameof(AddVoziloViewModel.Kubikaza)];
         yield return ["missing color", Mutate(ValidVehicle(), x => x.Boja = ""), nameof(AddVoziloViewModel.Boja)];
@@ -248,6 +273,13 @@ public class ViewModelValidationTests
     [Theory]
     [MemberData(nameof(InvalidLoginCases))]
     public void LoginViewModel_rejects_invalid_values(string _, LoginViewModel model, string member)
+    {
+        Assert.True(ValidationTestHelper.HasErrorFor(model, member));
+    }
+
+    [Theory]
+    [MemberData(nameof(InvalidForgotPasswordCases))]
+    public void ForgotPasswordViewModel_rejects_invalid_values(string _, ForgotPasswordViewModel model, string member)
     {
         Assert.True(ValidationTestHelper.HasErrorFor(model, member));
     }
@@ -343,6 +375,16 @@ public class ViewModelValidationTests
     public void AddVoziloViewModel_rejects_invalid_values(string _, AddVoziloViewModel model, string member)
     {
         Assert.True(ValidationTestHelper.HasErrorFor(model, member));
+    }
+
+    [Fact]
+    public void AddVoziloViewModel_allows_electric_vehicle_without_displacement()
+    {
+        var model = ValidVehicle();
+        model.Gorivo = "Elektro";
+        model.Kubikaza = null;
+
+        Assert.True(ValidationTestHelper.IsValid(model));
     }
 
     [Theory]

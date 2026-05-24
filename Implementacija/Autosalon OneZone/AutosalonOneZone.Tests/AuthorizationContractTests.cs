@@ -25,14 +25,24 @@ public class AuthorizationContractTests
     [InlineData(nameof(AdminPanelController.GetEditProfilForm))]
     [InlineData(nameof(AdminPanelController.SaveProfil))]
     [InlineData(nameof(AdminPanelController.DeleteProfil))]
-    [InlineData(nameof(AdminPanelController.DeletePodrska))]
-    [InlineData(nameof(AdminPanelController.UpdatePodrskaStatus))]
     public void Administrator_only_admin_actions_are_explicitly_restricted(string actionName)
     {
         var method = FindAction(actionName);
         var authorize = method.GetCustomAttributes<AuthorizeAttribute>().ToList();
 
         Assert.Contains(authorize, attribute => attribute.Roles == "Administrator");
+    }
+
+    [Theory]
+    [InlineData(nameof(AdminPanelController.DeletePodrska))]
+    [InlineData(nameof(AdminPanelController.UpdatePodrskaStatus))]
+    public void Support_mutations_are_available_to_admin_and_seller_roles(string actionName)
+    {
+        var method = FindAction(actionName);
+
+        Assert.NotNull(method.GetCustomAttribute<HttpPostAttribute>());
+        Assert.NotNull(method.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>());
+        Assert.Contains(method.GetCustomAttributes<AuthorizeAttribute>(), attribute => attribute.Roles == "Administrator,Prodavac");
     }
 
     [Theory]
@@ -48,8 +58,6 @@ public class AuthorizationContractTests
     }
 
     [Theory]
-    [InlineData(nameof(AdminPanelController.UpdatePodrskaStatus))]
-    [InlineData(nameof(AdminPanelController.DeletePodrska))]
     [InlineData(nameof(AdminPanelController.SaveProfil))]
     [InlineData(nameof(AdminPanelController.DeleteProfil))]
     public void Sensitive_admin_only_mutations_require_post_antiforgery_and_admin_role(string actionName)

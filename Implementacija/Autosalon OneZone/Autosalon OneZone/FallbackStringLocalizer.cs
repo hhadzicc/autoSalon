@@ -7,6 +7,8 @@ namespace Autosalon_OneZone
         private static readonly Dictionary<string, string> Values = new()
         {
             ["PasswordPolicyError"] = "Lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo.",
+            ["Validation.MessageMaxLength"] = "Poruka može imati najviše 5000 znakova.",
+            ["CommentMaxLength"] = "Komentar može imati najviše 1000 znakova.",
             ["UserSavedSuccess"] = "Korisnik uspješno sačuvan.",
             ["UserDeletedSuccess"] = "Korisnik uspješno obrisan.",
             ["VehicleNotFound"] = "Vozilo nije pronađeno.",
@@ -19,9 +21,6 @@ namespace Autosalon_OneZone
             ["CartRemoveSuccess"] = "Vozilo je uklonjeno iz korpe.",
             ["CartVehicleNotFoundInCart"] = "Vozilo nije pronađeno u korpi.",
             ["CartRemoveError"] = "Došlo je do greške pri uklanjanju vozila iz korpe. Molimo pokušajte ponovo.",
-            ["CartQuantityMin"] = "Količina ne može biti manja od 1.",
-            ["CartQuantityUpdated"] = "Količina je ažurirana.",
-            ["CartQuantityError"] = "Došlo je do greške pri ažuriranju količine.",
             ["CartClearedSuccess"] = "Korpa je uspješno očišćena.",
             ["CartClearError"] = "Došlo je do greške pri čišćenju korpe.",
             ["PaymentNameRequired"] = "Ime vlasnika je obavezno.",
@@ -35,6 +34,8 @@ namespace Autosalon_OneZone
             ["PaymentCardExpired"] = "Kartica je istekla.",
             ["PaymentCvvRequired"] = "CVV kod je obavezan.",
             ["PaymentCvvLength"] = "CVV kod mora sadržavati tačno 3 cifre.",
+            ["InvalidFuelValue"] = "Odabrana vrijednost za gorivo nije validna.",
+            ["InvalidImageContentError"] = "Uploadovani fajl mora biti validna slika.",
             ["PaymentProcessingError"] = "Došlo je do greške prilikom obrade plaćanja. Molimo pokušajte ponovo.",
             ["PaymentOrderRecorded"] = "Plaćanje je uspješno izvršeno. Vaša narudžba je evidentirana.",
             ["NoVehiclesSelectedForPurchase"] = "Odaberite najmanje jedno vozilo za kupovinu.",

@@ -1,4 +1,3 @@
-using Autosalon_OneZone.Data.Helpers;
 using Autosalon_OneZone.Models;
 using Autosalon_OneZone.Data;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +12,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
 using System.Text.Json;
 using Autosalon_OneZone.Services;
-using Microsoft.Extensions.Options;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Localization;
 
@@ -23,7 +21,6 @@ namespace Autosalon_OneZone.Controllers
     public class KorpaController : Controller
     {
         private readonly IPaymentService _paymentService;
-        private readonly StripeSettings _stripeSettings;
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<KorpaController> _logger;
@@ -34,11 +31,9 @@ namespace Autosalon_OneZone.Controllers
             UserManager<ApplicationUser> userManager,
             ILogger<KorpaController> logger,
             IPaymentService paymentService,
-            IOptions<StripeSettings> stripeSettings,
             IStringLocalizer<SharedResource>? localizer = null)
         {
             _paymentService = paymentService;
-            _stripeSettings = stripeSettings.Value;
             _context = context;
             _userManager = userManager;
             _logger = logger;
@@ -197,19 +192,23 @@ namespace Autosalon_OneZone.Controllers
                 {
                     errors.Add("imeVlasnika", _localizer["PaymentNameRequired"].Value);
                 }
-                else if (!ImeVlasnika.Contains(" "))
+                else if (!ImeVlasnika.Trim().Contains(" "))
                 {
                     errors.Add("imeVlasnika", _localizer["PaymentNameFullRequired"].Value);
                 }
 
-                string cleanCardNumber = new string(BrojKartice.Where(char.IsDigit).ToArray());
-                if (string.IsNullOrWhiteSpace(cleanCardNumber))
+                string cleanCardNumber = string.Empty;
+                if (string.IsNullOrWhiteSpace(BrojKartice))
                 {
                     errors.Add("brojKartice", _localizer["PaymentCardRequired"].Value);
                 }
-                else if (cleanCardNumber.Length != 16)
+                else
                 {
-                    errors.Add("brojKartice", _localizer["PaymentCardLength"].Value);
+                    cleanCardNumber = new string(BrojKartice.Where(char.IsDigit).ToArray());
+                    if (cleanCardNumber.Length != 16)
+                    {
+                        errors.Add("brojKartice", _localizer["PaymentCardLength"].Value);
+                    }
                 }
 
                 if (string.IsNullOrWhiteSpace(DatumIsteka))
@@ -246,14 +245,18 @@ namespace Autosalon_OneZone.Controllers
                     }
                 }
 
-                string cleanCvv = new string(Cvv.Where(char.IsDigit).ToArray());
-                if (string.IsNullOrWhiteSpace(cleanCvv))
+                string cleanCvv = string.Empty;
+                if (string.IsNullOrWhiteSpace(Cvv))
                 {
                     errors.Add("cvv", _localizer["PaymentCvvRequired"].Value);
                 }
-                else if (cleanCvv.Length != 3)
+                else
                 {
-                    errors.Add("cvv", _localizer["PaymentCvvLength"].Value);
+                    cleanCvv = new string(Cvv.Where(char.IsDigit).ToArray());
+                    if (cleanCvv.Length != 3)
+                    {
+                        errors.Add("cvv", _localizer["PaymentCvvLength"].Value);
+                    }
                 }
 
                 if (errors.Any())
@@ -290,7 +293,7 @@ namespace Autosalon_OneZone.Controllers
                     ExpirationYear = year,
                     Cvv = cleanCvv,
                     Amount = cijenaVozila,
-                    CustomerName = ImeVlasnika,
+                    CustomerName = ImeVlasnika.Trim(),
                     Email = user.Email,
                     Description = $"Purchase of {vozilo.Marka} {vozilo.Model}",
                     ProductId = VoziloID
@@ -345,7 +348,9 @@ namespace Autosalon_OneZone.Controllers
 
                             userCart.UkupnaCijena -= cartItem.CijenaStavke;
                             if (userCart.UkupnaCijena < 0)
+                            {
                                 userCart.UkupnaCijena = 0;
+                            }
 
                             _context.Korpe.Update(userCart);
                         }
@@ -353,7 +358,7 @@ namespace Autosalon_OneZone.Controllers
 
                     await _context.SaveChangesAsync();
 
-                    _logger.LogInformation($"Uspješno izvršeno plaćanje za vozilo ID: {VoziloID}, iznos: {cijenaVozila}, korisnik: {user.Id}");
+                    _logger.LogInformation("Uspjesno izvrseno placanje za vozilo ID: {VoziloID}, iznos: {Iznos}, korisnik: {KorisnikId}", VoziloID, cijenaVozila, user.Id);
 
                     return Json(new
                     {
@@ -362,20 +367,16 @@ namespace Autosalon_OneZone.Controllers
                         redirectUrl = Url.Action("Uspjeh", "Korpa", new { id = narudzba.NarudzbaID })
                     });
                 }
-                else
-                {
-                    _logger.LogWarning($"Neuspješno plaćanje za vozilo ID: {VoziloID}, iznos: {cijenaVozila}, korisnik: {user.Id}, razlog: {result.Message}");
 
-                    return Json(new { success = false, message = result.Message });
-                }
+                _logger.LogWarning("Neuspjesno placanje za vozilo ID: {VoziloID}, iznos: {Iznos}, korisnik: {KorisnikId}, razlog: {Razlog}", VoziloID, cijenaVozila, user.Id, result.Message);
+                return Json(new { success = false, message = result.Message });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Greška prilikom izvršavanja plaćanja: {ex.Message}");
+                _logger.LogError(ex, "Greska prilikom izvrsavanja placanja: {Message}", ex.Message);
                 return Json(new { success = false, message = _localizer["PaymentProcessingError"].Value });
             }
         }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
@@ -394,7 +395,18 @@ namespace Autosalon_OneZone.Controllers
                     NumberHandling = JsonNumberHandling.AllowReadingFromString
                 };
 
-                var odabranaVozila = JsonSerializer.Deserialize<List<OdabranoVoziloViewModel>>(OdabranaVozilaJSON, options);
+                List<OdabranoVoziloViewModel>? odabranaVozila = null;
+                if (!string.IsNullOrWhiteSpace(OdabranaVozilaJSON))
+                {
+                    try
+                    {
+                        odabranaVozila = JsonSerializer.Deserialize<List<OdabranoVoziloViewModel>>(OdabranaVozilaJSON, options);
+                    }
+                    catch (JsonException)
+                    {
+                        return Json(new { success = false, message = _localizer["NoVehiclesSelectedForPurchase"].Value });
+                    }
+                }
 
                 if (odabranaVozila == null || !odabranaVozila.Any())
                 {
@@ -412,14 +424,18 @@ namespace Autosalon_OneZone.Controllers
                     errors.Add("checkoutImeVlasnika", _localizer["PaymentNameFullRequired"].Value);
                 }
 
-                string cleanCardNumber = new string(BrojKartice.Where(char.IsDigit).ToArray());
-                if (string.IsNullOrWhiteSpace(cleanCardNumber))
+                string cleanCardNumber = string.Empty;
+                if (string.IsNullOrWhiteSpace(BrojKartice))
                 {
                     errors.Add("checkoutBrojKartice", _localizer["PaymentCardRequired"].Value);
                 }
-                else if (cleanCardNumber.Length != 16)
+                else
                 {
-                    errors.Add("checkoutBrojKartice", _localizer["PaymentCardLength"].Value);
+                    cleanCardNumber = new string(BrojKartice.Where(char.IsDigit).ToArray());
+                    if (cleanCardNumber.Length != 16)
+                    {
+                        errors.Add("checkoutBrojKartice", _localizer["PaymentCardLength"].Value);
+                    }
                 }
 
                 if (string.IsNullOrWhiteSpace(DatumIsteka))
@@ -456,14 +472,18 @@ namespace Autosalon_OneZone.Controllers
                     }
                 }
 
-                string cleanCvv = new string(Cvv.Where(char.IsDigit).ToArray());
-                if (string.IsNullOrWhiteSpace(cleanCvv))
+                string cleanCvv = string.Empty;
+                if (string.IsNullOrWhiteSpace(Cvv))
                 {
                     errors.Add("checkoutCvv", _localizer["PaymentCvvRequired"].Value);
                 }
-                else if (cleanCvv.Length != 3)
+                else
                 {
-                    errors.Add("checkoutCvv", _localizer["PaymentCvvLength"].Value);
+                    cleanCvv = new string(Cvv.Where(char.IsDigit).ToArray());
+                    if (cleanCvv.Length != 3)
+                    {
+                        errors.Add("checkoutCvv", _localizer["PaymentCvvLength"].Value);
+                    }
                 }
 
                 if (errors.Any())
@@ -617,34 +637,6 @@ namespace Autosalon_OneZone.Controllers
             }
         }
 
-        private bool IsValidName(string name)
-        {
-            if (string.IsNullOrWhiteSpace(name))
-                return false;
-
-            return name.All(c => char.IsLetter(c) || char.IsWhiteSpace(c));
-        }
-
-        private bool ValidateExpiryDate(string expiryDate)
-        {
-            if (!System.Text.RegularExpressions.Regex.IsMatch(expiryDate, @"^(0[1-9]|1[0-2])\/[0-9]{2}$"))
-                return false;
-
-            string[] parts = expiryDate.Split('/');
-            if (parts.Length != 2)
-                return false;
-
-            if (!int.TryParse(parts[0], out int month) || !int.TryParse(parts[1], out int year))
-                return false;
-
-            year += 2000;
-
-            DateTime now = DateTime.Now;
-            DateTime cardExpiry = new DateTime(year, month, DateTime.DaysInMonth(year, month));
-
-            return cardExpiry >= new DateTime(now.Year, now.Month, 1);
-        }
-
         public async Task<IActionResult> Uspjeh(int id)
         {
             var user = await _userManager.GetUserAsync(User);
@@ -718,71 +710,6 @@ namespace Autosalon_OneZone.Controllers
             {
                 _logger.LogError(ex, $"Greška pri uklanjanju vozila iz korpe: {ex.Message}");
                 TempData["ErrorMessage"] = _localizer["CartRemoveError"].Value;
-                return RedirectToAction("Index");
-            }
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AzurirajKolicinu(int stavkaId, int kolicina)
-        {
-            try
-            {
-                if (kolicina < 1)
-                {
-                    TempData["ErrorMessage"] = _localizer["CartQuantityMin"].Value;
-                    return RedirectToAction("Index");
-                }
-
-                var user = await _userManager.GetUserAsync(User);
-                var korpa = await _context.Korpe
-                    .FirstOrDefaultAsync(k => k.KorisnikId == user.Id);
-
-                if (korpa != null)
-                {
-                    var stavka = await _context.StavkeKorpe
-                        .FirstOrDefaultAsync(s => s.StavkaID == stavkaId && s.KorpaID == korpa.KorpaID);
-
-                    if (stavka != null)
-                    {
-                        _logger.LogInformation($"Ažuriranje količine stavke ID: {stavkaId}, stara kol: {stavka.Kolicina}, nova kol: {kolicina}");
-
-                        decimal staraVrijednost = stavka.Kolicina * stavka.CijenaStavke;
-                        decimal novaVrijednost = kolicina * stavka.CijenaStavke;
-
-                        stavka.Kolicina = kolicina;
-                        _context.StavkeKorpe.Update(stavka);
-
-                        korpa.UkupnaCijena = korpa.UkupnaCijena - staraVrijednost + novaVrijednost;
-                        _context.Korpe.Update(korpa);
-
-                        await _context.SaveChangesAsync();
-
-                        TempData["SuccessMessage"] = _localizer["CartQuantityUpdated"].Value;
-                    }
-                }
-
-                return RedirectToAction("Index");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Greška pri ažuriranju količine: {ex.Message}");
-                TempData["ErrorMessage"] = _localizer["CartQuantityError"].Value;
-                return RedirectToAction("Index");
-            }
-        }
-
-        [HttpGet]
-        public IActionResult Checkout()
-        {
-            try
-            {
-                return View();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Greška pri prikazivanju checkout stranice: {ex.Message}");
-                TempData["ErrorMessage"] = _localizer["CommonError"].Value;
                 return RedirectToAction("Index");
             }
         }

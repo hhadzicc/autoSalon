@@ -541,6 +541,9 @@
   <data name="Validation.MessageRequired" xml:space="preserve">
     <value>Message is required.</value>
   </data>
+  <data name="Validation.MessageMaxLength" xml:space="preserve">
+    <value>Message can have at most 5000 characters.</value>
+  </data>
   <data name="ContactSubject" xml:space="preserve">
     <value>Subject</value>
   </data>
@@ -970,12 +973,6 @@
   <data name="LoginToBuy" xml:space="preserve">
     <value>Log in to buy</value>
   </data>
-  <data name="CreateVehicleTitle" xml:space="preserve">
-    <value>Add new vehicle</value>
-  </data>
-  <data name="CreateVehicleText" xml:space="preserve">
-    <value>Enter basic vehicle information and save it to the offer.</value>
-  </data>
   <data name="BackToList" xml:space="preserve">
     <value>Back to list</value>
   </data>
@@ -1333,6 +1330,9 @@
   <data name="CommentRequired" xml:space="preserve">
     <value>Comment cannot be empty.</value>
   </data>
+  <data name="CommentMaxLength" xml:space="preserve">
+    <value>Comment can have at most 1000 characters.</value>
+  </data>
   <data name="NoPurchasedItems" xml:space="preserve">
     <value>There are no purchased items yet.</value>
   </data>
@@ -1512,6 +1512,9 @@
   </data>
   <data name="AllowedImageExtensionsError" xml:space="preserve">
     <value>Only these file extensions are allowed: .jpg, .jpeg, .png, .gif, .bmp</value>
+  </data>
+  <data name="InvalidImageContentError" xml:space="preserve">
+    <value>The uploaded file must be a valid image.</value>
   </data>
   <data name="ImageSizeLimitError" xml:space="preserve">
     <value>Image size must not exceed 5MB.</value>
@@ -1801,12 +1804,6 @@
   <data name="CartRemoveError" xml:space="preserve">
     <value>An error occurred while removing the vehicle from the cart. Please try again.</value>
   </data>
-  <data name="CartQuantityUpdated" xml:space="preserve">
-    <value>Quantity updated.</value>
-  </data>
-  <data name="CartQuantityError" xml:space="preserve">
-    <value>An error occurred while updating quantity.</value>
-  </data>
   <data name="CartClearedSuccess" xml:space="preserve">
     <value>Cart cleared successfully.</value>
   </data>
@@ -1986,9 +1983,6 @@
   </data>
   <data name="PaymentCvvDigits" xml:space="preserve">
     <value>CVV code must contain exactly 3 digits.</value>
-  </data>
-  <data name="CartQuantityMin" xml:space="preserve">
-    <value>Quantity cannot be less than 1.</value>
   </data>
   <data name="CommonTryAgain" xml:space="preserve">
     <value>An error occurred. Please try again.</value>

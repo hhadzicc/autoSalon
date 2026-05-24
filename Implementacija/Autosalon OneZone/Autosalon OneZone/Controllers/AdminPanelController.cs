@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Autosalon_OneZone.Data;
 using Autosalon_OneZone.Models;
+using Autosalon_OneZone.Validation;
 using Autosalon_OneZone.ViewModels.Admin;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
@@ -26,13 +27,6 @@ namespace Autosalon_OneZone.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
 
-        private static bool MeetsPasswordPolicy(string password)
-        {
-            return password.Length >= 8
-                && password.Any(char.IsDigit)
-                && password.Any(char.IsLower)
-                && password.Any(char.IsUpper);
-        }
 
         public AdminPanelController(
             ApplicationDbContext context,
@@ -128,6 +122,69 @@ namespace Autosalon_OneZone.Controllers
             return PartialView("_AdminDashboard", viewModel);
         }
 
+
+        private static List<string> NormalizeRoleNames(IEnumerable<string>? roleNames)
+        {
+            if (roleNames == null)
+            {
+                return new List<string>();
+            }
+
+            return roleNames
+                .Where(role => !string.IsNullOrWhiteSpace(role))
+                .SelectMany(role => role.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+                .Where(role => !string.IsNullOrWhiteSpace(role))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+        }
+
+        private async Task<(List<string> ValidRoles, List<string> InvalidRoles)> ValidateRequestedRolesAsync(IEnumerable<string>? requestedRoleNames)
+        {
+            var requestedRoles = NormalizeRoleNames(requestedRoleNames);
+            if (!requestedRoles.Any())
+            {
+                return (new List<string>(), new List<string>());
+            }
+
+            var availableRoles = await _roleManager.Roles
+                .Select(role => role.Name)
+                .Where(roleName => roleName != null)
+                .ToListAsync();
+
+            var availableRoleLookup = availableRoles.ToDictionary(
+                roleName => roleName!,
+                roleName => roleName!,
+                StringComparer.OrdinalIgnoreCase);
+
+            var validRoles = new List<string>();
+            var invalidRoles = new List<string>();
+
+            foreach (var requestedRole in requestedRoles)
+            {
+                if (availableRoleLookup.TryGetValue(requestedRole, out var validRole))
+                {
+                    validRoles.Add(validRole);
+                }
+                else
+                {
+                    invalidRoles.Add(requestedRole);
+                }
+            }
+
+            return (validRoles, invalidRoles);
+        }
+
+        private static bool HasRole(IEnumerable<string> roles, string roleName)
+        {
+            return roles.Contains(roleName, StringComparer.OrdinalIgnoreCase);
+        }
+
+        private async Task<bool> IsOnlyAdministratorAsync(ApplicationUser user)
+        {
+            var adminUsers = await _userManager.GetUsersInRoleAsync("Administrator");
+            return adminUsers.Count == 1 && adminUsers[0].Id == user.Id;
+        }
+
         private static string GetUserDisplayName(ApplicationUser? user)
         {
             if (user == null)
@@ -178,6 +235,21 @@ namespace Autosalon_OneZone.Controllers
             return PartialView("_AdminVozila", viewModel);
         }
 
+        private static bool HasValidImageSignature(IFormFile file, string extension)
+        {
+            using var stream = file.OpenReadStream();
+            Span<byte> header = stackalloc byte[8];
+            var bytesRead = stream.Read(header);
+
+            return extension switch
+            {
+                ".jpg" or ".jpeg" => bytesRead >= 3 && header[0] == 0xFF && header[1] == 0xD8 && header[2] == 0xFF,
+                ".png" => bytesRead >= 8 && header[0] == 0x89 && header[1] == 0x50 && header[2] == 0x4E && header[3] == 0x47 && header[4] == 0x0D && header[5] == 0x0A && header[6] == 0x1A && header[7] == 0x0A,
+                ".gif" => bytesRead >= 6 && header[0] == 0x47 && header[1] == 0x49 && header[2] == 0x46 && header[3] == 0x38 && (header[4] == 0x37 || header[4] == 0x39) && header[5] == 0x61,
+                ".bmp" => bytesRead >= 2 && header[0] == 0x42 && header[1] == 0x4D,
+                _ => false
+            };
+        }
         public IActionResult GetAddVoziloForm()
         {
             return PartialView("_AddVoziloForm", new AddVoziloViewModel());
@@ -227,17 +299,32 @@ namespace Autosalon_OneZone.Controllers
             if (viewModel.Slika != null)
             {
                 var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp" };
+                var allowedContentTypes = new[] { "image/jpeg", "image/png", "image/gif", "image/bmp" };
                 var extension = Path.GetExtension(viewModel.Slika.FileName).ToLowerInvariant();
+                var hasAllowedExtension = allowedExtensions.Contains(extension);
 
-                if (!allowedExtensions.Contains(extension))
+                if (!hasAllowedExtension)
                 {
                     ModelState.AddModelError("Slika", _localizer["AllowedImageExtensionsError"]);
+                }
+
+                if (string.IsNullOrWhiteSpace(viewModel.Slika.ContentType) ||
+                    !allowedContentTypes.Contains(viewModel.Slika.ContentType, StringComparer.OrdinalIgnoreCase) ||
+                    (hasAllowedExtension && !HasValidImageSignature(viewModel.Slika, extension)))
+                {
+                    ModelState.AddModelError("Slika", _localizer["InvalidImageContentError"]);
                 }
 
                 if (viewModel.Slika.Length > 5 * 1024 * 1024)
                 {
                     ModelState.AddModelError("Slika", _localizer["ImageSizeLimitError"]);
                 }
+            }
+
+            if (!Enum.TryParse<TipGoriva>(viewModel.Gorivo, ignoreCase: true, out var gorivo) ||
+                !Enum.IsDefined(typeof(TipGoriva), gorivo))
+            {
+                ModelState.AddModelError("Gorivo", _localizer["InvalidFuelValue"]);
             }
 
             if (!ModelState.IsValid)
@@ -250,7 +337,6 @@ namespace Autosalon_OneZone.Controllers
                     )
                 });
             }
-
             string uniqueFileName = null;
 
             if (viewModel.Slika != null)
@@ -286,22 +372,7 @@ namespace Autosalon_OneZone.Controllers
             vozilo.Model = viewModel.Model;
             vozilo.Godiste = viewModel.Godiste;
 
-            try
-            {
-                vozilo.Gorivo = (TipGoriva)Enum.Parse(typeof(TipGoriva), viewModel.Gorivo);
-            }
-            catch (ArgumentException)
-            {
-                ModelState.AddModelError("Gorivo", _localizer["InvalidFuelValue"]);
-                return BadRequest(new
-                {
-                    errors = ModelState.ToDictionary(
-                        kvp => kvp.Key,
-                        kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray()
-                    )
-                });
-            }
-
+            vozilo.Gorivo = gorivo;
             vozilo.Kubikaza = viewModel.Kubikaza;
             vozilo.Boja = viewModel.Boja;
             vozilo.Kilometraza = viewModel.Kilometraza;
@@ -444,6 +515,7 @@ namespace Autosalon_OneZone.Controllers
         public async Task<JsonResult> GetPodrskaJson(string? searchQuery = null, int page = 1)
         {
             int pageSize = int.MaxValue;
+            page = 1;
 
             var query = _context.PodrskaUpiti
                 .Include(p => p.Korisnik)
@@ -491,7 +563,7 @@ namespace Autosalon_OneZone.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator,Prodavac")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeletePodrska(int id)
         {
@@ -508,7 +580,7 @@ namespace Autosalon_OneZone.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator,Prodavac")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdatePodrskaStatus(int id, string status)
         {
@@ -518,7 +590,8 @@ namespace Autosalon_OneZone.Controllers
                 return NotFound();
             }
 
-            if (Enum.TryParse<StatusUpita>(status, out var statusEnum))
+            if (Enum.TryParse<StatusUpita>(status, ignoreCase: true, out var statusEnum) &&
+                Enum.IsDefined(typeof(StatusUpita), statusEnum))
             {
                 upit.Status = statusEnum;
                 await _context.SaveChangesAsync();
@@ -536,6 +609,7 @@ namespace Autosalon_OneZone.Controllers
         public async Task<JsonResult> GetRecenzijeJson(string? searchQuery = null, string? korisnikFilter = null, string? voziloFilter = null, int page = 1)
         {
             int pageSize = int.MaxValue;
+            page = 1;
 
             var query = _context.Recenzije
                 .Include(r => r.Korisnik)
@@ -626,6 +700,7 @@ namespace Autosalon_OneZone.Controllers
             string? direction = null)
         {
             int pageSize = int.MaxValue;
+            page = 1;
 
             var query = _context.Vozila.AsQueryable();
 
@@ -634,9 +709,11 @@ namespace Autosalon_OneZone.Controllers
                 query = query.Where(v => (v.Marka != null && v.Marka.Contains(searchQuery)) || (v.Model != null && v.Model.Contains(searchQuery)));
             }
 
-            if (!string.IsNullOrWhiteSpace(gorivoFilter) && Enum.TryParse<TipGoriva>(gorivoFilter, true, out var gorivo))
+            if (!string.IsNullOrWhiteSpace(gorivoFilter) &&
+                Enum.TryParse<TipGoriva>(gorivoFilter, true, out var gorivoFilterValue) &&
+                Enum.IsDefined(typeof(TipGoriva), gorivoFilterValue))
             {
-                query = query.Where(v => v.Gorivo == gorivo);
+                query = query.Where(v => v.Gorivo == gorivoFilterValue);
             }
 
             sort = string.IsNullOrWhiteSpace(sort) ? null : sort.ToLowerInvariant();
@@ -723,6 +800,7 @@ namespace Autosalon_OneZone.Controllers
         public async Task<JsonResult> GetProfiliJson(string? searchQuery = null, int page = 1, string? roleFilter = null)
         {
             int pageSize = int.MaxValue;
+            page = 1;
 
             var query = _context.Users.AsQueryable();
 
@@ -839,7 +917,7 @@ namespace Autosalon_OneZone.Controllers
                     {
                         ModelState.AddModelError(nameof(viewModel.ConfirmPassword), _localizer["NewPasswordMismatch"]);
                     }
-                    else if (!MeetsPasswordPolicy(viewModel.Password))
+                    else if (!PasswordPolicy.IsValid(viewModel.Password))
                     {
                         ModelState.AddModelError(nameof(viewModel.Password), _localizer["PasswordPolicyError"]);
                     }
@@ -853,7 +931,7 @@ namespace Autosalon_OneZone.Controllers
             {
                 ModelState.AddModelError(nameof(viewModel.Password), _localizer["PasswordRequired"]);
             }
-            else if (!MeetsPasswordPolicy(viewModel.Password))
+            else if (!PasswordPolicy.IsValid(viewModel.Password))
             {
                 ModelState.AddModelError(nameof(viewModel.Password), _localizer["PasswordPolicyError"]);
             }
@@ -865,6 +943,14 @@ namespace Autosalon_OneZone.Controllers
             if (viewModel.OdabraneRole != null && viewModel.OdabraneRole.Count == 0 && Request.Form["OdabraneRole"].Count > 0)
             {
                 viewModel.OdabraneRole = new List<string> { Request.Form["OdabraneRole"].ToString() };
+            }
+
+            var roleValidation = await ValidateRequestedRolesAsync(viewModel.OdabraneRole);
+            viewModel.OdabraneRole = roleValidation.ValidRoles;
+
+            if (roleValidation.InvalidRoles.Any())
+            {
+                ModelState.AddModelError(nameof(viewModel.OdabraneRole), $"Nevalidne uloge: {string.Join(", ", roleValidation.InvalidRoles)}");
             }
 
             if (!ModelState.IsValid)
@@ -974,19 +1060,70 @@ namespace Autosalon_OneZone.Controllers
                     }
                 }
             }
-
+            var currentRoles = await _userManager.GetRolesAsync(user);
             if (viewModel.OdabraneRole != null && viewModel.OdabraneRole.Any())
             {
-                var currentRoles = await _userManager.GetRolesAsync(user);
-                await _userManager.RemoveFromRolesAsync(user, currentRoles);
-                await _userManager.AddToRolesAsync(user, viewModel.OdabraneRole);
-            }
-            else
-            {
-                var currentRoles = await _userManager.GetRolesAsync(user);
-                if (!currentRoles.Any())
+                var removesAdministratorRole = HasRole(currentRoles, "Administrator") && !HasRole(viewModel.OdabraneRole, "Administrator");
+                if (removesAdministratorRole)
                 {
-                    await _userManager.AddToRoleAsync(user, "Kupac");
+                    var currentUserId = _userManager.GetUserId(User);
+                    if (user.Id == currentUserId)
+                    {
+                        return BadRequest(new
+                        {
+                            identityErrors = new[] { "Ne mozete ukloniti Administrator ulogu sa vlastitog naloga." }
+                        });
+                    }
+
+                    if (await IsOnlyAdministratorAsync(user))
+                    {
+                        return BadRequest(new
+                        {
+                            identityErrors = new[] { "Nije moguce ukloniti Administrator ulogu sa jedinog administratorskog naloga." }
+                        });
+                    }
+                }
+
+                var rolesToAdd = viewModel.OdabraneRole
+                    .Except(currentRoles, StringComparer.OrdinalIgnoreCase)
+                    .ToList();
+                var rolesToRemove = currentRoles
+                    .Except(viewModel.OdabraneRole, StringComparer.OrdinalIgnoreCase)
+                    .ToList();
+
+                if (rolesToAdd.Any())
+                {
+                    var addRolesResult = await _userManager.AddToRolesAsync(user, rolesToAdd);
+                    if (!addRolesResult.Succeeded)
+                    {
+                        return BadRequest(new
+                        {
+                            identityErrors = addRolesResult.Errors.Select(e => e.Description).ToArray()
+                        });
+                    }
+                }
+
+                if (rolesToRemove.Any())
+                {
+                    var removeRolesResult = await _userManager.RemoveFromRolesAsync(user, rolesToRemove);
+                    if (!removeRolesResult.Succeeded)
+                    {
+                        return BadRequest(new
+                        {
+                            identityErrors = removeRolesResult.Errors.Select(e => e.Description).ToArray()
+                        });
+                    }
+                }
+            }
+            else if (!currentRoles.Any())
+            {
+                var addDefaultRoleResult = await _userManager.AddToRoleAsync(user, "Kupac");
+                if (!addDefaultRoleResult.Succeeded)
+                {
+                    return BadRequest(new
+                    {
+                        identityErrors = addDefaultRoleResult.Errors.Select(e => e.Description).ToArray()
+                    });
                 }
             }
 
@@ -1004,6 +1141,12 @@ namespace Autosalon_OneZone.Controllers
                 if (user == null)
                 {
                     return NotFound();
+                }
+
+                var currentUserId = _userManager.GetUserId(User);
+                if (user.Id == currentUserId && await _userManager.IsInRoleAsync(user, "Administrator"))
+                {
+                    return BadRequest(new { errorMessage = "Ne mozete obrisati vlastiti administratorski nalog." });
                 }
 
                 var userOrders = await _context.Narudzbe

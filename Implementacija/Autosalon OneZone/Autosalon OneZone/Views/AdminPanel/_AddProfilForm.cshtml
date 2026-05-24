@@ -35,25 +35,25 @@
 
     <div class="form-group">
         <label asp-for="UserName">@L["Username"]</label>
-        <input asp-for="UserName" class="form-control" pattern="[A-Za-z0-9]+" title="@L["Validation.UsernameAlphanumeric"]" required />
+        <input asp-for="UserName" class="form-control" pattern="@UserInputPatterns.UsernameHtml" title="@L["Validation.UsernameAlphanumeric"]" required />
         <span asp-validation-for="UserName" class="text-danger"></span>
     </div>
 
     <div class="form-group">
         <label asp-for="Email">@L["Email"]</label>
-        <input asp-for="Email" class="form-control" type="email" required />
+        <input asp-for="Email" class="form-control" type="email" required pattern="@UserInputPatterns.EmailHtml" />
         <span asp-validation-for="Email" class="text-danger"></span>
     </div>
 
     <div class="form-group">
         <label asp-for="Ime">@L["FirstName"]</label>
-        <input asp-for="Ime" class="form-control" pattern="[\p{L}\s]+" title="@L["Validation.FirstNameLettersOnly"]" required />
+        <input asp-for="Ime" class="form-control" pattern="@UserInputPatterns.PersonNameHtml" title="@L["Validation.FirstNameLettersOnly"]" required />
         <span asp-validation-for="Ime" class="text-danger"></span>
     </div>
 
     <div class="form-group">
         <label asp-for="Prezime">@L["LastName"]</label>
-        <input asp-for="Prezime" class="form-control" pattern="[\p{L}\s]+" title="@L["Validation.LastNameLettersOnly"]" required />
+        <input asp-for="Prezime" class="form-control" pattern="@UserInputPatterns.PersonNameHtml" title="@L["Validation.LastNameLettersOnly"]" required />
         <span asp-validation-for="Prezime" class="text-danger"></span>
     </div>
 
@@ -62,7 +62,7 @@
         <div class="form-group">
             <label asp-for="Password">@L["Password"]</label>
             <div class="password-wrapper">
-                <input asp-for="Password" class="form-control password-input" type="password" required minlength="8" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}" title="@L["PasswordPolicyError"]" autocomplete="new-password" />
+                <input asp-for="Password" class="form-control password-input" type="password" required minlength="@PasswordPolicy.RequiredLength" pattern="@PasswordPolicy.HtmlPattern" title="@L["PasswordPolicyError"]" autocomplete="new-password" />
                 <button type="button" class="password-toggle" aria-label="@L["ShowPassword"]">
                     <i class="bi bi-eye"></i>
                 </button>
@@ -86,7 +86,7 @@
         <div class="form-group">
             <label asp-for="Password">@L["NewPassword"] <span class="text-muted fw-normal">(@L["Optional"])</span></label>
             <div class="password-wrapper">
-                <input asp-for="Password" class="form-control password-input" type="password" autocomplete="new-password" placeholder="@L["AdminNewPasswordPlaceholder"]" minlength="8" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}" title="@L["PasswordPolicyError"]" />
+                <input asp-for="Password" class="form-control password-input" type="password" autocomplete="new-password" placeholder="@L["AdminNewPasswordPlaceholder"]" minlength="@PasswordPolicy.RequiredLength" pattern="@PasswordPolicy.HtmlPattern" title="@L["PasswordPolicyError"]" />
                 <button type="button" class="password-toggle" aria-label="@L["ShowPassword"]">
                     <i class="bi bi-eye"></i>
                 </button>
@@ -135,7 +135,7 @@
         form.off();
 
         $("#Ime, #Prezime").on("input", function () {
-            const cleanValue = $(this).val().replace(/[^\p{L}\s]/gu, '');
+            const cleanValue = $(this).val().replace(/[^\p{L}\s-]/gu, '');
             $(this).val(cleanValue);
         });
 
@@ -164,11 +164,11 @@
                 },
                 Ime: {
                     required: true,
-                    pattern: /^[\p{L}\s]+$/u
+                    pattern: /^[\p{L}\s-]+$/u
                 },
                 Prezime: {
                     required: true,
-                    pattern: /^[\p{L}\s]+$/u
+                    pattern: /^[\p{L}\s-]+$/u
                 }
             },
             messages: {
@@ -201,12 +201,14 @@
             }
         });
 
+        const passwordPattern = new RegExp(@Html.Raw(JsonSerializer.Serialize(PasswordPolicy.Pattern)));
+
         $("#Password").rules("add", {
             required: function () {
                 return $("#UserId").val().length === 0;
             },
-            minlength: 8,
-            pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/,
+            minlength: @PasswordPolicy.RequiredLength,
+            pattern: passwordPattern,
             messages: {
                 required: text.passwordRequired,
                 minlength: text.passwordPolicy,

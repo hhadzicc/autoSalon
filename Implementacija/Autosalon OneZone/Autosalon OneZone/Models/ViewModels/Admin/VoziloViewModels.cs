@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Autosalon_OneZone.Models;
+using Autosalon_OneZone.Validation;
 using Microsoft.AspNetCore.Http;
 
 namespace Autosalon_OneZone.ViewModels.Admin
@@ -42,7 +44,7 @@ namespace Autosalon_OneZone.ViewModels.Admin
 
         [Required(ErrorMessage = "Validation.VehicleColorRequired")]
         [MaxLength(50, ErrorMessage = "Validation.VehicleColorMaxLength")]
-        [RegularExpression(@"^[a-zA-ZčćžšđČĆŽŠĐ\s-]+$", ErrorMessage = "Validation.VehicleColorLettersOnly")]
+        [RegularExpression(UserInputPatterns.PersonName, ErrorMessage = "Validation.VehicleColorLettersOnly")]
         [Display(Name = "VehicleColor")]
         public string? Boja { get; set; }
 
@@ -66,16 +68,24 @@ namespace Autosalon_OneZone.ViewModels.Admin
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            if (!string.Equals(Gorivo, "Elektro", System.StringComparison.OrdinalIgnoreCase) &&
-                !Kubikaza.HasValue)
+            if (string.IsNullOrWhiteSpace(Gorivo) ||
+                !System.Enum.TryParse<TipGoriva>(Gorivo, ignoreCase: true, out var tipGoriva) ||
+                !System.Enum.IsDefined(typeof(TipGoriva), tipGoriva))
+            {
+                yield return new ValidationResult(
+                    "InvalidFuelValue",
+                    new[] { nameof(Gorivo) });
+                yield break;
+            }
+
+            if (tipGoriva != TipGoriva.Elektro && !Kubikaza.HasValue)
             {
                 yield return new ValidationResult(
                     "Validation.VehicleDisplacementRequired",
                     new[] { nameof(Kubikaza) });
             }
 
-            if (Kubikaza.HasValue && Kubikaza.Value <= 0 &&
-                !string.Equals(Gorivo, "Elektro", System.StringComparison.OrdinalIgnoreCase))
+            if (Kubikaza.HasValue && Kubikaza.Value <= 0 && tipGoriva != TipGoriva.Elektro)
             {
                 yield return new ValidationResult(
                     "Validation.VehicleDisplacementPositive",
@@ -88,12 +98,5 @@ namespace Autosalon_OneZone.ViewModels.Admin
     {
         public string? PostojecaSlikaPath { get; set; }
         public bool ZadrzatiPostojecuSliku { get; set; } = true;
-    }
-
-    public class VoziloDetailsViewModel
-    {
-        public Autosalon_OneZone.Models.Vozilo? Vozilo { get; set; }
-        public List<Autosalon_OneZone.Models.Recenzija>? Recenzije { get; set; }
-        public double ProsjecnaOcjena { get; set; } = 0;
     }
 }

@@ -15,7 +15,6 @@
         </div>
     </div>
 </section>
-
 <section class="auth-section">
     <div class="container">
         <div class="row justify-content-center">
@@ -34,32 +33,32 @@
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label asp-for="Ime" class="form-label">@L["FirstName"]</label>
-                                <input asp-for="Ime" type="text" class="form-control" placeholder="@L["FirstName"]" required pattern="[A-Za-z\s]+" />
+                                <input asp-for="Ime" type="text" class="form-control" placeholder="@L["FirstName"]" required pattern="@UserInputPatterns.PersonNameHtml" />
                                 <span asp-validation-for="Ime" class="text-danger"></span>
                             </div>
 
                             <div class="col-md-6">
                                 <label asp-for="Prezime" class="form-label">@L["LastName"]</label>
-                                <input asp-for="Prezime" type="text" class="form-control" placeholder="@L["LastName"]" required pattern="[A-Za-z\s]+" />
+                                <input asp-for="Prezime" type="text" class="form-control" placeholder="@L["LastName"]" required pattern="@UserInputPatterns.PersonNameHtml" />
                                 <span asp-validation-for="Prezime" class="text-danger"></span>
                             </div>
 
                             <div class="col-12">
                                 <label asp-for="UserName" class="form-label">@L["Username"]</label>
-                                <input asp-for="UserName" type="text" class="form-control" placeholder="@L["Username"]" required pattern="[A-Za-z0-9]+" />
+                                <input asp-for="UserName" type="text" class="form-control" placeholder="@L["Username"]" required pattern="@UserInputPatterns.UsernameHtml" />
                                 <span asp-validation-for="UserName" class="text-danger"></span>
                             </div>
 
                             <div class="col-12">
                                 <label asp-for="Email" class="form-label">@L["EmailAddress"]</label>
-                                <input asp-for="Email" type="email" class="form-control" placeholder="@L["EmailAddress"]" autocomplete="email" required />
+                                <input asp-for="Email" type="email" class="form-control" placeholder="@L["EmailAddress"]" autocomplete="email" required pattern="@UserInputPatterns.EmailHtml" />
                                 <span asp-validation-for="Email" class="text-danger"></span>
                             </div>
 
                             <div class="col-md-6">
                                 <label asp-for="Password" class="form-label">@L["AuthPassword"]</label>
                                 <div class="password-wrapper">
-                                    <input asp-for="Password" type="password" class="form-control password-input" placeholder="@L["AuthPassword"]" autocomplete="new-password" required minlength="8" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}" title="@L["PasswordPolicyError"]" />
+                                    <input asp-for="Password" type="password" class="form-control password-input" placeholder="@L["AuthPassword"]" autocomplete="new-password" required minlength="@PasswordPolicy.RequiredLength" pattern="@PasswordPolicy.HtmlPattern" title="@L["PasswordPolicyError"]" />
                                     <button type="button" class="password-toggle" aria-label="@L["ShowPassword"]">
                                         <i class="bi bi-eye"></i>
                                     </button>
@@ -95,9 +94,3 @@
         </div>
     </div>
 </section>
-
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-}

@@ -541,6 +541,9 @@
   <data name="Validation.MessageRequired" xml:space="preserve">
     <value>Poruka je obavezna.</value>
   </data>
+  <data name="Validation.MessageMaxLength" xml:space="preserve">
+    <value>Poruka može imati najviše 5000 znakova.</value>
+  </data>
   <data name="ContactSubject" xml:space="preserve">
     <value>Naslov</value>
   </data>
@@ -970,12 +973,6 @@
   <data name="LoginToBuy" xml:space="preserve">
     <value>Prijava za kupovinu</value>
   </data>
-  <data name="CreateVehicleTitle" xml:space="preserve">
-    <value>Dodaj novo vozilo</value>
-  </data>
-  <data name="CreateVehicleText" xml:space="preserve">
-    <value>Unesite osnovne podatke vozila i sačuvajte ga u ponudu.</value>
-  </data>
   <data name="BackToList" xml:space="preserve">
     <value>Nazad na listu</value>
   </data>
@@ -1333,6 +1330,9 @@
   <data name="CommentRequired" xml:space="preserve">
     <value>Komentar ne može biti prazan.</value>
   </data>
+  <data name="CommentMaxLength" xml:space="preserve">
+    <value>Komentar može imati najviše 1000 znakova.</value>
+  </data>
   <data name="NoPurchasedItems" xml:space="preserve">
     <value>Još uvijek nema kupljenih artikala.</value>
   </data>
@@ -1512,6 +1512,9 @@
   </data>
   <data name="AllowedImageExtensionsError" xml:space="preserve">
     <value>Dozvoljena su samo sljede?a pro?irenja fajlova: .jpg, .jpeg, .png, .gif, .bmp</value>
+  </data>
+  <data name="InvalidImageContentError" xml:space="preserve">
+    <value>Uploadovani fajl mora biti validna slika.</value>
   </data>
   <data name="ImageSizeLimitError" xml:space="preserve">
     <value>Veli?ina slike ne smije prelaziti 5MB.</value>
@@ -1801,12 +1804,6 @@
   <data name="CartRemoveError" xml:space="preserve">
     <value>Do?lo je do gre?ke pri uklanjanju vozila iz korpe. Molimo poku?ajte ponovo.</value>
   </data>
-  <data name="CartQuantityUpdated" xml:space="preserve">
-    <value>Koli?ina je a?urirana.</value>
-  </data>
-  <data name="CartQuantityError" xml:space="preserve">
-    <value>Do?lo je do gre?ke pri a?uriranju koli?ine.</value>
-  </data>
   <data name="CartClearedSuccess" xml:space="preserve">
     <value>Korpa je uspje?no o?i??ena.</value>
   </data>
@@ -1986,9 +1983,6 @@
   </data>
   <data name="PaymentCvvDigits" xml:space="preserve">
     <value>CVV kod mora sadr?avati ta?no 3 cifre.</value>
-  </data>
-  <data name="CartQuantityMin" xml:space="preserve">
-    <value>Koli?ina ne mo?e biti manja od 1.</value>
   </data>
   <data name="CommonTryAgain" xml:space="preserve">
     <value>Do?lo je do gre?ke. Molimo poku?ajte ponovo.</value>

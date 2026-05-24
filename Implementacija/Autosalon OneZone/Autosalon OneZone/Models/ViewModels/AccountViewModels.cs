@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Autosalon_OneZone.Validation;
 
 namespace Autosalon_OneZone.Models.ViewModels
 {
@@ -7,17 +8,18 @@ namespace Autosalon_OneZone.Models.ViewModels
         [Required(ErrorMessage = "Validation.UsernameRequired")]
         [Display(Name = "Username")]
         [MaxLength(100)]
-        [RegularExpression(@"^[a-zA-Z0-9]+$", ErrorMessage = "Validation.UsernameAlphanumeric")]
+        [RegularExpression(UserInputPatterns.Username, ErrorMessage = "Validation.UsernameAlphanumeric")]
         public string UserName { get; set; }
 
         [Required(ErrorMessage = "Validation.EmailRequired")]
         [EmailAddress(ErrorMessage = "Validation.EmailValid")]
+        [RegularExpression(UserInputPatterns.Email, ErrorMessage = "Validation.EmailValid")]
         [Display(Name = "EmailAddress")]
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Validation.PasswordRequired")]
-        [StringLength(100, ErrorMessage = "Lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo.", MinimumLength = 8)]
-        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$", ErrorMessage = "Lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo.")]
+        [StringLength(100, ErrorMessage = PasswordPolicy.ErrorMessage, MinimumLength = PasswordPolicy.RequiredLength)]
+        [RegularExpression(PasswordPolicy.Pattern, ErrorMessage = PasswordPolicy.ErrorMessage)]
         [DataType(DataType.Password)]
         [Display(Name = "AuthPassword")]
         public string Password { get; set; }
@@ -31,13 +33,13 @@ namespace Autosalon_OneZone.Models.ViewModels
         [Required(ErrorMessage = "Validation.FirstNameRequired")]
         [Display(Name = "FirstName")]
         [MaxLength(100)]
-        [RegularExpression(@"^[a-zA-Z\s]+$", ErrorMessage = "Validation.FirstNameLettersOnly")]
+        [RegularExpression(UserInputPatterns.PersonName, ErrorMessage = "Validation.FirstNameLettersOnly")]
         public string Ime { get; set; }
 
         [Required(ErrorMessage = "Validation.LastNameRequired")]
         [Display(Name = "LastName")]
         [MaxLength(100)]
-        [RegularExpression(@"^[a-zA-Z\s]+$", ErrorMessage = "Validation.LastNameLettersOnly")]
+        [RegularExpression(UserInputPatterns.PersonName, ErrorMessage = "Validation.LastNameLettersOnly")]
         public string Prezime { get; set; }
     }
 
@@ -61,6 +63,7 @@ namespace Autosalon_OneZone.Models.ViewModels
     {
         [Required(ErrorMessage = "Validation.EmailRequired")]
         [EmailAddress(ErrorMessage = "Validation.EmailValid")]
+        [RegularExpression(UserInputPatterns.Email, ErrorMessage = "Validation.EmailValid")]
         [Display(Name = "EmailAddress")]
         public string Email { get; set; }
     }
@@ -74,8 +77,8 @@ namespace Autosalon_OneZone.Models.ViewModels
         public string Code { get; set; }
 
         [Required(ErrorMessage = "Validation.NewPasswordRequired")]
-        [StringLength(100, ErrorMessage = "Lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo.", MinimumLength = 8)]
-        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$", ErrorMessage = "Lozinka mora imati najmanje 8 karaktera, jednu cifru, jedno malo i jedno veliko slovo.")]
+        [StringLength(100, ErrorMessage = PasswordPolicy.ErrorMessage, MinimumLength = PasswordPolicy.RequiredLength)]
+        [RegularExpression(PasswordPolicy.Pattern, ErrorMessage = PasswordPolicy.ErrorMessage)]
         [DataType(DataType.Password)]
         [Display(Name = "NewPassword")]
         public string Password { get; set; }

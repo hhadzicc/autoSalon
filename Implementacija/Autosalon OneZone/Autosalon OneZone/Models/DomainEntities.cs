@@ -1,18 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Autosalon_OneZone.Validation;
 using Microsoft.AspNetCore.Identity;
 
 namespace Autosalon_OneZone.Models
 {
-    public enum VrstaRacuna
-    {
-        Administrator,
-        Prodavac,
-        Kupac,
-        Gost
-    }
-
     public enum TipGoriva
     {
         Benzin,
@@ -52,10 +45,12 @@ namespace Autosalon_OneZone.Models
     {
         [Required]
         [MaxLength(100)]
+        [RegularExpression(UserInputPatterns.PersonName)]
         public string Ime { get; set; }
 
         [Required]
         [MaxLength(100)]
+        [RegularExpression(UserInputPatterns.PersonName)]
         public string Prezime { get; set; }
 
         public Korpa Korpa { get; set; }

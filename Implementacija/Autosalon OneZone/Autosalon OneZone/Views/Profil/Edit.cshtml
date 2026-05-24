@@ -31,25 +31,25 @@
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label asp-for="Ime" class="form-label">@L["FirstName"]</label>
-                                <input asp-for="Ime" type="text" class="form-control" placeholder="@L["FirstName"]" required pattern="[A-Za-z\s]+" />
+                                <input asp-for="Ime" type="text" class="form-control" placeholder="@L["FirstName"]" required pattern="@UserInputPatterns.PersonNameHtml" />
                                 <span asp-validation-for="Ime" class="text-danger"></span>
                             </div>
 
                             <div class="col-md-6">
                                 <label asp-for="Prezime" class="form-label">@L["LastName"]</label>
-                                <input asp-for="Prezime" type="text" class="form-control" placeholder="@L["LastName"]" required pattern="[A-Za-z\s]+" />
+                                <input asp-for="Prezime" type="text" class="form-control" placeholder="@L["LastName"]" required pattern="@UserInputPatterns.PersonNameHtml" />
                                 <span asp-validation-for="Prezime" class="text-danger"></span>
                             </div>
 
                             <div class="col-12">
                                 <label asp-for="Email" class="form-label">@L["EmailAddress"]</label>
-                                <input asp-for="Email" type="email" class="form-control" placeholder="@L["EmailAddress"]" required />
+                                <input asp-for="Email" type="email" class="form-control" placeholder="@L["EmailAddress"]" required pattern="@UserInputPatterns.EmailHtml" />
                                 <span asp-validation-for="Email" class="text-danger"></span>
                             </div>
 
                             <div class="col-12">
                                 <label asp-for="UserName" class="form-label">@L["Username"]</label>
-                                <input asp-for="UserName" type="text" class="form-control" placeholder="@L["Username"]" required pattern="[A-Za-z0-9]+" />
+                                <input asp-for="UserName" type="text" class="form-control" placeholder="@L["Username"]" required pattern="@UserInputPatterns.UsernameHtml" />
                                 <span asp-validation-for="UserName" class="text-danger"></span>
                             </div>
                         </div>
@@ -105,7 +105,7 @@
                     <div class="mb-3">
                         <label for="newPassword" class="form-label">@L["NewPassword"]</label>
                         <div class="password-wrapper">
-                            <input type="password" class="form-control password-input" id="newPassword" name="newPassword" required minlength="8" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}" title="@L["PasswordPolicyError"]">
+                            <input type="password" class="form-control password-input" id="newPassword" name="newPassword" required minlength="@PasswordPolicy.RequiredLength" pattern="@PasswordPolicy.HtmlPattern" title="@L["PasswordPolicyError"]">
                             <button type="button" class="password-toggle" aria-label="@L["ShowPassword"]">
                                 <i class="bi bi-eye"></i>
                             </button>
@@ -134,10 +134,6 @@
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-
     <script>
         const profileTexts = {
             currentRequired: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["Validation.CurrentPasswordRequired"].Value)),
@@ -146,16 +142,17 @@
             passwordPolicy: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PasswordPolicyError"].Value)),
             passwordsMatch: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["Validation.NewPasswordsMatch"].Value)),
             passwordChanged: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PasswordChangedSuccess"].Value)),
-            genericError: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["CommonError"].Value))
+            genericError: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["CommonError"].Value)),
+            passwordPattern: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(PasswordPolicy.Pattern))
         };
 
         $(document).ready(function() {
             $("#Ime, #Prezime").on("input", function() {
                 var value = $(this).val();
-                var lettersOnly = /^[A-Za-z\s]*$/;
+                var lettersOnly = /^[\p{L}\s-]*$/u;
 
                 if (!lettersOnly.test(value)) {
-                    $(this).val(value.replace(/[^A-Za-z\s]/g, ''));
+                    $(this).val(value.replace(/[^\p{L}\s-]/gu, ''));
                 }
             });
 
@@ -190,7 +187,7 @@
                 }
 
                 const newPasswordValue = $("#newPassword").val();
-                const passwordPolicy = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+                const passwordPolicy = new RegExp(profileTexts.passwordPattern);
 
                 if (newPasswordValue === "") {
                     $("#newPassword-error").text(profileTexts.newRequired);

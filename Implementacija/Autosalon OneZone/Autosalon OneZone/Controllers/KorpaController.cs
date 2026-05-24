@@ -40,6 +40,12 @@ namespace Autosalon_OneZone.Controllers
             _localizer = localizer ?? new FallbackStringLocalizer<SharedResource>();
         }
 
+        private string GetCartReturnUrl()
+        {
+            var referer = Request.Headers["Referer"].ToString();
+            return string.IsNullOrWhiteSpace(referer) ? "/Vozilo" : referer;
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DodajUKorpu(int id)
@@ -53,7 +59,7 @@ namespace Autosalon_OneZone.Controllers
                 {
                     _logger.LogWarning($"Vozilo sa ID: {id} nije pronađeno");
                     TempData["ErrorMessage"] = _localizer["VehicleNotFound"].Value;
-                    return Redirect(Request.Headers["Referer"].ToString() ?? "/Vozilo");
+                    return Redirect(GetCartReturnUrl());
                 }
 
                 decimal cijenaVozila = vozilo.Cijena ?? 0;
@@ -121,13 +127,13 @@ namespace Autosalon_OneZone.Controllers
                     TempData["SuccessMessage"] = _localizer["CartVehicleAlreadyAdded"].Value;
                 }
 
-                return Redirect(Request.Headers["Referer"].ToString() ?? "/Vozilo");
+                return Redirect(GetCartReturnUrl());
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Greška pri dodavanju vozila u korpu: {ex.Message}");
                 TempData["ErrorMessage"] = _localizer["CartAddError"].Value;
-                return Redirect(Request.Headers["Referer"].ToString() ?? "/Vozilo");
+                return Redirect(GetCartReturnUrl());
             }
         }
 

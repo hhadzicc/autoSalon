@@ -25,14 +25,6 @@ else
     builder.Services.AddScoped<IPaymentService, StripePaymentService>();
 }
 
-builder.Services.AddDistributedMemoryCache();
-builder.Services.AddSession(options =>
-{
-    options.IdleTimeout = TimeSpan.FromMinutes(30);
-    options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true;
-});
-
 var keysDirectory = Path.Combine(builder.Environment.ContentRootPath, "Keys");
 Directory.CreateDirectory(keysDirectory);
 
@@ -97,8 +89,6 @@ builder.Services
         options.DataAnnotationLocalizerProvider = (_, factory) => factory.Create(typeof(SharedResource));
     });
 
-builder.Services.AddRazorPages();
-
 var app = builder.Build();
 
 await DatabaseInitializer.InitializeAsync(app);
@@ -134,15 +124,11 @@ app.UseRequestLocalization(new RequestLocalizationOptions
     SupportedUICultures = supportedCultures
 });
 
-app.UseSession();
-
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-
-app.MapRazorPages();
 
 app.Run();

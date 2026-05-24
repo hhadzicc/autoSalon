@@ -3,7 +3,6 @@ using Autosalon_OneZone.Services;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Autosalon_OneZone.Models;
-using Microsoft.AspNetCore.Authorization;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Autosalon_OneZone.Data;
@@ -145,28 +144,6 @@ namespace Autosalon_OneZone.Controllers
             }
 
             return View(vozila);
-        }
-
-        [Authorize(Policy = "RequireAdminRole")]
-        [HttpGet]
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        [Authorize(Policy = "RequireAdminRole")]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Vozilo novoVozilo)
-        {
-            if (ModelState.IsValid)
-            {
-                var addedVozilo = await _voziloService.AddVoziloAsync(novoVozilo);
-
-                return RedirectToAction(nameof(Index));
-            }
-
-            return View(novoVozilo);
         }
     }
 }

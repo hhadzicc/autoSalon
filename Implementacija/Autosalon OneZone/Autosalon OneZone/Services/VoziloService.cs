@@ -12,6 +12,8 @@ namespace Autosalon_OneZone.Services
         Task<bool> DeleteVoziloAsync(int id);
         Task<IEnumerable<Vozilo>> FilterVozilaAsync(string marka, string model, int? godisteOd, int? godisteDo, TipGoriva? gorivo, decimal? cijenaOd, decimal? cijenaDo);
         Task<IEnumerable<Vozilo>> SearchVozilaAsync(string searchTerm);
+        Task<Vozilo?> GetVehicleDetailsAsync(int id);
+        Task<IReadOnlyList<Vozilo>> GetVehiclesAsync(VehicleSearchCriteria criteria);
     }
 
     public class VoziloService : IVoziloService
@@ -126,5 +128,85 @@ namespace Autosalon_OneZone.Services
                             v.Model.ToLower().Contains(term))
                 .ToListAsync();
         }
+
+        public async Task<Vozilo?> GetVehicleDetailsAsync(int id)
+        {
+            var vehicle = await _context.Vozila
+                .AsNoTracking()
+                .Include(item => item.Recenzije)
+                .ThenInclude(review => review.Korisnik)
+                .FirstOrDefaultAsync(item => item.VoziloID == id);
+
+            if (vehicle?.Recenzije != null)
+            {
+                vehicle.Recenzije = vehicle.Recenzije
+                    .OrderByDescending(review => review.DatumRecenzije)
+                    .ToList();
+            }
+
+            return vehicle;
+        }
+
+        public async Task<IReadOnlyList<Vozilo>> GetVehiclesAsync(VehicleSearchCriteria criteria)
+        {
+            IEnumerable<Vozilo> vehicles = await _context.Vozila.AsNoTracking().ToListAsync();
+
+            if (!string.IsNullOrEmpty(criteria.SearchTerm))
+            {
+                var words = criteria.SearchTerm.ToLower().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                vehicles = vehicles.Where(vehicle => words.Any(word =>
+                    (vehicle.Marka?.ToLower().Contains(word) ?? false) ||
+                    (vehicle.Model?.ToLower().Contains(word) ?? false)));
+            }
+
+            if (criteria.YearFrom.HasValue)
+                vehicles = vehicles.Where(vehicle => vehicle.Godiste >= criteria.YearFrom.Value);
+            if (criteria.YearTo.HasValue)
+                vehicles = vehicles.Where(vehicle => vehicle.Godiste <= criteria.YearTo.Value);
+            if (!string.IsNullOrEmpty(criteria.Fuel))
+                vehicles = vehicles.Where(vehicle => vehicle.Gorivo.ToString() == criteria.Fuel);
+            if (!string.IsNullOrEmpty(criteria.Color))
+                vehicles = vehicles.Where(vehicle =>
+                    vehicle.Boja != null && vehicle.Boja.Contains(criteria.Color, StringComparison.OrdinalIgnoreCase));
+            if (criteria.EngineDisplacementFrom.HasValue)
+                vehicles = vehicles.Where(vehicle => vehicle.Kubikaza >= criteria.EngineDisplacementFrom.Value);
+            if (criteria.EngineDisplacementTo.HasValue)
+                vehicles = vehicles.Where(vehicle => vehicle.Kubikaza <= criteria.EngineDisplacementTo.Value);
+            if (criteria.MileageFrom.HasValue)
+                vehicles = vehicles.Where(vehicle => vehicle.Kilometraza >= criteria.MileageFrom.Value);
+            if (criteria.MileageTo.HasValue)
+                vehicles = vehicles.Where(vehicle => vehicle.Kilometraza <= criteria.MileageTo.Value);
+            if (criteria.PriceFrom.HasValue)
+                vehicles = vehicles.Where(vehicle => vehicle.Cijena >= criteria.PriceFrom.Value);
+            if (criteria.PriceTo.HasValue)
+                vehicles = vehicles.Where(vehicle => vehicle.Cijena <= criteria.PriceTo.Value);
+
+            vehicles = criteria.SortOrder switch
+            {
+                "name_desc" => vehicles.OrderByDescending(vehicle => vehicle.Marka)
+                    .ThenByDescending(vehicle => vehicle.Model),
+                "price" => vehicles.OrderBy(vehicle => vehicle.Cijena),
+                "price_desc" => vehicles.OrderByDescending(vehicle => vehicle.Cijena),
+                "year" => vehicles.OrderBy(vehicle => vehicle.Godiste),
+                "year_desc" => vehicles.OrderByDescending(vehicle => vehicle.Godiste),
+                _ => vehicles.OrderBy(vehicle => vehicle.Marka).ThenBy(vehicle => vehicle.Model)
+            };
+
+            return vehicles.ToList();
+        }
     }
+
+    public sealed record VehicleSearchCriteria(
+        string? SearchTerm,
+        string? SortOrder,
+        int? YearFrom,
+        int? YearTo,
+        string? Fuel,
+        string? Color,
+        decimal? EngineDisplacementFrom,
+        decimal? EngineDisplacementTo,
+        double? MileageFrom,
+        double? MileageTo,
+        decimal? PriceFrom,
+        decimal? PriceTo);
 }

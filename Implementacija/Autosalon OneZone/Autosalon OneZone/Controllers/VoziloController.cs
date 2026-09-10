@@ -12,107 +12,80 @@ namespace Autosalon_OneZone.Controllers
     public class VoziloController : Controller
     {
         private readonly IVoziloService _voziloService;
-        private readonly ApplicationDbContext _context;
 
-        public VoziloController(IVoziloService voziloService, ApplicationDbContext context)
+        public VoziloController(IVoziloService voziloService)
         {
             _voziloService = voziloService;
-            _context = context;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Details(int id)
         {
-            var vozilo = await _context.Vozila
-                .Include(v => v.Recenzije)
-                    .ThenInclude(r => r.Korisnik)
-                .FirstOrDefaultAsync(m => m.VoziloID == id);
+            var vozilo = await _voziloService.GetVehicleDetailsAsync(id);
 
             if (vozilo == null)
             {
                 return NotFound();
             }
 
-            if (vozilo.Recenzije != null)
-            {
-                vozilo.Recenzije = vozilo.Recenzije.OrderByDescending(r => r.DatumRecenzije).ToList();
-            }
-
             return View(vozilo);
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index(string searchTerm, string sortOrder,
             int? godisteOd, int? godisteDo, string gorivo, string boja,
             decimal? kubikazaOd, decimal? kubikazaDo,
             double? kilometrazaOd, double? kilometrazaDo,
             decimal? cijenaOd, decimal? cijenaDo)
         {
-            var vozila = await _voziloService.GetAllVozilaAsync();
-
             if (!string.IsNullOrEmpty(searchTerm))
             {
-                var searchWords = searchTerm.ToLower().Split(' ', StringSplitOptions.RemoveEmptyEntries);
-                vozila = vozila.Where(v =>
-                    searchWords.Any(word =>
-                        (v.Marka?.ToLower().Contains(word) ?? false) ||
-                        (v.Model?.ToLower().Contains(word) ?? false)
-                    )
-                ).ToList();
                 ViewData["SearchTerm"] = searchTerm;
             }
 
             if (godisteOd.HasValue)
             {
-                vozila = vozila.Where(v => v.Godiste >= godisteOd.Value).ToList();
                 ViewData["GodisteOd"] = godisteOd.Value;
             }
             if (godisteDo.HasValue)
             {
-                vozila = vozila.Where(v => v.Godiste <= godisteDo.Value).ToList();
                 ViewData["GodisteDo"] = godisteDo.Value;
             }
 
             if (!string.IsNullOrEmpty(gorivo))
             {
-                vozila = vozila.Where(v => v.Gorivo.ToString() == gorivo).ToList();
                 ViewData["Gorivo"] = gorivo;
             }
 
             if (!string.IsNullOrEmpty(boja))
             {
-                vozila = vozila.Where(v => v.Boja != null && v.Boja.ToLower().Contains(boja.ToLower())).ToList();
                 ViewData["Boja"] = boja;
             }
 
             if (kubikazaOd.HasValue)
             {
-                vozila = vozila.Where(v => v.Kubikaza >= kubikazaOd.Value).ToList();
                 ViewData["KubikazaOd"] = kubikazaOd.Value;
             }
             if (kubikazaDo.HasValue)
             {
-                vozila = vozila.Where(v => v.Kubikaza <= kubikazaDo.Value).ToList();
                 ViewData["KubikazaDo"] = kubikazaDo.Value;
             }
 
             if (kilometrazaOd.HasValue)
             {
-                vozila = vozila.Where(v => v.Kilometraza >= kilometrazaOd.Value).ToList();
                 ViewData["KilometrazaOd"] = kilometrazaOd.Value;
             }
             if (kilometrazaDo.HasValue)
             {
-                vozila = vozila.Where(v => v.Kilometraza <= kilometrazaDo.Value).ToList();
                 ViewData["KilometrazaDo"] = kilometrazaDo.Value;
             }
 
             if (cijenaOd.HasValue)
             {
-                vozila = vozila.Where(v => v.Cijena >= cijenaOd.Value).ToList();
                 ViewData["CijenaOd"] = cijenaOd.Value;
             }
             if (cijenaDo.HasValue)
             {
-                vozila = vozila.Where(v => v.Cijena <= cijenaDo.Value).ToList();
                 ViewData["CijenaDo"] = cijenaDo.Value;
             }
 
@@ -121,27 +94,19 @@ namespace Autosalon_OneZone.Controllers
             ViewData["PriceSortParam"] = sortOrder == "price" ? "price_desc" : "price";
             ViewData["YearSortParam"] = sortOrder == "year" ? "year_desc" : "year";
 
-            switch (sortOrder)
-            {
-                case "name_desc":
-                    vozila = vozila.OrderByDescending(v => v.Marka).ThenByDescending(v => v.Model).ToList();
-                    break;
-                case "price":
-                    vozila = vozila.OrderBy(v => v.Cijena).ToList();
-                    break;
-                case "price_desc":
-                    vozila = vozila.OrderByDescending(v => v.Cijena).ToList();
-                    break;
-                case "year":
-                    vozila = vozila.OrderBy(v => v.Godiste).ToList();
-                    break;
-                case "year_desc":
-                    vozila = vozila.OrderByDescending(v => v.Godiste).ToList();
-                    break;
-                default:
-                    vozila = vozila.OrderBy(v => v.Marka).ThenBy(v => v.Model).ToList();
-                    break;
-            }
+            var vozila = await _voziloService.GetVehiclesAsync(new VehicleSearchCriteria(
+                searchTerm,
+                sortOrder,
+                godisteOd,
+                godisteDo,
+                gorivo,
+                boja,
+                kubikazaOd,
+                kubikazaDo,
+                kilometrazaOd,
+                kilometrazaDo,
+                cijenaOd,
+                cijenaDo));
 
             return View(vozila);
         }

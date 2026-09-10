@@ -1,4 +1,5 @@
 using Autosalon_OneZone.Models;
+using Autosalon_OneZone.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,10 +7,6 @@ namespace Autosalon_OneZone.Data
 {
     public static class DatabaseInitializer
     {
-        private const string AdminRole = "Administrator";
-        private const string SellerRole = "Prodavac";
-        private const string BuyerRole = "Kupac";
-
         public static async Task InitializeAsync(WebApplication app)
         {
             var configuration = app.Services.GetRequiredService<IConfiguration>();
@@ -64,7 +61,7 @@ namespace Autosalon_OneZone.Data
                     configuration["AdminUserSecrets:Password"]!,
                     configuration["AdminUserSecrets:FirstName"] ?? "Demo",
                     configuration["AdminUserSecrets:LastName"] ?? "Admin",
-                    AdminRole,
+                    AppRoles.Administrator,
                     logger);
             }
 
@@ -77,7 +74,7 @@ namespace Autosalon_OneZone.Data
                     configuration["DemoUsers:SellerPassword"] ?? "Prodavac123!",
                     "Demo",
                     "Prodavac",
-                    SellerRole,
+                    AppRoles.Seller,
                     logger);
 
                 buyerUser = await EnsureUserAsync(
@@ -87,7 +84,7 @@ namespace Autosalon_OneZone.Data
                     configuration["DemoUsers:BuyerPassword"] ?? "Kupac123!",
                     "Demo",
                     "Kupac",
-                    BuyerRole,
+                    AppRoles.Buyer,
                     logger);
 
                 await SeedVehiclesAsync(dbContext, logger);
@@ -118,7 +115,7 @@ namespace Autosalon_OneZone.Data
 
         private static async Task EnsureRolesAsync(RoleManager<IdentityRole> roleManager, ILogger logger)
         {
-            foreach (var roleName in new[] { AdminRole, SellerRole, BuyerRole })
+            foreach (var roleName in AppRoles.All)
             {
                 if (await roleManager.RoleExistsAsync(roleName))
                 {
@@ -239,7 +236,7 @@ namespace Autosalon_OneZone.Data
 
             await EnsureExclusiveSeedRoleAsync(userManager, user, roleName, email, logger);
 
-            if (roleName == BuyerRole)
+            if (roleName == AppRoles.Buyer)
             {
                 await EnsureCartAsync(dbContext, user.Id);
             }
@@ -254,7 +251,7 @@ namespace Autosalon_OneZone.Data
             string email,
             ILogger logger)
         {
-            foreach (var roleName in new[] { AdminRole, SellerRole, BuyerRole }.Where(role => role != targetRole))
+            foreach (var roleName in AppRoles.All.Where(role => role != targetRole))
             {
                 if (!await userManager.IsInRoleAsync(user, roleName))
                 {

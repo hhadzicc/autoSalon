@@ -4,6 +4,7 @@ using Autosalon_OneZone.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Autosalon_OneZone.Data;
+using Autosalon_OneZone.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
 using System.IO;
 using Microsoft.AspNetCore.DataProtection;
@@ -78,12 +79,21 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Administrator"));
-    options.AddPolicy("RequireProdavacRole", policy => policy.RequireRole("Prodavac"));
-    options.AddPolicy("RequireKupacRole", policy => policy.RequireRole("Kupac"));
+    options.AddPolicy("RequireAdminRole", policy => policy.RequireRole(AppRoles.Administrator));
+    options.AddPolicy("RequireProdavacRole", policy => policy.RequireRole(AppRoles.Seller));
+    options.AddPolicy("RequireKupacRole", policy => policy.RequireRole(AppRoles.Buyer));
 });
 
 builder.Services.AddScoped<IVoziloService, VoziloService>();
+builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<ICheckoutService, CheckoutService>();
+builder.Services.AddScoped<IAdminDashboardService, AdminDashboardService>();
+builder.Services.AddScoped<IAdminListQueryService, AdminListQueryService>();
+builder.Services.AddScoped<IAdminModerationService, AdminModerationService>();
+builder.Services.AddScoped<IAdminVehicleService, AdminVehicleService>();
+builder.Services.AddScoped<IAdminProfileService, AdminProfileService>();
+builder.Services.AddScoped<IHomeService, HomeService>();
+builder.Services.AddScoped<IProfileActivityService, ProfileActivityService>();
 builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
 {
     options.TokenLifespan = TimeSpan.FromMinutes(30);

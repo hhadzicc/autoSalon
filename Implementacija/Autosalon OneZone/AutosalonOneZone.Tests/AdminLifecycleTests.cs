@@ -747,10 +747,11 @@ public class AdminLifecycleTests
     private static AdminPanelController CreateAdminController(TestApp app)
     {
         var controller = new AdminPanelController(
-            app.Db,
-            app.Environment,
-            app.UserManager,
-            app.RoleManager);
+            new AdminDashboardService(app.Db),
+            new AdminListQueryService(app.Db, app.UserManager),
+            new AdminModerationService(app.Db),
+            new AdminVehicleService(app.Db, app.Environment),
+            new AdminProfileService(app.Db, app.UserManager, app.RoleManager));
 
         ConfigureController(controller, app.Provider);
         return controller;
@@ -759,10 +760,13 @@ public class AdminLifecycleTests
     private static KorpaController CreateKorpaController(TestApp app, ApplicationUser user)
     {
         var controller = new KorpaController(
-            app.Db,
             app.UserManager,
             NullLogger<KorpaController>.Instance,
-            new MockPaymentService(NullLogger<MockPaymentService>.Instance));
+            new CartService(app.Db),
+            new CheckoutService(
+                app.Db,
+                new MockPaymentService(NullLogger<MockPaymentService>.Instance),
+                NullLogger<CheckoutService>.Instance));
 
         ConfigureController(controller, app.Provider, user);
         controller.Url = new TestUrlHelper(controller.ControllerContext);
@@ -772,10 +776,15 @@ public class AdminLifecycleTests
     private static AccountController CreateAccountController(TestApp app)
     {
         var controller = new AccountController(
-            app.UserManager,
-            app.SignInManager,
-            app.RoleManager,
-            app.EmailSender,
+            new AccountAuthenticationService(app.UserManager, app.SignInManager),
+            new AccountRegistrationService(
+                app.UserManager,
+                app.RoleManager,
+                NullLogger<AccountRegistrationService>.Instance),
+            new PasswordRecoveryService(
+                app.UserManager,
+                app.EmailSender,
+                NullLogger<PasswordRecoveryService>.Instance),
             NullLogger<AccountController>.Instance);
 
         ConfigureController(controller, app.Provider);
@@ -787,9 +796,9 @@ public class AdminLifecycleTests
     {
         var controller = new ProfilController(
             app.UserManager,
-            app.SignInManager,
             NullLogger<ProfilController>.Instance,
-            app.Db);
+            new ProfileActivityService(app.Db),
+            new ProfileAccountService(app.UserManager, app.SignInManager));
 
         ConfigureController(controller, app.Provider, user);
         controller.Url = new TestUrlHelper(controller.ControllerContext);

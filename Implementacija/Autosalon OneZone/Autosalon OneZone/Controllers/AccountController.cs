@@ -1,13 +1,10 @@
 using System;
-using System.Text;
 using System.Threading.Tasks;
-using Autosalon_OneZone.Models;
 using Autosalon_OneZone.Models.ViewModels;
 using Autosalon_OneZone.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 
@@ -15,25 +12,22 @@ namespace Autosalon_OneZone.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly IEmailSender _emailSender;
+        private readonly IAccountAuthenticationService _authenticationService;
+        private readonly IAccountRegistrationService _registrationService;
+        private readonly IPasswordRecoveryService _passwordRecoveryService;
         private readonly ILogger<AccountController> _logger;
         private readonly IStringLocalizer<SharedResource> _localizer;
 
         public AccountController(
-            UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager,
-            RoleManager<IdentityRole> roleManager,
-            IEmailSender emailSender,
+            IAccountAuthenticationService authenticationService,
+            IAccountRegistrationService registrationService,
+            IPasswordRecoveryService passwordRecoveryService,
             ILogger<AccountController> logger,
             IStringLocalizer<SharedResource>? localizer = null)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _roleManager = roleManager;
-            _emailSender = emailSender;
+            _authenticationService = authenticationService;
+            _registrationService = registrationService;
+            _passwordRecoveryService = passwordRecoveryService;
             _logger = logger;
             _localizer = localizer ?? new FallbackStringLocalizer<SharedResource>();
         }
@@ -55,53 +49,30 @@ namespace Autosalon_OneZone.Controllers
 
             if (ModelState.IsValid)
             {
-                var existingUserByUsername = await _userManager.FindByNameAsync(model.UserName);
-                if (existingUserByUsername != null)
+                var result = await _registrationService.RegisterAsync(model);
+                if (result.Status == AccountRegistrationStatus.UsernameTaken)
                 {
                     ModelState.AddModelError(string.Empty, _localizer["UsernameTaken", model.UserName]);
                     ViewData["ReturnUrl"] = returnUrl;
                     return View(model);
                 }
 
-                var existingUserByEmail = await _userManager.FindByEmailAsync(model.Email);
-                if (existingUserByEmail != null)
+                if (result.Status == AccountRegistrationStatus.EmailTaken)
                 {
                     ModelState.AddModelError(string.Empty, _localizer["EmailTaken", model.Email]);
                     ViewData["ReturnUrl"] = returnUrl;
                     return View(model);
                 }
 
-                var user = new ApplicationUser
+                if (result.Status == AccountRegistrationStatus.Succeeded)
                 {
-                    UserName = model.UserName,
-                    Email = model.Email,
-                    Ime = model.Ime,
-                    Prezime = model.Prezime
-                };
-
-                var result = await _userManager.CreateAsync(user, model.Password);
-
-                if (result.Succeeded)
-                {
-                    _logger.LogInformation("User created a new account with password.");
-
-                    const string kupacRoleName = "Kupac";
-                    if (!await _roleManager.RoleExistsAsync(kupacRoleName))
-                    {
-                        await _roleManager.CreateAsync(new IdentityRole(kupacRoleName));
-                        _logger.LogInformation("Role '{Role}' created.", kupacRoleName);
-                    }
-
-                    await _userManager.AddToRoleAsync(user, kupacRoleName);
-                    _logger.LogInformation("User '{UserName}' added to role '{Role}'.", user.UserName, kupacRoleName);
-
                     TempData["SuccessMessage"] = _localizer["RegisterSuccess"].Value;
                     return RedirectToAction("Login", "Account");
                 }
 
                 foreach (var error in result.Errors)
                 {
-                    ModelState.AddModelError(string.Empty, TranslateIdentityError(error.Description));
+                    ModelState.AddModelError(string.Empty, TranslateIdentityError(error));
                 }
             }
 
@@ -126,46 +97,33 @@ namespace Autosalon_OneZone.Controllers
 
             if (ModelState.IsValid)
             {
-                var loginIdentifier = model.LoginIdentifier.Trim();
                 var invalidLoginMessage = _localizer["InvalidLogin"];
+                var result = await _authenticationService.SignInAsync(
+                    model.LoginIdentifier,
+                    model.Password,
+                    model.RememberMe);
 
-                var user = await _userManager.FindByEmailAsync(loginIdentifier);
-                user ??= await _userManager.FindByNameAsync(loginIdentifier);
-
-                if (user != null)
+                if (result == AccountSignInStatus.Succeeded)
                 {
-                    var result = await _signInManager.PasswordSignInAsync(
-                        user.UserName!,
-                        model.Password,
-                        model.RememberMe,
-                        lockoutOnFailure: false);
+                    _logger.LogInformation("User logged in.");
 
-                    if (result.Succeeded)
-                    {
-                        _logger.LogInformation("User logged in.");
+                    return Url.IsLocalUrl(returnUrl)
+                        ? Redirect(returnUrl)
+                        : RedirectToAction("Index", "Home");
+                }
 
-                        return Url.IsLocalUrl(returnUrl)
-                            ? Redirect(returnUrl)
-                            : RedirectToAction("Index", "Home");
-                    }
-
-                    if (result.RequiresTwoFactor)
-                    {
-                        ModelState.AddModelError(string.Empty, _localizer["TwoFactorRequired"]);
-                    }
-                    else if (result.IsLockedOut)
-                    {
-                        _logger.LogWarning("User account locked out.");
-                        ModelState.AddModelError(string.Empty, _localizer["AccountLocked"]);
-                    }
-                    else if (result.IsNotAllowed)
-                    {
-                        ModelState.AddModelError(string.Empty, _localizer["LoginNotAllowed"]);
-                    }
-                    else
-                    {
-                        ModelState.AddModelError(string.Empty, invalidLoginMessage);
-                    }
+                if (result == AccountSignInStatus.RequiresTwoFactor)
+                {
+                    ModelState.AddModelError(string.Empty, _localizer["TwoFactorRequired"]);
+                }
+                else if (result == AccountSignInStatus.LockedOut)
+                {
+                    _logger.LogWarning("User account locked out.");
+                    ModelState.AddModelError(string.Empty, _localizer["AccountLocked"]);
+                }
+                else if (result == AccountSignInStatus.NotAllowed)
+                {
+                    ModelState.AddModelError(string.Empty, _localizer["LoginNotAllowed"]);
                 }
                 else
                 {
@@ -187,6 +145,7 @@ namespace Autosalon_OneZone.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
+        [EnableRateLimiting("password-recovery")]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
         {
             if (!ModelState.IsValid)
@@ -194,32 +153,18 @@ namespace Autosalon_OneZone.Controllers
                 return View(model);
             }
 
-            var user = await _userManager.FindByEmailAsync(model.Email.Trim());
-            if (user != null)
+            var resetRequest = await _passwordRecoveryService.CreateResetRequestAsync(model.Email);
+            if (resetRequest != null)
             {
-                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-                var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
                 var resetLink = Url.Action(
                     nameof(ResetPassword),
                     "Account",
-                    new { userId = user.Id, code = encodedToken },
+                    new { userId = resetRequest.UserId, code = resetRequest.EncodedCode },
                     Request.Scheme);
 
                 if (!string.IsNullOrWhiteSpace(resetLink))
                 {
-                    try
-                    {
-                        var displayName = $"{user.Ime} {user.Prezime}".Trim();
-                        await _emailSender.SendPasswordResetEmailAsync(
-                            user.Email!,
-                            string.IsNullOrWhiteSpace(displayName) ? user.UserName ?? user.Email! : displayName,
-                            resetLink,
-                            DateTime.UtcNow.AddMinutes(30));
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex, "Failed to send password reset email for {Email}.", model.Email);
-                    }
+                    await _passwordRecoveryService.SendResetEmailAsync(resetRequest, resetLink);
                 }
             }
 
@@ -259,33 +204,25 @@ namespace Autosalon_OneZone.Controllers
                 return View(model);
             }
 
-            var user = await _userManager.FindByIdAsync(model.UserId);
-            if (user == null)
+            var result = await _passwordRecoveryService.ResetPasswordAsync(
+                model.UserId,
+                model.Code,
+                model.Password);
+
+            if (result.Status is PasswordResetStatus.Succeeded or PasswordResetStatus.UserNotFound)
             {
                 return RedirectToAction(nameof(ResetPasswordConfirmation));
             }
 
-            string token;
-            try
-            {
-                token = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(model.Code));
-            }
-            catch (FormatException)
+            if (result.Status == PasswordResetStatus.InvalidCode)
             {
                 ModelState.AddModelError(string.Empty, _localizer["ResetLinkInvalid"]);
                 return View(model);
             }
 
-            var result = await _userManager.ResetPasswordAsync(user, token, model.Password);
-            if (result.Succeeded)
-            {
-                _logger.LogInformation("Password reset completed for user {UserId}.", user.Id);
-                return RedirectToAction(nameof(ResetPasswordConfirmation));
-            }
-
             foreach (var error in result.Errors)
             {
-                ModelState.AddModelError(string.Empty, TranslateIdentityError(error.Description));
+                ModelState.AddModelError(string.Empty, TranslateIdentityError(error));
             }
 
             return View(model);
@@ -302,7 +239,7 @@ namespace Autosalon_OneZone.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
-            await _signInManager.SignOutAsync();
+            await _authenticationService.SignOutAsync();
             _logger.LogInformation("User logged out.");
 
             return RedirectToAction("Index", "Home");

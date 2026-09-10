@@ -8,91 +8,33 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Localization;
+using Autosalon_OneZone.Services;
 
 namespace Autosalon_OneZone.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IStringLocalizer<SharedResource> _localizer;
+        private readonly IHomeService _homeService;
 
         public HomeController(
             ILogger<HomeController> logger,
-            ApplicationDbContext context,
             UserManager<ApplicationUser> userManager,
+            IHomeService homeService,
             IStringLocalizer<SharedResource>? localizer = null)
         {
             _logger = logger;
-            _context = context;
             _userManager = userManager;
+            _homeService = homeService;
             _localizer = localizer ?? new FallbackStringLocalizer<SharedResource>();
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var featuredVehicle = await _context.Vozila
-                .AsNoTracking()
-                .FirstOrDefaultAsync(v =>
-                    v.Marka == "Porsche" &&
-                    v.Model == "Panamera 4 E-Hybrid");
-
-            var curatedVehicles = await _context.Vozila
-                .AsNoTracking()
-                .Where(v =>
-                    (v.Marka == "Audi" && v.Model == "e-tron GT quattro") ||
-                    (v.Marka == "BMW" && v.Model == "M4 Competition") ||
-                    (v.Marka == "Mercedes-Benz" && v.Model == "GLC 300"))
-                .ToListAsync();
-
-            var curatedOrder = new Dictionary<string, int>
-            {
-                ["Audi|e-tron GT quattro"] = 0,
-                ["BMW|M4 Competition"] = 1,
-                ["Mercedes-Benz|GLC 300"] = 2
-            };
-
-            var featuredVehicles = curatedVehicles
-                .OrderBy(v => curatedOrder.GetValueOrDefault($"{v.Marka}|{v.Model}", int.MaxValue))
-                .Take(3)
-                .ToList();
-
-            if (featuredVehicles.Count < 3)
-            {
-                var excludedVehicleIds = featuredVehicles
-                    .Select(v => v.VoziloID)
-                    .ToList();
-
-                if (featuredVehicle != null)
-                {
-                    excludedVehicleIds.Add(featuredVehicle.VoziloID);
-                }
-
-                var fallbackVehicles = await _context.Vozila
-                    .AsNoTracking()
-                    .Where(v => !excludedVehicleIds.Contains(v.VoziloID))
-                    .OrderByDescending(v => v.Godiste ?? 0)
-                    .ThenByDescending(v => v.Cijena ?? 0)
-                    .Take(3 - featuredVehicles.Count)
-                    .ToListAsync();
-
-                featuredVehicles.AddRange(fallbackVehicles);
-            }
-
-            featuredVehicles = featuredVehicles
-                .OrderByDescending(v => v.Godiste ?? 0)
-                .ThenByDescending(v => v.Cijena ?? 0)
-                .Take(3)
-                .ToList();
-
-            var viewModel = new HomeIndexViewModel
-            {
-                FeaturedVehicle = featuredVehicle,
-                FeaturedVehicles = featuredVehicles
-            };
-
-            return View(viewModel);
+            return View(await _homeService.GetHomePageAsync());
         }
 
         [HttpGet]
@@ -114,21 +56,12 @@ namespace Autosalon_OneZone.Controllers
 
             try
             {
-                var podrska = new Podrska
-                {
-                    Naslov = model.Naslov,
-                    Sadrzaj = model.Sadrzaj,
-                    DatumUpita = DateTime.Now,
-                    Status = StatusUpita.Poslat
-                };
-
                 if (User.Identity.IsAuthenticated)
                 {
                     var user = await _userManager.GetUserAsync(User);
                     if (user != null)
                     {
-                        podrska.KorisnikId = user.Id;
-                        podrska.Korisnik = user;
+                        await _homeService.AddSupportRequestAsync(user.Id, model.Naslov, model.Sadrzaj);
                     }
                     else
                     {
@@ -144,9 +77,6 @@ namespace Autosalon_OneZone.Controllers
                     return Redirect(mailtoUrl);
                 }
 
-                _context.PodrskaUpiti.Add(podrska);
-                await _context.SaveChangesAsync();
-
                 TempData["SuccessMessage"] = _localizer["ContactMessageSent"].Value;
                 return RedirectToAction(nameof(Index));
             }
@@ -158,11 +88,13 @@ namespace Autosalon_OneZone.Controllers
             }
         }
 
+        [HttpGet]
         public IActionResult Privacy()
         {
             return View();
         }
 
+        [HttpGet]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

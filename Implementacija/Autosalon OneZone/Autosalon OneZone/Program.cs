@@ -105,7 +105,10 @@ else
 
 app.UseForwardedHeaders();
 
-app.UseHttpsRedirection();
+if (builder.Configuration.GetValue("HttpsRedirection:Enabled", true))
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseStaticFiles();
 

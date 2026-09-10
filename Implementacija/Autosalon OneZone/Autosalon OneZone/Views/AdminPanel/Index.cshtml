@@ -1,11 +1,9 @@
 @Html.AntiForgeryToken()
 @using Microsoft.AspNetCore.Identity
-@using Autosalon_OneZone.Models
 @inject UserManager<ApplicationUser> UserManager
 
 @{
     ViewData["Title"] = L["AdminPanel"];
-    Layout = "~/Views/Shared/_Layout.cshtml";
     var currentSection = ViewBag.CurrentSection;
     var user = await UserManager.GetUserAsync(User);
     bool isAdmin = user != null && await UserManager.IsInRoleAsync(user, "Administrator");

@@ -1,7 +1,6 @@
 @using Microsoft.AspNetCore.Identity
 @using System.Globalization
 @inject SignInManager<Autosalon_OneZone.Models.ApplicationUser> SignInManager
-@inject UserManager<Autosalon_OneZone.Models.ApplicationUser> UserManager
 
 @model IEnumerable<Autosalon_OneZone.Models.Vozilo>
 @{
@@ -223,7 +222,7 @@
                                     <div class="vehicles-card-actions">
                                         <a href="@Url.Action("Details", "Vozilo", new { id = vozilo.VoziloID })" class="btn btn-primary">@L["Details"]</a>
 
-                                        @if (SignInManager.IsSignedIn(User) && User.Identity != null && User.Identity.IsAuthenticated)
+                                        @if (SignInManager.IsSignedIn(User))
                                         {
                                             <form asp-controller="Korpa" asp-action="DodajUKorpu" method="post">
                                                 @Html.AntiForgeryToken()

@@ -1,11 +1,9 @@
 @using Microsoft.AspNetCore.Identity
 @inject SignInManager<Autosalon_OneZone.Models.ApplicationUser> SignInManager
-@inject UserManager<Autosalon_OneZone.Models.ApplicationUser> UserManager
 @model Autosalon_OneZone.ViewModels.KontaktViewModel
 @{
     ViewData["Title"] = L["ContactTitle"];
-    Layout = "~/Views/Shared/_Layout.cshtml";
-    var isSignedIn = SignInManager.IsSignedIn(User) && User.Identity != null && User.Identity.IsAuthenticated;
+    var isSignedIn = SignInManager.IsSignedIn(User);
 }
 
 <section class="inner-page-header">

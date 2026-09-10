@@ -6,6 +6,7 @@ This folder contains the current documentation for the final Autosalon OneZone a
 
 - [FEATURES.md](FEATURES.md) - feature overview of the final application
 - [ARCHITECTURE.md](ARCHITECTURE.md) - architecture, core modules and security decisions
+- [DEPLOYMENT.md](DEPLOYMENT.md) - Docker deployment modes and reverse proxy setup
 - [TESTING.md](TESTING.md) - test strategy and test execution instructions
 - [SCREENSHOTS.md](SCREENSHOTS.md) - screenshot album for the final interface
 - [DEMO_ACCOUNTS.md](DEMO_ACCOUNTS.md) - local Docker demo credentials
@@ -23,6 +24,7 @@ This archive contains the initial specifications, diagrams, design pattern docum
 1. Root [README.md](../README.md)
 2. [FEATURES.md](FEATURES.md)
 3. [ARCHITECTURE.md](ARCHITECTURE.md)
-4. [TESTING.md](TESTING.md)
-5. [SCREENSHOTS.md](SCREENSHOTS.md)
-6. [Legacy_MVP_Documentation](Legacy_MVP_Documentation), if the initial MVP/OOAD history is needed
+4. [DEPLOYMENT.md](DEPLOYMENT.md)
+5. [TESTING.md](TESTING.md)
+6. [SCREENSHOTS.md](SCREENSHOTS.md)
+7. [Legacy_MVP_Documentation](Legacy_MVP_Documentation), if the initial MVP/OOAD history is needed

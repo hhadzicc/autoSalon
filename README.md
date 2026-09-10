@@ -21,6 +21,7 @@ Autosalon OneZone is an ASP.NET Core MVC application for managing a car dealersh
 - ASP.NET Core Identity
 - SQL Server 2022
 - Docker Compose
+- Caddy reverse proxy
 - Bootstrap 5
 - Resend email integration
 - Stripe-ready payment abstraction with local mock payments
@@ -41,12 +42,24 @@ The application will be available at:
 http://localhost:8080
 ```
 
-Docker Compose starts:
-
-- `db`: SQL Server on local port `14333`
-- `web`: ASP.NET Core application on local port `8080`
+Docker Compose starts SQL Server and the ASP.NET Core application. The app is
+bound only to `127.0.0.1:8080`, while the database remains private inside the
+Docker network. No `.env` file or domain is required for this local demo.
 
 On startup, the application applies EF Core migrations and seeds demo data.
+
+## Deployment Modes
+
+The repository provides two deployment modes:
+
+- **Default local:** zero-configuration ASP.NET HTTP entry point on
+  `127.0.0.1:8080`, without an additional reverse proxy.
+- **Standalone VPS:** Caddy owns host ports 80 and 443, obtains TLS certificates,
+  and requires a domain plus private deployment credentials.
+
+Configuration, request flows, multi-application hosting guidance, and the
+standalone prerequisites are documented in
+[Dokumentacija/DEPLOYMENT.md](Dokumentacija/DEPLOYMENT.md).
 
 ## Demo Accounts
 

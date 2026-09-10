@@ -110,3 +110,8 @@ Docker Compose starts:
 - ASP.NET Core web container
 
 On startup, the application applies migrations and seeds demo data.
+
+The default Compose setup exposes the ASP.NET application only on localhost and
+keeps SQL Server private. A separate standalone VPS variant adds Caddy on ports
+80/443 for automatic public TLS while keeping both application and database
+containers private. See [DEPLOYMENT.md](DEPLOYMENT.md).

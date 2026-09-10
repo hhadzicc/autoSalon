@@ -27,12 +27,18 @@ namespace Autosalon_OneZone.Services
 
         public async Task<IEnumerable<Vozilo>> GetAllVozilaAsync()
         {
-            return await _context.Vozila.ToListAsync();
+            return await _context.Vozila
+                .AsNoTracking()
+                .AvailableForPurchase()
+                .ToListAsync();
         }
 
         public async Task<Vozilo> GetVoziloByIdAsync(int id)
         {
-            return await _context.Vozila.FindAsync(id);
+            return await _context.Vozila
+                .AsNoTracking()
+                .AvailableForPurchase()
+                .FirstOrDefaultAsync(vehicle => vehicle.VoziloID == id);
         }
 
         public async Task<Vozilo> AddVoziloAsync(Vozilo vozilo)
@@ -74,7 +80,9 @@ namespace Autosalon_OneZone.Services
 
         public async Task<IEnumerable<Vozilo>> FilterVozilaAsync(string marka, string model, int? godisteOd, int? godisteDo, TipGoriva? gorivo, decimal? cijenaOd, decimal? cijenaDo)
         {
-            var query = _context.Vozila.AsQueryable();
+            var query = _context.Vozila
+                .AsNoTracking()
+                .AvailableForPurchase();
 
             if (!string.IsNullOrEmpty(marka))
             {
@@ -124,6 +132,8 @@ namespace Autosalon_OneZone.Services
             var term = searchTerm.ToLower();
 
             return await _context.Vozila
+                .AsNoTracking()
+                .AvailableForPurchase()
                 .Where(v => v.Marka.ToLower().Contains(term) ||
                             v.Model.ToLower().Contains(term))
                 .ToListAsync();
@@ -133,6 +143,7 @@ namespace Autosalon_OneZone.Services
         {
             var vehicle = await _context.Vozila
                 .AsNoTracking()
+                .AvailableForPurchase()
                 .Include(item => item.Recenzije)
                 .ThenInclude(review => review.Korisnik)
                 .FirstOrDefaultAsync(item => item.VoziloID == id);
@@ -149,50 +160,58 @@ namespace Autosalon_OneZone.Services
 
         public async Task<IReadOnlyList<Vozilo>> GetVehiclesAsync(VehicleSearchCriteria criteria)
         {
-            IEnumerable<Vozilo> vehicles = await _context.Vozila.AsNoTracking().ToListAsync();
+            var query = _context.Vozila
+                .AsNoTracking()
+                .AvailableForPurchase();
 
             if (!string.IsNullOrEmpty(criteria.SearchTerm))
             {
                 var words = criteria.SearchTerm.ToLower().Split(' ', StringSplitOptions.RemoveEmptyEntries);
-                vehicles = vehicles.Where(vehicle => words.Any(word =>
-                    (vehicle.Marka?.ToLower().Contains(word) ?? false) ||
-                    (vehicle.Model?.ToLower().Contains(word) ?? false)));
+                query = query.Where(vehicle => words.Any(word =>
+                    (vehicle.Marka != null && vehicle.Marka.ToLower().Contains(word)) ||
+                    (vehicle.Model != null && vehicle.Model.ToLower().Contains(word))));
             }
 
             if (criteria.YearFrom.HasValue)
-                vehicles = vehicles.Where(vehicle => vehicle.Godiste >= criteria.YearFrom.Value);
+                query = query.Where(vehicle => vehicle.Godiste >= criteria.YearFrom.Value);
             if (criteria.YearTo.HasValue)
-                vehicles = vehicles.Where(vehicle => vehicle.Godiste <= criteria.YearTo.Value);
+                query = query.Where(vehicle => vehicle.Godiste <= criteria.YearTo.Value);
             if (!string.IsNullOrEmpty(criteria.Fuel))
-                vehicles = vehicles.Where(vehicle => vehicle.Gorivo.ToString() == criteria.Fuel);
-            if (!string.IsNullOrEmpty(criteria.Color))
-                vehicles = vehicles.Where(vehicle =>
-                    vehicle.Boja != null && vehicle.Boja.Contains(criteria.Color, StringComparison.OrdinalIgnoreCase));
-            if (criteria.EngineDisplacementFrom.HasValue)
-                vehicles = vehicles.Where(vehicle => vehicle.Kubikaza >= criteria.EngineDisplacementFrom.Value);
-            if (criteria.EngineDisplacementTo.HasValue)
-                vehicles = vehicles.Where(vehicle => vehicle.Kubikaza <= criteria.EngineDisplacementTo.Value);
-            if (criteria.MileageFrom.HasValue)
-                vehicles = vehicles.Where(vehicle => vehicle.Kilometraza >= criteria.MileageFrom.Value);
-            if (criteria.MileageTo.HasValue)
-                vehicles = vehicles.Where(vehicle => vehicle.Kilometraza <= criteria.MileageTo.Value);
-            if (criteria.PriceFrom.HasValue)
-                vehicles = vehicles.Where(vehicle => vehicle.Cijena >= criteria.PriceFrom.Value);
-            if (criteria.PriceTo.HasValue)
-                vehicles = vehicles.Where(vehicle => vehicle.Cijena <= criteria.PriceTo.Value);
-
-            vehicles = criteria.SortOrder switch
             {
-                "name_desc" => vehicles.OrderByDescending(vehicle => vehicle.Marka)
+                if (!Enum.TryParse<TipGoriva>(criteria.Fuel, out var fuel))
+                {
+                    return Array.Empty<Vozilo>();
+                }
+
+                query = query.Where(vehicle => vehicle.Gorivo == fuel);
+            }
+            if (!string.IsNullOrEmpty(criteria.Color))
+                query = query.Where(vehicle => vehicle.Boja != null && vehicle.Boja.Contains(criteria.Color));
+            if (criteria.EngineDisplacementFrom.HasValue)
+                query = query.Where(vehicle => vehicle.Kubikaza >= criteria.EngineDisplacementFrom.Value);
+            if (criteria.EngineDisplacementTo.HasValue)
+                query = query.Where(vehicle => vehicle.Kubikaza <= criteria.EngineDisplacementTo.Value);
+            if (criteria.MileageFrom.HasValue)
+                query = query.Where(vehicle => vehicle.Kilometraza >= criteria.MileageFrom.Value);
+            if (criteria.MileageTo.HasValue)
+                query = query.Where(vehicle => vehicle.Kilometraza <= criteria.MileageTo.Value);
+            if (criteria.PriceFrom.HasValue)
+                query = query.Where(vehicle => vehicle.Cijena >= criteria.PriceFrom.Value);
+            if (criteria.PriceTo.HasValue)
+                query = query.Where(vehicle => vehicle.Cijena <= criteria.PriceTo.Value);
+
+            query = criteria.SortOrder switch
+            {
+                "name_desc" => query.OrderByDescending(vehicle => vehicle.Marka)
                     .ThenByDescending(vehicle => vehicle.Model),
-                "price" => vehicles.OrderBy(vehicle => vehicle.Cijena),
-                "price_desc" => vehicles.OrderByDescending(vehicle => vehicle.Cijena),
-                "year" => vehicles.OrderBy(vehicle => vehicle.Godiste),
-                "year_desc" => vehicles.OrderByDescending(vehicle => vehicle.Godiste),
-                _ => vehicles.OrderBy(vehicle => vehicle.Marka).ThenBy(vehicle => vehicle.Model)
+                "price" => query.OrderBy(vehicle => vehicle.Cijena),
+                "price_desc" => query.OrderByDescending(vehicle => vehicle.Cijena),
+                "year" => query.OrderBy(vehicle => vehicle.Godiste),
+                "year_desc" => query.OrderByDescending(vehicle => vehicle.Godiste),
+                _ => query.OrderBy(vehicle => vehicle.Marka).ThenBy(vehicle => vehicle.Model)
             };
 
-            return vehicles.ToList();
+            return await query.ToListAsync();
         }
     }
 

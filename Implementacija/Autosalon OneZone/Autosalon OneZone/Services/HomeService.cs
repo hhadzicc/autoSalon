@@ -24,12 +24,14 @@ public sealed class HomeService : IHomeService
     {
         var featuredVehicle = await _context.Vozila
             .AsNoTracking()
+            .AvailableForPurchase()
             .FirstOrDefaultAsync(vehicle =>
                 vehicle.Marka == "Porsche" &&
                 vehicle.Model == "Panamera 4 E-Hybrid");
 
         var curatedVehicles = await _context.Vozila
             .AsNoTracking()
+            .AvailableForPurchase()
             .Where(vehicle =>
                 (vehicle.Marka == "Audi" && vehicle.Model == "e-tron GT quattro") ||
                 (vehicle.Marka == "BMW" && vehicle.Model == "M4 Competition") ||
@@ -59,6 +61,7 @@ public sealed class HomeService : IHomeService
 
             var fallbackVehicles = await _context.Vozila
                 .AsNoTracking()
+                .AvailableForPurchase()
                 .Where(vehicle => !excludedIds.Contains(vehicle.VoziloID))
                 .OrderByDescending(vehicle => vehicle.Godiste ?? 0)
                 .ThenByDescending(vehicle => vehicle.Cijena ?? 0)

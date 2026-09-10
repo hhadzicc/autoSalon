@@ -24,10 +24,17 @@ public sealed class CartService : ICartService
 
     public async Task<CartAddResult> AddVehicleAsync(string userId, int vehicleId)
     {
-        var vehicle = await _context.Vozila.FindAsync(vehicleId);
+        var vehicle = await _context.Vozila
+            .AvailableForPurchase()
+            .FirstOrDefaultAsync(item => item.VoziloID == vehicleId);
         if (vehicle == null)
         {
-            return CartAddResult.VehicleNotFound;
+            var vehicleExists = await _context.Vozila
+                .AsNoTracking()
+                .AnyAsync(item => item.VoziloID == vehicleId);
+            return vehicleExists
+                ? CartAddResult.VehicleAlreadyPurchased
+                : CartAddResult.VehicleNotFound;
         }
 
         var cart = await _context.Korpe
@@ -79,9 +86,19 @@ public sealed class CartService : ICartService
             };
         }
 
+        var purchasedVehicleIds = await _context.StavkeKorpe
+            .AsNoTracking()
+            .Where(item => item.NarudzbaID != null)
+            .Select(item => item.VoziloID)
+            .Distinct()
+            .ToListAsync();
+        var availableItems = cart.StavkeKorpe
+            .Where(item => !purchasedVehicleIds.Contains(item.VoziloID))
+            .ToList();
+
         return new CartViewModel
         {
-            VozilaUKorpi = cart.StavkeKorpe.Select(item => new CartItemViewModel
+            VozilaUKorpi = availableItems.Select(item => new CartItemViewModel
             {
                 Id = item.VoziloID,
                 StavkaId = item.StavkaID,
@@ -94,7 +111,7 @@ public sealed class CartService : ICartService
                 Cijena = item.CijenaStavke,
                 Kolicina = item.Kolicina
             }).ToList(),
-            UkupnaCijena = cart.UkupnaCijena
+            UkupnaCijena = availableItems.Sum(item => item.CijenaStavke * item.Kolicina)
         };
     }
 
@@ -143,6 +160,7 @@ public enum CartAddResult
 {
     Added,
     AlreadyAdded,
+    VehicleAlreadyPurchased,
     VehicleNotFound
 }
 

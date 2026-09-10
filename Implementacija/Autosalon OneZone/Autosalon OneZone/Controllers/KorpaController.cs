@@ -1,7 +1,5 @@
 using Autosalon_OneZone.Models;
-using Autosalon_OneZone.Data;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +19,6 @@ namespace Autosalon_OneZone.Controllers
     [Authorize]
     public class KorpaController : Controller
     {
-        private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<KorpaController> _logger;
         private readonly IStringLocalizer<SharedResource> _localizer;
@@ -29,14 +26,12 @@ namespace Autosalon_OneZone.Controllers
         private readonly ICheckoutService _checkoutService;
 
         public KorpaController(
-            ApplicationDbContext context,
             UserManager<ApplicationUser> userManager,
             ILogger<KorpaController> logger,
             ICartService cartService,
             ICheckoutService checkoutService,
             IStringLocalizer<SharedResource>? localizer = null)
         {
-            _context = context;
             _userManager = userManager;
             _logger = logger;
             _cartService = cartService;
@@ -69,6 +64,9 @@ namespace Autosalon_OneZone.Controllers
                 {
                     case CartAddResult.VehicleNotFound:
                         TempData["ErrorMessage"] = _localizer["VehicleNotFound"].Value;
+                        break;
+                    case CartAddResult.VehicleAlreadyPurchased:
+                        TempData["ErrorMessage"] = _localizer["VehicleAlreadyPurchased"].Value;
                         break;
                     case CartAddResult.AlreadyAdded:
                         TempData["SuccessMessage"] = _localizer["CartVehicleAlreadyAdded"].Value;
@@ -156,9 +154,13 @@ namespace Autosalon_OneZone.Controllers
                     return Json(new { success = false, message = checkout.PaymentMessage });
                 }
 
-                var message = checkout.Status == CheckoutStatus.VehicleNotFound
-                    ? _localizer["VehicleNotFound"].Value
-                    : _localizer["VehiclePriceInvalid"].Value;
+                var message = checkout.Status switch
+                {
+                    CheckoutStatus.VehicleNotFound => _localizer["VehicleNotFound"].Value,
+                    CheckoutStatus.VehicleAlreadyPurchased => _localizer["VehicleAlreadyPurchased"].Value,
+                    CheckoutStatus.CheckoutBusy => _localizer["CheckoutBusy"].Value,
+                    _ => _localizer["VehiclePriceInvalid"].Value
+                };
                 return Json(new { success = false, message });
             }
             catch (Exception ex)
@@ -248,9 +250,13 @@ namespace Autosalon_OneZone.Controllers
                     return Json(new { success = false, message = checkout.PaymentMessage });
                 }
 
-                var message = checkout.Status == CheckoutStatus.CartNotFound
-                    ? _localizer["CartNotFound"].Value
-                    : _localizer["SelectedVehicleMissingFromCart"].Value;
+                var message = checkout.Status switch
+                {
+                    CheckoutStatus.CartNotFound => _localizer["CartNotFound"].Value,
+                    CheckoutStatus.VehicleAlreadyPurchased => _localizer["VehicleAlreadyPurchased"].Value,
+                    CheckoutStatus.CheckoutBusy => _localizer["CheckoutBusy"].Value,
+                    _ => _localizer["SelectedVehicleMissingFromCart"].Value
+                };
                 return Json(new { success = false, message });
             }
             catch (Exception ex)
@@ -269,17 +275,10 @@ namespace Autosalon_OneZone.Controllers
                 return Challenge();
             }
 
-            var narudzbeQuery = _context.Narudzbe
-                .Include(n => n.StavkeKorpe)
-                .ThenInclude(s => s.Vozilo)
-                .AsQueryable();
-
-            if (!User.IsInRole(AppRoles.Administrator))
-            {
-                narudzbeQuery = narudzbeQuery.Where(n => n.KorisnikId == user.Id);
-            }
-
-            var narudzba = await narudzbeQuery.FirstOrDefaultAsync(n => n.NarudzbaID == id);
+            var narudzba = await _checkoutService.GetOrderAsync(
+                id,
+                user.Id,
+                User.IsInRole(AppRoles.Administrator));
 
             if (narudzba == null)
             {

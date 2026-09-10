@@ -101,7 +101,10 @@ namespace Autosalon_OneZone.Services
 
                 try
                 {
-                    Charge charge = await service.CreateAsync(options);
+                    var requestOptions = string.IsNullOrWhiteSpace(paymentRequest.IdempotencyKey)
+                        ? null
+                        : new RequestOptions { IdempotencyKey = paymentRequest.IdempotencyKey };
+                    Charge charge = await service.CreateAsync(options, requestOptions);
 
                     _logger.LogInformation("Uspješno procesirana transakcija ID: {ChargeId}", charge.Id);
                     return new PaymentResult

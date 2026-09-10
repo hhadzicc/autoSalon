@@ -11,6 +11,7 @@ namespace Autosalon_OneZone.Models
         public string Email { get; set; }
         public string Description { get; set; }
         public int ProductId { get; set; }
+        public string? IdempotencyKey { get; set; }
     }
 
     public class PaymentResult

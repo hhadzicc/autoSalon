@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc.Razor;
 using System.Globalization;
+using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
@@ -34,7 +35,19 @@ builder.Services.AddDataProtection()
 
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
-    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor |
+                               ForwardedHeaders.XForwardedProto;
+
+    var knownProxy = builder.Configuration["ReverseProxy:KnownProxy"];
+    if (!string.IsNullOrWhiteSpace(knownProxy))
+    {
+        if (!IPAddress.TryParse(knownProxy, out var proxyAddress))
+        {
+            throw new InvalidOperationException("ReverseProxy:KnownProxy must be a valid IP address.");
+        }
+
+        options.KnownProxies.Add(proxyAddress);
+    }
 });
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??

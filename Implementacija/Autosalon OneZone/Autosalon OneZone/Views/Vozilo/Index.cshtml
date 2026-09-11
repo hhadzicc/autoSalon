@@ -1,13 +1,15 @@
-@using Microsoft.AspNetCore.Identity
-@using System.Globalization
-@inject SignInManager<Autosalon_OneZone.Models.ApplicationUser> SignInManager
+@using Autosalon_OneZone.Models.ViewModels
 
-@model IEnumerable<Autosalon_OneZone.Models.Vozilo>
+@model VehicleListingViewModel
 @{
     ViewData["Title"] = L["VehiclesTitle"];
     var currentYear = DateTime.Now.Year;
-    var culture = CultureInfo.CurrentCulture;
-    var searchTerm = ViewData["SearchTerm"]?.ToString();
+    var searchTerm = Model.SearchTerm;
+    var clearSearchParameters = Context.Request.Query
+        .Where(parameter => !string.Equals(parameter.Key, "searchTerm", StringComparison.OrdinalIgnoreCase))
+        .SelectMany(parameter => parameter.Value.Select(value =>
+            new KeyValuePair<string, string?>(parameter.Key, value)));
+    var clearSearchUrl = $"{Url.Action("Index", "Vozilo")}{QueryString.Create(clearSearchParameters)}";
     var hasActiveFilters =
         ViewData["GodisteOd"] != null ||
         ViewData["GodisteDo"] != null ||
@@ -29,21 +31,37 @@
         "Hibrid" => L["FuelHybrid"].Value,
         _ => value
     };
+
 }
 
 <section class="vehicles-hero">
     <div class="container">
-        <div class="row align-items-center g-4">
-            <div class="col-lg-7">
-                <p class="section-eyebrow">@L["VehiclesOverview"]</p>
+        <div class="vehicles-hero-grid">
+            <div class="vehicles-hero-copy">
                 <h1>@L["VehiclesHeroTitle"]</h1>
                 <p>@L["VehiclesHeroText"]</p>
             </div>
 
-            <div class="col-lg-5">
-                <form class="vehicles-search" method="get" action="@Url.Action("Index", "Vozilo")" role="search">
-                    <input type="text" class="form-control" name="searchTerm" value="@searchTerm" placeholder="@L["VehiclesSearchPlaceholder"]" aria-label="@L["VehicleSearchAria"]">
-                    <button class="btn btn-primary" type="submit">@L["CommonSearch"]</button>
+            <div>
+                <form class="vehicles-search" method="get" action="@Url.Action("Index", "Vozilo")" role="search" autocomplete="off">
+                    <input type="text"
+                           class="form-control animated-search-placeholder"
+                           name="searchTerm"
+                           autocomplete="off"
+                           spellcheck="false"
+                           value="@searchTerm"
+                           placeholder="@L["VehiclesSearchPlaceholder"]"
+                           data-animated-search-placeholder
+                           data-static-placeholder="@L["VehiclesSearchPlaceholder"]"
+                           data-placeholder-phrases="@L["VehicleSearchAnimatedPhrases"]"
+                           aria-label="@L["VehicleSearchAria"]">
+                    <button class="btn btn-primary" type="submit">
+                        <svg class="oz-btn-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                            <circle cx="11" cy="11" r="6.5"></circle>
+                            <path d="m16 16 4 4"></path>
+                        </svg>
+                        <span>@L["CommonSearch"]</span>
+                    </button>
                 </form>
             </div>
         </div>
@@ -52,45 +70,40 @@
 
 <section class="vehicles-listing-section">
     <div class="container">
-        @if (!string.IsNullOrWhiteSpace(searchTerm))
-        {
-            <div class="alert alert-info vehicles-search-alert">
-                @L["SearchResultsFor"] <strong>@searchTerm</strong>
-            </div>
-        }
+        <button type="button"
+                class="vehicles-mobile-filter-button"
+                data-bs-toggle="collapse"
+                data-bs-target="#vehicleFilters"
+                aria-expanded="@(hasActiveFilters.ToString().ToLowerInvariant())"
+                aria-controls="vehicleFilters">
+            <i class="bi bi-funnel"></i>
+            @L["ShowHideFilters"]
+        </button>
 
-        <div class="filters-card">
-            <div class="d-flex justify-content-between align-items-center gap-3 mb-3 flex-wrap">
-                <div>
-                    <h2 class="mb-1">@L["FiltersAndSorting"]</h2>
-                    <p class="text-secondary mb-0">@L["FiltersText"]</p>
+        <div class="vehicles-market-grid">
+            <aside class="vehicles-filter-panel collapse @(hasActiveFilters ? "show" : "")" id="vehicleFilters">
+                <div class="vehicles-filter-header">
+                    <h2><i class="bi bi-sliders"></i> @L["Filters"]</h2>
+                    @if (hasActiveFilters)
+                    {
+                        <button type="button" class="vehicles-clear-button" data-clear-filters>@L["ClearAllFilters"]</button>
+                    }
                 </div>
-                <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-3" data-bs-toggle="collapse" data-bs-target="#filterCollapse" aria-expanded="@(hasActiveFilters.ToString().ToLowerInvariant())" aria-controls="filterCollapse">
-                    <i class="bi bi-funnel"></i> @L["ShowHideFilters"]
-                </button>
-            </div>
 
-            <div class="collapse @(hasActiveFilters ? "show" : "")" id="filterCollapse">
-                <form id="filterForm" method="get" action="@Url.Action("Index", "Vozilo")">
+                <form id="filterForm"
+                      method="get"
+                      action="@Url.Action("Index", "Vozilo")"
+                      novalidate
+                      data-year-error="@L["FilterYearRangeError", currentYear]"
+                      data-range-order-error="@L["FilterRangeOrderError"]"
+                      data-non-negative-error="@L["FilterNonNegativeError"]">
                     @if (!string.IsNullOrWhiteSpace(searchTerm))
                     {
                         <input type="hidden" name="searchTerm" value="@searchTerm" />
                     }
 
-                    <div class="row g-3">
-                        <div class="col-md-6 col-lg-4">
-                            <label for="sortOrder" class="form-label">@L["Sorting"]</label>
-                            <select class="form-select" id="sortOrder" name="sortOrder">
-                                <option value="" selected="@(ViewData["CurrentSort"] == null)">@L["SortNameAsc"]</option>
-                                <option value="name_desc" selected="@(ViewData["CurrentSort"]?.ToString() == "name_desc")">@L["SortNameDesc"]</option>
-                                <option value="price" selected="@(ViewData["CurrentSort"]?.ToString() == "price")">@L["SortPriceAsc"]</option>
-                                <option value="price_desc" selected="@(ViewData["CurrentSort"]?.ToString() == "price_desc")">@L["SortPriceDesc"]</option>
-                                <option value="year" selected="@(ViewData["CurrentSort"]?.ToString() == "year")">@L["SortYearAsc"]</option>
-                                <option value="year_desc" selected="@(ViewData["CurrentSort"]?.ToString() == "year_desc")">@L["SortYearDesc"]</option>
-                            </select>
-                        </div>
-
-                        <div class="col-md-6 col-lg-4">
+                    <div class="vehicles-filter-group">
+                        <div>
                             <label for="gorivo" class="form-label">@L["VehicleFuel"]</label>
                             <select class="form-select" id="gorivo" name="gorivo">
                                 <option value="">@L["AllFuelTypes"]</option>
@@ -104,151 +117,200 @@
                             </select>
                         </div>
 
-                        <div class="col-md-6 col-lg-4">
+                        <div class="vehicles-filter-field" data-manual-filter-group>
                             <label for="boja" class="form-label">@L["VehicleColor"]</label>
-                            <input type="text" class="form-control" id="boja" name="boja" placeholder="@L["EnterColor"]" value="@ViewData["Boja"]">
-                        </div>
-
-                        <div class="col-md-6 col-lg-3">
-                            <label for="godisteOd" class="form-label">@L["YearFrom"]</label>
-                            <input type="number" class="form-control" placeholder="@L["From"]" id="godisteOd" name="godisteOd" min="1900" max="@currentYear" value="@ViewData["GodisteOd"]">
-                        </div>
-
-                        <div class="col-md-6 col-lg-3">
-                            <label for="godisteDo" class="form-label">@L["YearTo"]</label>
-                            <input type="number" class="form-control" placeholder="@L["To"]" id="godisteDo" name="godisteDo" min="1900" max="@currentYear" value="@ViewData["GodisteDo"]">
-                        </div>
-
-                        <div class="col-md-6 col-lg-3">
-                            <label for="cijenaOd" class="form-label">@L["PriceFromEuro"]</label>
-                            <input type="number" min="0" class="form-control" placeholder="@L["From"]" id="cijenaOd" name="cijenaOd" value="@ViewData["CijenaOd"]">
-                        </div>
-
-                        <div class="col-md-6 col-lg-3">
-                            <label for="cijenaDo" class="form-label">@L["PriceToEuro"]</label>
-                            <input type="number" min="0" class="form-control" placeholder="@L["To"]" id="cijenaDo" name="cijenaDo" value="@ViewData["CijenaDo"]">
-                        </div>
-
-                        <div class="col-md-6 col-lg-3">
-                            <label for="kubikazaOd" class="form-label">@L["DisplacementFrom"]</label>
-                            <input type="number" step="0.1" min="0" class="form-control" placeholder="@L["From"]" id="kubikazaOd" name="kubikazaOd" value="@ViewData["KubikazaOd"]">
-                        </div>
-
-                        <div class="col-md-6 col-lg-3">
-                            <label for="kubikazaDo" class="form-label">@L["DisplacementTo"]</label>
-                            <input type="number" step="0.1" min="0" class="form-control" placeholder="@L["To"]" id="kubikazaDo" name="kubikazaDo" value="@ViewData["KubikazaDo"]">
-                        </div>
-
-                        <div class="col-md-6 col-lg-3">
-                            <label for="kilometrazaOd" class="form-label">@L["MileageFrom"]</label>
-                            <input type="number" min="0" class="form-control" placeholder="@L["From"]" id="kilometrazaOd" name="kilometrazaOd" value="@ViewData["KilometrazaOd"]">
-                        </div>
-
-                        <div class="col-md-6 col-lg-3">
-                            <label for="kilometrazaDo" class="form-label">@L["MileageTo"]</label>
-                            <input type="number" min="0" class="form-control" placeholder="@L["To"]" id="kilometrazaDo" name="kilometrazaDo" value="@ViewData["KilometrazaDo"]">
+                            <input type="text" class="form-control" id="boja" name="boja" autocomplete="off" spellcheck="false" placeholder="@L["EnterColor"]" value="@ViewData["Boja"]">
+                            <button type="submit" class="vehicles-group-apply" data-filter-apply hidden>@L["Apply"]</button>
                         </div>
                     </div>
 
-                    <div class="filters-actions">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-funnel-fill"></i> @L["ApplyFilters"]
-                        </button>
-                        <button type="button" id="clearAllFilters" class="btn btn-outline-danger">
-                            @L["ClearAllFilters"]
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <div class="vehicles-results-header">
-            <p class="results-count mb-0">@L["VehiclesFound", Model.Count()]</p>
-        </div>
-
-        @if (!Model.Any())
-        {
-            <div class="vehicles-empty-state">
-                <i class="bi bi-search"></i>
-                <h2>@L["NoVehiclesTitle"]</h2>
-                <p>@L["NoVehiclesText"]</p>
-            </div>
-        }
-        else
-        {
-            <div class="row g-4">
-                @foreach (var vozilo in Model)
-                {
-                    var imageUrl = !string.IsNullOrWhiteSpace(vozilo.Slika)
-                        ? Url.Content($"~/images/vozila/{vozilo.Slika}")
-                        : Url.Content("~/img/no-image.png");
-                    var priceText = vozilo.Cijena.HasValue
-                        ? $"€{vozilo.Cijena.Value.ToString("N0", culture)}"
-                        : L["PriceOnRequest"].Value;
-                    var mileageText = vozilo.Kilometraza.HasValue
-                        ? $"{vozilo.Kilometraza.Value.ToString("N0", culture)} km"
-                        : L["MileageNotEntered"].Value;
-
-                    <div class="col-md-6 col-xl-4">
-                        <article class="vehicles-card h-100">
-                            <a href="@Url.Action("Details", "Vozilo", new { id = vozilo.VoziloID })" class="vehicles-card-image-link">
-                                <img src="@imageUrl" class="vehicles-card-image" alt="@vozilo.Marka @vozilo.Model">
-                            </a>
-
-                            <div class="vehicles-card-body">
-                                <div class="d-flex justify-content-between align-items-start gap-3 mb-2">
-                                    <h2 class="vehicles-card-title">@vozilo.Marka @vozilo.Model</h2>
-                                    <span class="vehicles-card-tag">@FuelLabel(vozilo.Gorivo.ToString())</span>
-                                </div>
-
-                                <p class="vehicles-card-meta">@vozilo.Godiste · @vozilo.Boja · @mileageText</p>
-
-                                <dl class="vehicles-spec-grid">
-                                    @if (vozilo.Gorivo != Autosalon_OneZone.Models.TipGoriva.Elektro)
-                                    {
-                                        <div>
-                                            <dt>@L["VehicleDisplacement"]</dt>
-                                            <dd>@vozilo.Kubikaza</dd>
-                                        </div>
-                                    }
-                                    <div>
-                                        <dt>@L["VehicleFuel"]</dt>
-                                        <dd>@FuelLabel(vozilo.Gorivo.ToString())</dd>
-                                    </div>
-                                </dl>
-
-                                <div class="vehicles-card-footer">
-                                    <span class="vehicles-card-price">@priceText</span>
-                                    <div class="vehicles-card-actions">
-                                        <a href="@Url.Action("Details", "Vozilo", new { id = vozilo.VoziloID })" class="btn btn-primary">@L["Details"]</a>
-
-                                        @if (SignInManager.IsSignedIn(User))
-                                        {
-                                            <form asp-controller="Korpa" asp-action="DodajUKorpu" method="post">
-                                                @Html.AntiForgeryToken()
-                                                <input type="hidden" name="id" value="@vozilo.VoziloID" />
-                                                <button type="submit" class="btn btn-outline-primary">@L["AddToCart"]</button>
-                                            </form>
-                                        }
-                                        else
-                                        {
-                                            <a href="@Url.Action("Login", "Account", new { returnUrl = Context.Request.Path })" class="btn btn-outline-primary">@L["LoginToBuy"]</a>
-                                        }
-                                    </div>
-                                </div>
+                    <div class="vehicles-filter-group" data-manual-filter-group>
+                        <span class="vehicles-filter-label">@L["VehicleYear"]</span>
+                        <div class="vehicles-range-fields">
+                            <div>
+                                <label for="godisteOd">@L["From"]</label>
+                                <input type="number" class="form-control" placeholder="@L["From"]" id="godisteOd" name="godisteOd" min="1900" max="@currentYear" value="@ViewData["GodisteOd"]">
                             </div>
-                        </article>
+                            <div>
+                                <label for="godisteDo">@L["To"]</label>
+                                <input type="number" class="form-control" placeholder="@L["To"]" id="godisteDo" name="godisteDo" min="1900" max="@currentYear" value="@ViewData["GodisteDo"]">
+                            </div>
+                        </div>
+                        <p class="vehicles-filter-error" data-filter-error>@ViewData["YearFilterError"]</p>
+                        <button type="submit" class="vehicles-group-apply" data-filter-apply hidden>@L["Apply"]</button>
+                    </div>
+
+                    <div class="vehicles-filter-group" data-manual-filter-group>
+                        <span class="vehicles-filter-label">@L["VehiclePrice"] (€)</span>
+                        <div class="vehicles-range-fields">
+                            <div>
+                                <label for="cijenaOd">@L["From"]</label>
+                                <input type="number" min="0" class="form-control" placeholder="@L["From"]" id="cijenaOd" name="cijenaOd" value="@ViewData["CijenaOd"]">
+                            </div>
+                            <div>
+                                <label for="cijenaDo">@L["To"]</label>
+                                <input type="number" min="0" class="form-control" placeholder="@L["To"]" id="cijenaDo" name="cijenaDo" value="@ViewData["CijenaDo"]">
+                            </div>
+                        </div>
+                        <p class="vehicles-filter-error" data-filter-error>@ViewData["PriceFilterError"]</p>
+                        <button type="submit" class="vehicles-group-apply" data-filter-apply hidden>@L["Apply"]</button>
+                    </div>
+
+                    <div class="vehicles-filter-group" data-manual-filter-group>
+                        <span class="vehicles-filter-label">@L["VehicleMileage"] (km)</span>
+                        <div class="vehicles-range-fields">
+                            <div>
+                                <label for="kilometrazaOd">@L["From"]</label>
+                                <input type="number" min="0" class="form-control" placeholder="@L["From"]" id="kilometrazaOd" name="kilometrazaOd" value="@ViewData["KilometrazaOd"]">
+                            </div>
+                            <div>
+                                <label for="kilometrazaDo">@L["To"]</label>
+                                <input type="number" min="0" class="form-control" placeholder="@L["To"]" id="kilometrazaDo" name="kilometrazaDo" value="@ViewData["KilometrazaDo"]">
+                            </div>
+                        </div>
+                        <p class="vehicles-filter-error" data-filter-error>@ViewData["MileageFilterError"]</p>
+                        <button type="submit" class="vehicles-group-apply" data-filter-apply hidden>@L["Apply"]</button>
+                    </div>
+
+                    <div class="vehicles-filter-group" data-manual-filter-group>
+                        <span class="vehicles-filter-label">@L["VehicleDisplacement"]</span>
+                        <div class="vehicles-range-fields">
+                            <div>
+                                <label for="kubikazaOd">@L["From"]</label>
+                                <input type="number" step="0.1" min="0" class="form-control" placeholder="@L["From"]" id="kubikazaOd" name="kubikazaOd" value="@ViewData["KubikazaOd"]">
+                            </div>
+                            <div>
+                                <label for="kubikazaDo">@L["To"]</label>
+                                <input type="number" step="0.1" min="0" class="form-control" placeholder="@L["To"]" id="kubikazaDo" name="kubikazaDo" value="@ViewData["KubikazaDo"]">
+                            </div>
+                        </div>
+                        <p class="vehicles-filter-error" data-filter-error>@ViewData["DisplacementFilterError"]</p>
+                        <button type="submit" class="vehicles-group-apply" data-filter-apply hidden>@L["Apply"]</button>
+                    </div>
+
+                </form>
+            </aside>
+
+            <div class="vehicles-results-area">
+                <div class="vehicles-results-header">
+                    <div class="vehicles-results-summary">
+                        <p class="results-count">
+                            @if (!string.IsNullOrWhiteSpace(searchTerm))
+                            {
+                                @(Model.TotalCount == 1
+                                    ? L["VehicleSearchFoundSingle", searchTerm]
+                                    : L["VehicleSearchFoundPlural", Model.TotalCount, searchTerm])
+                            }
+                            else
+                            {
+                                @(Model.TotalCount == 1
+                                    ? L["VehicleFoundSingle"]
+                                    : L["VehiclesFound", Model.TotalCount])
+                            }
+                        </p>
+                        @if (!string.IsNullOrWhiteSpace(searchTerm))
+                        {
+                            <a class="vehicles-clear-search" href="@clearSearchUrl">
+                                @L["ClearSearch"] <i class="bi bi-x" aria-hidden="true"></i>
+                            </a>
+                        }
+                    </div>
+                    <div class="vehicles-sort-control">
+                        <label for="sortOrder">@L["Sorting"]</label>
+                        <select class="form-select" id="sortOrder" name="sortOrder" form="filterForm">
+                            <option value="" selected="@(ViewData["CurrentSort"] == null)">@L["SortNameAsc"]</option>
+                            <option value="name_desc" selected="@(ViewData["CurrentSort"]?.ToString() == "name_desc")">@L["SortNameDesc"]</option>
+                            <option value="price" selected="@(ViewData["CurrentSort"]?.ToString() == "price")">@L["SortPriceAsc"]</option>
+                            <option value="price_desc" selected="@(ViewData["CurrentSort"]?.ToString() == "price_desc")">@L["SortPriceDesc"]</option>
+                            <option value="year" selected="@(ViewData["CurrentSort"]?.ToString() == "year")">@L["SortYearAsc"]</option>
+                            <option value="year_desc" selected="@(ViewData["CurrentSort"]?.ToString() == "year_desc")">@L["SortYearDesc"]</option>
+                        </select>
+                    </div>
+                </div>
+
+                @if (hasActiveFilters)
+                {
+                    <div class="vehicles-active-filters" aria-label="@L["ActiveFilters"]">
+                        @if (ViewData["Gorivo"] != null)
+                        {
+                            <button type="button" class="vehicles-filter-chip" data-clear-filter="gorivo">
+                                <span>@FuelLabel(ViewData["Gorivo"]!.ToString()!)</span><i class="bi bi-x" aria-hidden="true"></i>
+                            </button>
+                        }
+                        @if (ViewData["Boja"] != null)
+                        {
+                            <button type="button" class="vehicles-filter-chip" data-clear-filter="boja">
+                                <span>@ViewData["Boja"]</span><i class="bi bi-x" aria-hidden="true"></i>
+                            </button>
+                        }
+                        @if (ViewData["GodisteOd"] != null || ViewData["GodisteDo"] != null)
+                        {
+                            <button type="button" class="vehicles-filter-chip" data-clear-filter="godisteOd,godisteDo">
+                                <span>@L["VehicleYear"]: @(ViewData["GodisteOd"] ?? "…")–@(ViewData["GodisteDo"] ?? "…")</span><i class="bi bi-x" aria-hidden="true"></i>
+                            </button>
+                        }
+                        @if (ViewData["CijenaOd"] != null || ViewData["CijenaDo"] != null)
+                        {
+                            <button type="button" class="vehicles-filter-chip" data-clear-filter="cijenaOd,cijenaDo">
+                                <span>@L["VehiclePrice"]: €@(ViewData["CijenaOd"] ?? "…")–€@(ViewData["CijenaDo"] ?? "…")</span><i class="bi bi-x" aria-hidden="true"></i>
+                            </button>
+                        }
+                        @if (ViewData["KilometrazaOd"] != null || ViewData["KilometrazaDo"] != null)
+                        {
+                            <button type="button" class="vehicles-filter-chip" data-clear-filter="kilometrazaOd,kilometrazaDo">
+                                <span>@L["VehicleMileage"]: @(ViewData["KilometrazaOd"] ?? "…")–@(ViewData["KilometrazaDo"] ?? "…") km</span><i class="bi bi-x" aria-hidden="true"></i>
+                            </button>
+                        }
+                        @if (ViewData["KubikazaOd"] != null || ViewData["KubikazaDo"] != null)
+                        {
+                            <button type="button" class="vehicles-filter-chip" data-clear-filter="kubikazaOd,kubikazaDo">
+                                <span>@L["VehicleDisplacement"]: @(ViewData["KubikazaOd"] ?? "…")–@(ViewData["KubikazaDo"] ?? "…")</span><i class="bi bi-x" aria-hidden="true"></i>
+                            </button>
+                        }
+                        <button type="button" class="vehicles-clear-all-chips" data-clear-filters>@L["ClearFiltersShort"]</button>
                     </div>
                 }
+
+                @if (Model.Vehicles.Count == 0)
+                {
+                    <div class="vehicles-empty-state">
+                        <i class="bi bi-search"></i>
+                        <h2>@L["NoVehiclesTitle"]</h2>
+                        <p>@L["NoVehiclesText"]</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="vehicles-cards-grid"
+                         id="vehicles-cards-grid"
+                         data-load-url="@Url.Action("LoadMore", "Vozilo")"
+                         data-next-page="@(Model.CurrentPage + 1)"
+                         data-has-more="@Model.HasMore.ToString().ToLowerInvariant()">
+                        <partial name="_VehicleCards" model="Model.Vehicles" />
+                    </div>
+
+                    @if (Model.HasMore)
+                    {
+                        <div class="vehicles-infinite-loader" data-vehicles-loader hidden aria-live="polite">
+                            <span class="visually-hidden">@L["LoadingMoreVehicles"]</span>
+                            <div class="vehicles-skeleton-card" aria-hidden="true"></div>
+                            <div class="vehicles-skeleton-card" aria-hidden="true"></div>
+                        </div>
+                        <div class="vehicles-scroll-sentinel" data-vehicles-sentinel aria-hidden="true"></div>
+                    }
+                }
             </div>
-        }
+        </div>
     </div>
 </section>
 
 @section Scripts {
+    <script src="~/js/components/animated-search-placeholder.js" asp-append-version="true"></script>
+    <script src="~/js/components/cart-actions.js" asp-append-version="true"></script>
+    <script src="~/js/components/vehicle-infinite-scroll.js" asp-append-version="true"></script>
     <script>
         $(document).ready(function() {
-            $('#clearAllFilters').click(function() {
+            $('[data-clear-filters]').click(function() {
                 var searchTerm = '@searchTerm';
 
                 $('#filterForm').find('input:not([name="searchTerm"])').val('');
@@ -267,56 +329,85 @@
                 $('#filterForm').submit();
             });
 
+            $('[data-clear-filter]').click(function() {
+                var fieldNames = ($(this).attr('data-clear-filter') || '').split(',');
+
+                fieldNames.forEach(function(fieldName) {
+                    $('#filterForm').find('[name="' + fieldName + '"]').val('');
+                });
+
+                $('#filterForm').submit();
+            });
+
             $('#sortOrder').change(function() {
                 $('#filterForm').submit();
             });
 
-            $('#godisteOd, #godisteDo').on('change', function() {
-                var min = 1900;
-                var max = @currentYear;
-                var val = $(this).val() ? parseInt($(this).val()) : '';
-
-                if (val !== '') {
-                    if (val < min) {
-                        $(this).val(min);
-                    } else if (val > max) {
-                        $(this).val(max);
-                    }
-
-                    if (this.id === 'godisteOd' && $('#godisteDo').val()) {
-                        var doVal = parseInt($('#godisteDo').val());
-                        if (val > doVal) {
-                            $('#godisteDo').val(val);
-                        }
-                    }
-                    else if (this.id === 'godisteDo' && $('#godisteOd').val()) {
-                        var odVal = parseInt($('#godisteOd').val());
-                        if (val < odVal) {
-                            $('#godisteOd').val(val);
-                        }
-                    }
-                }
+            $('#gorivo').change(function() {
+                $('#filterForm').submit();
             });
 
-            function validateRange(odId, doId) {
-                var odVal = $('#' + odId).val() ? parseFloat($('#' + odId).val()) : '';
-                var doVal = $('#' + doId).val() ? parseFloat($('#' + doId).val()) : '';
+            $('[data-manual-filter-group] input').on('input', function() {
+                var group = $(this).closest('[data-manual-filter-group]');
+                group.find('[data-filter-apply]').prop('hidden', false);
+                group.find('[data-filter-error]').text('');
+                group.find('input').removeClass('is-invalid').removeAttr('aria-invalid');
+            });
 
-                if (odVal !== '' && doVal !== '' && odVal > doVal) {
-                    $('#' + doId).val(odVal);
-                }
+            function readNumber(id) {
+                var rawValue = $('#' + id).val();
+                return rawValue === '' ? null : Number(rawValue);
             }
 
-            $('#kubikazaOd, #kubikazaDo').on('change', function() {
-                validateRange('kubikazaOd', 'kubikazaDo');
-            });
+            function setRangeError(fromId, toId, message) {
+                var inputs = $('#' + fromId + ', #' + toId);
+                var group = inputs.first().closest('[data-manual-filter-group]');
+                inputs.addClass('is-invalid').attr('aria-invalid', 'true');
+                group.find('[data-filter-error]').text(message);
+                group.find('[data-filter-apply]').prop('hidden', false);
+            }
 
-            $('#kilometrazaOd, #kilometrazaDo').on('change', function() {
-                validateRange('kilometrazaOd', 'kilometrazaDo');
-            });
+            function validateNonNegativeRange(fromId, toId) {
+                var fromValue = readNumber(fromId);
+                var toValue = readNumber(toId);
 
-            $('#cijenaOd, #cijenaDo').on('change', function() {
-                validateRange('cijenaOd', 'cijenaDo');
+                if ((fromValue !== null && fromValue < 0) || (toValue !== null && toValue < 0)) {
+                    setRangeError(fromId, toId, $('#filterForm').data('non-negative-error'));
+                    return false;
+                }
+
+                if (fromValue !== null && toValue !== null && fromValue > toValue) {
+                    setRangeError(fromId, toId, $('#filterForm').data('range-order-error'));
+                    return false;
+                }
+
+                return true;
+            }
+
+            $('#filterForm').on('submit', function(event) {
+                var yearFrom = readNumber('godisteOd');
+                var yearTo = readNumber('godisteDo');
+                var yearIsValid = true;
+
+                if ((yearFrom !== null && (!Number.isInteger(yearFrom) || yearFrom < 1900 || yearFrom > @currentYear)) ||
+                    (yearTo !== null && (!Number.isInteger(yearTo) || yearTo < 1900 || yearTo > @currentYear))) {
+                    setRangeError('godisteOd', 'godisteDo', $(this).data('year-error'));
+                    yearIsValid = false;
+                } else if (yearFrom !== null && yearTo !== null && yearFrom > yearTo) {
+                    setRangeError('godisteOd', 'godisteDo', $(this).data('range-order-error'));
+                    yearIsValid = false;
+                }
+
+                var rangesAreValid = [
+                    validateNonNegativeRange('cijenaOd', 'cijenaDo'),
+                    validateNonNegativeRange('kilometrazaOd', 'kilometrazaDo'),
+                    validateNonNegativeRange('kubikazaOd', 'kubikazaDo')
+                ].every(Boolean);
+
+                if (!yearIsValid || !rangesAreValid) {
+                    event.preventDefault();
+                    $('.is-invalid').first().trigger('focus');
+                }
             });
         });
     </script>

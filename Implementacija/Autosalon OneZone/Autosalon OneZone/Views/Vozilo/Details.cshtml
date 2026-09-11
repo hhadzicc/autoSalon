@@ -9,6 +9,7 @@
     var voziloNaziv = $"{Model.Marka} {Model.Model}".Trim();
     var cijena = Model.Cijena ?? 0;
     var slikaUrl = !string.IsNullOrEmpty(Model.Slika) ? Url.Content($"~/images/vozila/{Model.Slika}") : Url.Content("~/img/no-image.png");
+    var isInCart = ViewData["IsInCart"] as bool? ?? false;
 
     string FuelLabel(string value) => value switch
     {
@@ -52,11 +53,24 @@
                         <div class="vehicle-actions">
                             @if (SignInManager.IsSignedIn(User))
                             {
-                                <form asp-controller="Korpa" asp-action="DodajUKorpu" method="post">
+                                <form class="add-to-cart-form"
+                                      asp-controller="Korpa"
+                                      asp-action="DodajUKorpu"
+                                      method="post"
+                                      data-vehicle-name="@voziloNaziv"
+                                      data-adding-text="@L["CartAdding"]"
+                                      data-added-text="@L["CartInCart"]"
+                                      data-view-cart-text="@L["CartView"]"
+                                      data-success-template="@L["CartVehicleAddedToast"]"
+                                      data-cart-url="@Url.Action("Index", "Korpa")"
+                                      data-error-text="@L["CartAddError"]">
                                     @Html.AntiForgeryToken()
                                     <input type="hidden" name="id" value="@Model.VoziloID" />
-                                    <button type="submit" class="btn btn-success rounded-4">
-                                        <i class="bi bi-cart-plus me-2"></i>@L["AddToCart"]
+                                    <button type="submit"
+                                            class="btn btn-success rounded-4 @(isInCart ? "is-added" : "")"
+                                            data-cart-button
+                                            disabled="@isInCart">
+                                        <i class="bi @(isInCart ? "bi-check-lg" : "bi-cart-plus") me-2" data-cart-icon></i><span data-cart-button-text>@(isInCart ? L["CartInCart"] : L["AddToCart"])</span>
                                     </button>
                                 </form>
                                 <button type="button" class="btn btn-primary rounded-4" data-bs-toggle="modal" data-bs-target="#paymentModal">
@@ -317,6 +331,7 @@
 </div>
 
 @section Scripts {
+    <script src="~/js/components/cart-actions.js" asp-append-version="true"></script>
     <script>
         const paymentTexts = {
             processing: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["Processing"].Value)),

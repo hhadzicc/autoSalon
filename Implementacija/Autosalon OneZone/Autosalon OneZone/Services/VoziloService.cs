@@ -13,7 +13,10 @@ namespace Autosalon_OneZone.Services
         Task<IEnumerable<Vozilo>> FilterVozilaAsync(string marka, string model, int? godisteOd, int? godisteDo, TipGoriva? gorivo, decimal? cijenaOd, decimal? cijenaDo);
         Task<IEnumerable<Vozilo>> SearchVozilaAsync(string searchTerm);
         Task<Vozilo?> GetVehicleDetailsAsync(int id);
-        Task<IReadOnlyList<Vozilo>> GetVehiclesAsync(VehicleSearchCriteria criteria);
+        Task<VehicleSearchResult> GetVehiclesPageAsync(
+            VehicleSearchCriteria criteria,
+            int page,
+            int pageSize);
     }
 
     public class VoziloService : IVoziloService
@@ -158,7 +161,24 @@ namespace Autosalon_OneZone.Services
             return vehicle;
         }
 
-        public async Task<IReadOnlyList<Vozilo>> GetVehiclesAsync(VehicleSearchCriteria criteria)
+        public async Task<VehicleSearchResult> GetVehiclesPageAsync(
+            VehicleSearchCriteria criteria,
+            int page,
+            int pageSize)
+        {
+            page = Math.Max(1, page);
+            pageSize = Math.Max(1, pageSize);
+            var query = BuildVehicleQuery(criteria);
+            var totalCount = await query.CountAsync();
+            var vehicles = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return new VehicleSearchResult(vehicles, totalCount, page, pageSize);
+        }
+
+        private IQueryable<Vozilo> BuildVehicleQuery(VehicleSearchCriteria criteria)
         {
             var query = _context.Vozila
                 .AsNoTracking()
@@ -180,7 +200,7 @@ namespace Autosalon_OneZone.Services
             {
                 if (!Enum.TryParse<TipGoriva>(criteria.Fuel, out var fuel))
                 {
-                    return Array.Empty<Vozilo>();
+                    return query.Where(_ => false);
                 }
 
                 query = query.Where(vehicle => vehicle.Gorivo == fuel);
@@ -203,15 +223,22 @@ namespace Autosalon_OneZone.Services
             query = criteria.SortOrder switch
             {
                 "name_desc" => query.OrderByDescending(vehicle => vehicle.Marka)
-                    .ThenByDescending(vehicle => vehicle.Model),
-                "price" => query.OrderBy(vehicle => vehicle.Cijena),
-                "price_desc" => query.OrderByDescending(vehicle => vehicle.Cijena),
-                "year" => query.OrderBy(vehicle => vehicle.Godiste),
-                "year_desc" => query.OrderByDescending(vehicle => vehicle.Godiste),
-                _ => query.OrderBy(vehicle => vehicle.Marka).ThenBy(vehicle => vehicle.Model)
+                    .ThenByDescending(vehicle => vehicle.Model)
+                    .ThenBy(vehicle => vehicle.VoziloID),
+                "price" => query.OrderBy(vehicle => vehicle.Cijena)
+                    .ThenBy(vehicle => vehicle.VoziloID),
+                "price_desc" => query.OrderByDescending(vehicle => vehicle.Cijena)
+                    .ThenBy(vehicle => vehicle.VoziloID),
+                "year" => query.OrderBy(vehicle => vehicle.Godiste)
+                    .ThenBy(vehicle => vehicle.VoziloID),
+                "year_desc" => query.OrderByDescending(vehicle => vehicle.Godiste)
+                    .ThenBy(vehicle => vehicle.VoziloID),
+                _ => query.OrderBy(vehicle => vehicle.Marka)
+                    .ThenBy(vehicle => vehicle.Model)
+                    .ThenBy(vehicle => vehicle.VoziloID)
             };
 
-            return await query.ToListAsync();
+            return query;
         }
     }
 
@@ -228,4 +255,13 @@ namespace Autosalon_OneZone.Services
         double? MileageTo,
         decimal? PriceFrom,
         decimal? PriceTo);
+
+    public sealed record VehicleSearchResult(
+        IReadOnlyList<Vozilo> Vehicles,
+        int TotalCount,
+        int Page,
+        int PageSize)
+    {
+        public bool HasMore => Page * PageSize < TotalCount;
+    }
 }

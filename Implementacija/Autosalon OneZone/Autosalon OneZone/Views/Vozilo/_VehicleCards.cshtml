@@ -1,0 +1,117 @@
+@using Microsoft.AspNetCore.Identity
+@using System.Globalization
+@using Autosalon_OneZone.Models.ViewModels
+@inject SignInManager<Autosalon_OneZone.Models.ApplicationUser> SignInManager
+
+@model IReadOnlyList<VehicleCardViewModel>
+@{
+    var culture = CultureInfo.CurrentCulture;
+
+    string FuelLabel(string value) => value switch
+    {
+        "Benzin" => L["FuelGasoline"].Value,
+        "Dizel" => L["FuelDiesel"].Value,
+        "Plin" => L["FuelGas"].Value,
+        "Elektro" => L["FuelElectric"].Value,
+        "Hibrid" => L["FuelHybrid"].Value,
+        _ => value
+    };
+
+    string FuelChipClass(string value) => value switch
+    {
+        "Benzin" => "is-petrol",
+        "Dizel" => "is-diesel",
+        "Plin" => "is-gas",
+        "Elektro" => "is-electric",
+        "Hibrid" => "is-hybrid",
+        _ => "is-default"
+    };
+}
+
+@foreach (var item in Model)
+{
+    var vehicle = item.Vehicle;
+    var imageUrl = !string.IsNullOrWhiteSpace(vehicle.Slika)
+        ? Url.Content($"~/images/vozila/{vehicle.Slika}")
+        : Url.Content("~/img/no-image.png");
+    var priceText = vehicle.Cijena.HasValue
+        ? $"€{vehicle.Cijena.Value.ToString("N0", culture)}"
+        : L["PriceOnRequest"].Value;
+    var mileageText = vehicle.Kilometraza.HasValue
+        ? $"{vehicle.Kilometraza.Value.ToString("N0", culture)} km"
+        : L["MileageNotEntered"].Value;
+
+    <article class="vehicles-card">
+        <a href="@Url.Action("Details", "Vozilo", new { id = vehicle.VoziloID })" class="vehicles-card-image-link">
+            <img src="@imageUrl"
+                 class="vehicles-card-image"
+                 alt="@vehicle.Marka @vehicle.Model"
+                 loading="lazy"
+                 decoding="async">
+        </a>
+
+        <div class="vehicles-card-body">
+            <div class="vehicles-card-heading">
+                <h2 class="vehicles-card-title">@vehicle.Marka @vehicle.Model</h2>
+                <span class="vehicles-fuel-chip @FuelChipClass(vehicle.Gorivo.ToString())">@FuelLabel(vehicle.Gorivo.ToString())</span>
+            </div>
+
+            <dl class="vehicles-spec-grid">
+                <div>
+                    <dt>@L["VehicleYear"]</dt>
+                    <dd>@vehicle.Godiste</dd>
+                </div>
+                <div>
+                    <dt>@L["VehicleMileage"]</dt>
+                    <dd>@mileageText</dd>
+                </div>
+                <div>
+                    <dt>@L["VehicleColor"]</dt>
+                    <dd>@vehicle.Boja</dd>
+                </div>
+            </dl>
+
+            <div class="vehicles-card-footer">
+                <span class="vehicles-card-price">@priceText</span>
+                <div class="vehicles-card-actions">
+                    <a href="@Url.Action("Details", "Vozilo", new { id = vehicle.VoziloID })" class="vehicles-details-button">
+                        <span>@L["Details"]</span>
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
+
+                    @if (SignInManager.IsSignedIn(User))
+                    {
+                        <form class="add-to-cart-form"
+                              asp-controller="Korpa"
+                              asp-action="DodajUKorpu"
+                              method="post"
+                              data-vehicle-name="@vehicle.Marka @vehicle.Model"
+                              data-adding-text="@L["CartAdding"]"
+                              data-added-text="@L["CartInCart"]"
+                              data-view-cart-text="@L["CartView"]"
+                              data-success-template="@L["CartVehicleAddedToast"]"
+                              data-cart-url="@Url.Action("Index", "Korpa")"
+                              data-error-text="@L["CartAddError"]">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@vehicle.VoziloID" />
+                            <button type="submit"
+                                    class="vehicles-cart-button @(item.IsInCart ? "is-added" : "")"
+                                    data-cart-button
+                                    disabled="@item.IsInCart">
+                                <i class="bi @(item.IsInCart ? "bi-check-lg" : "bi-cart3")" data-cart-icon></i>
+                                <span data-cart-button-text>@(item.IsInCart ? L["CartInCart"] : L["AddToCart"])</span>
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <a href="@Url.Action("Login", "Account", new { returnUrl = Url.Action("Index", "Vozilo") })" class="vehicles-cart-button">
+                            <i class="bi bi-box-arrow-in-right"></i>
+                            <span>@L["LoginToBuy"]</span>
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </article>
+}

@@ -8,6 +8,8 @@ namespace Autosalon_OneZone.Services;
 public interface ICartService
 {
     Task<CartAddResult> AddVehicleAsync(string userId, int vehicleId);
+    Task<int> GetItemCountAsync(string userId);
+    Task<HashSet<int>> GetVehicleIdsAsync(string userId, IEnumerable<int> vehicleIds);
     Task<CartViewModel> GetCartAsync(string userId);
     Task<CartRemoveResult> RemoveVehicleAsync(string userId, int vehicleId);
     Task ClearAsync(string userId);
@@ -113,6 +115,38 @@ public sealed class CartService : ICartService
             }).ToList(),
             UkupnaCijena = availableItems.Sum(item => item.CijenaStavke * item.Kolicina)
         };
+    }
+
+    public Task<int> GetItemCountAsync(string userId)
+    {
+        return _context.StavkeKorpe
+            .AsNoTracking()
+            .CountAsync(item =>
+                item.Korpa != null &&
+                item.Korpa.KorisnikId == userId &&
+                item.NarudzbaID == null);
+    }
+
+    public async Task<HashSet<int>> GetVehicleIdsAsync(string userId, IEnumerable<int> vehicleIds)
+    {
+        var ids = vehicleIds.Distinct().ToArray();
+        if (ids.Length == 0)
+        {
+            return new HashSet<int>();
+        }
+
+        var cartVehicleIds = await _context.StavkeKorpe
+            .AsNoTracking()
+            .Where(item =>
+                item.Korpa != null &&
+                item.Korpa.KorisnikId == userId &&
+                item.NarudzbaID == null &&
+                ids.Contains(item.VoziloID))
+            .Select(item => item.VoziloID)
+            .Distinct()
+            .ToListAsync();
+
+        return cartVehicleIds.ToHashSet();
     }
 
     public async Task<CartRemoveResult> RemoveVehicleAsync(string userId, int vehicleId)

@@ -49,6 +49,11 @@ namespace Autosalon_OneZone.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DodajUKorpu(int id)
         {
+            var isAjaxRequest = string.Equals(
+                Request.Headers["X-Requested-With"],
+                "XMLHttpRequest",
+                StringComparison.OrdinalIgnoreCase);
+
             try
             {
                 var user = await _userManager.GetUserAsync(User);
@@ -60,19 +65,46 @@ namespace Autosalon_OneZone.Controllers
                 }
 
                 var result = await _cartService.AddVehicleAsync(user.Id, id);
+                var message = result switch
+                {
+                    CartAddResult.VehicleNotFound => _localizer["VehicleNotFound"].Value,
+                    CartAddResult.VehicleAlreadyPurchased => _localizer["VehicleAlreadyPurchased"].Value,
+                    CartAddResult.AlreadyAdded => _localizer["CartVehicleAlreadyAdded"].Value,
+                    _ => _localizer["CartAddVehicleSuccess"].Value
+                };
+
+                if (isAjaxRequest)
+                {
+                    var success = result is CartAddResult.Added or CartAddResult.AlreadyAdded;
+                    var statusCode = result switch
+                    {
+                        CartAddResult.VehicleNotFound => StatusCodes.Status404NotFound,
+                        CartAddResult.VehicleAlreadyPurchased => StatusCodes.Status409Conflict,
+                        _ => StatusCodes.Status200OK
+                    };
+
+                    return StatusCode(statusCode, new
+                    {
+                        success,
+                        alreadyAdded = result == CartAddResult.AlreadyAdded,
+                        message,
+                        cartCount = await _cartService.GetItemCountAsync(user.Id)
+                    });
+                }
+
                 switch (result)
                 {
                     case CartAddResult.VehicleNotFound:
-                        TempData["ErrorMessage"] = _localizer["VehicleNotFound"].Value;
+                        TempData["ErrorMessage"] = message;
                         break;
                     case CartAddResult.VehicleAlreadyPurchased:
-                        TempData["ErrorMessage"] = _localizer["VehicleAlreadyPurchased"].Value;
+                        TempData["ErrorMessage"] = message;
                         break;
                     case CartAddResult.AlreadyAdded:
-                        TempData["SuccessMessage"] = _localizer["CartVehicleAlreadyAdded"].Value;
+                        TempData["SuccessMessage"] = message;
                         break;
                     default:
-                        TempData["SuccessMessage"] = _localizer["CartAddVehicleSuccess"].Value;
+                        TempData["SuccessMessage"] = message;
                         break;
                 }
 
@@ -81,6 +113,15 @@ namespace Autosalon_OneZone.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Greška pri dodavanju vozila u korpu: {ex.Message}");
+                if (isAjaxRequest)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, new
+                    {
+                        success = false,
+                        message = _localizer["CartAddError"].Value
+                    });
+                }
+
                 TempData["ErrorMessage"] = _localizer["CartAddError"].Value;
                 return Redirect(GetCartReturnUrl());
             }

@@ -1,0 +1,173 @@
+.oz-btn {
+    --oz-bg: #2f6fed;
+    --oz-bg-hover: #245ed5;
+    --oz-text: #fff;
+    --oz-border: rgba(255, 255, 255, 0.12);
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.62rem;
+    min-height: 52px;
+    padding: 0.72rem 1.15rem;
+    border: 1px solid var(--oz-border);
+    border-radius: 12px;
+    background: var(--oz-bg);
+    color: var(--oz-text) !important;
+    text-decoration: none;
+    font-weight: 800;
+    line-height: 1;
+    box-shadow:
+        0 8px 20px rgba(37, 99, 235, 0.17),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    transition:
+        transform 170ms ease,
+        background-color 170ms ease,
+        border-color 170ms ease,
+        box-shadow 170ms ease,
+        color 170ms ease;
+}
+
+.oz-btn:hover {
+    background: var(--oz-bg-hover);
+    color: var(--oz-text) !important;
+    transform: translateY(-1px);
+    box-shadow:
+        0 11px 24px rgba(37, 99, 235, 0.22),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.oz-btn:active {
+    transform: translateY(0);
+}
+
+.oz-btn-icon {
+    width: 18px;
+    height: 18px;
+    flex: 0 0 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.15;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.oz-btn-arrow {
+    width: 28px;
+    height: 28px;
+    flex: 0 0 28px;
+    display: inline-grid;
+    place-items: center;
+    margin-left: 0.08rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.12);
+    transition:
+        transform 170ms ease,
+        background-color 170ms ease;
+}
+
+.oz-btn-arrow svg {
+    width: 14px;
+    height: 14px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.35;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.oz-btn:hover .oz-btn-arrow {
+    transform: translateX(3px);
+    background: rgba(255, 255, 255, 0.18);
+}
+
+.oz-btn-secondary {
+    --oz-bg: rgba(255, 255, 255, 0.02);
+    --oz-bg-hover: rgba(255, 255, 255, 0.075);
+    --oz-text: #fff;
+    --oz-border: rgba(255, 255, 255, 0.52);
+
+    box-shadow: none;
+}
+
+.oz-btn-secondary:hover {
+    border-color: rgba(255, 255, 255, 0.78);
+    box-shadow: none;
+}
+
+.oz-btn-search {
+    min-height: 58px;
+    padding-inline: 1.2rem;
+    border-radius: 15px;
+}
+
+.oz-btn-light {
+    --oz-bg: #f8fafc;
+    --oz-bg-hover: #fff;
+    --oz-text: #111827;
+    --oz-border: rgba(255, 255, 255, 0.75);
+
+    min-height: 48px;
+    box-shadow:
+        0 6px 16px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.92);
+}
+
+.about-card .oz-btn-quiet {
+    --oz-bg: rgba(255, 255, 255, 0.055);
+    --oz-bg-hover: rgba(255, 255, 255, 0.1);
+    --oz-text: #fff;
+    --oz-border: rgba(255, 255, 255, 0.2);
+
+    box-shadow: none;
+}
+
+.home-details-link.oz-text-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.42rem;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.home-details-link.oz-text-link::after {
+    content: "→";
+    font-size: 1rem;
+    line-height: 1;
+    transition: transform 160ms ease;
+}
+
+.home-details-link.oz-text-link:hover::after {
+    transform: translateX(3px);
+}
+
+.hero-actions .oz-btn {
+    min-width: 210px;
+}
+
+.hero-search .oz-btn-search {
+    flex: 0 0 auto;
+}
+
+@media (max-width: 575.98px) {
+    .hero-actions .oz-btn {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .hero-search {
+        flex-direction: column;
+    }
+
+    .hero-search .oz-btn-search {
+        width: 100%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .oz-btn,
+    .oz-btn-arrow,
+    .home-details-link.oz-text-link::after {
+        transition: none;
+    }
+}

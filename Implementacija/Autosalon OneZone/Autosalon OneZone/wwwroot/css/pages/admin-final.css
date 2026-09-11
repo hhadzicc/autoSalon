@@ -1,0 +1,281 @@
+/* Final admin toolbar, search, and table action corrections */
+.admin-page-header h1 {
+    margin-bottom: 0;
+}
+
+.admin-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 18px;
+    margin-bottom: 18px;
+}
+
+.admin-card-header h2 {
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    margin-bottom: 4px;
+    color: #111827;
+}
+
+.admin-card-header p {
+    margin: 0;
+    color: #64748b;
+}
+
+.admin-list-toolbar,
+.admin-users-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 26px;
+    flex-wrap: nowrap;
+}
+
+.admin-users-toolbar {
+    margin-top: 22px;
+}
+
+.add-admin-btn {
+    min-height: 46px;
+    padding-inline: 18px;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+.admin-filter-chips,
+.role-filter-chips {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 2px;
+}
+
+.filter-chip {
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 15px;
+    border: 1px solid #dbe3ef;
+    border-radius: 999px;
+    background: #ffffff;
+    color: #334155;
+    font-size: 0.92rem;
+    font-weight: 900;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: 0.2s ease;
+}
+
+.filter-chip:hover,
+.filter-chip:focus {
+    color: var(--primary);
+    background: #eff6ff;
+    border-color: #bfdbfe;
+}
+
+.filter-chip.active {
+    color: #ffffff;
+    background: var(--primary);
+    border-color: var(--primary);
+    box-shadow: 0 10px 22px rgba(37, 99, 235, 0.22);
+}
+
+.admin-search-compact {
+    position: relative;
+    width: min(360px, 100%);
+    margin-left: auto;
+    flex: 0 0 360px;
+}
+
+.admin-search-compact .form-control {
+    min-height: 46px;
+    border-radius: 999px;
+    padding: 11px 48px 11px 18px;
+    background: #f8fafc;
+    border-color: #dbe3ef;
+    box-shadow: none;
+}
+
+.admin-search-compact .form-control:focus {
+    background: #ffffff;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+}
+
+.search-submit-btn {
+    position: absolute;
+    top: 50%;
+    right: 8px;
+    width: 34px;
+    height: 34px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: #334155;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transform: translateY(-50%);
+    transition: 0.2s ease;
+}
+
+.search-submit-btn:hover,
+.search-submit-btn:focus {
+    color: var(--primary);
+    background: #eff6ff;
+}
+
+.sortable-th {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: #0f172a;
+    text-decoration: none;
+    font-weight: 900;
+    cursor: pointer;
+    user-select: none;
+}
+
+.sortable-th i {
+    color: #94a3b8;
+    font-size: 1rem;
+    transition: 0.2s ease;
+}
+
+.sortable-th:hover,
+.sortable-th:focus,
+.sortable-th:hover i,
+.sortable-th:focus i,
+.sortable-th.active,
+.sortable-th.active i {
+    color: var(--primary);
+}
+
+.admin-mobile-sort {
+    display: none;
+    margin-bottom: 18px;
+}
+
+.admin-mobile-sort .form-label {
+    color: #334155;
+    font-weight: 900;
+    margin-bottom: 7px;
+}
+
+.admin-mobile-sort .form-select {
+    min-height: 46px;
+    border-radius: 16px;
+    background-color: #f8fafc;
+    border-color: #dbe3ef;
+    box-shadow: none;
+    font-weight: 700;
+}
+
+#podrska-list-container,
+#podrska-list-container .admin-card,
+#podrska-list-container .admin-table-wrapper {
+    overflow: visible;
+}
+
+#podrska-list-container .admin-table,
+#podrska-list-container .admin-table tbody,
+#podrska-list-container .admin-table tr,
+#podrska-list-container .status-dropdown {
+    overflow: visible;
+}
+
+#podrska-list-container .user-cell {
+    display: flex;
+    width: 100%;
+    min-width: 0;
+}
+
+#podrska-list-container .user-cell strong {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.support-actions-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    justify-content: stretch;
+    min-width: 0;
+}
+
+.support-actions-grid .btn,
+.support-actions-grid .dropdown,
+.support-actions-grid .dropdown > .btn {
+    width: 100%;
+}
+
+.status-dropdown .dropdown-menu {
+    z-index: 2055;
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.18);
+}
+
+#podrska-list-container .admin-table td:not(:last-child),
+#recenzije-list-container .admin-table td:not(:last-child),
+#profili-list-container .admin-table td:not(:last-child),
+#vozila-list-container .admin-table td:not(:last-child) {
+    overflow: hidden;
+}
+
+#podrska-list-container .admin-table td:last-child,
+#recenzije-list-container .admin-table td:last-child,
+#profili-list-container .admin-table td:last-child,
+#vozila-list-container .admin-table td:last-child {
+    overflow: visible;
+}
+
+@media (max-width: 1199.98px) {
+    .admin-list-toolbar,
+    .admin-users-toolbar {
+        flex-wrap: wrap;
+    }
+
+    .admin-search-compact {
+        width: 100%;
+        margin-left: 0;
+        flex: 1 1 100%;
+    }
+
+    #profili-list-container .table-actions {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .admin-list-toolbar,
+    .admin-users-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .add-admin-btn {
+        width: 100%;
+    }
+
+    .admin-filter-chips,
+    .role-filter-chips {
+        width: 100%;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+    }
+
+    .admin-search-compact {
+        width: 100%;
+        flex: 1 1 auto;
+    }
+
+    .admin-mobile-sort {
+        display: block;
+    }
+}

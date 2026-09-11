@@ -1,0 +1,291 @@
+@media (max-width: 991.98px) {
+    .cart-page-section,
+    .vehicle-details-section,
+    .success-section {
+        padding: 32px 0 64px;
+    }
+
+    .admin-container {
+        width: calc(100% - 32px);
+    }
+
+    .cart-sidebar,
+    .details-sidebar,
+    .admin-sidebar {
+        position: static;
+    }
+
+    .cart-toolbar {
+        flex-direction: column;
+        align-items: stretch !important;
+    }
+
+    .cart-sort {
+        align-items: stretch !important;
+        flex-direction: column;
+    }
+
+    .cart-sort .form-select {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .cart-item-card,
+    .cart-item-content {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .cart-item-image img {
+        width: 100%;
+        height: 220px;
+    }
+
+    .cart-actions {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .vehicle-gallery img {
+        height: 300px;
+    }
+
+    .vehicle-title-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .vehicle-price {
+        white-space: normal;
+    }
+
+    .vehicle-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .vehicle-actions .btn,
+    .vehicle-actions form {
+        width: 100%;
+    }
+
+    .admin-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-page-header,
+    .admin-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .dashboard-page-header {
+        align-items: stretch;
+    }
+
+    .dashboard-header-actions .btn {
+        flex: 1 1 180px;
+    }
+
+    .dashboard-stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .dashboard-stat-wide {
+        grid-column: span 2;
+    }
+
+    .dashboard-content-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-page-header .btn,
+    .admin-search,
+    .admin-filter-form {
+        width: 100%;
+        min-width: 0;
+        max-width: none;
+    }
+
+    .admin-search .form-control,
+    .admin-filter-form .form-control {
+        flex: 1 1 220px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .admin-container {
+        width: calc(100% - 24px);
+    }
+
+    .admin-card,
+    .admin-form-card {
+        padding: 18px;
+        border-radius: 24px;
+    }
+
+    .admin-menu {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        padding-bottom: 4px;
+    }
+
+    .admin-menu-link {
+        white-space: nowrap;
+        flex: 0 0 auto;
+    }
+
+    .admin-search,
+    .admin-filter-form {
+        flex-direction: column;
+    }
+
+    .admin-search .btn,
+    .admin-filter-form .btn {
+        width: 100%;
+    }
+
+    .admin-table-wrapper {
+        display: none;
+    }
+
+    .admin-mobile-list {
+        display: grid;
+        gap: 14px;
+    }
+
+    .dashboard-header-actions {
+        width: 100%;
+    }
+
+    .dashboard-panel-header,
+    .dashboard-list-top,
+    .dashboard-list-bottom,
+    .dashboard-mini-item {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .dashboard-panel-header .btn {
+        width: 100%;
+    }
+
+    .review-meta-grid,
+    .support-meta-grid,
+    .order-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .success-card {
+        padding: 30px 22px;
+        border-radius: 24px;
+    }
+
+    .purchase-row {
+        grid-template-columns: 1fr;
+        gap: 6px;
+    }
+
+    .success-note {
+        flex-direction: column;
+    }
+
+    .success-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+
+    .success-actions .btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .cart-page-section,
+    .vehicle-details-section,
+    .success-section {
+        padding: 26px 0 52px;
+    }
+
+    .checkout-card,
+    .loan-card,
+    .summary-card,
+    .reviews-card {
+        padding: 22px;
+        border-radius: 24px;
+    }
+
+    .cart-item-card {
+        padding: 18px;
+    }
+
+    .cart-item-image img {
+        height: 200px;
+    }
+
+    .cart-price {
+        font-size: 1.45rem;
+    }
+
+    .summary-total {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+
+    .loan-card-header {
+        align-items: flex-start;
+    }
+
+    .vehicle-gallery {
+        padding: 16px 16px 0;
+    }
+
+    .vehicle-gallery img {
+        height: 230px;
+        border-radius: 20px;
+    }
+
+    .vehicle-details-body {
+        padding: 22px;
+    }
+
+    .vehicle-title-row h2 {
+        font-size: 2rem;
+    }
+
+    .vehicle-actions,
+    .spec-grid,
+    .dashboard-stats-grid,
+    .mobile-specs,
+    .review-mobile-meta,
+    .mobile-actions {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-stat-wide {
+        grid-column: span 1;
+    }
+
+    .dashboard-stat-card,
+    .dashboard-list-item {
+        padding: 18px;
+        border-radius: 24px;
+    }
+
+    .dashboard-list-item {
+        flex-direction: column;
+    }
+
+    .empty-reviews {
+        padding: 26px 18px;
+    }
+
+    .modern-modal .modal-dialog,
+    .modal-dialog {
+        margin-left: 12px;
+        margin-right: 12px;
+    }
+}
+

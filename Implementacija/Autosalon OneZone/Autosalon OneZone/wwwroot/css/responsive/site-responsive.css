@@ -1,0 +1,376 @@
+@media (min-width: 992px) {
+    .navbar-collapse {
+        justify-content: flex-end;
+    }
+}
+
+@media (min-width: 992px) and (max-width: 1199.98px) {
+    .navbar-brand {
+        font-size: 19px;
+    }
+
+    .brand-icon {
+        width: 38px;
+        height: 38px;
+    }
+
+    .navbar .nav-link {
+        font-size: 15px;
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .custom-navbar {
+        min-height: 66px;
+        padding: 12px 0;
+    }
+
+    .navbar-collapse {
+        width: 100%;
+        margin-top: 16px;
+    }
+
+    .navbar-nav {
+        gap: 6px;
+        align-items: stretch !important;
+    }
+
+    .navbar .nav-link {
+        display: block;
+        width: 100%;
+        padding: 10px 12px !important;
+    }
+
+    .register-link {
+        background: transparent;
+        box-shadow: none;
+    }
+
+    .register-link:hover,
+    .register-link:focus,
+    .register-link.active {
+        background: rgba(255, 255, 255, 0.08) !important;
+        transform: none;
+    }
+
+    .user-menu {
+        margin-top: 8px;
+    }
+
+    .hero {
+        padding: 28px 0 82px;
+    }
+
+    .featured-car-card {
+        min-height: auto;
+    }
+
+    .section-padding {
+        padding: 68px 0;
+    }
+
+    .vehicles-search {
+        margin-top: 4px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    html {
+        font-size: 16px;
+    }
+
+    .custom-navbar .container,
+    .custom-navbar .container-xxl,
+    .hero .container,
+    .vehicles-hero .container,
+    .vehicles-listing-section .container,
+    .auth-section .container {
+        max-width: 100%;
+        padding-left: 24px;
+        padding-right: 24px;
+        overflow: hidden;
+    }
+
+    .vehicles-hero .row,
+    .vehicles-listing-section .row {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .vehicles-hero .row > [class*="col"],
+    .vehicles-listing-section .row > [class*="col"] {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .navbar-brand {
+        font-size: 1.08rem;
+    }
+
+    .brand-icon {
+        width: 36px;
+        height: 36px;
+    }
+
+    .hero-search {
+        border-radius: 18px;
+    }
+
+    .hero-search .btn {
+        width: 100%;
+    }
+
+    .hero-title {
+        font-size: 1.85rem;
+        line-height: 1.06;
+        letter-spacing: -0.025em;
+        max-width: 15ch;
+    }
+
+    .hero-text {
+        font-size: 1rem;
+        max-width: 32ch;
+    }
+
+    .hero-actions {
+        flex-direction: column;
+        width: min(340px, calc(100vw - 48px));
+        max-width: min(340px, calc(100vw - 48px));
+    }
+
+    .hero-actions .btn {
+        width: 100%;
+    }
+
+    .hero-search {
+        display: block !important;
+        width: min(340px, calc(100vw - 48px));
+        max-width: min(340px, calc(100vw - 48px));
+    }
+
+    .hero-search .btn {
+        margin-top: 8px;
+        min-height: 48px;
+    }
+
+    .car-image {
+        height: 210px;
+    }
+
+    .featured-car-card {
+        width: min(340px, calc(100vw - 48px));
+        max-width: min(340px, calc(100vw - 48px));
+        padding: 20px;
+    }
+
+    .about-card,
+    .support-card {
+        padding: 28px;
+        border-radius: 20px;
+    }
+
+    .section-padding .container {
+        max-width: 100%;
+        padding-left: 12px;
+        padding-right: 12px;
+        overflow: hidden;
+    }
+
+    .section-padding .row {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .section-padding .row > [class*="col"] {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .section-title {
+        max-width: 340px;
+        margin-left: auto;
+        margin-right: auto;
+        font-size: 1.85rem;
+        line-height: 1.12;
+        overflow-wrap: break-word;
+    }
+
+    .section-text {
+        max-width: 340px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .modern-card,
+    .home-vehicle-card,
+    .about-card,
+    .support-card {
+        width: min(340px, calc(100vw - 48px));
+        max-width: min(340px, calc(100vw - 48px));
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .home-vehicle-body {
+        padding: 20px;
+    }
+
+    .home-vehicle-price {
+        font-size: 1.15rem;
+    }
+
+    .small-page-hero {
+        padding: 56px 0 64px;
+    }
+
+    .inner-page-header {
+        padding: 36px 0 28px;
+    }
+
+    .page-hero h1,
+    .inner-page-header h1,
+    .vehicles-hero h1 {
+        font-size: 2.05rem;
+        line-height: 1.08;
+        letter-spacing: -0.025em;
+        max-width: min(320px, calc(100vw - 48px));
+        margin-left: auto;
+        margin-right: auto;
+        overflow-wrap: break-word;
+    }
+
+    .inner-page-header p:not(.section-eyebrow) {
+        max-width: min(320px, calc(100vw - 48px));
+    }
+
+    .vehicles-hero p {
+        max-width: min(320px, calc(100vw - 48px));
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .auth-section {
+        padding: 52px 0 76px;
+    }
+
+    .modern-form-card {
+        width: min(340px, calc(100vw - 48px));
+        max-width: min(340px, calc(100vw - 48px));
+        margin-left: auto;
+        margin-right: auto;
+        padding: 28px;
+        border-radius: 22px;
+    }
+
+    .info-card {
+        width: min(340px, calc(100vw - 48px));
+        max-width: min(340px, calc(100vw - 48px));
+        margin-left: auto;
+        margin-right: auto;
+        padding: 28px;
+        border-radius: 22px;
+    }
+
+    .vehicles-hero {
+        padding: 52px 0 34px;
+    }
+
+    .vehicles-search {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+        border-radius: 18px;
+    }
+
+    .vehicles-search .btn {
+        width: 100%;
+        margin-top: 8px;
+        min-height: 48px;
+    }
+
+    .vehicles-listing-section {
+        padding: 30px 0 76px;
+    }
+
+    .filters-card,
+    .vehicles-card,
+    .vehicles-empty-state {
+        width: 100%;
+        max-width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .filters-card {
+        padding: 22px;
+    }
+
+    .filters-actions {
+        display: grid;
+    }
+
+    .filters-actions .btn,
+    .vehicles-card-actions .btn,
+    .vehicles-card-actions form {
+        width: 100%;
+    }
+
+    .vehicles-card-body {
+        padding: 20px;
+    }
+
+    .vehicles-card-actions {
+        display: grid;
+    }
+
+    .profile-section {
+        padding: 34px 0 64px;
+    }
+
+    .profile-card {
+        width: min(340px, calc(100vw - 48px));
+        max-width: min(340px, calc(100vw - 48px));
+        margin-left: auto;
+        margin-right: auto;
+        padding: 28px;
+        border-radius: 24px;
+    }
+
+    .profile-actions,
+    .profile-actions-left {
+        width: 100%;
+    }
+
+    .profile-actions .btn,
+    .profile-actions-left .btn {
+        width: 100%;
+    }
+
+    .purchase-card,
+    .purchase-body {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .purchase-card {
+        width: min(340px, calc(100vw - 48px));
+        max-width: min(340px, calc(100vw - 48px));
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .purchase-card img {
+        width: 100%;
+        height: 210px;
+        min-height: auto;
+    }
+
+    .purchase-actions {
+        min-width: 0;
+    }
+}
+

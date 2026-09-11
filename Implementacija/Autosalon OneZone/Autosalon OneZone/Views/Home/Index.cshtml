@@ -34,13 +34,29 @@
                 <p class="hero-text">@L["HomeHeroText"]</p>
 
                 <div class="hero-actions d-flex flex-wrap gap-3 mb-4">
-                    <a href="@Url.Action("Index", "Vozilo")" class="btn btn-primary btn-lg rounded-4 px-4">@L["HomeViewOffer"]</a>
-                    <a href="@Url.Action("Kontakt", "Home")" class="btn btn-outline-light btn-lg rounded-4 px-4">@L["HomeContactUs"]</a>
+                    <a href="@Url.Action("Index", "Vozilo")" class="oz-btn">
+                        <span>@L["HomeViewOffer"]</span>
+                        <span class="oz-btn-arrow" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" focusable="false">
+                                <path d="M5 12h14"></path>
+                                <path d="m14 7 5 5-5 5"></path>
+                            </svg>
+                        </span>
+                    </a>
+                    <a href="@Url.Action("Kontakt", "Home")" class="oz-btn oz-btn-secondary">
+                        <span>@L["HomeContactUs"]</span>
+                    </a>
                 </div>
 
                 <form class="hero-search d-flex gap-2" action="/Vozilo/Index" method="get" role="search">
                     <input class="form-control" type="search" name="searchTerm" placeholder="@L["HomeSearchPlaceholder"]" aria-label="@L["VehicleSearchAria"]">
-                    <button class="btn btn-primary" type="submit">@L["HomeFindVehicle"]</button>
+                    <button class="oz-btn oz-btn-search" type="submit">
+                        <svg class="oz-btn-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                            <circle cx="11" cy="11" r="6.5"></circle>
+                            <path d="m16 16 4 4"></path>
+                        </svg>
+                        <span>@L["HomeFindVehicle"]</span>
+                    </button>
                 </form>
             </div>
 
@@ -89,8 +105,8 @@
                             </div>
                         </div>
 
-                        <a href="@Url.Action("Details", "Vozilo", new { id = featuredVehicle.VoziloID })" class="btn btn-light rounded-4 px-4 fw-bold">
-                            @L["ViewDetails"]
+                        <a href="@Url.Action("Details", "Vozilo", new { id = featuredVehicle.VoziloID })" class="oz-btn oz-btn-light">
+                            <span>@L["ViewDetails"]</span>
                         </a>
                     }
                     else
@@ -99,7 +115,9 @@
                             <i class="bi bi-car-front-fill"></i>
                             <h2 class="fw-black mb-2">@L["HomeNoFeaturedVehicle"]</h2>
                             <p class="text-light opacity-75 mb-4">@L["HomeOfferAvailableOnVehicles"]</p>
-                            <a href="@Url.Action("Index", "Vozilo")" class="btn btn-light rounded-4 px-4 fw-bold">@L["HomeViewOffer"]</a>
+                            <a href="@Url.Action("Index", "Vozilo")" class="oz-btn oz-btn-light">
+                                <span>@L["HomeViewOffer"]</span>
+                            </a>
                         </div>
                     }
                 </div>
@@ -203,7 +221,7 @@
 
                                 <div class="d-flex justify-content-between align-items-center pt-3 border-top">
                                     <span class="home-vehicle-price">@cardPrice</span>
-                                    <a href="@Url.Action("Details", "Vozilo", new { id = vehicle.VoziloID })" class="home-details-link">@L["Details"]</a>
+                                    <a href="@Url.Action("Details", "Vozilo", new { id = vehicle.VoziloID })" class="home-details-link oz-text-link">@L["Details"]</a>
                                 </div>
                             </div>
                         </article>
@@ -230,7 +248,9 @@
                     <p class="section-eyebrow text-info">@L["HomeCurrentOfferEyebrow"]</p>
                     <h2 class="section-title text-white">@L["HomeCurrentOfferTitle"]</h2>
                     <p class="text-light opacity-75 mb-4">@L["HomeCurrentOfferText"]</p>
-                    <a href="@Url.Action("Index", "Vozilo")" class="btn btn-primary btn-lg rounded-4 px-4">@L["HomeOpenVehicles"]</a>
+                    <a href="@Url.Action("Index", "Vozilo")" class="oz-btn oz-btn-quiet">
+                        <span>@L["HomeOpenVehicles"]</span>
+                    </a>
                 </div>
             </div>
 

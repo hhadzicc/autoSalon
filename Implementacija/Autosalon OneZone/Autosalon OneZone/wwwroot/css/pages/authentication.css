@@ -1,0 +1,104 @@
+.auth-section {
+    padding: 32px 0 60px;
+    background: #f4f7fb;
+}
+
+.modern-form-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 28px;
+    padding: 38px 42px;
+    box-shadow: 0 24px 70px rgba(15, 23, 42, 0.1);
+}
+
+.modern-form-card h2 {
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    color: #111827;
+}
+
+.form-icon {
+    width: 58px;
+    height: 58px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #2563eb, #06b6d4);
+    color: #ffffff;
+    font-size: 1.55rem;
+    box-shadow: 0 14px 34px rgba(37, 99, 235, 0.32);
+    margin-bottom: 18px;
+}
+
+.modern-form-card .form-label {
+    font-weight: 800;
+    color: #334155;
+    margin-bottom: 7px;
+}
+
+.modern-form-card .form-control {
+    border-radius: 15px;
+    padding: 14px 16px;
+    border-color: #dbe3ef;
+    background: #f8fafc;
+    box-shadow: none;
+}
+
+.modern-form-card textarea.form-control {
+    resize: vertical;
+}
+
+.modern-form-card .form-control:focus {
+    border-color: #2563eb;
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+}
+
+.password-wrapper {
+    position: relative;
+}
+
+.password-wrapper .form-control {
+    padding-right: 52px;
+}
+
+.password-toggle {
+    position: absolute;
+    top: 50%;
+    right: 14px;
+    transform: translateY(-50%);
+    border: 0;
+    background: transparent;
+    color: #64748b;
+    font-size: 1.15rem;
+    padding: 4px;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.password-toggle:hover,
+.password-toggle:focus {
+    color: var(--primary);
+}
+
+.modern-form-card a {
+    color: #2563eb;
+}
+
+.modern-form-card a:hover,
+.modern-form-card a:focus {
+    color: #1d4ed8;
+}
+
+.modern-form-card .btn-primary,
+.modern-form-card .btn-primary:hover,
+.modern-form-card .btn-primary:focus {
+    color: #ffffff;
+}
+
+.modern-form-card .btn-outline-primary:hover,
+.modern-form-card .btn-outline-primary:focus {
+    color: #ffffff;
+}
+

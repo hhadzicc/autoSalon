@@ -25,7 +25,7 @@ namespace Autosalon_OneZone.Validation
         public const string EmailHtml = @"[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}";
         public const string Username = @"^[A-Za-z0-9]+$";
         public const string UsernameHtml = @"[A-Za-z0-9]+";
-        public const string PersonName = @"^[\p{L}\s-]+$";
-        public const string PersonNameHtml = @"[\p{L}\s-]+";
+        public const string PersonName = @"^[\p{L}]+(?:[ '’\-][\p{L}]+)*$";
+        public const string PersonNameHtml = @"[\p{L}]+(?:[ '’\-][\p{L}]+)*";
     }
 }

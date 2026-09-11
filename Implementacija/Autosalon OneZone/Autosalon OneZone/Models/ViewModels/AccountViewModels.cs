@@ -7,7 +7,7 @@ namespace Autosalon_OneZone.Models.ViewModels
     {
         [Required(ErrorMessage = "Validation.UsernameRequired")]
         [Display(Name = "Username")]
-        [MaxLength(100)]
+        [MaxLength(100, ErrorMessage = "Validation.UsernameMaxLength")]
         [RegularExpression(UserInputPatterns.Username, ErrorMessage = "Validation.UsernameAlphanumeric")]
         public string UserName { get; set; }
 
@@ -32,13 +32,13 @@ namespace Autosalon_OneZone.Models.ViewModels
 
         [Required(ErrorMessage = "Validation.FirstNameRequired")]
         [Display(Name = "FirstName")]
-        [MaxLength(100)]
+        [MaxLength(100, ErrorMessage = "Validation.FirstNameMaxLength")]
         [RegularExpression(UserInputPatterns.PersonName, ErrorMessage = "Validation.FirstNameLettersOnly")]
         public string Ime { get; set; }
 
         [Required(ErrorMessage = "Validation.LastNameRequired")]
         [Display(Name = "LastName")]
-        [MaxLength(100)]
+        [MaxLength(100, ErrorMessage = "Validation.LastNameMaxLength")]
         [RegularExpression(UserInputPatterns.PersonName, ErrorMessage = "Validation.LastNameLettersOnly")]
         public string Prezime { get; set; }
     }
@@ -46,7 +46,7 @@ namespace Autosalon_OneZone.Models.ViewModels
     public class LoginViewModel
     {
         [Required(ErrorMessage = "Validation.LoginIdentifierRequired")]
-        [MaxLength(256)]
+        [MaxLength(256, ErrorMessage = "Validation.LoginIdentifierMaxLength")]
         [Display(Name = "AuthLoginIdentifier")]
         public string LoginIdentifier { get; set; }
 

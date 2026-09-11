@@ -67,7 +67,7 @@ namespace Autosalon_OneZone.Controllers
                 if (result.Status == AccountRegistrationStatus.Succeeded)
                 {
                     TempData["SuccessMessage"] = _localizer["RegisterSuccess"].Value;
-                    return RedirectToAction("Login", "Account");
+                    return RedirectToAction("Login", "Account", new { returnUrl });
                 }
 
                 foreach (var error in result.Errors)

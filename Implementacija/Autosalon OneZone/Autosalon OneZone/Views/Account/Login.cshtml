@@ -3,67 +3,73 @@
     ViewData["Title"] = L["AuthLoginTitle"];
 }
 
-<section class="inner-page-header">
-    <div class="container">
-        <div class="row justify-content-center text-center">
-            <div class="col-lg-8">
-                <p class="section-eyebrow">@L["AuthAccountEyebrow"]</p>
-                <h1>@L["AuthLoginTitle"]</h1>
-                <p>@L["AuthLoginSubtitle"]</p>
-            </div>
-        </div>
-    </div>
-</section>
-<section class="auth-section">
+<section class="auth-section login-page-section">
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-lg-5 col-md-8">
-                <div class="modern-form-card">
-                    <div class="text-center mb-4">
+            <div class="col-lg-5 col-md-8 login-shell">
+                <div class="modern-form-card login-card">
+                    <div class="login-card-header">
                         <div class="form-icon mx-auto">
                             <i class="bi bi-person-circle"></i>
                         </div>
-                        <h2>@L["AuthLoginHeading"]</h2>
+                        <h1>@L["AuthLoginTitle"]</h1>
                     </div>
 
-                    <div asp-validation-summary="All" class="text-danger validation-summary mb-3"></div>
+                    <div asp-validation-summary="All" class="account-validation-summary validation-summary"></div>
 
-                    <form asp-controller="Account" asp-action="Login" method="post">
-                        <div class="mb-3">
+                    <form asp-controller="Account" asp-action="Login" method="post" id="loginForm" novalidate
+                          data-account-validation="login"
+                          data-check-fields-message="@L["Validation.CheckMarkedFields"]">
+                        <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
+                        <div class="login-field">
                             <label asp-for="LoginIdentifier" class="form-label">@L["AuthLoginIdentifier"]</label>
-                            <input asp-for="LoginIdentifier" type="text" class="form-control" placeholder="@L["AuthLoginIdentifierPlaceholder"]" autocomplete="username" required data-val-required="@L["ValidationRequired"]" />
-                            <span asp-validation-for="LoginIdentifier" class="text-danger"></span>
+                            <input asp-for="LoginIdentifier" type="text" class="form-control" placeholder="@L["AuthLoginIdentifierPlaceholder"]" autocomplete="username" required
+                                   data-account-field="loginIdentifier"
+                                   data-required-message="@L["Validation.LoginIdentifierRequired"]"
+                                   data-max-message="@L["Validation.LoginIdentifierMaxLength"]" />
+                            <span asp-validation-for="LoginIdentifier" class="account-validation-message"></span>
                         </div>
 
-                        <div class="mb-3">
+                        <div class="login-field">
                             <label asp-for="Password" class="form-label">@L["AuthPassword"]</label>
                             <div class="password-wrapper">
-                                <input asp-for="Password" type="password" class="form-control password-input" placeholder="@L["AuthPasswordPlaceholder"]" autocomplete="current-password" required data-val-required="@L["ValidationRequired"]" />
+                                <input asp-for="Password" type="password" class="form-control password-input" placeholder="@L["AuthPasswordPlaceholder"]" autocomplete="current-password" required
+                                       data-account-field="password"
+                                       data-required-message="@L["Validation.PasswordRequired"]" />
                                 <button type="button" class="password-toggle" aria-label="@L["ShowPassword"]">
                                     <i class="bi bi-eye"></i>
                                 </button>
                             </div>
-                            <span asp-validation-for="Password" class="text-danger"></span>
+                            <span asp-validation-for="Password" class="account-validation-message"></span>
                         </div>
 
-                        <div class="form-check mb-4">
-                            <input asp-for="RememberMe" type="checkbox" class="form-check-input" />
-                            <label asp-for="RememberMe" class="form-check-label">@L["AuthRememberMe"]</label>
-                            <span asp-validation-for="RememberMe" class="text-danger d-block"></span>
+                        <div class="login-options">
+                            <label class="login-remember" asp-for="RememberMe">
+                                <input asp-for="RememberMe" type="checkbox" class="form-check-input" />
+                                <span>@L["AuthRememberMe"]</span>
+                            </label>
+                            <a href="/Account/ForgotPassword" class="login-forgot">@L["AuthForgotPassword"]</a>
                         </div>
+                        <span asp-validation-for="RememberMe" class="text-danger d-block"></span>
 
-                        <button type="submit" class="btn btn-primary btn-lg rounded-4 w-100">@L["AuthLoginSubmit"]</button>
+                        <button type="submit" class="btn btn-primary login-submit">@L["AuthLoginSubmit"]</button>
 
-                        <div class="text-center mt-4">
-                            <p class="mb-2">
-                                @L["AuthNoAccount"]
-                                <a href="/Account/Register" class="fw-bold">@L["AuthRegisterLink"]</a>
-                            </p>
-                            <a href="/Account/ForgotPassword" class="small">@L["AuthForgotPassword"]</a>
+                        <div class="login-card-bottom">
+                            @L["AuthNoAccount"]
+                            <a asp-controller="Account" asp-action="Register" asp-route-returnUrl="@ViewData["ReturnUrl"]">@L["AuthRegisterLink"]</a>
                         </div>
                     </form>
+
+                    <div class="login-security-note">
+                        <i class="bi bi-lock-fill" aria-hidden="true"></i>
+                        <span>@L["AuthSecureLogin"]</span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+@section Scripts {
+    <script src="~/js/components/account-validation.js" asp-append-version="true"></script>
+}

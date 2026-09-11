@@ -199,6 +199,9 @@
   <data name="AuthForgotPassword" xml:space="preserve">
     <value>Forgot your password?</value>
   </data>
+  <data name="AuthSecureLogin" xml:space="preserve">
+    <value>Secure sign-in to your account</value>
+  </data>
   <data name="AuthRegisterEyebrow" xml:space="preserve">
     <value>New user</value>
   </data>
@@ -509,7 +512,7 @@
     <value>First name cannot be longer than 100 characters.</value>
   </data>
   <data name="Validation.FirstNameLettersOnly" xml:space="preserve">
-    <value>First name can contain only letters.</value>
+    <value>First name can contain only letters separated by single spaces, apostrophes, or hyphens.</value>
   </data>
   <data name="Validation.LastNameRequired" xml:space="preserve">
     <value>Last name is required.</value>
@@ -518,7 +521,7 @@
     <value>Last name cannot be longer than 100 characters.</value>
   </data>
   <data name="Validation.LastNameLettersOnly" xml:space="preserve">
-    <value>Last name can contain only letters.</value>
+    <value>Last name can contain only letters separated by single spaces, apostrophes, or hyphens.</value>
   </data>
   <data name="Validation.NewPasswordRequired" xml:space="preserve">
     <value>New password is required.</value>
@@ -662,7 +665,7 @@
     <value>Details</value>
   </data>
   <data name="HomeHeroBadge" xml:space="preserve">
-    <value>Fast purchase, verified vehicles</value>
+    <value>Verified vehicles. A simpler way to buy.</value>
   </data>
   <data name="HomeHeroTitleStart" xml:space="preserve">
     <value>Find a vehicle that looks good, drives better and</value>
@@ -671,19 +674,22 @@
     <value>fits your budget.</value>
   </data>
   <data name="HomeHeroText" xml:space="preserve">
-    <value>OneZone brings a clear car offer, simple search, transparent prices and support throughout the entire buying process.</value>
+    <value>Browse the latest inventory, compare prices and key specifications, and find the vehicle that suits you.</value>
   </data>
   <data name="HomeViewOffer" xml:space="preserve">
-    <value>View offer</value>
+    <value>View vehicles</value>
   </data>
   <data name="HomeContactUs" xml:space="preserve">
     <value>Contact us</value>
   </data>
   <data name="HomeSearchPlaceholder" xml:space="preserve">
-    <value>Make, model, year or price...</value>
+    <value>Search by make, model, year or price...</value>
+  </data>
+  <data name="VehicleSearchAnimatedPhrases" xml:space="preserve">
+    <value>Search Audi A4...|Search BMW M4...|Search Porsche Panamera...|Search Tesla Model 3...|Search Volkswagen Golf...</value>
   </data>
   <data name="HomeFindVehicle" xml:space="preserve">
-    <value>Find vehicle</value>
+    <value>Search vehicles</value>
   </data>
   <data name="VehicleYearLower" xml:space="preserve">
     <value>year</value>
@@ -704,43 +710,52 @@
     <value>Why OneZone?</value>
   </data>
   <data name="HomeWhyTitle" xml:space="preserve">
-    <value>Buying a car should be simple, fast and secure.</value>
+    <value>Buying a car, without the unnecessary complexity.</value>
   </data>
   <data name="HomeWhyText" xml:space="preserve">
-    <value>The offer is organized for quick vehicle comparison, detail review and direct purchase continuation.</value>
+    <value>Everything you need to make a decision in one place — clear vehicle information, pricing, offer details and a straightforward path to purchase.</value>
   </data>
   <data name="HomeFeatureSelectionTitle" xml:space="preserve">
-    <value>Large vehicle selection</value>
+    <value>A carefully selected range</value>
   </data>
   <data name="HomeFeatureSelectionText" xml:space="preserve">
-    <value>The vehicle overview is filtered, searchable and adapted for quick comparison of key information.</value>
+    <value>Explore currently available vehicles across different makes, model years and powertrains in one place.</value>
   </data>
   <data name="HomeFeaturePricesTitle" xml:space="preserve">
-    <value>Clear prices</value>
+    <value>Clear pricing</value>
   </data>
   <data name="HomeFeaturePricesText" xml:space="preserve">
-    <value>The vehicle price is shown in lists, details and the cart without relying on form data.</value>
+    <value>Every vehicle is clearly priced upfront, together with the key information you need to make an informed choice.</value>
   </data>
   <data name="HomeFeaturePurchaseTitle" xml:space="preserve">
-    <value>Verified purchase flow</value>
+    <value>A straightforward buying process</value>
   </data>
   <data name="HomeFeaturePurchaseText" xml:space="preserve">
-    <value>Orders, cart and payments use database records and guide the user through a clear process.</value>
+    <value>From choosing a vehicle to ordering and payment, every step is clear and easy to follow.</value>
   </data>
   <data name="HomeFeatureSupportTitle" xml:space="preserve">
     <value>Support</value>
   </data>
   <data name="HomeFeatureSupportText" xml:space="preserve">
-    <value>Users can send an inquiry through the contact form and continue communication with the salon team.</value>
+    <value>Have a question about a vehicle or your purchase? Send us an inquiry and we'll help you with the information you need.</value>
   </data>
   <data name="HomeFeaturedVehiclesEyebrow" xml:space="preserve">
     <value>Featured vehicles</value>
   </data>
   <data name="HomeFeaturedVehiclesTitle" xml:space="preserve">
-    <value>Current vehicles from the offer</value>
+    <value>Vehicles worth a closer look.</value>
   </data>
-  <data name="HomeFeaturedVehiclesText" xml:space="preserve">
-    <value>Cards are populated directly from the database, so they show what currently exists in the system.</value>
+  <data name="HomeCarouselPrevious" xml:space="preserve">
+    <value>Previous vehicle</value>
+  </data>
+  <data name="HomeCarouselNext" xml:space="preserve">
+    <value>Next vehicle</value>
+  </data>
+  <data name="HomeCarouselNavigation" xml:space="preserve">
+    <value>Featured vehicle navigation</value>
+  </data>
+  <data name="HomeCarouselShowVehicle" xml:space="preserve">
+    <value>Show vehicle</value>
   </data>
   <data name="HomeNoFeaturedVehicles" xml:space="preserve">
     <value>No featured vehicles at the moment</value>
@@ -749,37 +764,37 @@
     <value>When vehicles are added to the database, this section will fill automatically.</value>
   </data>
   <data name="HomeCurrentOfferEyebrow" xml:space="preserve">
-    <value>Current offer</value>
+    <value>Current inventory</value>
   </data>
   <data name="HomeCurrentOfferTitle" xml:space="preserve">
-    <value>Browse vehicles without unnecessary waiting.</value>
+    <value>Your next car may already be here.</value>
   </data>
   <data name="HomeCurrentOfferText" xml:space="preserve">
-    <value>The vehicles page leads to real database records with images, filters, details and purchase continuation.</value>
+    <value>Explore the full inventory and narrow your search by make, price, year, mileage and the details that matter to you.</value>
   </data>
   <data name="HomeOpenVehicles" xml:space="preserve">
-    <value>Open vehicles</value>
+    <value>Browse all vehicles</value>
   </data>
   <data name="HomeSupportEyebrow" xml:space="preserve">
-    <value>Fast support</value>
+    <value>NEED SOME HELP?</value>
   </data>
   <data name="HomeSupportTitle" xml:space="preserve">
-    <value>Send an inquiry about a vehicle or purchase process.</value>
+    <value>Have a question? We're here to help.</value>
   </data>
   <data name="HomeSupportText" xml:space="preserve">
-    <value>The contact form is connected to the application workflow, so messages are handled through the real support process.</value>
+    <value>Get in touch for more information about a vehicle, availability, purchasing or an order. We'll get back to you as soon as possible.</value>
   </data>
   <data name="HomeSupportPointResponse" xml:space="preserve">
-    <value>Response as soon as possible</value>
+    <value>Quick response to your inquiry</value>
   </data>
   <data name="HomeSupportPointChoice" xml:space="preserve">
-    <value>Help with choosing a vehicle</value>
+    <value>Help choosing the right vehicle</value>
   </data>
   <data name="HomeSupportPointAppointment" xml:space="preserve">
-    <value>Agreement about inspection and purchase</value>
+    <value>Arrange a vehicle viewing</value>
   </data>
   <data name="HomeSendMessage" xml:space="preserve">
-    <value>Send message</value>
+    <value>Send a message →</value>
   </data>
   <data name="ContactTitle" xml:space="preserve">
     <value>Contact support</value>
@@ -797,13 +812,13 @@
     <value>Send a message</value>
   </data>
   <data name="ContactSupportRequestHeading" xml:space="preserve">
-    <value>Send a support inquiry</value>
+    <value>Send an inquiry through OneZone</value>
   </data>
   <data name="ContactSignedInText" xml:space="preserve">
     <value>Write your question and the support team will respond as soon as possible.</value>
   </data>
   <data name="ContactGuestText" xml:space="preserve">
-    <value>You need to be logged in to send a message through the application.</value>
+    <value>Log in to send an inquiry about a vehicle, purchase or order and keep track of communication with our team.</value>
   </data>
   <data name="ContactSubjectPlaceholder" xml:space="preserve">
     <value>Enter subject</value>
@@ -814,17 +829,17 @@
   <data name="ContactSendMessage" xml:space="preserve">
     <value>Send message</value>
   </data>
-  <data name="ContactGuestDetails" xml:space="preserve">
-    <value>After logging in, you can send an inquiry about a vehicle, purchase or order.</value>
-  </data>
   <data name="ContactLoginToSend" xml:space="preserve">
-    <value>Log in to send a message</value>
+    <value>Log in and send an inquiry</value>
+  </data>
+  <data name="ContactRegisterPrompt" xml:space="preserve">
+    <value>Don't have an account?</value>
+  </data>
+  <data name="ContactRegisterAction" xml:space="preserve">
+    <value>Register</value>
   </data>
   <data name="ContactDirectEmail" xml:space="preserve">
     <value>Send email directly</value>
-  </data>
-  <data name="ContactFooterNote" xml:space="preserve">
-    <value>Support will respond as soon as possible. Thank you for your patience.</value>
   </data>
   <data name="ContactInfoTitle" xml:space="preserve">
     <value>Information</value>
@@ -857,19 +872,25 @@
     <value>Vehicle overview</value>
   </data>
   <data name="VehiclesHeroTitle" xml:space="preserve">
-    <value>Find the vehicle that suits you.</value>
+    <value>Find your next car.</value>
   </data>
   <data name="VehiclesHeroText" xml:space="preserve">
-    <value>Search the offer by make, model, price, fuel, mileage and year.</value>
+    <value>Browse by make, model, price, fuel, mileage and year.</value>
   </data>
   <data name="VehiclesSearchPlaceholder" xml:space="preserve">
     <value>Search make or model...</value>
   </data>
-  <data name="SearchResultsFor" xml:space="preserve">
-    <value>Search results for:</value>
-  </data>
   <data name="FiltersAndSorting" xml:space="preserve">
     <value>Filters and sorting</value>
+  </data>
+  <data name="Filters" xml:space="preserve">
+    <value>Filters</value>
+  </data>
+  <data name="ActiveFilters" xml:space="preserve">
+    <value>Active filters</value>
+  </data>
+  <data name="ClearFiltersShort" xml:space="preserve">
+    <value>Clear all</value>
   </data>
   <data name="FiltersText" xml:space="preserve">
     <value>Narrow the offer by the most important vehicle characteristics.</value>
@@ -955,11 +976,38 @@
   <data name="ApplyFilters" xml:space="preserve">
     <value>Apply filters</value>
   </data>
+  <data name="Apply" xml:space="preserve">
+    <value>Apply</value>
+  </data>
+  <data name="FilterYearRangeError" xml:space="preserve">
+    <value>Enter a whole year between 1900 and {0}.</value>
+  </data>
+  <data name="FilterRangeOrderError" xml:space="preserve">
+    <value>The from value cannot be greater than the to value.</value>
+  </data>
+  <data name="FilterNonNegativeError" xml:space="preserve">
+    <value>Values cannot be negative.</value>
+  </data>
   <data name="ClearAllFilters" xml:space="preserve">
     <value>Clear all filters</value>
   </data>
   <data name="VehiclesFound" xml:space="preserve">
-    <value>Found {0} vehicles</value>
+    <value>{0} vehicles</value>
+  </data>
+  <data name="VehicleFoundSingle" xml:space="preserve">
+    <value>1 vehicle</value>
+  </data>
+  <data name="VehicleSearchFoundSingle" xml:space="preserve">
+    <value>1 vehicle for “{0}”</value>
+  </data>
+  <data name="VehicleSearchFoundPlural" xml:space="preserve">
+    <value>{0} vehicles for “{1}”</value>
+  </data>
+  <data name="ClearSearch" xml:space="preserve">
+    <value>Clear search</value>
+  </data>
+  <data name="LoadingMoreVehicles" xml:space="preserve">
+    <value>Loading more vehicles...</value>
   </data>
   <data name="NoVehiclesTitle" xml:space="preserve">
     <value>No vehicles to display</value>
@@ -969,6 +1017,18 @@
   </data>
   <data name="AddToCart" xml:space="preserve">
     <value>Add to cart</value>
+  </data>
+  <data name="CartAdding" xml:space="preserve">
+    <value>Adding...</value>
+  </data>
+  <data name="CartInCart" xml:space="preserve">
+    <value>In cart</value>
+  </data>
+  <data name="CartView" xml:space="preserve">
+    <value>View cart</value>
+  </data>
+  <data name="CartVehicleAddedToast" xml:space="preserve">
+    <value>{0} was added to the cart.</value>
   </data>
   <data name="LoginToBuy" xml:space="preserve">
     <value>Log in to buy</value>
@@ -2076,5 +2136,35 @@
   </data>
   <data name="DemoModeWarningTooltip" xml:space="preserve">
     <value>Reset in less than a minute. Wait for it to finish before starting a new action.</value>
+  </data>
+  <data name="Validation.CheckMarkedFields" xml:space="preserve">
+    <value>Please check the highlighted fields.</value>
+  </data>
+  <data name="Validation.CheckMarkedFieldsBeforeRegistration" xml:space="preserve">
+    <value>Please check the highlighted fields before registering.</value>
+  </data>
+  <data name="Validation.LoginIdentifierMaxLength" xml:space="preserve">
+    <value>Email or username cannot exceed 256 characters.</value>
+  </data>
+  <data name="Validation.UsernameHint" xml:space="preserve">
+    <value>Only letters and numbers are allowed.</value>
+  </data>
+  <data name="Validation.PasswordRulesTitle" xml:space="preserve">
+    <value>Password must contain:</value>
+  </data>
+  <data name="Validation.PasswordRuleLength" xml:space="preserve">
+    <value>Between 8 and 100 characters</value>
+  </data>
+  <data name="Validation.PasswordRuleUppercase" xml:space="preserve">
+    <value>One uppercase letter</value>
+  </data>
+  <data name="Validation.PasswordRuleLowercase" xml:space="preserve">
+    <value>One lowercase letter</value>
+  </data>
+  <data name="Validation.PasswordRuleDigit" xml:space="preserve">
+    <value>One digit</value>
+  </data>
+  <data name="Validation.PasswordsMatchSuccess" xml:space="preserve">
+    <value>Passwords match.</value>
   </data>
 </root>

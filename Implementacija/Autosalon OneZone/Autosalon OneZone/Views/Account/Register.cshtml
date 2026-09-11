@@ -3,18 +3,7 @@
     ViewData["Title"] = L["AuthRegisterTitle"];
 }
 
-<section class="inner-page-header">
-    <div class="container">
-        <div class="row justify-content-center text-center">
-            <div class="col-lg-8">
-                <p class="section-eyebrow">@L["AuthRegisterEyebrow"]</p>
-                <h1>@L["AuthRegisterTitle"]</h1>
-                <p>@L["AuthRegisterSubtitle"]</p>
-            </div>
-        </div>
-    </div>
-</section>
-<section class="auth-section">
+<section class="auth-section register-page-section">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-6 col-md-9">
@@ -26,54 +15,85 @@
                         <h2>@L["AuthCreateAccount"]</h2>
                     </div>
 
-                    <div asp-validation-summary="All" class="text-danger validation-summary mb-3"></div>
+                    <div asp-validation-summary="All" class="account-validation-summary validation-summary"></div>
 
-                    <form asp-controller="Account" asp-action="Register" method="post">
+                    <form asp-controller="Account" asp-action="Register" method="post" id="registerForm" novalidate autocomplete="off"
+                          data-account-validation="register"
+                          data-check-fields-message="@L["Validation.CheckMarkedFieldsBeforeRegistration"]">
+                        <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label asp-for="Ime" class="form-label">@L["FirstName"]</label>
-                                <input asp-for="Ime" type="text" class="form-control" placeholder="@L["FirstName"]" required pattern="@UserInputPatterns.PersonNameHtml" />
-                                <span asp-validation-for="Ime" class="text-danger"></span>
+                                <input asp-for="Ime" type="text" class="form-control" placeholder="@L["FirstName"]" required pattern="@UserInputPatterns.PersonNameHtml" autocomplete="off"
+                                       data-account-field="firstName"
+                                       data-required-message="@L["Validation.FirstNameRequired"]"
+                                       data-invalid-message="@L["Validation.FirstNameLettersOnly"]"
+                                       data-max-message="@L["Validation.FirstNameMaxLength"]" />
+                                <span asp-validation-for="Ime" class="account-validation-message"></span>
                             </div>
 
                             <div class="col-md-6">
                                 <label asp-for="Prezime" class="form-label">@L["LastName"]</label>
-                                <input asp-for="Prezime" type="text" class="form-control" placeholder="@L["LastName"]" required pattern="@UserInputPatterns.PersonNameHtml" />
-                                <span asp-validation-for="Prezime" class="text-danger"></span>
+                                <input asp-for="Prezime" type="text" class="form-control" placeholder="@L["LastName"]" required pattern="@UserInputPatterns.PersonNameHtml" autocomplete="off"
+                                       data-account-field="lastName"
+                                       data-required-message="@L["Validation.LastNameRequired"]"
+                                       data-invalid-message="@L["Validation.LastNameLettersOnly"]"
+                                       data-max-message="@L["Validation.LastNameMaxLength"]" />
+                                <span asp-validation-for="Prezime" class="account-validation-message"></span>
                             </div>
 
                             <div class="col-12">
                                 <label asp-for="UserName" class="form-label">@L["Username"]</label>
-                                <input asp-for="UserName" type="text" class="form-control" placeholder="@L["Username"]" required pattern="@UserInputPatterns.UsernameHtml" />
-                                <span asp-validation-for="UserName" class="text-danger"></span>
+                                <input asp-for="UserName" type="text" class="form-control" placeholder="@L["Username"]" required pattern="@UserInputPatterns.UsernameHtml" autocomplete="off"
+                                       data-account-field="username"
+                                       data-required-message="@L["Validation.UsernameRequired"]"
+                                       data-invalid-message="@L["Validation.UsernameAlphanumeric"]"
+                                       data-max-message="@L["Validation.UsernameMaxLength"]"
+                                       data-hint-message="@L["Validation.UsernameHint"]" />
+                                <span asp-validation-for="UserName" class="account-validation-message"></span>
                             </div>
 
                             <div class="col-12">
                                 <label asp-for="Email" class="form-label">@L["EmailAddress"]</label>
-                                <input asp-for="Email" type="email" class="form-control" placeholder="@L["EmailAddress"]" autocomplete="email" required pattern="@UserInputPatterns.EmailHtml" />
-                                <span asp-validation-for="Email" class="text-danger"></span>
+                                <input asp-for="Email" type="email" class="form-control" placeholder="@L["EmailAddress"]" autocomplete="off" required pattern="@UserInputPatterns.EmailHtml"
+                                       data-account-field="email"
+                                       data-required-message="@L["Validation.EmailRequired"]"
+                                       data-invalid-message="@L["Validation.EmailValid"]" />
+                                <span asp-validation-for="Email" class="account-validation-message"></span>
                             </div>
 
                             <div class="col-md-6">
                                 <label asp-for="Password" class="form-label">@L["AuthPassword"]</label>
                                 <div class="password-wrapper">
-                                    <input asp-for="Password" type="password" class="form-control password-input" placeholder="@L["AuthPassword"]" autocomplete="new-password" required minlength="@PasswordPolicy.RequiredLength" pattern="@PasswordPolicy.HtmlPattern" title="@L["PasswordPolicyError"]" />
+                                    <input asp-for="Password" type="password" class="form-control password-input" placeholder="@L["AuthPassword"]" autocomplete="off" required minlength="@PasswordPolicy.RequiredLength" pattern="@PasswordPolicy.HtmlPattern" title="@L["PasswordPolicyError"]"
+                                           data-account-field="password" />
                                     <button type="button" class="password-toggle" aria-label="@L["ShowPassword"]">
                                         <i class="bi bi-eye"></i>
                                     </button>
                                 </div>
-                                <span asp-validation-for="Password" class="text-danger"></span>
+                                <div class="password-rules" data-password-rules>
+                                    <div class="password-rules-title">@L["Validation.PasswordRulesTitle"]</div>
+                                    <div class="password-rule" data-password-rule="length"><span class="password-rule-dot">○</span><span>@L["Validation.PasswordRuleLength"]</span></div>
+                                    <div class="password-rule" data-password-rule="upper"><span class="password-rule-dot">○</span><span>@L["Validation.PasswordRuleUppercase"]</span></div>
+                                    <div class="password-rule" data-password-rule="lower"><span class="password-rule-dot">○</span><span>@L["Validation.PasswordRuleLowercase"]</span></div>
+                                    <div class="password-rule" data-password-rule="digit"><span class="password-rule-dot">○</span><span>@L["Validation.PasswordRuleDigit"]</span></div>
+                                </div>
+                                <span asp-validation-for="Password" class="account-validation-message"></span>
                             </div>
 
                             <div class="col-md-6">
                                 <label asp-for="ConfirmPassword" class="form-label">@L["ConfirmPassword"]</label>
                                 <div class="password-wrapper">
-                                    <input asp-for="ConfirmPassword" type="password" class="form-control password-input" placeholder="@L["ConfirmPassword"]" autocomplete="new-password" required />
+                                    <input asp-for="ConfirmPassword" type="password" class="form-control password-input" placeholder="@L["ConfirmPassword"]" autocomplete="off" required
+                                           data-account-field="confirmPassword"
+                                           data-required-message="@L["Validation.ConfirmPasswordRequired"]"
+                                           data-invalid-message="@L["Validation.PasswordsMatch"]"
+                                           data-valid-message="@L["Validation.PasswordsMatchSuccess"]" />
                                     <button type="button" class="password-toggle" aria-label="@L["ShowPassword"]">
                                         <i class="bi bi-eye"></i>
                                     </button>
                                 </div>
-                                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                                <span asp-validation-for="ConfirmPassword" class="account-validation-message"></span>
                             </div>
 
                             <div class="col-12">
@@ -84,7 +104,7 @@
                         <div class="text-center mt-4">
                             <p class="mb-0">
                                 @L["AuthAlreadyHaveAccount"]
-                                <a asp-controller="Account" asp-action="Login" class="fw-bold">@L["AuthSignInLink"]</a>
+                                <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]" class="fw-bold">@L["AuthSignInLink"]</a>
                             </p>
                         </div>
                     </form>
@@ -93,3 +113,7 @@
         </div>
     </div>
 </section>
+
+@section Scripts {
+    <script src="~/js/components/account-validation.js" asp-append-version="true"></script>
+}

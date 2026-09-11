@@ -97,8 +97,268 @@
     color: #ffffff;
 }
 
-.modern-form-card .btn-outline-primary:hover,
-.modern-form-card .btn-outline-primary:focus {
-    color: #ffffff;
+.modern-form-card .form-control.is-invalid {
+    border-color: #ef4444;
+    background-color: #fffafa;
+    background-image: none;
+}
+
+.modern-form-card .form-control.is-valid {
+    border-color: #86c99a;
+    background-color: #fbfffc;
+    background-image: none;
+}
+
+.account-validation-message {
+    display: none;
+    margin-top: 8px;
+    color: #dc2626;
+    font-size: 0.82rem;
+    line-height: 1.4;
+}
+
+.account-validation-message.field-validation-error,
+.account-validation-message.is-hint,
+.account-validation-message.is-success {
+    display: block;
+}
+
+.account-validation-message.is-hint {
+    color: #64748b;
+}
+
+.account-validation-message.is-success {
+    color: #15803d;
+}
+
+.account-validation-summary {
+    display: none;
+    margin: 0 0 18px;
+    padding: 12px 14px;
+    border: 1px solid #fecaca;
+    border-radius: 14px;
+    background: #fff1f2;
+    color: #b91c1c;
+    font-size: 0.875rem;
+    line-height: 1.45;
+}
+
+.account-validation-summary.validation-summary-errors,
+.account-validation-summary.is-visible {
+    display: block;
+}
+
+.account-validation-summary ul {
+    margin: 0;
+    padding-left: 18px;
+}
+
+.password-rules {
+    display: none;
+    margin-top: 10px;
+    padding: 11px 12px;
+    border: 1px solid #e4ebf3;
+    border-radius: 14px;
+    background: #fbfcfe;
+}
+
+.password-rules.is-visible {
+    display: block;
+}
+
+.password-rules-title {
+    margin-bottom: 7px;
+    color: #6b7e95;
+    font-size: 0.78rem;
+    font-weight: 750;
+}
+
+.password-rule {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 5px 0;
+    color: #64748b;
+    font-size: 0.8rem;
+    transition: color 0.15s ease;
+}
+
+.password-rule-dot {
+    width: 17px;
+    height: 17px;
+    display: inline-grid;
+    flex: 0 0 17px;
+    place-items: center;
+    border: 1.5px solid #aebac8;
+    border-radius: 50%;
+    font-size: 0.68rem;
+    font-weight: 900;
+}
+
+.password-rule.is-valid {
+    color: #15803d;
+}
+
+.password-rule.is-valid .password-rule-dot {
+    border-color: #22a447;
+    background: #ecfdf3;
+}
+
+.password-rule.is-invalid {
+    color: #dc2626;
+}
+
+.password-rule.is-invalid .password-rule-dot {
+    border-color: #ef4444;
+    background: #fff1f2;
+}
+
+.auth-section.login-page-section {
+    min-height: 620px;
+    padding: 28px 0 72px;
+    background:
+        radial-gradient(circle at 50% -10%, rgba(47, 111, 240, 0.08), transparent 32%),
+        #f4f7fb;
+}
+
+.auth-section.register-page-section {
+    padding: 28px 0 72px;
+}
+
+.login-shell {
+    width: 100%;
+    max-width: 560px;
+}
+
+.modern-form-card.login-card {
+    padding: 40px 44px 30px;
+    box-shadow: 0 22px 60px rgba(15, 23, 42, 0.08);
+}
+
+.login-card-header {
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.login-card .form-icon {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 16px;
+    font-size: 1.75rem;
+}
+
+.login-card-header h1 {
+    margin: 0;
+    color: #111827;
+    font-size: 2.375rem;
+    font-weight: 850;
+    line-height: 1.05;
+    letter-spacing: -0.035em;
+}
+
+.login-field {
+    margin-bottom: 20px;
+}
+
+.login-card .form-control {
+    min-height: 58px;
+}
+
+.login-options {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    margin: 2px 0 24px;
+}
+
+.login-remember {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #27354a;
+    font-size: 0.94rem;
+    cursor: pointer;
+}
+
+.login-remember .form-check-input {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+}
+
+.login-forgot {
+    font-size: 0.875rem;
+    font-weight: 750;
+    text-decoration: none;
+}
+
+.login-forgot:hover,
+.login-forgot:focus {
+    text-decoration: underline;
+}
+
+.login-card .login-submit {
+    width: 100%;
+    min-height: 58px;
+    border: 0;
+    border-radius: 15px;
+    font-size: 1.06rem;
+    font-weight: 850;
+    box-shadow: 0 12px 24px rgba(47, 111, 240, 0.22);
+}
+
+.login-card-bottom {
+    margin-top: 20px;
+    padding-top: 18px;
+    border-top: 1px solid #e7edf5;
+    color: #5d6a7e;
+    font-size: 0.94rem;
+    text-align: center;
+}
+
+.login-card-bottom a {
+    font-weight: 850;
+    text-decoration: none;
+}
+
+.login-card-bottom a:hover,
+.login-card-bottom a:focus {
+    text-decoration: underline;
+}
+
+.login-security-note {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    margin-top: 10px;
+    color: #8792a3;
+    font-size: 0.8rem;
+}
+
+.login-security-note i {
+    font-size: 0.82rem;
+}
+
+@media (max-width: 575.98px) {
+    .auth-section.login-page-section {
+        min-height: 0;
+        padding: 28px 0 44px;
+    }
+
+    .modern-form-card.login-card {
+        padding: 30px 22px 26px;
+    }
+
+    .login-card-header h1 {
+        font-size: 2.05rem;
+    }
+
+    .login-options {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 12px;
+    }
 }
 

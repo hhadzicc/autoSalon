@@ -1825,6 +1825,12 @@
   <data name="VehiclePriceInvalid" xml:space="preserve">
     <value>Cijena vozila nije validna.</value>
   </data>
+  <data name="VehicleAlreadyPurchased" xml:space="preserve">
+    <value>Jedno ili vise odabranih vozila je vec kupljeno.</value>
+  </data>
+  <data name="CheckoutBusy" xml:space="preserve">
+    <value>Jedno od odabranih vozila se trenutno kupuje. Pokusajte ponovo za nekoliko trenutaka.</value>
+  </data>
   <data name="VehicleNotFound" xml:space="preserve">
     <value>Vozilo nije prona?eno.</value>
   </data>
@@ -2058,5 +2064,17 @@
   </data>
   <data name="Vehicles" xml:space="preserve">
     <value>Vozila</value>
+  </data>
+  <data name="DemoModeTitle" xml:space="preserve">
+    <value>Demo način</value>
+  </data>
+  <data name="DemoModeAriaLabel" xml:space="preserve">
+    <value>Demo način. Plaćanja su simulirana i podaci se periodično resetuju.</value>
+  </data>
+  <data name="DemoModeTooltip" xml:space="preserve">
+    <value>Plaćanja su simulirana. Podaci se automatski resetuju svakih {0} minuta.</value>
+  </data>
+  <data name="DemoModeWarningTooltip" xml:space="preserve">
+    <value>Reset za manje od minute. Sačekajte da se završi prije pokretanja nove akcije.</value>
   </data>
 </root>

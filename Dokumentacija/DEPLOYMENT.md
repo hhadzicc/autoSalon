@@ -66,6 +66,9 @@ MSSQL_SA_PASSWORD=replace-with-a-strong-password
 DEMO_ADMIN_PASSWORD=replace-with-a-strong-password
 DEMO_BUYER_PASSWORD=replace-with-a-strong-password
 DEMO_SELLER_PASSWORD=replace-with-a-strong-password
+DEMO_MODE=true
+DEMO_RESET_ENABLED=true
+DEMO_RESET_INTERVAL_MINUTES=60
 ```
 
 Replace the example domain with a domain controlled by the deployer. The
@@ -106,6 +109,38 @@ the real `.env`, passwords, API keys, certificates, or private keys.
 
 `STANDALONE_NETWORK_SUBNET` and `STANDALONE_PROXY_IP` are private Docker network
 values. Their defaults normally require no changes.
+
+## Public Demo Safety
+
+Outbound password-reset email is off by default. Enable it only with all three
+private environment values:
+
+```env
+EMAIL_SENDING_ENABLED=true
+RESEND_API_KEY=re_...
+FROM_EMAIL=noreply@example.com
+```
+
+The forgot-password POST endpoint permits five requests per client IP in a
+15-minute window. Keep provider keys only in the private `.env` file.
+
+Periodic cleanup is also opt-in. It removes runtime orders, payments, cart
+items, reviews, support inquiries, and vehicle changes, then restores the seed
+catalog and demo account state. Registered Identity accounts are not deleted.
+The application performs one reset at startup and then repeats it at the
+configured interval. A visible demo notice shows that payments are simulated
+and, when cleanup is enabled, the approximate time until the next reset.
+
+`DEMO_RESET_ENABLED=true` is accepted only when all of these are true:
+
+```env
+DEMO_MODE=true
+STRIPE_USE_MOCK_PAYMENTS=true
+```
+
+`Database__SeedDemoData` must also be enabled by the deployment configuration.
+The interval cannot be shorter than five minutes. Real Stripe mode requires
+`STRIPE_USE_MOCK_PAYMENTS=false` and a non-empty `STRIPE_SECRET_KEY`.
 
 ## Validation
 

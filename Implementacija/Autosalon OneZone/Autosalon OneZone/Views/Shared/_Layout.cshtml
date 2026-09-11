@@ -1,7 +1,8 @@
 @using Microsoft.AspNetCore.Identity
-@using Autosalon_OneZone.Models
+@using Microsoft.Extensions.Options
 @inject SignInManager<ApplicationUser> SignInManager
-@inject UserManager<ApplicationUser> UserManager
+@inject IOptions<Autosalon_OneZone.Services.DemoOptions> DemoOptionsAccessor
+@inject Autosalon_OneZone.Services.DemoResetSchedule DemoResetSchedule
 
 @{
     var currentPath = Context.Request.Path.Value?.ToLowerInvariant() ?? "";
@@ -25,6 +26,8 @@
     var isBosnian = currentCulture.StartsWith("bs", StringComparison.OrdinalIgnoreCase);
     var languageLabel = isBosnian ? "BS" : "EN";
     var returnUrl = string.Concat(Context.Request.PathBase, Context.Request.Path, Context.Request.QueryString);
+    var demoOptions = DemoOptionsAccessor.Value;
+    var nextDemoResetUtc = DemoResetSchedule.NextResetUtc;
 }
 
 <!DOCTYPE html>
@@ -36,6 +39,10 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link rel="stylesheet" type="text/css" href="~/css/kod.css" asp-append-version="true">
+    @if (demoOptions.Enabled && demoOptions.ResetEnabled)
+    {
+        <link rel="stylesheet" type="text/css" href="~/css/components/demo-reset-timer.css" asp-append-version="true">
+    }
     @await RenderSectionAsync("Head", required: false)
 </head>
 <body>
@@ -45,6 +52,37 @@
                 <span class="brand-icon"><i class="bi bi-car-front-fill"></i></span>
                 Autosalon OneZone
             </a>
+
+            @if (demoOptions.Enabled && demoOptions.ResetEnabled && nextDemoResetUtc.HasValue)
+            {
+                <div class="demo-reset-nav" id="demo-reset-nav">
+                    <button type="button"
+                            class="demo-reset-button"
+                            id="demo-reset-button"
+                            aria-expanded="false"
+                            aria-describedby="demo-reset-tooltip"
+                            aria-label="@L["DemoModeAriaLabel"]">
+                        <svg class="demo-reset-icon" aria-hidden="true" focusable="false" viewBox="0 0 32 32">
+                            <path d="M8 4.5h16M8 27.5h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2.8"></path>
+                            <path d="M10 5.5v4.1c0 3 2.2 5 5.1 6.4C12.2 17.4 10 19.4 10 22.4v4.1M22 5.5v4.1c0 3-2.2 5-5.1 6.4 2.9 1.4 5.1 3.4 5.1 6.4v4.1" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.8"></path>
+                            <path d="M13 10.2h6M13.3 22.2h5.4" fill="none" opacity=".9" stroke="currentColor" stroke-linecap="round" stroke-width="2.2"></path>
+                        </svg>
+                        <strong id="demo-reset-countdown"
+                                data-reset-at="@nextDemoResetUtc.Value.ToString("O")"
+                                data-reset-interval-seconds="@(demoOptions.ResetIntervalMinutes * 60)">
+                            <span class="demo-time-full">--:--</span>
+                            <span class="demo-time-compact">--m</span>
+                        </strong>
+                    </button>
+                    <div class="demo-reset-tooltip" id="demo-reset-tooltip" role="tooltip">
+                        <div class="demo-reset-tooltip-title">
+                            <i class="bi bi-info-circle-fill" aria-hidden="true"></i>
+                            @L["DemoModeTitle"]
+                        </div>
+                        <span class="demo-reset-tooltip-text">@L["DemoModeTooltip", demoOptions.ResetIntervalMinutes]</span>
+                    </div>
+                </div>
+            }
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
                     aria-controls="mainNavbar" aria-expanded="false" aria-label="@L["CommonShow"]">
@@ -265,6 +303,115 @@
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    @if (demoOptions.Enabled && demoOptions.ResetEnabled && nextDemoResetUtc.HasValue)
+    {
+        <script>
+            (() => {
+                const countdown = document.getElementById('demo-reset-countdown');
+                const wrapper = document.getElementById('demo-reset-nav');
+                const button = document.getElementById('demo-reset-button');
+                const tooltipText = document.querySelector('#demo-reset-tooltip .demo-reset-tooltip-text');
+                const fullTime = countdown?.querySelector('.demo-time-full');
+                const compactTime = countdown?.querySelector('.demo-time-compact');
+
+                if (!countdown || !wrapper || !button || !fullTime || !compactTime) return;
+
+                let resetAt = Date.parse(countdown.dataset.resetAt);
+                const intervalMs = Number(countdown.dataset.resetIntervalSeconds) * 1000;
+                const seenAtKey = 'autosalon-demo-indicator-seen-at-v1';
+                const repeatIntroAfterMs = 5 * 60 * 60 * 1000;
+                const defaultTooltip = @Json.Serialize(L["DemoModeTooltip", demoOptions.ResetIntervalMinutes].Value);
+                const warningTooltip = @Json.Serialize(L["DemoModeWarningTooltip"].Value);
+                let previousMinute = null;
+                let wasInLastMinute = false;
+
+                const restartAnimation = (className, duration) => {
+                    wrapper.classList.remove(className);
+                    void wrapper.offsetWidth;
+                    wrapper.classList.add(className);
+                    window.setTimeout(() => wrapper.classList.remove(className), duration);
+                };
+
+                const updateCountdown = () => {
+                    const now = Date.now();
+                    while (resetAt <= now && intervalMs > 0) resetAt += intervalMs;
+
+                    const remainingSeconds = Math.max(0, Math.ceil((resetAt - now) / 1000));
+                    const minutes = Math.floor(remainingSeconds / 60);
+                    const seconds = remainingSeconds % 60;
+                    const isLastMinute = remainingSeconds <= 60;
+                    const isCritical = remainingSeconds <= 10;
+
+                    fullTime.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                    compactTime.textContent = `${minutes}m`;
+                    wrapper.classList.toggle('is-reset-warning', isLastMinute);
+                    wrapper.classList.toggle('is-reset-critical', isCritical);
+
+                    if (tooltipText) {
+                        tooltipText.textContent = isLastMinute ? warningTooltip : defaultTooltip;
+                    }
+
+                    if (isLastMinute && !wasInLastMinute) {
+                        restartAnimation('entering-reset-warning', 850);
+                    } else if (!isLastMinute && previousMinute !== null && minutes !== previousMinute) {
+                        restartAnimation('minute-flip', 650);
+                    }
+
+                    wasInLastMinute = isLastMinute;
+                    previousMinute = minutes;
+                };
+
+                updateCountdown();
+                window.setInterval(updateCountdown, 1000);
+
+                let shouldShowIntro = true;
+                try {
+                    const lastSeenAt = Number(localStorage.getItem(seenAtKey));
+                    shouldShowIntro = !Number.isFinite(lastSeenAt) ||
+                        lastSeenAt <= 0 ||
+                        Date.now() - lastSeenAt >= repeatIntroAfterMs;
+
+                    if (shouldShowIntro) {
+                        localStorage.setItem(seenAtKey, String(Date.now()));
+                    }
+                } catch {
+                    // Without localStorage, the small introduction is shown on each visit.
+                }
+
+                if (shouldShowIntro) {
+                    wrapper.classList.add('is-first-visit', 'is-open');
+                    button.setAttribute('aria-expanded', 'true');
+                    window.setTimeout(() => wrapper.classList.remove('is-first-visit'), 1600);
+                    window.setTimeout(() => {
+                        wrapper.classList.remove('is-open');
+                        button.setAttribute('aria-expanded', 'false');
+                    }, 3600);
+                    window.setTimeout(() => wrapper.classList.add('is-acknowledged'), 7000);
+                } else {
+                    wrapper.classList.add('is-acknowledged');
+                }
+
+                button.addEventListener('click', event => {
+                    event.stopPropagation();
+                    const isOpen = wrapper.classList.toggle('is-open');
+                    button.setAttribute('aria-expanded', String(isOpen));
+                });
+
+                document.addEventListener('click', () => {
+                    if (!wrapper.classList.contains('is-open')) return;
+                    wrapper.classList.remove('is-open');
+                    button.setAttribute('aria-expanded', 'false');
+                });
+
+                button.addEventListener('keydown', event => {
+                    if (event.key !== 'Escape') return;
+                    wrapper.classList.remove('is-open');
+                    button.setAttribute('aria-expanded', 'false');
+                    button.blur();
+                });
+            })();
+        </script>
+    }
     @await RenderSectionAsync("Scripts", required: false)
     @await RenderSectionAsync("BottomScripts", required: false)
 </body>

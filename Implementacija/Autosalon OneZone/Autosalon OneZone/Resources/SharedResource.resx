@@ -1825,6 +1825,12 @@
   <data name="VehiclePriceInvalid" xml:space="preserve">
     <value>Vehicle price is invalid.</value>
   </data>
+  <data name="VehicleAlreadyPurchased" xml:space="preserve">
+    <value>One or more selected vehicles have already been purchased.</value>
+  </data>
+  <data name="CheckoutBusy" xml:space="preserve">
+    <value>One of the selected vehicles is currently being purchased. Please try again shortly.</value>
+  </data>
   <data name="VehicleNotFound" xml:space="preserve">
     <value>Vehicle not found.</value>
   </data>
@@ -2058,5 +2064,17 @@
   </data>
   <data name="Vehicles" xml:space="preserve">
     <value>Vehicles</value>
+  </data>
+  <data name="DemoModeTitle" xml:space="preserve">
+    <value>Demo mode</value>
+  </data>
+  <data name="DemoModeAriaLabel" xml:space="preserve">
+    <value>Demo mode. Payments are simulated and data resets periodically.</value>
+  </data>
+  <data name="DemoModeTooltip" xml:space="preserve">
+    <value>Payments are simulated. Data resets automatically every {0} minutes.</value>
+  </data>
+  <data name="DemoModeWarningTooltip" xml:space="preserve">
+    <value>Reset in less than a minute. Wait for it to finish before starting a new action.</value>
   </data>
 </root>

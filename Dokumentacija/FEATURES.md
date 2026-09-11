@@ -17,7 +17,8 @@ This document summarizes the final feature set of Autosalon OneZone.
 - Frontend and backend password validation.
 - Show/hide password controls.
 - Forgot-password flow with secure reset links.
-- Development fallback for password reset when Resend is not configured.
+- Explicitly enabled Resend delivery with a safe Development logging fallback.
+- Per-IP rate limiting for password-reset requests.
 
 ## User Profile
 
@@ -35,6 +36,7 @@ This document summarizes the final feature set of Autosalon OneZone.
 - Purchase summary.
 - Mock payment flow for local demo.
 - Stripe-ready payment abstraction.
+- Startup validation prevents real payments from being enabled in demo mode.
 - Order confirmation screen after successful purchase.
 
 ## Admin Panel
@@ -62,6 +64,8 @@ This document summarizes the final feature set of Autosalon OneZone.
 - Automatic EF Core migrations on startup.
 - Demo data seeding.
 - Demo accounts configured through `.env` or public fallback values.
+- Optional guarded periodic reset of mutable demo data.
+- Visible demo/payment notice with a reset countdown when cleanup is enabled.
 
 ## Testing
 

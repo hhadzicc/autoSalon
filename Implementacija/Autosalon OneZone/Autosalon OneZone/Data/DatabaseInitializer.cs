@@ -2,6 +2,7 @@ using Autosalon_OneZone.Models;
 using Autosalon_OneZone.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 
 namespace Autosalon_OneZone.Data
 {
@@ -25,6 +26,80 @@ namespace Autosalon_OneZone.Data
             await ExecuteWithRetryAsync(
                 () => InitializeDatabaseAsync(app.Services, configuration, applyMigrations, seedDemoData, hasAdminConfig, logger),
                 logger);
+        }
+
+        public static async Task ResetDemoDataAsync(
+            IServiceProvider services,
+            IConfiguration configuration,
+            ILogger logger,
+            CancellationToken cancellationToken = default)
+        {
+            using var scope = services.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+            var strategy = dbContext.Database.CreateExecutionStrategy();
+            await strategy.ExecuteAsync(async () =>
+            {
+                await using var transaction = await dbContext.Database.BeginTransactionAsync(
+                    IsolationLevel.Serializable,
+                    cancellationToken);
+
+                await dbContext.Recenzije.ExecuteDeleteAsync(cancellationToken);
+                await dbContext.PodrskaUpiti.ExecuteDeleteAsync(cancellationToken);
+                await dbContext.Placanja.ExecuteDeleteAsync(cancellationToken);
+                await dbContext.StavkeKorpe.ExecuteDeleteAsync(cancellationToken);
+                await dbContext.Narudzbe.ExecuteDeleteAsync(cancellationToken);
+                await dbContext.Kartice.ExecuteDeleteAsync(cancellationToken);
+                await dbContext.Krediti.ExecuteDeleteAsync(cancellationToken);
+                await dbContext.Korpe.ExecuteUpdateAsync(
+                    setters => setters.SetProperty(cart => cart.UkupnaCijena, 0m),
+                    cancellationToken);
+                await dbContext.Vozila.ExecuteDeleteAsync(cancellationToken);
+
+                await EnsureRolesAsync(roleManager, logger);
+
+                ApplicationUser? adminUser = null;
+                if (HasCredentials(configuration, "AdminUserSecrets"))
+                {
+                    adminUser = await EnsureUserAsync(
+                        userManager,
+                        dbContext,
+                        configuration["AdminUserSecrets:Email"]!,
+                        configuration["AdminUserSecrets:Password"]!,
+                        configuration["AdminUserSecrets:FirstName"] ?? "Demo",
+                        configuration["AdminUserSecrets:LastName"] ?? "Admin",
+                        AppRoles.Administrator,
+                        logger);
+                }
+
+                var sellerUser = await EnsureUserAsync(
+                    userManager,
+                    dbContext,
+                    configuration["DemoUsers:SellerEmail"] ?? "prodavac@autosalon.local",
+                    configuration["DemoUsers:SellerPassword"] ?? "Prodavac123!",
+                    "Demo",
+                    "Prodavac",
+                    AppRoles.Seller,
+                    logger);
+
+                var buyerUser = await EnsureUserAsync(
+                    userManager,
+                    dbContext,
+                    configuration["DemoUsers:BuyerEmail"] ?? "kupac@autosalon.local",
+                    configuration["DemoUsers:BuyerPassword"] ?? "Kupac123!",
+                    "Demo",
+                    "Kupac",
+                    AppRoles.Buyer,
+                    logger);
+
+                await SeedVehiclesAsync(dbContext, logger);
+                await SeedReviewsAndSupportAsync(dbContext, adminUser, sellerUser, buyerUser, logger);
+                await transaction.CommitAsync(cancellationToken);
+            });
+
+            logger.LogInformation("Demo data reset completed.");
         }
 
         private static async Task InitializeDatabaseAsync(

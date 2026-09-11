@@ -7,6 +7,7 @@ namespace Autosalon_OneZone.Services
 {
     public class ResendEmailOptions
     {
+        public bool Enabled { get; set; }
         public string? ApiKey { get; set; }
         public string? FromEmail { get; set; }
     }
@@ -35,18 +36,27 @@ namespace Autosalon_OneZone.Services
 
         public async Task SendPasswordResetEmailAsync(string toEmail, string displayName, string resetLink, DateTime expiresAtUtc)
         {
+            var enabled = _configuration.GetValue("Resend:Enabled", false);
             var apiKey = _configuration["Resend:ApiKey"];
             var fromEmail = _configuration["Resend:FromEmail"];
 
-            if (string.IsNullOrWhiteSpace(apiKey) || string.IsNullOrWhiteSpace(fromEmail))
+            if (!enabled)
             {
                 if (_environment.IsDevelopment())
                 {
-                    _logger.LogWarning("Resend is not configured. Development password reset link for {Email}: {ResetLink}", toEmail, resetLink);
-                    return;
+                    _logger.LogWarning("Email delivery is disabled. Development password reset link for {Email}: {ResetLink}", toEmail, resetLink);
+                }
+                else
+                {
+                    _logger.LogInformation("Email delivery is disabled; password reset email for {Email} was not sent.", toEmail);
                 }
 
-                throw new InvalidOperationException("Resend email configuration is missing.");
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(apiKey) || string.IsNullOrWhiteSpace(fromEmail))
+            {
+                throw new InvalidOperationException("Email delivery is enabled, but Resend configuration is missing.");
             }
 
             using var request = new HttpRequestMessage(HttpMethod.Post, "emails");

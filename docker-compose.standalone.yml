@@ -35,6 +35,9 @@ services:
       ConnectionStrings__DefaultConnection: Server=db,1433;Database=AutoSalonDb;User Id=sa;Password=${MSSQL_SA_PASSWORD:?Set MSSQL_SA_PASSWORD for standalone deployment};TrustServerCertificate=True;MultipleActiveResultSets=true
       Database__ApplyMigrations: "true"
       Database__SeedDemoData: "true"
+      Demo__Enabled: ${DEMO_MODE:-false}
+      Demo__ResetEnabled: ${DEMO_RESET_ENABLED:-false}
+      Demo__ResetIntervalMinutes: ${DEMO_RESET_INTERVAL_MINUTES:-60}
       AdminUserSecrets__Email: ${DEMO_ADMIN_EMAIL:-admin@autosalon.local}
       AdminUserSecrets__Password: ${DEMO_ADMIN_PASSWORD:?Set DEMO_ADMIN_PASSWORD for standalone deployment}
       AdminUserSecrets__FirstName: ${DEMO_ADMIN_FIRST_NAME:-Demo}
@@ -43,8 +46,9 @@ services:
       DemoUsers__BuyerPassword: ${DEMO_BUYER_PASSWORD:?Set DEMO_BUYER_PASSWORD for standalone deployment}
       DemoUsers__SellerEmail: ${DEMO_SELLER_EMAIL:-prodavac@autosalon.local}
       DemoUsers__SellerPassword: ${DEMO_SELLER_PASSWORD:?Set DEMO_SELLER_PASSWORD for standalone deployment}
+      Resend__Enabled: ${EMAIL_SENDING_ENABLED:-false}
       Resend__ApiKey: ${RESEND_API_KEY:-}
-      Resend__FromEmail: ${FROM_EMAIL:-noreply@autosalon.local}
+      Resend__FromEmail: ${FROM_EMAIL:-}
       ReverseProxy__KnownProxy: ${STANDALONE_PROXY_IP:-172.30.251.10}
       Stripe__UseMockPayments: ${STRIPE_USE_MOCK_PAYMENTS:-true}
       Stripe__SecretKey: ${STRIPE_SECRET_KEY:-}

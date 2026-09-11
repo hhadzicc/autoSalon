@@ -70,6 +70,9 @@ If a local `.env` file exists, Docker Compose uses those values. Without `.env`,
 ## Demo Payment
 
 The Docker demo uses mock payments by default, so Stripe keys are not required.
+Real Stripe processing is used only when `STRIPE_USE_MOCK_PAYMENTS=false` and a
+server-side `STRIPE_SECRET_KEY` is configured. Demo mode refuses to start with
+real payments enabled.
 
 Successful test payment:
 
@@ -85,7 +88,18 @@ The card `4000000000000002` simulates a declined payment.
 
 The application supports a complete forgot-password flow using ASP.NET Core Identity tokens. Reset links expire after 30 minutes.
 
-If `RESEND_API_KEY` and `FROM_EMAIL` are configured, the reset link is sent by email. In Development mode without Resend configuration, the reset link is written to the application log so the flow can be tested locally without exposing API keys.
+Email delivery is disabled by default. Set `EMAIL_SENDING_ENABLED=true` together
+with `RESEND_API_KEY` and `FROM_EMAIL` to send reset links through Resend. The
+forgot-password endpoint is limited to five submissions per IP address every 15
+minutes. In Development mode, a disabled email provider writes the reset link to
+the application log for local testing.
+
+## Optional Periodic Demo Reset
+
+Persistent demo data can be restored on startup and every 60 minutes by setting
+`DEMO_MODE=true` and `DEMO_RESET_ENABLED=true`. The interval is configurable
+through `DEMO_RESET_INTERVAL_MINUTES`. The application rejects unsafe reset
+configuration unless demo seeding and mock payments are also enabled.
 
 ## Screenshots
 

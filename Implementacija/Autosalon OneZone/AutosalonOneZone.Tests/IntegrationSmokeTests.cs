@@ -117,7 +117,7 @@ public class AutosalonFactory : WebApplicationFactory<Autosalon_OneZone.Controll
                 Boja = "Bijela",
                 Kilometraza = 76000,
                 Cijena = 43900,
-                Slika = "seed-audi-a4-2020.jpg",
+                Slika = "seed-audi-a4-2020-showroom.webp",
                 Opis = "Test vozilo"
             },
             new Vozilo
@@ -131,7 +131,7 @@ public class AutosalonFactory : WebApplicationFactory<Autosalon_OneZone.Controll
                 Boja = "Crna",
                 Kilometraza = 21400,
                 Cijena = 72800,
-                Slika = "seed-tesla-model3-2023.jpg",
+                Slika = "seed-tesla-model3-2023-showroom.webp",
                 Opis = "Test vozilo"
             });
 

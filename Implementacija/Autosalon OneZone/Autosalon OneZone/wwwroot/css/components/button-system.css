@@ -149,6 +149,11 @@
     flex: 0 0 auto;
 }
 
+.animated-search-placeholder::placeholder {
+    color: #64748b;
+    opacity: 1;
+}
+
 @media (max-width: 575.98px) {
     .hero-actions .oz-btn {
         width: 100%;
@@ -161,13 +166,5 @@
 
     .hero-search .oz-btn-search {
         width: 100%;
-    }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .oz-btn,
-    .oz-btn-arrow,
-    .home-details-link.oz-text-link::after {
-        transition: none;
     }
 }

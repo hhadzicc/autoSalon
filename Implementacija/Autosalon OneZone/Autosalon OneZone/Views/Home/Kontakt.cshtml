@@ -4,20 +4,20 @@
 @{
     ViewData["Title"] = L["ContactTitle"];
     var isSignedIn = SignInManager.IsSignedIn(User);
+    var returnUrl = string.Concat(Context.Request.PathBase, Context.Request.Path, Context.Request.QueryString);
 }
 
-<section class="inner-page-header">
+<section class="inner-page-header contact-page-header">
     <div class="container">
         <div class="row justify-content-center text-center">
             <div class="col-lg-8">
-                <p class="section-eyebrow">@L["ContactEyebrow"]</p>
                 <h1>@L["ContactHeaderTitle"]</h1>
                 <p>@L["ContactHeaderText"]</p>
             </div>
         </div>
     </div>
 </section>
-<section class="auth-section">
+<section class="auth-section contact-content-section">
     <div class="container">
         <div class="row justify-content-center align-items-start g-4">
             <div class="col-lg-7 col-xl-6">
@@ -32,18 +32,18 @@
 
                     @if (isSignedIn)
                     {
-                        <form asp-controller="Home" asp-action="Kontakt" method="post" id="contact-form">
+                        <form asp-controller="Home" asp-action="Kontakt" method="post" id="contact-form" autocomplete="off">
                             @Html.AntiForgeryToken()
 
                             <div class="mb-3">
                                 <label asp-for="Naslov" class="form-label">@L["ContactSubject"]</label>
-                                <input asp-for="Naslov" class="form-control" placeholder="@L["ContactSubjectPlaceholder"]" />
+                                <input asp-for="Naslov" class="form-control" placeholder="@L["ContactSubjectPlaceholder"]" autocomplete="off" />
                                 <span asp-validation-for="Naslov" class="text-danger"></span>
                             </div>
 
                             <div class="mb-4">
                                 <label asp-for="Sadrzaj" class="form-label">@L["ContactMessage"]</label>
-                                <textarea asp-for="Sadrzaj" class="form-control" rows="6" maxlength="5000" placeholder="@L["ContactMessagePlaceholder"]"></textarea>
+                                <textarea asp-for="Sadrzaj" class="form-control" rows="6" maxlength="5000" placeholder="@L["ContactMessagePlaceholder"]" autocomplete="off"></textarea>
                                 <span asp-validation-for="Sadrzaj" class="text-danger"></span>
                             </div>
 
@@ -53,21 +53,28 @@
                     else
                     {
                         <div class="contact-choice text-center">
-                            <p class="text-muted mb-4">@L["ContactGuestDetails"]</p>
-                            <div class="d-grid gap-3">
-                                <a asp-controller="Account" asp-action="Login" class="btn btn-primary btn-lg rounded-4">@L["ContactLoginToSend"]</a>
-                                <a asp-controller="Account" asp-action="Register" class="btn btn-outline-primary btn-lg rounded-4">@L["NavRegister"]</a>
-                                <a href="mailto:autosalon@autosalon.com" class="btn btn-light border btn-lg rounded-4">@L["ContactDirectEmail"]</a>
+                            <div class="contact-login-action">
+                                <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@returnUrl" class="oz-btn">
+                                    <span>@L["ContactLoginToSend"]</span>
+                                    <span class="oz-btn-arrow" aria-hidden="true">
+                                        <svg viewBox="0 0 24 24" focusable="false">
+                                            <path d="M5 12h14"></path>
+                                            <path d="m14 7 5 5-5 5"></path>
+                                        </svg>
+                                    </span>
+                                </a>
                             </div>
+                            <p class="contact-register-prompt">
+                                @L["ContactRegisterPrompt"]
+                                <a asp-controller="Account" asp-action="Register" asp-route-returnUrl="@returnUrl">@L["ContactRegisterAction"]</a>
+                            </p>
                         </div>
                     }
-
-                    <p class="small text-muted text-center mt-4 mb-0">@L["ContactFooterNote"]</p>
                 </div>
             </div>
 
             <div class="col-lg-5 col-xl-4">
-                <aside class="info-card">
+                <aside class="info-card contact-info-card">
                     <h3>@L["ContactInfoTitle"]</h3>
 
                     <div class="info-item">
@@ -101,6 +108,11 @@
                             <span>@L["ContactInquiryTypes"]</span>
                         </div>
                     </div>
+
+                    <a href="mailto:autosalon@autosalon.com" class="contact-direct-email">
+                        <i class="bi bi-envelope"></i>
+                        <span>@L["ContactDirectEmail"]</span>
+                    </a>
                 </aside>
             </div>
         </div>

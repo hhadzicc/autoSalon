@@ -6,19 +6,9 @@
     ViewData["Title"] = L["HomeTitle"];
 
     var culture = CultureInfo.CurrentCulture;
-    var featuredVehicle = Model.FeaturedVehicle;
+    var heroVehicles = Model.HeroVehicles;
     var featuredVehicles = Model.FeaturedVehicles;
-    var hasFeaturedVehicle = featuredVehicle != null;
-    var vehicleName = hasFeaturedVehicle ? $"{featuredVehicle!.Marka} {featuredVehicle.Model}" : L["HomeFeaturedVehicle"].Value;
-    var vehicleImage = hasFeaturedVehicle && !string.IsNullOrWhiteSpace(featuredVehicle!.Slika)
-        ? Url.Content($"~/images/vozila/{featuredVehicle.Slika}")
-        : null;
-    var vehiclePrice = hasFeaturedVehicle && featuredVehicle!.Cijena.HasValue
-        ? $"€{featuredVehicle.Cijena.Value.ToString("N0", culture)}"
-        : L["PriceOnRequest"].Value;
-    var vehicleMileage = hasFeaturedVehicle && featuredVehicle!.Kilometraza.HasValue
-        ? $"{featuredVehicle.Kilometraza.Value.ToString("N0", culture)} km"
-        : L["NotEntered"].Value;
+    var hasHeroVehicles = heroVehicles.Any();
 }
 
 <section class="hero">
@@ -48,8 +38,17 @@
                     </a>
                 </div>
 
-                <form class="hero-search d-flex gap-2" action="/Vozilo/Index" method="get" role="search">
-                    <input class="form-control" type="search" name="searchTerm" placeholder="@L["HomeSearchPlaceholder"]" aria-label="@L["VehicleSearchAria"]">
+                <form class="hero-search d-flex gap-2" action="/Vozilo/Index" method="get" role="search" autocomplete="off">
+                    <input class="form-control animated-search-placeholder"
+                           type="search"
+                           name="searchTerm"
+                           autocomplete="off"
+                           spellcheck="false"
+                           placeholder="@L["HomeSearchPlaceholder"]"
+                           data-animated-search-placeholder
+                           data-static-placeholder="@L["HomeSearchPlaceholder"]"
+                           data-placeholder-phrases="@L["VehicleSearchAnimatedPhrases"]"
+                           aria-label="@L["VehicleSearchAria"]">
                     <button class="oz-btn oz-btn-search" type="submit">
                         <svg class="oz-btn-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                             <circle cx="11" cy="11" r="6.5"></circle>
@@ -61,56 +60,105 @@
             </div>
 
             <div class="col-lg-5">
-                <div class="featured-car-card">
-                    @if (hasFeaturedVehicle)
-                    {
-                        if (!string.IsNullOrWhiteSpace(vehicleImage))
-                        {
-                            <div class="car-image" style="background-image: url('@vehicleImage');"></div>
-                        }
-                        else
-                        {
-                            <div class="car-image car-image-placeholder">
-                                <i class="bi bi-car-front-fill"></i>
-                                <span>@L["ImageUnavailable"]</span>
-                            </div>
-                        }
+                @if (hasHeroVehicles)
+                {
+                    <div class="hero-vehicle-carousel"
+                         data-hero-vehicle-carousel
+                         data-autoplay-delay="5000"
+                         data-transition-duration="650">
+                        <div class="featured-car-card hero-carousel-card">
+                            <div class="hero-carousel-viewport">
+                            @for (var index = 0; index < heroVehicles.Count; index++)
+                            {
+                                var heroVehicle = heroVehicles[index];
+                                var heroVehicleName = $"{heroVehicle.Marka} {heroVehicle.Model}";
+                                var heroVehicleImage = !string.IsNullOrWhiteSpace(heroVehicle.Slika)
+                                    ? Url.Content($"~/images/vozila/{heroVehicle.Slika}")
+                                    : null;
+                                var heroVehiclePrice = heroVehicle.Cijena.HasValue
+                                    ? $"€{heroVehicle.Cijena.Value.ToString("N0", culture)}"
+                                    : L["PriceOnRequest"].Value;
+                                var heroVehicleMileage = heroVehicle.Kilometraza.HasValue
+                                    ? $"{heroVehicle.Kilometraza.Value.ToString("N0", culture)} km"
+                                    : L["NotEntered"].Value;
 
-                        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start gap-3 mb-4">
-                            <div>
-                                <h2 class="fw-black mb-1">@vehicleName</h2>
-                                <p class="text-light opacity-75 mb-0">@featuredVehicle!.Godiste · @featuredVehicle.Gorivo · @featuredVehicle.Boja</p>
+                                <article class="hero-carousel-slide @(index == 0 ? "is-active" : null)"
+                                         data-hero-carousel-slide
+                                         aria-hidden="@(index == 0 ? "false" : "true")">
+                                    @if (!string.IsNullOrWhiteSpace(heroVehicleImage))
+                                    {
+                                        <div class="car-image" style="background-image: url('@heroVehicleImage');"></div>
+                                    }
+                                    else
+                                    {
+                                        <div class="car-image car-image-placeholder">
+                                            <i class="bi bi-car-front-fill"></i>
+                                            <span>@L["ImageUnavailable"]</span>
+                                        </div>
+                                    }
+
+                                    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start gap-3 mb-4">
+                                        <div>
+                                            <h2 class="fw-black mb-1">@heroVehicleName</h2>
+                                        </div>
+                                        <span class="price-badge">@heroVehiclePrice</span>
+                                    </div>
+
+                                    <div class="row g-3 mb-4">
+                                        <div class="col-4">
+                                            <div class="glass-stat">
+                                                <strong>@heroVehicle.Godiste</strong>
+                                                <span>@L["VehicleYearLower"]</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="glass-stat">
+                                                <strong>@heroVehicleMileage</strong>
+                                                <span>@L["VehicleMileageLower"]</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="glass-stat">
+                                                <strong>@heroVehicle.Gorivo</strong>
+                                                <span>@L["VehicleFuelLower"]</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <a href="@Url.Action("Details", "Vozilo", new { id = heroVehicle.VoziloID })" class="oz-btn oz-btn-light">
+                                        <span>@L["ViewDetails"]</span>
+                                    </a>
+                                </article>
+                            }
                             </div>
-                            <span class="price-badge">@vehiclePrice</span>
                         </div>
 
-                        <div class="row g-3 mb-4">
-                            <div class="col-4">
-                                <div class="glass-stat">
-                                    <strong>@featuredVehicle.Godiste</strong>
-                                    <span>@L["VehicleYearLower"]</span>
+                        @if (heroVehicles.Count > 1)
+                        {
+                            <div class="hero-carousel-controls">
+                                <button class="hero-carousel-arrow" type="button" data-hero-carousel-previous aria-label="@L["HomeCarouselPrevious"]">
+                                    <i class="bi bi-chevron-left" aria-hidden="true"></i>
+                                </button>
+                                <div class="hero-carousel-dots" role="group" aria-label="@L["HomeCarouselNavigation"]">
+                                    @for (var index = 0; index < heroVehicles.Count; index++)
+                                    {
+                                        <button class="hero-carousel-dot @(index == 0 ? "is-active" : null)"
+                                                type="button"
+                                                data-hero-carousel-dot="@index"
+                                                aria-label="@($"{L["HomeCarouselShowVehicle"]} {index + 1}")"
+                                                aria-current="@(index == 0 ? "true" : "false")"></button>
+                                    }
                                 </div>
+                                <button class="hero-carousel-arrow" type="button" data-hero-carousel-next aria-label="@L["HomeCarouselNext"]">
+                                    <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                                </button>
                             </div>
-                            <div class="col-4">
-                                <div class="glass-stat">
-                                    <strong>@vehicleMileage</strong>
-                                    <span>@L["VehicleMileageLower"]</span>
-                                </div>
-                            </div>
-                            <div class="col-4">
-                                <div class="glass-stat">
-                                    <strong>@featuredVehicle.Gorivo</strong>
-                                    <span>@L["VehicleFuelLower"]</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <a href="@Url.Action("Details", "Vozilo", new { id = featuredVehicle.VoziloID })" class="oz-btn oz-btn-light">
-                            <span>@L["ViewDetails"]</span>
-                        </a>
-                    }
-                    else
-                    {
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="featured-car-card">
                         <div class="empty-featured-car">
                             <i class="bi bi-car-front-fill"></i>
                             <h2 class="fw-black mb-2">@L["HomeNoFeaturedVehicle"]</h2>
@@ -119,8 +167,8 @@
                                 <span>@L["HomeViewOffer"]</span>
                             </a>
                         </div>
-                    }
-                </div>
+                    </div>
+                }
             </div>
         </div>
     </div>
@@ -184,9 +232,7 @@
     <div class="container">
         <div class="row justify-content-center text-center mb-5">
             <div class="col-lg-8">
-                <p class="section-eyebrow">@L["HomeFeaturedVehiclesEyebrow"]</p>
                 <h2 class="section-title">@L["HomeFeaturedVehiclesTitle"]</h2>
-                <p class="section-text mb-0">@L["HomeFeaturedVehiclesText"]</p>
             </div>
         </div>
 
@@ -240,7 +286,7 @@
     </div>
 </section>
 
-<section class="section-padding bg-white">
+<section class="section-padding home-contact-section">
     <div class="container">
         <div class="row g-4 align-items-stretch">
             <div class="col-lg-5">
@@ -270,3 +316,8 @@
         </div>
     </div>
 </section>
+
+@section Scripts {
+    <script src="~/js/components/animated-search-placeholder.js" asp-append-version="true"></script>
+    <script src="~/js/components/hero-vehicle-carousel.js" asp-append-version="true"></script>
+}

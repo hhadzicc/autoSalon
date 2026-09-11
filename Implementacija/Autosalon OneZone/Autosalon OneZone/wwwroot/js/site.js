@@ -178,6 +178,45 @@
 })();
 
 (() => {
+    const storageKey = "autosalon-language-switch-scroll-v1";
+    const currentLocation = `${window.location.pathname}${window.location.search}`;
+
+    try {
+        const savedState = sessionStorage.getItem(storageKey);
+
+        if (savedState) {
+            sessionStorage.removeItem(storageKey);
+            const { returnUrl, scrollY } = JSON.parse(savedState);
+
+            if (returnUrl === currentLocation && Number.isFinite(scrollY)) {
+                if ("scrollRestoration" in history) {
+                    history.scrollRestoration = "manual";
+                }
+
+                window.requestAnimationFrame(() => {
+                    window.requestAnimationFrame(() => window.scrollTo(0, scrollY));
+                });
+            }
+        }
+    } catch {
+        sessionStorage.removeItem(storageKey);
+    }
+
+    document.querySelectorAll(".language-switch-form").forEach(form => {
+        form.addEventListener("submit", () => {
+            try {
+                sessionStorage.setItem(storageKey, JSON.stringify({
+                    returnUrl: currentLocation,
+                    scrollY: window.scrollY
+                }));
+            } catch {
+                // Language switching still works when sessionStorage is unavailable.
+            }
+        });
+    });
+})();
+
+(() => {
     if (window.validationMessagesInitialized || !window.jQuery || !window.jQuery.validator || !window.appTexts) {
         return;
     }

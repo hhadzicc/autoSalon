@@ -336,6 +336,27 @@
     font-weight: 900;
 }
 
+.vehicle-actions [data-cart-button].is-loading [data-cart-icon] {
+    animation: vehicle-cart-spin 1100ms linear infinite;
+}
+
+.vehicle-actions [data-cart-button] {
+    transition: background-color 0.32s ease, border-color 0.32s ease, color 0.32s ease;
+}
+
+.vehicle-actions [data-cart-button].is-added,
+.vehicle-actions [data-cart-button].is-added:hover {
+    border-color: #15803d;
+    background: #15803d;
+    color: #ffffff;
+}
+
+@keyframes vehicle-cart-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 .details-block {
     margin-top: 28px;
 }

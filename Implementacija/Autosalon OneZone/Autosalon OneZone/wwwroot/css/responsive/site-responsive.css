@@ -60,7 +60,7 @@
     }
 
     .hero {
-        padding: 28px 0 82px;
+        padding: 19px 0 82px;
     }
 
     .featured-car-card {
@@ -118,10 +118,6 @@
         border-radius: 18px;
     }
 
-    .hero-search .btn {
-        width: 100%;
-    }
-
     .hero-title {
         font-size: 1.85rem;
         line-height: 1.06;
@@ -140,19 +136,9 @@
         max-width: min(340px, calc(100vw - 48px));
     }
 
-    .hero-actions .btn {
-        width: 100%;
-    }
-
     .hero-search {
-        display: block !important;
         width: min(340px, calc(100vw - 48px));
         max-width: min(340px, calc(100vw - 48px));
-    }
-
-    .hero-search .btn {
-        margin-top: 8px;
-        min-height: 48px;
     }
 
     .car-image {
@@ -221,15 +207,10 @@
         font-size: 1.15rem;
     }
 
-    .small-page-hero {
-        padding: 56px 0 64px;
-    }
-
     .inner-page-header {
         padding: 36px 0 28px;
     }
 
-    .page-hero h1,
     .inner-page-header h1,
     .vehicles-hero h1 {
         font-size: 2.05rem;
@@ -274,11 +255,12 @@
     }
 
     .vehicles-hero {
-        padding: 52px 0 34px;
+        padding: 24px 0 20px;
     }
 
     .vehicles-search {
-        display: block;
+        display: flex;
+        flex-direction: column;
         width: 100%;
         max-width: 100%;
         margin-left: auto;
@@ -288,7 +270,7 @@
 
     .vehicles-search .btn {
         width: 100%;
-        margin-top: 8px;
+        margin-top: 0;
         min-height: 48px;
     }
 
@@ -296,7 +278,6 @@
         padding: 30px 0 76px;
     }
 
-    .filters-card,
     .vehicles-card,
     .vehicles-empty-state {
         width: 100%;
@@ -305,16 +286,6 @@
         margin-right: auto;
     }
 
-    .filters-card {
-        padding: 22px;
-    }
-
-    .filters-actions {
-        display: grid;
-    }
-
-    .filters-actions .btn,
-    .vehicles-card-actions .btn,
     .vehicles-card-actions form {
         width: 100%;
     }

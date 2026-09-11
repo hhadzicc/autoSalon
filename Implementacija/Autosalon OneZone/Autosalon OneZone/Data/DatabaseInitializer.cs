@@ -421,7 +421,7 @@ namespace Autosalon_OneZone.Data
                     Boja = "Siva",
                     Kilometraza = 48500,
                     Cijena = 37500m,
-                    Slika = "seed-volkswagen-golf8-2021.jpg",
+                    Slika = "seed-volkswagen-golf8-2021-showroom.webp",
                     Opis = "Demo vozilo spremno za lokalno pokretanje aplikacije."
                 },
                 new Vozilo
@@ -434,7 +434,7 @@ namespace Autosalon_OneZone.Data
                     Boja = "Crna",
                     Kilometraza = 9200,
                     Cijena = 149900m,
-                    Slika = "f3ddfedf-b427-40f3-9dc2-236a9251b322_2024-porsche-panamera-4-e-hybrid-108-6643725bab45b.jpeg",
+                    Slika = "seed-porsche-panamera-2024-showroom.webp",
                     Opis = "Premium demo model za prikaz detalja i procesa narudžbe."
                 },
                 new Vozilo
@@ -447,7 +447,7 @@ namespace Autosalon_OneZone.Data
                     Boja = "Bijela",
                     Kilometraza = 76000,
                     Cijena = 43900m,
-                    Slika = "seed-audi-a4-2020.jpg",
+                    Slika = "seed-audi-a4-2020-showroom.webp",
                     Opis = "Pouzdana limuzina za svakodnevnu vožnju."
                 },
                 new Vozilo
@@ -460,7 +460,7 @@ namespace Autosalon_OneZone.Data
                     Boja = "Plava",
                     Kilometraza = 38500,
                     Cijena = 89500m,
-                    Slika = "seed-bmw-x5-2022.jpg",
+                    Slika = "seed-bmw-x5-2022-showroom.webp",
                     Opis = "SUV demo vozilo sa bogatom opremom."
                 },
                 new Vozilo
@@ -473,7 +473,7 @@ namespace Autosalon_OneZone.Data
                     Boja = "Crvena",
                     Kilometraza = 21400,
                     Cijena = 72800m,
-                    Slika = "seed-tesla-model3-2023.jpg",
+                    Slika = "seed-tesla-model3-2023-showroom.webp",
                     Opis = "Električno demo vozilo za prikaz različitih tipova pogona."
                 },
                 new Vozilo
@@ -486,7 +486,7 @@ namespace Autosalon_OneZone.Data
                     Boja = "Srebrna",
                     Kilometraza = 93000,
                     Cijena = 41500m,
-                    Slika = "seed-mercedes-c220-2019.jpg",
+                    Slika = "seed-mercedes-c220-2019-showroom.webp",
                     Opis = "Demo sedan za testiranje pretrage i korpe."
                 },
                 new Vozilo
@@ -499,7 +499,7 @@ namespace Autosalon_OneZone.Data
                     Boja = "Bijela",
                     Kilometraza = 28400,
                     Cijena = 129500m,
-                    Slika = "seed-audi-etron-gt-2022.jpg",
+                    Slika = "seed-audi-etron-gt-2022-showroom.webp",
                     Opis = "Električni gran turismo sa naprednom opremom i sportskim karakterom."
                 },
                 new Vozilo
@@ -512,7 +512,7 @@ namespace Autosalon_OneZone.Data
                     Boja = "Žuta",
                     Kilometraza = 18500,
                     Cijena = 118900m,
-                    Slika = "seed-bmw-m4-competition-2022.jpg",
+                    Slika = "seed-bmw-m4-competition-2022-showroom.webp",
                     Opis = "Sportski coupe sa visokim performansama i upečatljivim izgledom."
                 },
                 new Vozilo
@@ -525,7 +525,7 @@ namespace Autosalon_OneZone.Data
                     Boja = "Bijela",
                     Kilometraza = 66400,
                     Cijena = 56900m,
-                    Slika = "seed-mercedes-glc300-2020.jpg",
+                    Slika = "seed-mercedes-glc300-2020-showroom.webp",
                     Opis = "Premium SUV za porodičnu i poslovnu vožnju."
                 },
                 new Vozilo
@@ -538,7 +538,7 @@ namespace Autosalon_OneZone.Data
                     Boja = "Crvena",
                     Kilometraza = 112000,
                     Cijena = 16900m,
-                    Slika = "seed-volkswagen-golf8-2021.jpg",
+                    Slika = "seed-toyota-yaris-2017-showroom.webp",
                     Opis = "Pristupačno gradsko vozilo sa niskom potrošnjom."
                 },
                 new Vozilo
@@ -551,7 +551,7 @@ namespace Autosalon_OneZone.Data
                     Boja = "Bijela",
                     Kilometraza = 98500,
                     Cijena = 14500m,
-                    Slika = "seed-audi-a4-2020.jpg",
+                    Slika = "seed-renault-clio-2018-showroom.webp",
                     Opis = "Ekonomično vozilo za svakodnevnu gradsku vožnju."
                 },
                 new Vozilo
@@ -564,7 +564,7 @@ namespace Autosalon_OneZone.Data
                     Boja = "Siva",
                     Kilometraza = 124000,
                     Cijena = 13500m,
-                    Slika = "seed-mercedes-c220-2019.jpg",
+                    Slika = "seed-opel-astra-2016-showroom.webp",
                     Opis = "Pouzdan hatchback za kupce koji traže niži budžet."
                 },
                 new Vozilo
@@ -577,7 +577,7 @@ namespace Autosalon_OneZone.Data
                     Boja = "Plava",
                     Kilometraza = 108000,
                     Cijena = 11900m,
-                    Slika = "seed-bmw-x5-2022.jpg",
+                    Slika = "seed-ford-fiesta-2017-showroom.webp",
                     Opis = "Kompaktno vozilo za gradsku vožnju i početnike."
                 },
                 new Vozilo
@@ -590,7 +590,7 @@ namespace Autosalon_OneZone.Data
                     Boja = "Srebrna",
                     Kilometraza = 72000,
                     Cijena = 15500m,
-                    Slika = "seed-tesla-model3-2023.jpg",
+                    Slika = "seed-hyundai-i20-2019-showroom.webp",
                     Opis = "Dobro očuvano vozilo sa jednostavnim održavanjem."
                 },
                 new Vozilo
@@ -603,7 +603,7 @@ namespace Autosalon_OneZone.Data
                     Boja = "Bijela",
                     Kilometraza = 68000,
                     Cijena = 12900m,
-                    Slika = "seed-mercedes-glc300-2020.jpg",
+                    Slika = "seed-dacia-sandero-2020-showroom.webp",
                     Opis = "Povoljan demo model sa plinskim pogonom."
                 }
             };

@@ -22,6 +22,61 @@
     border-top: 0;
 }
 
+.app-toast {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 1090;
+    width: min(380px, calc(100vw - 32px));
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px 18px;
+    border: 1px solid #bbf7d0;
+    border-radius: 16px;
+    background: #ffffff;
+    color: #166534;
+    box-shadow: 0 20px 55px rgba(15, 23, 42, 0.2);
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 340ms ease, transform 340ms ease;
+}
+
+.app-toast.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.app-toast.is-error {
+    border-color: #fecaca;
+    color: #b91c1c;
+}
+
+.app-toast > i {
+    margin-top: 2px;
+    font-size: 1.1rem;
+}
+
+.app-toast-content {
+    display: grid;
+    gap: 4px;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+.app-toast-content a {
+    width: fit-content;
+    color: #2563eb;
+    font-size: 0.88rem;
+    font-weight: 900;
+    text-decoration: none;
+}
+
+.app-toast-content a:hover,
+.app-toast-content a:focus {
+    text-decoration: underline;
+}
+
 .empty-cart-wrap {
     min-height: 360px;
     display: flex;
@@ -146,6 +201,11 @@
 }
 
 @media (max-width: 767.98px) {
+    .app-toast {
+        right: 16px;
+        bottom: 16px;
+    }
+
     .empty-cart-wrap {
         min-height: 320px;
     }

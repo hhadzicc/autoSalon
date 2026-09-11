@@ -22,64 +22,80 @@ public sealed class HomeService : IHomeService
 
     public async Task<HomeIndexViewModel> GetHomePageAsync()
     {
-        var featuredVehicle = await _context.Vozila
+        var availableVehicles = await _context.Vozila
             .AsNoTracking()
             .AvailableForPurchase()
-            .FirstOrDefaultAsync(vehicle =>
-                vehicle.Marka == "Porsche" &&
-                vehicle.Model == "Panamera 4 E-Hybrid");
-
-        var curatedVehicles = await _context.Vozila
-            .AsNoTracking()
-            .AvailableForPurchase()
-            .Where(vehicle =>
-                (vehicle.Marka == "Audi" && vehicle.Model == "e-tron GT quattro") ||
-                (vehicle.Marka == "BMW" && vehicle.Model == "M4 Competition") ||
-                (vehicle.Marka == "Mercedes-Benz" && vehicle.Model == "GLC 300"))
             .ToListAsync();
 
-        var curatedOrder = new Dictionary<string, int>
+        var heroOrder = new[]
         {
-            ["Audi|e-tron GT quattro"] = 0,
-            ["BMW|M4 Competition"] = 1,
-            ["Mercedes-Benz|GLC 300"] = 2
+            "Porsche|Panamera 4 E-Hybrid",
+            "BMW|X5",
+            "Mercedes-Benz|C 220",
+            "Audi|A4"
         };
-        var featuredVehicles = curatedVehicles
-            .OrderBy(vehicle => curatedOrder.GetValueOrDefault(
-                $"{vehicle.Marka}|{vehicle.Model}",
-                int.MaxValue))
-            .Take(3)
-            .ToList();
+
+        var featuredOrder = new[]
+        {
+            "Audi|e-tron GT quattro",
+            "BMW|M4 Competition",
+            "Mercedes-Benz|GLC 300"
+        };
+
+        var reservedFeaturedIds = availableVehicles
+            .Where(vehicle => featuredOrder.Contains(VehicleKey(vehicle)))
+            .Select(vehicle => vehicle.VoziloID)
+            .ToHashSet();
+
+        var heroVehicles = SelectInOrder(availableVehicles, heroOrder);
+        var heroIds = heroVehicles.Select(vehicle => vehicle.VoziloID).ToHashSet();
+
+        if (heroVehicles.Count < 4)
+        {
+            heroVehicles.AddRange(availableVehicles
+                .Where(vehicle => !heroIds.Contains(vehicle.VoziloID) &&
+                                  !reservedFeaturedIds.Contains(vehicle.VoziloID))
+                .OrderByDescending(vehicle => vehicle.Cijena ?? 0)
+                .ThenByDescending(vehicle => vehicle.Godiste ?? 0)
+                .Take(4 - heroVehicles.Count));
+        }
+
+        heroIds = heroVehicles.Select(vehicle => vehicle.VoziloID).ToHashSet();
+        var featuredVehicles = SelectInOrder(
+            availableVehicles.Where(vehicle => !heroIds.Contains(vehicle.VoziloID)),
+            featuredOrder);
 
         if (featuredVehicles.Count < 3)
         {
-            var excludedIds = featuredVehicles.Select(vehicle => vehicle.VoziloID).ToList();
-            if (featuredVehicle != null)
-            {
-                excludedIds.Add(featuredVehicle.VoziloID);
-            }
-
-            var fallbackVehicles = await _context.Vozila
-                .AsNoTracking()
-                .AvailableForPurchase()
-                .Where(vehicle => !excludedIds.Contains(vehicle.VoziloID))
-                .OrderByDescending(vehicle => vehicle.Godiste ?? 0)
-                .ThenByDescending(vehicle => vehicle.Cijena ?? 0)
-                .Take(3 - featuredVehicles.Count)
-                .ToListAsync();
-            featuredVehicles.AddRange(fallbackVehicles);
+            var featuredIds = featuredVehicles.Select(vehicle => vehicle.VoziloID).ToHashSet();
+            featuredVehicles.AddRange(availableVehicles
+                .Where(vehicle => !heroIds.Contains(vehicle.VoziloID) &&
+                                  !featuredIds.Contains(vehicle.VoziloID))
+                .OrderByDescending(vehicle => vehicle.Cijena ?? 0)
+                .ThenByDescending(vehicle => vehicle.Godiste ?? 0)
+                .Take(3 - featuredVehicles.Count));
         }
 
         return new HomeIndexViewModel
         {
-            FeaturedVehicle = featuredVehicle,
+            HeroVehicles = heroVehicles,
             FeaturedVehicles = featuredVehicles
-                .OrderByDescending(vehicle => vehicle.Godiste ?? 0)
-                .ThenByDescending(vehicle => vehicle.Cijena ?? 0)
-                .Take(3)
-                .ToList()
         };
     }
+
+    private static List<Vozilo> SelectInOrder(IEnumerable<Vozilo> vehicles, IEnumerable<string> orderedKeys)
+    {
+        var vehiclesByKey = vehicles
+            .GroupBy(VehicleKey)
+            .ToDictionary(group => group.Key, group => group.First());
+
+        return orderedKeys
+            .Where(vehiclesByKey.ContainsKey)
+            .Select(key => vehiclesByKey[key])
+            .ToList();
+    }
+
+    private static string VehicleKey(Vozilo vehicle) => $"{vehicle.Marka}|{vehicle.Model}";
 
     public async Task AddSupportRequestAsync(string userId, string title, string content)
     {

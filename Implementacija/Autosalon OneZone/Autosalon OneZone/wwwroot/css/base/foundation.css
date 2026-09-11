@@ -112,6 +112,22 @@ a {
     color: #bfdbfe;
 }
 
+.cart-count-badge {
+    min-width: 20px;
+    height: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 5px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: #2563eb;
+    color: #ffffff;
+    font-size: 0.72rem;
+    font-weight: 900;
+    line-height: 1;
+}
+
 .dropdown-menu {
     border: 1px solid var(--border);
     border-radius: 18px;

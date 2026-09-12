@@ -165,6 +165,68 @@ public class ServiceTests
         Assert.Equal(expected, vehicles.Count());
     }
 
+    [Fact]
+    public async Task Customer_experience_summary_contains_only_completed_purchases_and_orders_latest_first()
+    {
+        await using var db = CreateContext();
+        var buyer = new ApplicationUser { Id = "buyer", Ime = "Demo", Prezime = "Kupac", UserName = "demo" };
+        var pendingBuyer = new ApplicationUser { Id = "pending", Ime = "Novi", Prezime = "Kupac", UserName = "novi" };
+        var firstVehicle = CreateVehicle("Lexus", "LC 500", 2021, 109900);
+        var secondVehicle = CreateVehicle("Porsche", "Taycan 4S", 2021, 103900, TipGoriva.Elektro);
+        var pendingVehicle = CreateVehicle("Audi", "A8", 2022, 120000);
+        db.AddRange(buyer, pendingBuyer, firstVehicle, secondVehicle, pendingVehicle);
+        await db.SaveChangesAsync();
+
+        var firstOrder = new Narudzba { KorisnikId = buyer.Id, DatumNarudzbe = DateTime.UtcNow.AddDays(-20), Status = StatusNarudzbe.Placena, UkupnaCijena = 109900 };
+        var secondOrder = new Narudzba { KorisnikId = buyer.Id, DatumNarudzbe = DateTime.UtcNow.AddDays(-10), Status = StatusNarudzbe.Isporucena, UkupnaCijena = 103900 };
+        var pendingOrder = new Narudzba { KorisnikId = pendingBuyer.Id, DatumNarudzbe = DateTime.UtcNow.AddDays(-5), Status = StatusNarudzbe.Kreirana, UkupnaCijena = 120000 };
+        db.AddRange(firstOrder, secondOrder, pendingOrder);
+        await db.SaveChangesAsync();
+
+        db.StavkeKorpe.AddRange(
+            new StavkaKorpe { NarudzbaID = firstOrder.NarudzbaID, VoziloID = firstVehicle.VoziloID, Kolicina = 1, CijenaStavke = 109900 },
+            new StavkaKorpe { NarudzbaID = secondOrder.NarudzbaID, VoziloID = secondVehicle.VoziloID, Kolicina = 1, CijenaStavke = 103900 },
+            new StavkaKorpe { NarudzbaID = pendingOrder.NarudzbaID, VoziloID = pendingVehicle.VoziloID, Kolicina = 1, CijenaStavke = 120000 });
+        db.Recenzije.AddRange(
+            new Recenzija { KorisnikId = buyer.Id, VoziloID = firstVehicle.VoziloID, Ocjena = 4, Komentar = "Odlično iskustvo.", DatumRecenzije = DateTime.UtcNow.AddDays(-8) },
+            new Recenzija { KorisnikId = buyer.Id, VoziloID = secondVehicle.VoziloID, Ocjena = 5, Komentar = "Sve preporuke.", DatumRecenzije = DateTime.UtcNow.AddDays(-2) },
+            new Recenzija { KorisnikId = pendingBuyer.Id, VoziloID = pendingVehicle.VoziloID, Ocjena = 1, Komentar = "Kupovina nije završena.", DatumRecenzije = DateTime.UtcNow.AddDays(-1) });
+        await db.SaveChangesAsync();
+
+        var summary = await new VoziloService(db).GetCustomerExperienceSummaryAsync(2);
+
+        Assert.Equal(2, summary.TotalCount);
+        Assert.Equal(4.5, summary.AverageRating);
+        Assert.Collection(
+            summary.Recent,
+            experience => Assert.Equal("Porsche Taycan 4S", experience.VehicleName),
+            experience => Assert.Equal("Lexus LC 500", experience.VehicleName));
+    }
+
+    [Fact]
+    public async Task Purchase_experience_can_be_added_only_after_completed_order()
+    {
+        await using var db = CreateContext();
+        var buyer = new ApplicationUser { Id = "buyer", Ime = "Demo", Prezime = "Kupac", UserName = "demo" };
+        var vehicle = CreateVehicle("Genesis", "G80", 2022, 69900);
+        db.AddRange(buyer, vehicle);
+        await db.SaveChangesAsync();
+
+        var order = new Narudzba { KorisnikId = buyer.Id, DatumNarudzbe = DateTime.UtcNow, Status = StatusNarudzbe.Kreirana, UkupnaCijena = 69900 };
+        db.Narudzbe.Add(order);
+        await db.SaveChangesAsync();
+        db.StavkeKorpe.Add(new StavkaKorpe { NarudzbaID = order.NarudzbaID, VoziloID = vehicle.VoziloID, Kolicina = 1, CijenaStavke = 69900 });
+        await db.SaveChangesAsync();
+
+        var service = new ProfileActivityService(db);
+        Assert.Equal(ReviewSaveResult.NotPurchased, await service.SaveReviewAsync(buyer.Id, vehicle.VoziloID, 5, "Prerano."));
+
+        order.Status = StatusNarudzbe.Placena;
+        await db.SaveChangesAsync();
+
+        Assert.Equal(ReviewSaveResult.Added, await service.SaveReviewAsync(buyer.Id, vehicle.VoziloID, 5, "Odlično iskustvo kupovine."));
+    }
+
     private static ApplicationDbContext CreateContext()
     {
         var options = new DbContextOptionsBuilder<ApplicationDbContext>()

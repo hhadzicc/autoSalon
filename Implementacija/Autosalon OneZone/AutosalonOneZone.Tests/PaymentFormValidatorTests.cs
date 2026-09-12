@@ -14,7 +14,7 @@ public class PaymentFormValidatorTests
             "Demo Kupac",
             "4242 4242 4242 4242",
             "12/30",
-            "1 2 3",
+            "123",
             _localizer,
             currentDate: new DateTime(2026, 9, 1));
 
@@ -24,6 +24,21 @@ public class PaymentFormValidatorTests
         Assert.Equal("12", result.ExpirationMonth);
         Assert.Equal("2030", result.ExpirationYear);
         Assert.Equal("123", result.CleanCvv);
+    }
+
+    [Fact]
+    public void Validate_RejectsCvvWithSeparators()
+    {
+        var result = PaymentFormValidator.Validate(
+            "Demo Kupac",
+            "4242 4242 4242 4242",
+            "12/30",
+            "1 2 3",
+            _localizer,
+            currentDate: new DateTime(2026, 9, 1));
+
+        Assert.False(result.IsValid);
+        Assert.Contains("cvv", result.Errors.Keys);
     }
 
     [Fact]

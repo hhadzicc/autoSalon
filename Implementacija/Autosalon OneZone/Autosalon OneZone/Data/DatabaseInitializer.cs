@@ -605,6 +605,136 @@ namespace Autosalon_OneZone.Data
                     Cijena = 12900m,
                     Slika = "seed-dacia-sandero-2020-showroom.webp",
                     Opis = "Povoljan demo model sa plinskim pogonom."
+                },
+                new Vozilo
+                {
+                    Marka = "Lexus",
+                    Model = "LC 500",
+                    Godiste = 2021,
+                    Gorivo = TipGoriva.Benzin,
+                    Kubikaza = 5.0m,
+                    Boja = "Bijela",
+                    Kilometraza = 18500,
+                    Cijena = 109900m,
+                    Slika = "seed-lexus-lc500-2021-showroom.webp",
+                    Opis = "Luksuzni grand tourer sa atmosferskim V8 motorom i prepoznatljivim dizajnom."
+                },
+                new Vozilo
+                {
+                    Marka = "Jaguar",
+                    Model = "F-Type R",
+                    Godiste = 2021,
+                    Gorivo = TipGoriva.Benzin,
+                    Kubikaza = 5.0m,
+                    Boja = "Crvena",
+                    Kilometraza = 22800,
+                    Cijena = 114500m,
+                    Slika = "seed-jaguar-ftype-r-2021-showroom.webp",
+                    Opis = "Sportski coupe sa snažnim V8 motorom i elegantnim britanskim karakterom."
+                },
+                new Vozilo
+                {
+                    Marka = "Porsche",
+                    Model = "Taycan 4S",
+                    Godiste = 2021,
+                    Gorivo = TipGoriva.Elektro,
+                    Kubikaza = null,
+                    Boja = "Plava",
+                    Kilometraza = 31000,
+                    Cijena = 103900m,
+                    Slika = "seed-porsche-taycan-4s-2021-showroom.webp",
+                    Opis = "Električna sportska limuzina sa pogonom na sve točkove i odličnim voznim osobinama."
+                },
+                new Vozilo
+                {
+                    Marka = "Land Rover",
+                    Model = "Defender 110 P400",
+                    Godiste = 2021,
+                    Gorivo = TipGoriva.Hibrid,
+                    Kubikaza = 3.0m,
+                    Boja = "Zelena",
+                    Kilometraza = 42000,
+                    Cijena = 92900m,
+                    Slika = "seed-land-rover-defender-p400-2021-showroom.webp",
+                    Opis = "Premium terensko vozilo sa blagim hibridnim pogonom i prostranom kabinom."
+                },
+                new Vozilo
+                {
+                    Marka = "Range Rover",
+                    Model = "Sport P400e",
+                    Godiste = 2022,
+                    Gorivo = TipGoriva.Hibrid,
+                    Kubikaza = 2.0m,
+                    Boja = "Crna",
+                    Kilometraza = 36000,
+                    Cijena = 104900m,
+                    Slika = "seed-range-rover-sport-p400e-2022-showroom.webp",
+                    Opis = "Luksuzni plug-in hibridni SUV koji spaja udobnost, performanse i svakodnevnu praktičnost."
+                },
+                new Vozilo
+                {
+                    Marka = "Volvo",
+                    Model = "XC90 Recharge T8",
+                    Godiste = 2022,
+                    Gorivo = TipGoriva.Hibrid,
+                    Kubikaza = 2.0m,
+                    Boja = "Bijela",
+                    Kilometraza = 45500,
+                    Cijena = 84900m,
+                    Slika = "seed-volvo-xc90-recharge-2022-showroom.webp",
+                    Opis = "Prostrani plug-in hibridni SUV sa bogatom sigurnosnom opremom i sedam sjedišta."
+                },
+                new Vozilo
+                {
+                    Marka = "Genesis",
+                    Model = "G80 3.5T AWD",
+                    Godiste = 2022,
+                    Gorivo = TipGoriva.Benzin,
+                    Kubikaza = 3.5m,
+                    Boja = "Plava",
+                    Kilometraza = 29000,
+                    Cijena = 69900m,
+                    Slika = "seed-genesis-g80-2022-showroom.webp",
+                    Opis = "Elegantna premium limuzina sa pogonom na sve točkove i visokim nivoom udobnosti."
+                },
+                new Vozilo
+                {
+                    Marka = "Maserati",
+                    Model = "Ghibli Trofeo",
+                    Godiste = 2021,
+                    Gorivo = TipGoriva.Benzin,
+                    Kubikaza = 3.8m,
+                    Boja = "Crna",
+                    Kilometraza = 33500,
+                    Cijena = 98900m,
+                    Slika = "seed-maserati-ghibli-trofeo-2021-showroom.webp",
+                    Opis = "Sportska luksuzna limuzina sa V8 motorom i izraženim italijanskim karakterom."
+                },
+                new Vozilo
+                {
+                    Marka = "Audi",
+                    Model = "RS 6 Avant",
+                    Godiste = 2021,
+                    Gorivo = TipGoriva.Benzin,
+                    Kubikaza = 4.0m,
+                    Boja = "Siva",
+                    Kilometraza = 27500,
+                    Cijena = 139900m,
+                    Slika = "seed-audi-rs6-avant-2021-showroom.webp",
+                    Opis = "Karavan visokih performansi koji kombinuje prostranost, luksuz i sportski pogon."
+                },
+                new Vozilo
+                {
+                    Marka = "Mercedes-AMG",
+                    Model = "GT 53 4MATIC+",
+                    Godiste = 2022,
+                    Gorivo = TipGoriva.Hibrid,
+                    Kubikaza = 3.0m,
+                    Boja = "Crna",
+                    Kilometraza = 24000,
+                    Cijena = 124900m,
+                    Slika = "seed-mercedes-amg-gt53-2022-showroom.webp",
+                    Opis = "Četverovratni sportski coupe sa blagim hibridnim sistemom i pogonom na sve točkove."
                 }
             };
 
@@ -720,40 +850,127 @@ namespace Autosalon_OneZone.Data
                 return;
             }
 
-            var vehicleByName = vehicles.ToDictionary(vehicle => $"{vehicle.Marka} {vehicle.Model}", StringComparer.OrdinalIgnoreCase);
-            Vozilo PickVehicle(string name) => vehicleByName.TryGetValue(name, out var vehicle) ? vehicle : vehicles[0];
+            var purchaseUser = buyerUser ?? reviewUsers[0];
+            var vehicleByName = vehicles.ToDictionary(
+                vehicle => $"{vehicle.Marka} {vehicle.Model}",
+                StringComparer.OrdinalIgnoreCase);
 
             var demoReviews = new[]
             {
-                new { Vehicle = "Porsche Panamera 4 E-Hybrid", User = reviewUsers[0], Rating = 5, Comment = "Izuzetno udobno i brzo vozilo, cijeli proces kupovine je bio profesionalan." },
-                new { Vehicle = "Volkswagen Golf 8", User = reviewUsers[^1], Rating = 4, Comment = "Golf je pregledan, uredan i dobar za svakodnevnu vožnju." },
-                new { Vehicle = "Audi A4", User = reviewUsers[0], Rating = 5, Comment = "Odličan balans cijene, opreme i potrošnje. Preporuka za porodičnu vožnju." },
-                new { Vehicle = "BMW X5", User = reviewUsers[^1], Rating = 4, Comment = "Prostran SUV, dobra oprema i veoma stabilan na otvorenoj cesti." },
-                new { Vehicle = "Tesla Model 3", User = reviewUsers[0], Rating = 5, Comment = "Elektricni pogon je tih i brz, autonomija je odlicna za svakodnevnu upotrebu." },
-                new { Vehicle = "Mercedes-Benz C 220", User = reviewUsers[^1], Rating = 4, Comment = "Pouzdana limuzina, udobna i ekonomična za duže relacije." },
-                new { Vehicle = "Audi e-tron GT quattro", User = reviewUsers[0], Rating = 5, Comment = "Vrhunski izgled i performanse, auto ostavlja premium utisak." },
-                new { Vehicle = "Toyota Yaris", User = reviewUsers[^1], Rating = 4, Comment = "Povoljan i praktičan izbor za gradsku vožnju." },
-                new { Vehicle = "Renault Clio", User = reviewUsers[0], Rating = 3, Comment = "Dobar budžet auto, ekonomičan i jednostavan za održavanje." },
-                new { Vehicle = "Dacia Sandero", User = reviewUsers[^1], Rating = 4, Comment = "Odnos cijene i koristi je jako dobar, posebno za lokalnu vožnju." }
+                new { Vehicle = "Lexus LC 500", Rating = 5, PurchaseDaysAgo = 150, ReviewDelayDays = 6, LegacyComment = "Izuzetno udobno i brzo vozilo, cijeli proces kupovine je bio profesionalan.", Comment = "V8 motor, udobnost i završna obrada ostavili su odličan utisak. Kupovina je protekla profesionalno." },
+                new { Vehicle = "Jaguar F-Type R", Rating = 5, PurchaseDaysAgo = 137, ReviewDelayDays = 4, LegacyComment = "Golf je pregledan, uredan i dobar za svakodnevnu vožnju.", Comment = "Odličan sportski automobil sa upečatljivim zvukom i preciznim upravljanjem." },
+                new { Vehicle = "Porsche Taycan 4S", Rating = 5, PurchaseDaysAgo = 124, ReviewDelayDays = 8, LegacyComment = "Odličan balans cijene, opreme i potrošnje. Preporuka za porodičnu vožnju.", Comment = "Taycan je izuzetno tih, brz i stabilan, a kvalitet enterijera je na očekivanom premium nivou." },
+                new { Vehicle = "Land Rover Defender 110 P400", Rating = 4, PurchaseDaysAgo = 111, ReviewDelayDays = 5, LegacyComment = "Prostran SUV, dobra oprema i veoma stabilan na otvorenoj cesti.", Comment = "Prostran, udoban i siguran na dužim putovanjima. Posebno mi se dopada preglednost iz kabine." },
+                new { Vehicle = "Range Rover Sport P400e", Rating = 5, PurchaseDaysAgo = 98, ReviewDelayDays = 7, LegacyComment = "Elektricni pogon je tih i brz, autonomija je odlicna za svakodnevnu upotrebu.", Comment = "Hibridni pogon je tih u gradu, a vozilo ostaje snažno i vrlo udobno na otvorenoj cesti." },
+                new { Vehicle = "Volvo XC90 Recharge T8", Rating = 5, PurchaseDaysAgo = 85, ReviewDelayDays = 3, LegacyComment = "Pouzdana limuzina, udobna i ekonomična za duže relacije.", Comment = "Odličan porodični SUV sa mnogo prostora, kvalitetnim sjedištima i uvjerljivim sigurnosnim sistemima." },
+                new { Vehicle = "Genesis G80 3.5T AWD", Rating = 4, PurchaseDaysAgo = 72, ReviewDelayDays = 6, LegacyComment = "Vrhunski izgled i performanse, auto ostavlja premium utisak.", Comment = "Vrlo mirna i udobna vožnja, kvalitetna kabina i bogata oprema za ovu cjenovnu klasu." },
+                new { Vehicle = "Maserati Ghibli Trofeo", Rating = 4, PurchaseDaysAgo = 59, ReviewDelayDays = 5, LegacyComment = "Povoljan i praktičan izbor za gradsku vožnju.", Comment = "Karakteran automobil sa snažnim motorom i odličnim osjećajem za volanom." },
+                new { Vehicle = "Audi RS 6 Avant", Rating = 5, PurchaseDaysAgo = 46, ReviewDelayDays = 4, LegacyComment = "Dobar budžet auto, ekonomičan i jednostavan za održavanje.", Comment = "Nevjerovatno praktičan i brz automobil. Prostor i performanse su spojeni bez kompromisa." },
+                new { Vehicle = "Mercedes-AMG GT 53 4MATIC+", Rating = 5, PurchaseDaysAgo = 33, ReviewDelayDays = 7, LegacyComment = "Odnos cijene i koristi je jako dobar, posebno za lokalnu vožnju.", Comment = "Elegantna i brza limuzina sa odličnim pogonom na sve točkove i veoma kvalitetnim enterijerom." }
             };
 
             var addedReviews = 0;
+            var updatedReviews = 0;
+            var addedPurchases = 0;
+            var seedDate = DateTime.UtcNow.Date;
+
             foreach (var review in demoReviews)
             {
-                if (await dbContext.Recenzije.AnyAsync(r => r.Komentar == review.Comment))
+                if (!vehicleByName.TryGetValue(review.Vehicle, out var vehicle))
                 {
+                    logger.LogWarning("Skipping demo purchase for {VehicleName} because the vehicle was not seeded.", review.Vehicle);
                     continue;
                 }
 
-                dbContext.Recenzije.Add(new Recenzija
+                var purchaseDate = seedDate.AddDays(-review.PurchaseDaysAgo);
+                var reviewDate = purchaseDate.AddDays(review.ReviewDelayDays);
+                var purchasedItem = await dbContext.StavkeKorpe
+                    .Include(item => item.Narudzba)
+                    .FirstOrDefaultAsync(item =>
+                        item.VoziloID == vehicle.VoziloID &&
+                        item.NarudzbaID != null &&
+                        item.Narudzba.KorisnikId == purchaseUser.Id);
+
+                if (purchasedItem == null)
                 {
-                    VoziloID = PickVehicle(review.Vehicle).VoziloID,
-                    KorisnikId = review.User.Id,
-                    Ocjena = review.Rating,
-                    Komentar = review.Comment,
-                    DatumRecenzije = DateTime.UtcNow.AddDays(-(addedReviews + 1))
-                });
-                addedReviews++;
+                    var order = new Narudzba
+                    {
+                        KorisnikId = purchaseUser.Id,
+                        DatumNarudzbe = purchaseDate,
+                        Status = StatusNarudzbe.Placena,
+                        UkupnaCijena = vehicle.Cijena ?? 0m,
+                        StavkeKorpe = new List<StavkaKorpe>
+                        {
+                            new StavkaKorpe
+                            {
+                                VoziloID = vehicle.VoziloID,
+                                Kolicina = 1,
+                                CijenaStavke = vehicle.Cijena ?? 0m
+                            }
+                        },
+                        Placanje = new Placanje
+                        {
+                            DatumPlacanja = purchaseDate,
+                            Iznos = vehicle.Cijena ?? 0m,
+                            Status = StatusPlacanja.Uspjesno
+                        }
+                    };
+
+                    dbContext.Narudzbe.Add(order);
+                    addedPurchases++;
+                }
+                else
+                {
+                    purchasedItem.Kolicina = 1;
+                    purchasedItem.CijenaStavke = vehicle.Cijena ?? 0m;
+                    purchasedItem.Narudzba.DatumNarudzbe = purchaseDate;
+                    purchasedItem.Narudzba.Status = StatusNarudzbe.Placena;
+                    purchasedItem.Narudzba.UkupnaCijena = vehicle.Cijena ?? 0m;
+
+                    var payment = await dbContext.Placanja.FindAsync(purchasedItem.NarudzbaID!.Value);
+                    if (payment == null)
+                    {
+                        dbContext.Placanja.Add(new Placanje
+                        {
+                            NarudzbaID = purchasedItem.NarudzbaID.Value,
+                            DatumPlacanja = purchaseDate,
+                            Iznos = vehicle.Cijena ?? 0m,
+                            Status = StatusPlacanja.Uspjesno
+                        });
+                    }
+                    else
+                    {
+                        payment.DatumPlacanja = purchaseDate;
+                        payment.Iznos = vehicle.Cijena ?? 0m;
+                        payment.Status = StatusPlacanja.Uspjesno;
+                    }
+                }
+
+                var existingReview = await dbContext.Recenzije.FirstOrDefaultAsync(item =>
+                    item.Komentar == review.LegacyComment ||
+                    item.Komentar == review.Comment ||
+                    (item.KorisnikId == purchaseUser.Id && item.VoziloID == vehicle.VoziloID));
+
+                if (existingReview == null)
+                {
+                    dbContext.Recenzije.Add(new Recenzija
+                    {
+                        VoziloID = vehicle.VoziloID,
+                        KorisnikId = purchaseUser.Id,
+                        Ocjena = review.Rating,
+                        Komentar = review.Comment,
+                        DatumRecenzije = reviewDate
+                    });
+                    addedReviews++;
+                    continue;
+                }
+
+                existingReview.VoziloID = vehicle.VoziloID;
+                existingReview.KorisnikId = purchaseUser.Id;
+                existingReview.Ocjena = review.Rating;
+                existingReview.Komentar = review.Comment;
+                existingReview.DatumRecenzije = reviewDate;
+                updatedReviews++;
             }
 
             var supportUser = buyerUser ?? reviewUsers[0];
@@ -783,13 +1000,18 @@ namespace Autosalon_OneZone.Data
                 addedInquiries++;
             }
 
-            if (addedReviews == 0 && addedInquiries == 0)
+            if (addedReviews == 0 && updatedReviews == 0 && addedPurchases == 0 && addedInquiries == 0)
             {
                 return;
             }
 
             await dbContext.SaveChangesAsync();
-            logger.LogInformation("Seeded {ReviewCount} demo reviews and {InquiryCount} support inquiries.", addedReviews, addedInquiries);
+            logger.LogInformation(
+                "Seeded {PurchaseCount} purchases, {ReviewCount} reviews, updated {UpdatedReviewCount} reviews and seeded {InquiryCount} support inquiries.",
+                addedPurchases,
+                addedReviews,
+                updatedReviews,
+                addedInquiries);
         }
 
         private static bool HasCredentials(IConfiguration configuration, string sectionName)

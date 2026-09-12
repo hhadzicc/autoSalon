@@ -44,7 +44,11 @@ namespace Autosalon_OneZone.Controllers
             ViewData["IsInCart"] = !string.IsNullOrEmpty(userId) &&
                 (await _cartService.GetVehicleIdsAsync(userId, new[] { id })).Contains(id);
 
-            return View(vozilo);
+            return View(new VehicleDetailsViewModel
+            {
+                Vehicle = vozilo,
+                CustomerExperiences = await _voziloService.GetCustomerExperienceSummaryAsync()
+            });
         }
 
         [HttpGet]

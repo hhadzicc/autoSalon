@@ -22,27 +22,15 @@ public sealed class ProfileActivityService : IProfileActivityService
         _context = context;
     }
 
-    public async Task<ProfileViewModel> GetProfileAsync(ApplicationUser user, string role)
+    public Task<ProfileViewModel> GetProfileAsync(ApplicationUser user, string role)
     {
-        var reviews = await _context.Recenzije
-            .AsNoTracking()
-            .Where(review => review.KorisnikId == user.Id)
-            .Select(review => new ProfileViewModel.ReviewViewModel
-            {
-                VoziloNaziv = $"{review.Vozilo.Marka} {review.Vozilo.Model}",
-                Ocena = review.Ocjena,
-                Tekst = review.Komentar
-            })
-            .ToListAsync();
-
-        return new ProfileViewModel
+        return Task.FromResult(new ProfileViewModel
         {
             ImePrezime = $"{user.Ime} {user.Prezime}",
             Email = user.Email,
             UserName = user.UserName,
-            Role = role,
-            Recenzije = reviews
-        };
+            Role = role
+        });
     }
 
     public async Task<PurchasedItemsViewModel> GetPurchasedItemsAsync(string userId)
@@ -107,7 +95,9 @@ public sealed class ProfileActivityService : IProfileActivityService
         string comment)
     {
         var hasPurchased = await _context.Narudzbe
-            .Where(order => order.KorisnikId == userId)
+            .Where(order =>
+                order.KorisnikId == userId &&
+                (order.Status == StatusNarudzbe.Placena || order.Status == StatusNarudzbe.Isporucena))
             .SelectMany(order => order.StavkeKorpe)
             .AnyAsync(item => item.VoziloID == vehicleId);
         if (!hasPurchased)
@@ -125,7 +115,7 @@ public sealed class ProfileActivityService : IProfileActivityService
                 VoziloID = vehicleId,
                 Ocjena = rating,
                 Komentar = comment,
-                DatumRecenzije = DateTime.Now
+                DatumRecenzije = DateTime.UtcNow
             });
             await _context.SaveChangesAsync();
             return ReviewSaveResult.Added;
@@ -133,7 +123,7 @@ public sealed class ProfileActivityService : IProfileActivityService
 
         review.Ocjena = rating;
         review.Komentar = comment;
-        review.DatumRecenzije = DateTime.Now;
+        review.DatumRecenzije = DateTime.UtcNow;
         await _context.SaveChangesAsync();
         return ReviewSaveResult.Updated;
     }

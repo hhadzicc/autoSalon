@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Autosalon_OneZone.Models;
+using Autosalon_OneZone.Models.ViewModels;
 using Autosalon_OneZone.Data;
 namespace Autosalon_OneZone.Services
 {
@@ -13,6 +14,7 @@ namespace Autosalon_OneZone.Services
         Task<IEnumerable<Vozilo>> FilterVozilaAsync(string marka, string model, int? godisteOd, int? godisteDo, TipGoriva? gorivo, decimal? cijenaOd, decimal? cijenaDo);
         Task<IEnumerable<Vozilo>> SearchVozilaAsync(string searchTerm);
         Task<Vozilo?> GetVehicleDetailsAsync(int id);
+        Task<CustomerExperienceSummaryViewModel> GetCustomerExperienceSummaryAsync(int limit = 3);
         Task<VehicleSearchResult> GetVehiclesPageAsync(
             VehicleSearchCriteria criteria,
             int page,
@@ -144,21 +146,45 @@ namespace Autosalon_OneZone.Services
 
         public async Task<Vozilo?> GetVehicleDetailsAsync(int id)
         {
-            var vehicle = await _context.Vozila
+            return await _context.Vozila
                 .AsNoTracking()
                 .AvailableForPurchase()
-                .Include(item => item.Recenzije)
-                .ThenInclude(review => review.Korisnik)
                 .FirstOrDefaultAsync(item => item.VoziloID == id);
+        }
 
-            if (vehicle?.Recenzije != null)
+        public async Task<CustomerExperienceSummaryViewModel> GetCustomerExperienceSummaryAsync(int limit = 3)
+        {
+            limit = Math.Clamp(limit, 1, 12);
+            var verifiedExperiences = _context.Recenzije
+                .AsNoTracking()
+                .Where(review => _context.Narudzbe.Any(order =>
+                    order.KorisnikId == review.KorisnikId &&
+                    (order.Status == StatusNarudzbe.Placena || order.Status == StatusNarudzbe.Isporucena) &&
+                    order.StavkeKorpe.Any(item => item.VoziloID == review.VoziloID)));
+
+            var totalCount = await verifiedExperiences.CountAsync();
+            var averageRating = totalCount == 0
+                ? (double?)null
+                : await verifiedExperiences.AverageAsync(review => (double)review.Ocjena);
+            var recent = await verifiedExperiences
+                .OrderByDescending(review => review.DatumRecenzije)
+                .Take(limit)
+                .Select(review => new CustomerExperienceViewModel
+                {
+                    CustomerName = (review.Korisnik.Ime + " " + review.Korisnik.Prezime).Trim(),
+                    VehicleName = (review.Vozilo.Marka + " " + review.Vozilo.Model).Trim(),
+                    Rating = review.Ocjena,
+                    Comment = review.Komentar,
+                    CreatedAt = review.DatumRecenzije
+                })
+                .ToListAsync();
+
+            return new CustomerExperienceSummaryViewModel
             {
-                vehicle.Recenzije = vehicle.Recenzije
-                    .OrderByDescending(review => review.DatumRecenzije)
-                    .ToList();
-            }
-
-            return vehicle;
+                TotalCount = totalCount,
+                AverageRating = averageRating,
+                Recent = recent
+            };
         }
 
         public async Task<VehicleSearchResult> GetVehiclesPageAsync(

@@ -22,6 +22,14 @@
 }
 
 @media (max-width: 991.98px) {
+    .reviews-header,
+    .review-top,
+    .experience-meta {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 10px;
+    }
+
     .custom-navbar {
         min-height: 66px;
         padding: 12px 0;
@@ -302,6 +310,19 @@
         padding: 34px 0 64px;
     }
 
+    .profile-edit-toolbar {
+        width: min(340px, calc(100vw - 48px));
+        max-width: min(340px, calc(100vw - 48px));
+        margin-left: auto;
+        margin-right: auto;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .profile-edit-toolbar .btn {
+        width: 100%;
+    }
+
     .profile-card {
         width: min(340px, calc(100vw - 48px));
         max-width: min(340px, calc(100vw - 48px));
@@ -336,8 +357,10 @@
 
     .purchase-card img {
         width: 100%;
-        height: 210px;
-        min-height: auto;
+        height: auto;
+        aspect-ratio: 16 / 10;
+        min-height: 0;
+        flex-basis: auto;
     }
 
     .purchase-actions {

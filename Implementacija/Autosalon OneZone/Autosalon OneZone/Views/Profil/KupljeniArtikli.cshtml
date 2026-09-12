@@ -3,14 +3,6 @@
     ViewData["Title"] = L["NavPurchasedItems"];
 }
 
-<section class="inner-page-header">
-    <div class="container text-center">
-        <p class="section-eyebrow">@L["Purchases"]</p>
-        <h1>@L["NavPurchasedItems"]</h1>
-        <p>@L["PurchasedItemsHeaderText"]</p>
-    </div>
-</section>
-
 <section class="profile-section">
     <div class="container">
         <div class="row justify-content-center">
@@ -39,7 +31,7 @@
                                         <div class="d-flex align-items-start justify-content-between gap-3 flex-wrap">
                                             <div>
                                                 <h3>@item.Naziv</h3>
-                                                <p class="mb-1"><strong>@L["VehiclePrice"]:</strong> @item.Cijena.ToString("N2") KM</p>
+                                                <p class="mb-1"><strong>@L["VehiclePrice"]:</strong> €@item.Cijena.ToString("N0")</p>
                                                 <p class="mb-0"><strong>@L["PurchaseDate"]:</strong> @item.DatumKupovine.ToString("dd.MM.yyyy")</p>
                                             </div>
 
@@ -85,13 +77,13 @@
                                                 @Html.AntiForgeryToken()
                                                 <input type="hidden" name="recenzijaId" value="@item.Recenzija.RecenzijaID" />
                                                 <button type="submit"
-                                                        class="btn btn-light border rounded-4"
+                                                        class="btn btn-outline-danger rounded-4"
                                                         data-confirm-delete="true"
-                                                        data-confirm-title="@L["RemoveReviewConfirmTitle"]"
-                                                        data-confirm-message="@L["RemoveReviewConfirmMessage"]"
+                                                        data-confirm-title="@L["DeleteReviewTitle"]"
+                                                        data-confirm-message="@L["DeleteReviewMessage"]"
                                                         data-confirm-item="@item.Naziv"
-                                                        data-confirm-action="@L["RemoveReviewConfirmAction"]">
-                                                    @L["Remove"]
+                                                        data-confirm-action="@L["DeleteReviewAction"]">
+                                                    <i class="bi bi-trash me-2"></i>@L["DeleteReview"]
                                                 </button>
                                             </form>
                                         }

@@ -2,14 +2,17 @@
 @using System.Globalization
 @inject SignInManager<Autosalon_OneZone.Models.ApplicationUser> SignInManager
 
-@model Autosalon_OneZone.Models.Vozilo
+@model Autosalon_OneZone.Models.ViewModels.VehicleDetailsViewModel
 @{
-    ViewData["Title"] = $"{Model.Marka} {Model.Model}";
+    var vehicle = Model.Vehicle;
+    ViewData["Title"] = $"{vehicle.Marka} {vehicle.Model}";
     var culture = CultureInfo.CurrentCulture;
-    var voziloNaziv = $"{Model.Marka} {Model.Model}".Trim();
-    var cijena = Model.Cijena ?? 0;
-    var slikaUrl = !string.IsNullOrEmpty(Model.Slika) ? Url.Content($"~/images/vozila/{Model.Slika}") : Url.Content("~/img/no-image.png");
+    var voziloNaziv = $"{vehicle.Marka} {vehicle.Model}".Trim();
+    var cijena = vehicle.Cijena ?? 0;
+    var slikaUrl = !string.IsNullOrEmpty(vehicle.Slika) ? Url.Content($"~/images/vozila/{vehicle.Slika}") : Url.Content("~/img/no-image.png");
     var isInCart = ViewData["IsInCart"] as bool? ?? false;
+    var returnUrl = Context.Request.Query["returnUrl"].ToString();
+    var returningToCart = string.Equals(returnUrl, "/Korpa", StringComparison.OrdinalIgnoreCase);
 
     string FuelLabel(string value) => value switch
     {
@@ -22,16 +25,19 @@
     };
 }
 
-<section class="inner-page-header">
-    <div class="container text-center">
-        <p class="section-eyebrow">@L["VehicleDetailsEyebrow"]</p>
-        <h1>@voziloNaziv</h1>
-        <p>@L["VehicleDetailsHeaderText"]</p>
-    </div>
-</section>
-
 <section class="vehicle-details-section">
     <div class="container">
+        <div class="vehicle-details-back-row">
+            <button type="button"
+                    class="vehicle-back-button"
+                    data-vehicle-back
+                    data-return-url="@(returningToCart ? Url.Action("Index", "Korpa") : "")"
+                    data-fallback-url="@Url.Action("Index", returningToCart ? "Korpa" : "Vozilo")">
+                <i class="bi bi-arrow-left" aria-hidden="true"></i>
+                <span>@L[returningToCart ? "BackToCart" : "BackToVehicles"]</span>
+            </button>
+        </div>
+
         <div class="row g-4 align-items-start">
             <div class="col-lg-8">
                 <article class="vehicle-details-card">
@@ -42,9 +48,8 @@
                     <div class="vehicle-details-body">
                         <div class="vehicle-title-row">
                             <div>
-                                <span class="vehicle-badge">@L["Available"]</span>
                                 <h2>@voziloNaziv</h2>
-                                <p class="vehicle-subtitle">@Model.Godiste · @FuelLabel(Model.Gorivo.ToString()) · @Model.Boja</p>
+                                <p class="vehicle-subtitle">@vehicle.Godiste · @FuelLabel(vehicle.Gorivo.ToString()) · @vehicle.Boja</p>
                             </div>
 
                             <div class="vehicle-price">€@cijena.ToString("N0", culture)</div>
@@ -65,9 +70,9 @@
                                       data-cart-url="@Url.Action("Index", "Korpa")"
                                       data-error-text="@L["CartAddError"]">
                                     @Html.AntiForgeryToken()
-                                    <input type="hidden" name="id" value="@Model.VoziloID" />
+                                    <input type="hidden" name="id" value="@vehicle.VoziloID" />
                                     <button type="submit"
-                                            class="btn btn-success rounded-4 @(isInCart ? "is-added" : "")"
+                                            class="btn btn-outline-primary rounded-4 @(isInCart ? "is-added" : "")"
                                             data-cart-button
                                             disabled="@isInCart">
                                         <i class="bi @(isInCart ? "bi-check-lg" : "bi-cart-plus") me-2" data-cart-icon></i><span data-cart-button-text>@(isInCart ? L["CartInCart"] : L["AddToCart"])</span>
@@ -91,71 +96,82 @@
                             <div class="spec-grid">
                                 <div class="spec-item">
                                     <span>@L["VehicleYear"]</span>
-                                    <strong>@Model.Godiste</strong>
+                                    <strong>@vehicle.Godiste</strong>
                                 </div>
                                 <div class="spec-item">
                                     <span>@L["VehicleFuel"]</span>
-                                    <strong>@FuelLabel(Model.Gorivo.ToString())</strong>
+                                    <strong>@FuelLabel(vehicle.Gorivo.ToString())</strong>
                                 </div>
                                 <div class="spec-item">
                                     <span>@L["VehicleColor"]</span>
-                                    <strong>@Model.Boja</strong>
+                                    <strong>@vehicle.Boja</strong>
                                 </div>
-                                @if (Model.Gorivo != Autosalon_OneZone.Models.TipGoriva.Elektro)
+                                @if (vehicle.Gorivo != Autosalon_OneZone.Models.TipGoriva.Elektro)
                                 {
                                     <div class="spec-item">
                                         <span>@L["VehicleDisplacement"]</span>
-                                        <strong>@Model.Kubikaza</strong>
+                                        <strong>@vehicle.Kubikaza</strong>
                                     </div>
                                 }
                                 <div class="spec-item">
                                     <span>@L["VehicleMileage"]</span>
-                                    <strong>@Model.Kilometraza km</strong>
+                                    <strong>@vehicle.Kilometraza km</strong>
                                 </div>
                             </div>
                         </div>
 
                         <div class="details-block">
                             <h3>@L["VehicleDescription"]</h3>
-                            <p>@(Model.Opis ?? L["NoVehicleDescription"].Value)</p>
+                            <p>@(vehicle.Opis ?? L["NoVehicleDescription"].Value)</p>
                         </div>
                     </div>
                 </article>
 
-                <section class="reviews-card">
+                <section class="reviews-card customer-experiences-card">
                     <div class="reviews-header">
                         <div>
-                            <p class="section-eyebrow mb-1">@L["Reviews"]</p>
-                            <h2>@L["UserReviews"]</h2>
+                            <h2>@L["CustomerExperiencesTitle"]</h2>
+                            <p>@L["CustomerExperiencesSubtitle"]</p>
                         </div>
+                        @if (Model.CustomerExperiences.AverageRating.HasValue)
+                        {
+                            <div class="experience-summary" aria-label="@L["AverageCustomerRating"]">
+                                <i class="bi bi-star-fill" aria-hidden="true"></i>
+                                <strong>@Model.CustomerExperiences.AverageRating.Value.ToString("0.0", culture)</strong>
+                                <span>@L["ExperienceCount", Model.CustomerExperiences.TotalCount]</span>
+                            </div>
+                        }
                     </div>
 
-                    @if (Model.Recenzije != null && Model.Recenzije.Any())
+                    @if (Model.CustomerExperiences.Recent.Any())
                     {
                         <div class="details-review-list">
-                            @foreach (var recenzija in Model.Recenzije)
+                            @foreach (var experience in Model.CustomerExperiences.Recent)
                             {
-                                var komentarText = recenzija.Komentar ?? "";
-                                var skraceniKomentar = komentarText.Length > 120 ? komentarText.Substring(0, 120) + "..." : komentarText;
-
                                 <article class="review-item">
                                     <div class="review-avatar">
                                         <i class="bi bi-person-fill"></i>
                                     </div>
                                     <div class="review-content">
                                         <div class="review-top">
-                                            <strong>@recenzija.Korisnik.Ime @recenzija.Korisnik.Prezime</strong>
-                                            <span>
+                                            <div>
+                                                <strong>@experience.CustomerName</strong>
+                                                <span class="verified-purchase-badge">
+                                                    <i class="bi bi-patch-check-fill" aria-hidden="true"></i>@L["VerifiedPurchase"]
+                                                </span>
+                                            </div>
+                                            <span class="review-stars" aria-label="@L["RatingOutOfFive", experience.Rating]">
                                                 @for (int i = 1; i <= 5; i++)
                                                 {
-                                                    <i class="bi @(i <= recenzija.Ocjena ? "bi-star-fill" : "bi-star")"></i>
+                                                    <i class="bi @(i <= experience.Rating ? "bi-star-fill" : "bi-star")"></i>
                                                 }
                                             </span>
                                         </div>
-                                        <a href="#" class="view-komentar-recenzije" data-komentar="@System.Net.WebUtility.HtmlEncode(komentarText)">
-                                            <p>@skraceniKomentar</p>
-                                        </a>
-                                        <small>@recenzija.DatumRecenzije.ToString("dd.MM.yyyy")</small>
+                                        <p>@experience.Comment</p>
+                                        <div class="experience-meta">
+                                            <span>@L["PurchasedVehicle"] <strong>@experience.VehicleName</strong></span>
+                                            <small>@experience.CreatedAt.ToString("dd.MM.yyyy")</small>
+                                        </div>
                                     </div>
                                 </article>
                             }
@@ -165,15 +181,8 @@
                     {
                         <div class="empty-reviews">
                             <i class="bi bi-chat-square-text"></i>
-                            <h3>@L["NoReviewsTitle"]</h3>
-                            @if (SignInManager.IsSignedIn(User))
-                            {
-                                <p>@L["NoReviewsPurchasedText"]</p>
-                            }
-                            else
-                            {
-                                <p>@L["NoReviewsLoginText"]</p>
-                            }
+                            <h3>@L["NoCustomerExperiencesTitle"]</h3>
+                            <p>@L["NoCustomerExperiencesText"]</p>
                         </div>
                     }
                 </section>
@@ -181,24 +190,7 @@
 
             <div class="col-lg-4">
                 <aside class="details-sidebar">
-                    <div class="summary-card">
-                        <h3>@L["PurchaseOverview"]</h3>
-
-                        <div class="summary-row">
-                            <span>@L["Vehicle"]</span>
-                            <strong>@voziloNaziv</strong>
-                        </div>
-                        <div class="summary-row">
-                            <span>@L["VehiclePrice"]</span>
-                            <strong>€@cijena.ToString("N0", culture)</strong>
-                        </div>
-                        <div class="summary-row">
-                            <span>@L["Status"]</span>
-                            <strong>@L["Available"]</strong>
-                        </div>
-                    </div>
-
-                    <div class="loan-card mt-4">
+                    <div class="loan-card">
                         <div class="loan-card-header">
                             <div class="loan-icon">
                                 <i class="bi bi-calculator"></i>
@@ -211,16 +203,16 @@
 
                         <div class="mb-3">
                             <label for="loan-amount" class="form-label">@L["LoanAmountEuro"]</label>
-                            <input type="number" class="form-control" id="loan-amount" value="@cijena">
+                            <input type="number" class="form-control" id="loan-amount" value="@cijena.ToString(CultureInfo.InvariantCulture)">
                         </div>
                         <div class="mb-3">
                             <label for="loan-period" class="form-label">@L["InstallmentCount"]</label>
                             <select class="form-select" id="loan-period">
                                 <option value="12">@L["MonthsCount", 12]</option>
                                 <option value="24">@L["MonthsCount", 24]</option>
-                                <option value="36" selected>@L["MonthsCount", 36]</option>
+                                <option value="36">@L["MonthsCount", 36]</option>
                                 <option value="48">@L["MonthsCount", 48]</option>
-                                <option value="60">@L["MonthsCount", 60]</option>
+                                <option value="60" selected>@L["MonthsCount", 60]</option>
                                 <option value="72">@L["MonthsCount", 72]</option>
                             </select>
                         </div>
@@ -228,45 +220,19 @@
                             <label for="interest-rate" class="form-label">@L["InterestRate"]</label>
                             <input type="number" class="form-control" id="interest-rate" value="5.0" step="0.1" min="0">
                         </div>
-                        <button id="calculateBtn" class="btn btn-primary rounded-4 w-100">@L["Calculate"]</button>
+                        <button id="calculateBtn" class="btn btn-secondary rounded-4 w-100">@L["Calculate"]</button>
 
                         <div class="loan-result">
                             <span>@L["MonthlyInstallment"]</span>
                             <strong id="loan-result">€0</strong>
                         </div>
 
-                        <p class="loan-note">@L["LoanCalculatorNote"]</p>
                     </div>
                 </aside>
             </div>
         </div>
     </div>
 </section>
-
-<div class="modal fade" id="komentarRecenzijeModal" tabindex="-1" aria-labelledby="komentarRecenzijeModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content modern-modal">
-            <div class="modal-header modern-modal-header">
-                <div class="d-flex align-items-center gap-3">
-                    <div class="modal-icon">
-                        <i class="bi bi-chat-square-text-fill"></i>
-                    </div>
-                    <div>
-                        <h5 class="modal-title" id="komentarRecenzijeModalLabel">@L["ReviewComment"]</h5>
-                        <p class="mb-0 text-muted small">@L["ReviewCommentFullText"]</p>
-                    </div>
-                </div>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@L["Close"]"></button>
-            </div>
-            <div class="modal-body">
-                <div class="review-comment-box" id="komentarRecenzijeModalText"></div>
-            </div>
-            <div class="modal-footer modern-modal-footer">
-                <button type="button" class="btn btn-light border rounded-4" data-bs-dismiss="modal">@L["Close"]</button>
-            </div>
-        </div>
-    </div>
-</div>
 
 <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -277,20 +243,23 @@
                         <i class="bi bi-credit-card-fill"></i>
                     </div>
                     <div>
-                        <h5 class="modal-title" id="paymentModalLabel">@L["PaymentDetailsFor", voziloNaziv]</h5>
+                        <h5 class="modal-title" id="paymentModalLabel">@L["PaymentDetails"]</h5>
+                        <p class="payment-vehicle-name mb-0">@voziloNaziv</p>
                         <p class="mb-0 text-muted small">@L["PaymentDetailsText"]</p>
                     </div>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@L["Close"]"></button>
             </div>
             <div class="modal-body">
-                <div class="alert alert-info mb-4">
-                    <strong>@L["TotalToPay"]</strong> €@cijena.ToString("N0", culture)
+                <div class="payment-total-alert mb-4">
+                    <strong>@L["TotalToPay"]</strong> <span class="text-success fw-bold">€@cijena.ToString("N0", culture)</span>
                 </div>
+
+                <div class="payment-modal-error alert alert-danger d-none py-2 px-3 mb-3" id="paymentRequestError" role="alert"></div>
 
                 <form id="paymentForm" asp-controller="Korpa" asp-action="IzvrsiPlacanje" method="post" novalidate>
                     @Html.AntiForgeryToken()
-                    <input type="hidden" name="VoziloID" value="@Model.VoziloID" />
+                    <input type="hidden" name="VoziloID" value="@vehicle.VoziloID" />
 
                     <div class="form-group mb-3">
                         <label for="imeVlasnika" class="form-label">@L["CardHolderName"] <span class="text-danger">*</span></label>
@@ -315,14 +284,14 @@
                         <div class="col-md-6">
                             <div class="form-group mb-3">
                                 <label for="cvv" class="form-label">@L["CvvCode"] <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="cvv" name="Cvv" required placeholder="XXX" autocomplete="off">
+                        <input type="text" class="form-control" id="cvv" name="Cvv" required maxlength="4" placeholder="XXX ili XXXX" autocomplete="off">
                                 <div class="error-message text-danger mt-1" id="cvvError"></div>
                             </div>
                         </div>
                     </div>
 
                     <div class="d-grid gap-2 mt-4">
-                        <button type="submit" class="btn btn-primary" id="submitPayment">@L["ConfirmPurchase"]</button>
+                        <button type="submit" class="btn btn-success" id="submitPayment">@L["ConfirmPurchase"]</button>
                     </div>
                 </form>
             </div>
@@ -332,6 +301,7 @@
 
 @section Scripts {
     <script src="~/js/components/cart-actions.js" asp-append-version="true"></script>
+    <script src="~/js/components/vehicle-details-navigation.js" asp-append-version="true"></script>
     <script>
         const paymentTexts = {
             processing: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["Processing"].Value)),
@@ -381,12 +351,6 @@
 
             setupPaymentFormValidation();
 
-            $(".view-komentar-recenzije").on("click", function(e) {
-                e.preventDefault();
-                const komentar = $(this).data("komentar");
-                $("#komentarRecenzijeModalText").text(komentar);
-                $("#komentarRecenzijeModal").modal("show");
-            });
         });
 
         function setupPaymentFormValidation() {
@@ -444,8 +408,8 @@
             $("#cvv").on('input', function() {
                 var value = $(this).val().replace(/\D/g, '');
 
-                if (value.length > 3) {
-                    value = value.substring(0, 3);
+                if (value.length > 4) {
+                    value = value.substring(0, 4);
                 }
 
                 $(this).val(value);
@@ -455,6 +419,7 @@
             $("#paymentForm").on('submit', function(e) {
                 e.preventDefault();
                 clearAllErrors();
+                clearPaymentError();
 
                 if (!validatePaymentForm()) {
                     return;
@@ -477,15 +442,13 @@
                                 showError(field, message);
                             });
                         } else if (response.message) {
-                            $('#paymentModal').modal('hide');
-                            window.showAppFlashMessage(paymentTexts.paymentFailed + response.message, "error");
+                            showPaymentError(paymentTexts.paymentFailed + response.message);
                         }
 
                         $("#submitPayment").prop("disabled", false).html(paymentTexts.confirmPurchase);
                     },
                     error: function() {
-                        $('#paymentModal').modal('hide');
-                        window.showAppFlashMessage(paymentTexts.requestError, "error");
+                        showPaymentError(paymentTexts.requestError);
                         $("#submitPayment").prop("disabled", false).html(paymentTexts.confirmPurchase);
                     }
                 });
@@ -498,9 +461,6 @@
 
             if (!imePrezime) {
                 showError('imeVlasnika', paymentTexts.holderRequired);
-                isValid = false;
-            } else if (!imePrezime.includes(' ')) {
-                showError('imeVlasnika', paymentTexts.holderFullName);
                 isValid = false;
             }
 
@@ -540,7 +500,7 @@
             if (!cvv) {
                 showError('cvv', paymentTexts.cvvRequired);
                 isValid = false;
-            } else if (cvv.length !== 3) {
+            } else if (cvv.length < 3 || cvv.length > 4) {
                 showError('cvv', paymentTexts.cvvLength);
                 isValid = false;
             }
@@ -573,9 +533,18 @@
             $(".error-message").text("");
         }
 
+        function showPaymentError(message) {
+            $("#paymentRequestError").text(message).removeClass("d-none");
+        }
+
+        function clearPaymentError() {
+            $("#paymentRequestError").addClass("d-none").text("");
+        }
+
         function resetPaymentForm() {
             $("#paymentForm")[0].reset();
             clearAllErrors();
+            clearPaymentError();
             $("#submitPayment").prop("disabled", false).html(paymentTexts.confirmPurchase);
         }
     </script>

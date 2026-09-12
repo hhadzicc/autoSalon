@@ -14,6 +14,25 @@
     box-shadow: 0 24px 70px rgba(15, 23, 42, 0.08);
 }
 
+.profile-edit-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.profile-edit-toolbar .btn,
+.profile-submit-actions .btn {
+    min-height: 46px;
+    padding-inline: 22px;
+    font-weight: 900;
+}
+
+.profile-submit-actions {
+    justify-content: flex-end;
+}
+
 .profile-avatar {
     width: 76px;
     height: 76px;
@@ -150,30 +169,9 @@
     margin-bottom: 0;
 }
 
-.profile-review-list,
 .purchase-list {
     display: grid;
     gap: 18px;
-}
-
-.profile-review-item {
-    display: grid;
-    gap: 12px;
-    padding: 20px;
-    border-radius: 20px;
-    background: #f8fafc;
-    border: 1px solid #eef2f7;
-}
-
-.profile-review-item h4 {
-    margin: 0 0 6px;
-    font-weight: 900;
-    letter-spacing: -0.03em;
-}
-
-.profile-review-item p {
-    color: #475569;
-    margin: 0;
 }
 
 .profile-stars {
@@ -183,7 +181,7 @@
 .purchase-card {
     display: flex;
     gap: 24px;
-    align-items: stretch;
+    align-items: flex-start;
     background: #ffffff;
     border: 1px solid #e5e7eb;
     border-radius: 26px;
@@ -192,8 +190,9 @@
 }
 
 .purchase-card img {
-    width: 190px;
-    min-height: 125px;
+    width: 280px;
+    height: 175px;
+    flex: 0 0 280px;
     object-fit: cover;
     border-radius: 20px;
     background: #e5e7eb;
@@ -202,13 +201,15 @@
 .purchase-body {
     flex: 1;
     display: flex;
-    align-items: stretch;
+    align-items: flex-start;
     justify-content: space-between;
     gap: 20px;
+    min-width: 0;
 }
 
 .purchase-main {
     flex: 1;
+    min-width: 0;
 }
 
 .purchase-body h3 {
@@ -296,10 +297,12 @@
     gap: 10px;
 }
 
+.modern-modal .modal-body .btn,
 .modern-modal-footer .btn {
     min-height: 46px;
     padding-inline: 22px;
     font-weight: 900;
+    border-radius: 12px;
 }
 
 .password-hint {

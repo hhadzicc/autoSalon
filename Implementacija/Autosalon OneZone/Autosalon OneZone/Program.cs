@@ -192,7 +192,19 @@ if (builder.Configuration.GetValue("HttpsRedirection:Enabled", true))
     app.UseHttpsRedirection();
 }
 
-app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions
+{
+    OnPrepareResponse = context =>
+    {
+        var extension = Path.GetExtension(context.File.Name).ToLowerInvariant();
+
+        if (extension is ".webp" or ".jpg" or ".jpeg" or ".png" or ".avif")
+        {
+            context.Context.Response.Headers["Cache-Control"] =
+                "public,max-age=31536000,immutable";
+        }
+    }
+});
 
 app.UseRouting();
 app.UseRateLimiter();

@@ -3,15 +3,17 @@
 @{
     ViewData["Title"] = L["CartTitle"];
     var culture = CultureInfo.CurrentCulture;
-}
 
-<section class="inner-page-header">
-    <div class="container text-center">
-        <p class="section-eyebrow">@L["Purchase"]</p>
-        <h1>@L["CartHeaderTitle"]</h1>
-        <p>@L["CartHeaderText"]</p>
-    </div>
-</section>
+    string FuelChipClass(string value) => value switch
+    {
+        "Benzin" => "is-petrol",
+        "Dizel" => "is-diesel",
+        "Plin" => "is-gas",
+        "Elektro" => "is-electric",
+        "Hibrid" => "is-hybrid",
+        _ => "is-default"
+    };
+}
 
 <section class="cart-page-section">
     <div class="container">
@@ -34,61 +36,54 @@
         }
         else
         {
-            <div class="row g-4 align-items-start">
-                <div class="col-lg-8">
-                    <div class="cart-toolbar d-flex justify-content-between align-items-center flex-wrap gap-3">
-                        <div class="fw-bold">
-                            @L["TotalVehicles"]
-                            <span class="badge rounded-pill text-bg-primary">@Model.VozilaUKorpi.Count</span>
-                        </div>
+            <div class="cart-page-intro">
+                <h1>@L["CartHeaderTitle"]</h1>
+                <p>@L["CartHeaderText"]</p>
+            </div>
 
-                        <div class="cart-sort d-flex align-items-center gap-2">
-                            <label for="sortOptions" class="fw-bold text-secondary">@L["SortBy"]</label>
-                            <select id="sortOptions" class="form-select">
-                                <option value="naziv_asc">@L["SortNameAsc"]</option>
-                                <option value="naziv_desc">@L["SortNameDesc"]</option>
-                                <option value="cijena_asc">@L["SortPriceAsc"]</option>
-                                <option value="cijena_desc">@L["SortPriceDesc"]</option>
-                                <option value="godiste_asc">@L["SortYearAsc"]</option>
-                                <option value="godiste_desc">@L["SortYearDesc"]</option>
-                            </select>
-                        </div>
-                    </div>
-
+            <div class="row g-4 align-items-start cart-content-row">
+                <div class="col-lg-8 cart-content-column">
                     <div id="stavkeKorpe" class="cart-items-list">
                         @foreach (var vozilo in Model.VozilaUKorpi)
                         {
                             <article class="cart-item-card stavka-korpe"
                                      data-naziv="@vozilo.Naziv"
                                      data-cijena="@vozilo.Cijena"
-                                     data-godiste="@vozilo.Godiste">
+                                     data-godiste="@vozilo.Godiste"
+                                     data-cijena-numeric="@vozilo.Cijena.ToString(CultureInfo.InvariantCulture)">
                                 <div class="cart-item-image">
                                     <img src="@vozilo.SlikaUrl" alt="@vozilo.Naziv">
                                 </div>
 
                                 <div class="cart-item-content">
                                     <div>
-                                        <span class="cart-item-badge">@L["InCart"]</span>
+                                        <span class="cart-item-badge vehicles-fuel-chip @FuelChipClass(vozilo.Gorivo)">@vozilo.Gorivo</span>
                                         <h3 class="card-title">@vozilo.Naziv</h3>
 
                                         <div class="cart-meta">
                                             <span class="text-muted"><i class="bi bi-calendar3"></i>@L["VehicleYear"]: @vozilo.Godiste</span>
-                                            <span class="text-muted"><i class="bi bi-fuel-pump"></i>@L["VehicleFuel"]: @vozilo.Gorivo</span>
+                                            <span class="text-muted"><i class="bi bi-speedometer2"></i>@L["VehicleMileage"]: @vozilo.Kilometraza km</span>
                                         </div>
 
                                         <div class="cart-price text-success">€@vozilo.Cijena.ToString("N0", culture)</div>
                                     </div>
 
                                     <div class="cart-actions">
-                                        <a href="@Url.Action("Details", "Vozilo", new { id = vozilo.Id })" class="btn btn-light border rounded-4">
+                                        <a href="@Url.Action("Details", "Vozilo", new { id = vozilo.Id, returnUrl = Url.Action("Index", "Korpa") })" class="btn btn-light border rounded-4">
                                             <i class="bi bi-info-circle me-2"></i>@L["Details"]
                                         </a>
                                         <button type="button" class="btn btn-primary rounded-4 buy-now-btn"
                                                 data-bs-toggle="modal" data-bs-target="#paymentModal"
-                                                data-id="@vozilo.Id" data-cijena="@vozilo.Cijena" data-naziv="@vozilo.Naziv">
+                                                data-id="@vozilo.Id" data-cijena-numeric="@vozilo.Cijena.ToString(CultureInfo.InvariantCulture)" data-naziv="@vozilo.Naziv">
                                             <i class="bi bi-credit-card me-2"></i>@L["Buy"]
                                         </button>
-                                        <form asp-controller="Korpa" asp-action="UkloniIzKorpe" method="post">
+                                        <form asp-controller="Korpa" asp-action="UkloniIzKorpe" method="post"
+                                              class="remove-from-cart-form"
+                                              data-vehicle-name="@vozilo.Naziv"
+                                              data-remove-message="@L["CartVehicleRemovedToast"]"
+                                              data-remove-error="@L["CartRemoveError"]"
+                                              data-undo-text="@L["Undo"]"
+                                              data-undo-url="@Url.Action("DodajUKorpu", "Korpa")">
                                             @Html.AntiForgeryToken()
                                             <input type="hidden" name="id" value="@vozilo.Id">
                                             <button type="submit" class="btn btn-outline-danger rounded-4 w-100">
@@ -109,32 +104,31 @@
 
                             <div class="summary-row">
                                 <span>@L["VehicleCount"]</span>
-                                <strong>@Model.VozilaUKorpi.Count</strong>
-                            </div>
-
-                            <div class="summary-row">
-                                <span>@L["TotalAmount"]</span>
-                                <strong>€@Model.UkupnaCijena.ToString("N0", culture)</strong>
+                                <strong data-cart-vehicle-count>@Model.VozilaUKorpi.Count</strong>
                             </div>
 
                             <div class="summary-total">
                                 <span>@L["PaymentDue"]</span>
-                                <strong>€@Model.UkupnaCijena.ToString("N0", culture)</strong>
+                                <strong data-cart-total>€@Model.UkupnaCijena.ToString("N0", culture)</strong>
                             </div>
 
                             <div class="d-grid gap-2 mt-4">
-                                <button type="button" class="btn btn-success btn-lg rounded-4" id="checkoutButton" data-bs-toggle="modal" data-bs-target="#checkoutModal">
+                                <button type="button" class="btn btn-primary btn-lg rounded-4" id="checkoutButton" data-bs-toggle="modal" data-bs-target="#checkoutModal">
                                     <i class="bi bi-bag-check me-2"></i>@L["ContinueToCheckout"]
                                 </button>
-                                <form asp-controller="Korpa" asp-action="OcistiKorpu" method="post">
+                                <form asp-controller="Korpa" asp-action="OcistiKorpu" method="post"
+                                      class="clear-cart-form"
+                                      data-clear-success="@L["CartClearedSuccess"]"
+                                      data-clear-error="@L["CartClearError"]">
                                     @Html.AntiForgeryToken()
                                     <button type="submit"
                                             class="btn btn-outline-danger rounded-4 w-100"
                                             data-confirm-delete="true"
                                             data-confirm-title="@L["ClearCartConfirmTitle"]"
                                             data-confirm-message="@L["ClearCartConfirmMessage"]"
-                                            data-confirm-item="@L["ClearCartConfirmItem"]"
-                                            data-confirm-action="@L["ClearCartConfirmAction"]">
+                                            data-confirm-item="@L["ClearCartConfirmItem", Model.VozilaUKorpi.Count]"
+                                            data-confirm-action="@L["ClearCartConfirmAction"]"
+                                            data-confirm-event-only>
                                         <i class="bi bi-cart-x me-2"></i>@L["ClearCart"]
                                     </button>
                                 </form>
@@ -143,6 +137,19 @@
 
                         @await Html.PartialAsync("_LoanCalculator")
                     </aside>
+                </div>
+            </div>
+
+            <div id="cart-empty-state" class="empty-cart-wrap" hidden>
+                <div class="empty-cart-card">
+                    <div class="empty-cart-icon">
+                        <i class="bi bi-cart-x"></i>
+                    </div>
+                    <h2>@L["CartEmptyTitle"]</h2>
+                    <p>@L["CartEmptyText"]</p>
+                    <a href="@Url.Action("Index", "Vozilo")" class="btn btn-primary btn-lg rounded-4">
+                        <i class="bi bi-car-front-fill me-2"></i>@L["BrowseVehicles"]
+                    </a>
                 </div>
             </div>
         }
@@ -168,8 +175,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="mb-4">
-                        <h6>@L["SelectVehiclesForPurchase"]</h6>
-                        <div class="alert alert-info small">
+                        <div class="alert alert-info small d-none" id="checkoutSelectionWarning">
                             <i class="bi bi-info-circle-fill"></i> @L["SelectAtLeastOneVehicle"]
                         </div>
                         <div class="table-responsive">
@@ -206,12 +212,14 @@
                                 <tfoot>
                                     <tr class="table-active">
                                         <th colspan="2" class="text-end">@L["Total"]</th>
-                                        <th class="text-end" id="checkoutTotal">€@Model.UkupnaCijena.ToString("N0", culture)</th>
+                                        <th class="text-end text-success" id="checkoutTotal">€@Model.UkupnaCijena.ToString("N0", culture)</th>
                                     </tr>
                                 </tfoot>
                             </table>
                         </div>
                     </div>
+
+                    <div class="payment-modal-error alert alert-danger d-none py-2 px-3 mb-3" id="checkoutPaymentRequestError" role="alert"></div>
 
                     <form id="checkoutForm" asp-controller="Korpa" asp-action="IzvrsiPlacanjeSvih" method="post" novalidate>
                         @Html.AntiForgeryToken()
@@ -236,22 +244,25 @@
                         </div>
                         <div>
                             <h5 class="modal-title" id="paymentModalLabel">@L["PaymentDetails"]</h5>
+                            <p class="payment-vehicle-name mb-0" id="paymentVehicleName"></p>
                             <p class="mb-0 text-muted small">@L["PaymentDetailsText"]</p>
                         </div>
                     </div>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@L["Close"]"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="alert alert-info mb-4">
-                        <strong>@L["TotalToPay"]</strong> <span id="modalUkupnaCijena"></span>
+                    <div class="payment-total-alert mb-4">
+                        <strong>@L["TotalToPay"]</strong> <span id="modalUkupnaCijena" class="text-success fw-bold"></span>
                     </div>
+
+                    <div class="payment-modal-error alert alert-danger d-none py-2 px-3 mb-3" id="paymentRequestError" role="alert"></div>
 
                     <form id="paymentForm" asp-controller="Korpa" asp-action="IzvrsiPlacanje" method="post" novalidate>
                         @Html.AntiForgeryToken()
                         <input type="hidden" name="VoziloID" id="modalVoziloID" value="" />
                         @await Html.PartialAsync("_PaymentFields", "")
                         <div class="d-grid gap-2 mt-4">
-                            <button type="submit" class="btn btn-primary" id="submitPayment">@L["ConfirmPurchase"]</button>
+                            <button type="submit" class="btn btn-success" id="submitPayment">@L["ConfirmPurchase"]</button>
                         </div>
                     </form>
                 </div>
@@ -262,6 +273,139 @@
 
 @section Scripts {
     <script>
+        (() => {
+            const updateCartSummary = (count) => {
+                $("[data-cart-vehicle-count]").text(count);
+                $("[data-cart-count]").text(count).toggleClass("d-none", count < 1);
+
+                let total = 0;
+                $("#stavkeKorpe .stavka-korpe").each(function() {
+                    total += Number($(this).data("cijenaNumeric")) || 0;
+                });
+
+                const locale = document.documentElement.lang === "en" ? "en-US" : "bs-BA";
+                $("[data-cart-total]").text("€" + total.toLocaleString(locale, { maximumFractionDigits: 0 }));
+            };
+
+            const showRemoveToast = (message, undo) => {
+                window.showAppToast(message, {
+                    type: "success",
+                    duration: 5200,
+                    actionText: undo?.text,
+                    onAction: undo ? (actionButton) => {
+                        $(actionButton).prop("disabled", true);
+                        $.ajax({
+                            url: undo.url,
+                            type: "POST",
+                            data: undo.data,
+                            dataType: "json",
+                            headers: {
+                                "Accept": "application/json",
+                                "X-Requested-With": "XMLHttpRequest"
+                            }
+                        }).done((result) => {
+                            if (!result.success) {
+                                $(actionButton).prop("disabled", false);
+                                return;
+                            }
+
+                            const $card = $(undo.cardHtml);
+                            const $cards = $("#stavkeKorpe .stavka-korpe");
+                            if (undo.index >= $cards.length) {
+                                $("#stavkeKorpe").append($card);
+                            } else {
+                                $cards.eq(undo.index).before($card);
+                            }
+
+                            $(".cart-content-row").show();
+                            $("#cart-empty-state").prop("hidden", true);
+                            updateCartSummary(result.cartCount);
+                            window.dismissAppToast();
+                        }).fail(() => {
+                            $(actionButton).prop("disabled", false);
+                        });
+                    } : undefined
+                });
+            };
+
+            $(document).on("submit", ".remove-from-cart-form", function(event) {
+                event.preventDefault();
+
+                const form = this;
+                const $form = $(form);
+                const $card = $form.closest(".stavka-korpe");
+                const cardHtml = $card.prop("outerHTML");
+                const index = $card.index();
+                const vehicleName = form.dataset.vehicleName;
+                const removeMessage = form.dataset.removeMessage.replace("{0}", vehicleName);
+
+                $form.find("button").prop("disabled", true);
+
+                $.ajax({
+                    url: form.action,
+                    type: "POST",
+                    data: $form.serialize(),
+                    dataType: "json",
+                    headers: {
+                        "Accept": "application/json",
+                        "X-Requested-With": "XMLHttpRequest"
+                    }
+                }).done((result) => {
+                    if (!result.success) {
+                        $form.find("button").prop("disabled", false);
+                        return;
+                    }
+
+                    $card.remove();
+                    updateCartSummary(result.cartCount);
+                    if (result.cartCount < 1) {
+                        $(".cart-content-row").hide();
+                        $("#cart-empty-state").prop("hidden", false);
+                    }
+
+                    showRemoveToast(removeMessage, {
+                        text: form.dataset.undoText,
+                        url: form.dataset.undoUrl,
+                        data: $form.serialize(),
+                        cardHtml,
+                        index
+                    });
+                }).fail(() => {
+                    $form.find("button").prop("disabled", false);
+                    window.showAppToast(form.dataset.removeError, { type: "error" });
+                });
+            });
+
+            $(document).on("app:delete-confirmed", ".clear-cart-form [data-confirm-delete]", function() {
+                const form = this.closest("form");
+                const $form = $(form);
+
+                $.ajax({
+                    url: form.action,
+                    type: "POST",
+                    data: $form.serialize(),
+                    dataType: "json",
+                    headers: {
+                        "Accept": "application/json",
+                        "X-Requested-With": "XMLHttpRequest"
+                    }
+                }).done((result) => {
+                    if (!result.success) {
+                        window.showAppToast(form.dataset.clearError, { type: "error" });
+                        return;
+                    }
+
+                    $("#stavkeKorpe").empty();
+                    $(".cart-content-row").hide();
+                    $("#cart-empty-state").prop("hidden", false);
+                    updateCartSummary(0);
+                    showRemoveToast(form.dataset.clearSuccess);
+                }).fail(() => {
+                    window.showAppToast(form.dataset.clearError, { type: "error" });
+                });
+            });
+        })();
+
         const cartTexts = {
             processing: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["Processing"].Value)),
             confirmPurchase: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["ConfirmPurchase"].Value)),
@@ -281,42 +425,10 @@
         };
 
         $(document).ready(function() {
-            initializeCartSorting();
             initializeLoanCalculator();
             initializePaymentModal();
             initializeCheckoutModal();
         });
-
-        function initializeCartSorting() {
-            $("#sortOptions").change(function() {
-                var sortType = $(this).val();
-                var stavke = $(".stavka-korpe").get();
-
-                stavke.sort(function(a, b) {
-                    var $a = $(a);
-                    var $b = $(b);
-
-                    switch (sortType) {
-                        case "naziv_asc":
-                            return $a.data("naziv").localeCompare($b.data("naziv"));
-                        case "naziv_desc":
-                            return $b.data("naziv").localeCompare($a.data("naziv"));
-                        case "cijena_asc":
-                            return parseFloat($a.data("cijena")) - parseFloat($b.data("cijena"));
-                        case "cijena_desc":
-                            return parseFloat($b.data("cijena")) - parseFloat($a.data("cijena"));
-                        case "godiste_asc":
-                            return parseInt($a.data("godiste")) - parseInt($b.data("godiste"));
-                        case "godiste_desc":
-                            return parseInt($b.data("godiste")) - parseInt($a.data("godiste"));
-                        default:
-                            return 0;
-                    }
-                });
-
-                $("#stavkeKorpe").append(stavke);
-            });
-        }
 
         function initializeLoanCalculator() {
             updateLoanCalculation();
@@ -345,7 +457,8 @@
             $(".buy-now-btn").on("click", function() {
                 var button = $(this);
                 $("#modalVoziloID").val(button.data("id"));
-                $("#modalUkupnaCijena").text("€" + Number(button.data("cijena")).toLocaleString());
+                $("#paymentVehicleName").text(button.data("naziv") || "");
+                $("#modalUkupnaCijena").text("€" + Number(button.data("cijenaNumeric")).toLocaleString());
             });
 
             $("#paymentModal").on("show.bs.modal", function() {
@@ -368,7 +481,17 @@
 
             $(".vozilo-checkbox").on("change", updateCheckoutTotal);
 
-            $("#checkoutModal").on("show.bs.modal", updateCheckoutTotal);
+            $(".vozilo-checkbox").on("change", function() {
+                if ($(".vozilo-checkbox:checked").length) {
+                    $("#checkoutSelectionWarning").addClass("d-none");
+                }
+            });
+
+            $("#checkoutModal").on("show.bs.modal", function() {
+                $("#checkoutSelectionWarning").addClass("d-none");
+                clearPaymentError("checkout");
+                updateCheckoutTotal();
+            });
             bindPaymentFields("checkout");
 
             $("#checkoutForm").on("submit", function(e) {
@@ -376,7 +499,7 @@
 
                 var selected = getSelectedVehicles();
                 if (!selected.length) {
-                    window.showAppFlashMessage(cartTexts.selectOne, "warning");
+                    $("#checkoutSelectionWarning").removeClass("d-none");
                     return;
                 }
 
@@ -388,16 +511,16 @@
         function getSelectedVehicles() {
             return $(".vozilo-checkbox:checked").map(function() {
                 return {
-                    VoziloID: $(this).data("id"),
-                    Naziv: $(this).data("naziv"),
-                    Cijena: parseFloat($(this).data("cijena"))
+                    id: $(this).data("id"),
+                    naziv: $(this).data("naziv"),
+                    cijena: parseFloat($(this).data("cijena"))
                 };
             }).get();
         }
 
         function updateCheckoutTotal() {
             var total = getSelectedVehicles().reduce(function(sum, item) {
-                return sum + item.Cijena;
+                return sum + (Number(item.cijena) || 0);
             }, 0);
 
             $("#checkoutTotal").text("€" + total.toLocaleString(undefined, { maximumFractionDigits: 0 }));
@@ -437,7 +560,7 @@
             });
 
             $(cvv).on("input", function() {
-                $(this).val($(this).val().replace(/\D/g, "").substring(0, 3));
+                $(this).val($(this).val().replace(/\D/g, "").substring(0, 4));
                 clearError(idPrefix + "Cvv");
             });
         }
@@ -445,6 +568,7 @@
         function submitPaymentForm(form, buttonSelector) {
             var prefix = form.attr("id") === "checkoutForm" ? "checkout" : "";
             clearAllErrors(form);
+            clearPaymentError(prefix);
 
             if (!validatePaymentForm(prefix)) {
                 return;
@@ -463,21 +587,19 @@
                         return;
                     }
 
-                    if (response.errors) {
-                        $.each(response.errors, function(field, message) {
-                            showError(prefix + field, message);
-                        });
-                    } else if (response.message) {
-                        $(".modal.show").modal("hide");
-                        window.showAppFlashMessage(cartTexts.paymentFailed + response.message, "error");
-                    }
+                        if (response.errors) {
+                            $.each(response.errors, function(field, message) {
+                                showError(prefix + field, message);
+                            });
+                        } else if (response.message) {
+                            showPaymentError(cartTexts.paymentFailed + response.message, prefix);
+                        }
 
                     button.prop("disabled", false).html(cartTexts.confirmPurchase);
                 },
                 error: function(xhr, status, error) {
-                    $(".modal.show").modal("hide");
                     var message = error ? cartTexts.requestErrorWithDetail + error : cartTexts.requestError;
-                    window.showAppFlashMessage(message, "error");
+                    showPaymentError(message, prefix);
                     button.prop("disabled", false).html(cartTexts.confirmPurchase);
                 }
             });
@@ -490,9 +612,6 @@
 
             if (!holderValue) {
                 showError(idPrefix + "ImeVlasnika", cartTexts.holderRequired);
-                isValid = false;
-            } else if (!holderValue.includes(" ")) {
-                showError(idPrefix + "ImeVlasnika", cartTexts.holderFullName);
                 isValid = false;
             }
 
@@ -529,7 +648,7 @@
             if (!cvvValue) {
                 showError(idPrefix + "Cvv", cartTexts.cvvRequired);
                 isValid = false;
-            } else if (cvvValue.length !== 3) {
+                    } else if (cvvValue.length < 3 || cvvValue.length > 4) {
                 showError(idPrefix + "Cvv", cartTexts.cvvLength);
                 isValid = false;
             }
@@ -553,12 +672,23 @@
             root.find(".error-message").text("");
         }
 
+        function showPaymentError(message, prefix) {
+            var errorId = prefix === "checkout" ? "#checkoutPaymentRequestError" : "#paymentRequestError";
+            $(errorId).text(message).removeClass("d-none");
+        }
+
+        function clearPaymentError(prefix) {
+            var errorId = prefix === "checkout" ? "#checkoutPaymentRequestError" : "#paymentRequestError";
+            $(errorId).addClass("d-none").text("");
+        }
+
         function resetPaymentForm(formSelector, buttonSelector) {
             var form = $(formSelector);
             if (form.length) {
                 form[0].reset();
             }
             clearAllErrors(form);
+            clearPaymentError(formSelector === "#checkoutForm" ? "checkout" : "");
             $(buttonSelector).prop("disabled", false).html(cartTexts.confirmPurchase);
         }
     </script>

@@ -15,21 +15,6 @@
         position: static;
     }
 
-    .cart-toolbar {
-        flex-direction: column;
-        align-items: stretch !important;
-    }
-
-    .cart-sort {
-        align-items: stretch !important;
-        flex-direction: column;
-    }
-
-    .cart-sort .form-select {
-        width: 100%;
-        min-width: 0;
-    }
-
     .cart-item-card,
     .cart-item-content {
         flex-direction: column;

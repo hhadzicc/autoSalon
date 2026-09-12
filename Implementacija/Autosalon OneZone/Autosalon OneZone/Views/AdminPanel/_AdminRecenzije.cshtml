@@ -260,11 +260,11 @@
                     'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
                 },
                 success: function (response) {
-                    window.showAppFlashMessage(response.successMessage || text.deleteSuccess, 'success');
+                    window.showAppToast(response.successMessage || text.deleteSuccess, 'success');
                     loadRecenzijeList(getCurrentFilterParams());
                 },
                 error: function () {
-                    window.showAppFlashMessage(text.deleteError, 'error');
+                    window.showAppToast(text.deleteError, 'error');
                 }
             });
         });

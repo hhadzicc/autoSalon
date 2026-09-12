@@ -333,10 +333,33 @@ namespace Autosalon_OneZone.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UkloniIzKorpe(int id)
         {
+            var isAjaxRequest = string.Equals(
+                Request.Headers["X-Requested-With"],
+                "XMLHttpRequest",
+                StringComparison.OrdinalIgnoreCase);
+
             try
             {
                 var user = await _userManager.GetUserAsync(User);
                 var result = await _cartService.RemoveVehicleAsync(user!.Id, id);
+
+                if (isAjaxRequest)
+                {
+                    var success = result == CartRemoveResult.Removed;
+                    var statusCode = result == CartRemoveResult.VehicleNotFound
+                        ? StatusCodes.Status404NotFound
+                        : StatusCodes.Status200OK;
+
+                    return StatusCode(statusCode, new
+                    {
+                        success,
+                        message = _localizer[result == CartRemoveResult.Removed
+                            ? "CartRemoveSuccess"
+                            : "CartVehicleNotFoundInCart"].Value,
+                        cartCount = await _cartService.GetItemCountAsync(user.Id)
+                    });
+                }
+
                 if (result == CartRemoveResult.Removed)
                 {
                     TempData["SuccessMessage"] = _localizer["CartRemoveSuccess"].Value;
@@ -360,10 +383,22 @@ namespace Autosalon_OneZone.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> OcistiKorpu()
         {
+            var isAjaxRequest = Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+
             try
             {
                 var user = await _userManager.GetUserAsync(User);
                 await _cartService.ClearAsync(user!.Id);
+
+                if (isAjaxRequest)
+                {
+                    return Json(new
+                    {
+                        success = true,
+                        message = _localizer["CartClearedSuccess"].Value,
+                        cartCount = 0
+                    });
+                }
 
                 TempData["SuccessMessage"] = _localizer["CartClearedSuccess"].Value;
                 return RedirectToAction("Index");
@@ -371,6 +406,16 @@ namespace Autosalon_OneZone.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Greška pri čišćenju korpe: {ex.Message}");
+
+                if (isAjaxRequest)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, new
+                    {
+                        success = false,
+                        message = _localizer["CartClearError"].Value
+                    });
+                }
+
                 TempData["ErrorMessage"] = _localizer["CartClearError"].Value;
                 return RedirectToAction("Index");
             }

@@ -468,13 +468,13 @@
                     addFormContainer.hide();
                     addFormPlaceholder.empty();
                     loadVozilaList(searchInput.val(), 1, currentSort, currentDirection, currentFuelFilter);
-                    window.showAppFlashMessage(text.saveSuccess, 'success');
+                    window.showAppToast(text.saveSuccess, 'success');
                 },
                 error: function (jqXHR) {
                     if (jqXHR.status === 400 && jqXHR.responseJSON) {
-                        window.showAppFlashMessage(text.saveValidationError, 'error');
+                        window.showAppToast(text.saveValidationError, 'error');
                     } else {
-                        window.showAppFlashMessage(text.saveImageRequiredError, 'error');
+                        window.showAppToast(text.saveImageRequiredError, 'error');
                     }
                 }
             });
@@ -491,11 +491,11 @@
                 },
                 data: { id: voziloId },
                 success: function (response) {
-                    window.showAppFlashMessage(response.successMessage || text.deleteSuccess, 'success');
+                    window.showAppToast(response.successMessage || text.deleteSuccess, 'success');
                     loadVozilaList(searchInput.val(), 1, currentSort, currentDirection, currentFuelFilter);
                 },
                 error: function () {
-                    window.showAppFlashMessage(text.deleteError, 'error');
+                    window.showAppToast(text.deleteError, 'error');
                 }
             });
         });

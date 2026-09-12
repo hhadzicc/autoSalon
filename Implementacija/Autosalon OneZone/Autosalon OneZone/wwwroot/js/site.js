@@ -93,57 +93,103 @@
 })();
 
 (() => {
-    if (window.showAppFlashMessage) {
+    if (window.showAppToast) {
         return;
     }
 
-    const alertClasses = {
-        success: "alert-success",
-        error: "alert-danger",
-        danger: "alert-danger",
-        info: "alert-info",
-        warning: "alert-warning"
+    const toastIcons = {
+        success: "bi-check-circle-fill",
+        error: "bi-exclamation-circle-fill",
+        danger: "bi-exclamation-circle-fill",
+        info: "bi-info-circle-fill",
+        warning: "bi-exclamation-triangle-fill"
     };
 
-    window.showAppFlashMessage = function (message, type = "success") {
+    let activeToast = null;
+    let closeTimer = null;
+
+    const removeToast = () => {
+        if (closeTimer) {
+            window.clearTimeout(closeTimer);
+            closeTimer = null;
+        }
+
+        if (!activeToast) {
+            return;
+        }
+
+        activeToast.classList.remove("is-visible");
+        const toastToRemove = activeToast;
+        activeToast = null;
+        window.setTimeout(() => toastToRemove.remove(), 340);
+    };
+
+    window.showAppToast = function (message, options = {}) {
         if (!message) {
             return;
         }
 
-        const main = document.querySelector(".main-content-container") || document.body;
-        let wrapper = document.querySelector(".flash-messages");
-
-        if (!wrapper) {
-            wrapper = document.createElement("div");
-            wrapper.className = "flash-messages";
-            wrapper.setAttribute("aria-live", "polite");
-            main.insertBefore(wrapper, main.firstChild);
+        if (typeof options === "string") {
+            options = { type: options };
         }
 
-        const alert = document.createElement("div");
-        alert.className = `alert ${alertClasses[type] || alertClasses.success} alert-dismissible fade show app-alert`;
-        alert.setAttribute("role", "alert");
+        const type = options.type || "success";
+        const duration = Number.isFinite(options.duration) ? options.duration : 4200;
+        removeToast();
+
+        const toast = document.createElement("div");
+        toast.className = `app-toast is-${type === "danger" ? "error" : type}`;
+        toast.setAttribute("role", type === "error" || type === "danger" ? "alert" : "status");
+        toast.setAttribute("aria-live", type === "error" || type === "danger" ? "assertive" : "polite");
+
+        const icon = document.createElement("i");
+        icon.className = `bi ${toastIcons[type] || toastIcons.info}`;
+        icon.setAttribute("aria-hidden", "true");
+
+        const content = document.createElement("div");
+        content.className = "app-toast-content";
 
         const text = document.createElement("span");
         text.textContent = message;
-        alert.appendChild(text);
+        content.appendChild(text);
+
+        if (options.actionText && options.actionHref) {
+            const actionLink = document.createElement("a");
+            actionLink.href = options.actionHref;
+            actionLink.textContent = options.actionText;
+            content.appendChild(actionLink);
+        } else if (options.actionText && typeof options.onAction === "function") {
+            const actionButton = document.createElement("button");
+            actionButton.type = "button";
+            actionButton.textContent = options.actionText;
+            actionButton.addEventListener("click", () => options.onAction(actionButton));
+            content.appendChild(actionButton);
+        }
 
         const closeButton = document.createElement("button");
         closeButton.type = "button";
-        closeButton.className = "btn-close";
-        closeButton.setAttribute("data-bs-dismiss", "alert");
+        closeButton.className = "app-toast-close";
         closeButton.setAttribute("aria-label", (window.appTexts && window.appTexts.close) || "Close");
-        alert.appendChild(closeButton);
+        closeButton.innerHTML = "&times;";
+        closeButton.addEventListener("click", removeToast);
 
-        wrapper.replaceChildren(alert);
+        toast.append(icon, content, closeButton);
+        document.body.appendChild(toast);
+        activeToast = toast;
 
-        if (window.bootstrap) {
-            window.setTimeout(() => {
-                const instance = bootstrap.Alert.getOrCreateInstance(alert);
-                instance.close();
-            }, 4500);
-        }
+        window.requestAnimationFrame(() => toast.classList.add("is-visible"));
+        closeTimer = window.setTimeout(removeToast, duration);
     };
+
+    window.dismissAppToast = removeToast;
+
+    document.addEventListener("DOMContentLoaded", () => {
+        (window.appInitialToasts || []).forEach(({ message, type }) => {
+            if (message) {
+                window.showAppToast(message, { type });
+            }
+        });
+    });
 })();
 
 (() => {

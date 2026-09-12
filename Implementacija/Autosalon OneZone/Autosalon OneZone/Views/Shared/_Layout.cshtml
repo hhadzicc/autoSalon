@@ -19,11 +19,6 @@
     var errorMessage = Convert.ToString(TempData["ErrorMessage"]);
     var infoMessage = Convert.ToString(TempData["InfoMessage"]);
     var warningMessage = Convert.ToString(TempData["WarningMessage"]);
-    var hasFlashMessage =
-        !string.IsNullOrWhiteSpace(successMessage) ||
-        !string.IsNullOrWhiteSpace(errorMessage) ||
-        !string.IsNullOrWhiteSpace(infoMessage) ||
-        !string.IsNullOrWhiteSpace(warningMessage);
     var currentCulture = System.Globalization.CultureInfo.CurrentUICulture.Name;
     var isBosnian = currentCulture.StartsWith("bs", StringComparison.OrdinalIgnoreCase);
     var languageLabel = isBosnian ? "BS" : "EN";
@@ -217,40 +212,6 @@
     </nav>
 
     <main class="main-content-container">
-        @if (hasFlashMessage)
-        {
-            <div class="flash-messages" aria-live="polite">
-                @if (!string.IsNullOrWhiteSpace(successMessage))
-                {
-                    <div class="alert alert-success alert-dismissible fade show app-alert" role="alert">
-                        @successMessage
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="@L["Close"]"></button>
-                    </div>
-                }
-                @if (!string.IsNullOrWhiteSpace(errorMessage))
-                {
-                    <div class="alert alert-danger alert-dismissible fade show app-alert" role="alert">
-                        @errorMessage
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="@L["Close"]"></button>
-                    </div>
-                }
-                @if (!string.IsNullOrWhiteSpace(infoMessage))
-                {
-                    <div class="alert alert-info alert-dismissible fade show app-alert" role="alert">
-                        @infoMessage
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="@L["Close"]"></button>
-                    </div>
-                }
-                @if (!string.IsNullOrWhiteSpace(warningMessage))
-                {
-                    <div class="alert alert-warning alert-dismissible fade show app-alert" role="alert">
-                        @warningMessage
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="@L["Close"]"></button>
-                    </div>
-                }
-            </div>
-        }
-
         @RenderBody()
     </main>
 
@@ -302,6 +263,13 @@
     </div>
 
     <script>
+        window.appInitialToasts = [
+            { message: @Json.Serialize(successMessage), type: "success" },
+            { message: @Json.Serialize(errorMessage), type: "error" },
+            { message: @Json.Serialize(infoMessage), type: "info" },
+            { message: @Json.Serialize(warningMessage), type: "warning" }
+        ];
+
         window.appTexts = {
             close: @Json.Serialize(L["Close"].Value),
             showPassword: @Json.Serialize(L["ShowPassword"].Value),
@@ -442,5 +410,14 @@
     }
     @await RenderSectionAsync("Scripts", required: false)
     @await RenderSectionAsync("BottomScripts", required: false)
+    <script>
+        $(document).on('hidden.bs.modal', '.modal', function () {
+            window.setTimeout(function () {
+                if (document.activeElement && document.activeElement !== document.body) {
+                    document.activeElement.blur();
+                }
+            }, 0);
+        });
+    </script>
 </body>
 </html>

@@ -42,7 +42,7 @@
         : L["MileageNotEntered"].Value;
 
     <article class="vehicles-card">
-        <a href="@Url.Action("Details", "Vozilo", new { id = vehicle.VoziloID })" class="vehicles-card-image-link">
+        <a href="@Url.Action("Details", "Vozilo", new { id = vehicle.VoziloID })" class="vehicles-card-image-link" data-vehicle-details-link>
             <img src="@imageUrl"
                  class="vehicles-card-image"
                  alt="@vehicle.Marka @vehicle.Model"
@@ -74,7 +74,7 @@
             <div class="vehicles-card-footer">
                 <span class="vehicles-card-price">@priceText</span>
                 <div class="vehicles-card-actions">
-                    <a href="@Url.Action("Details", "Vozilo", new { id = vehicle.VoziloID })" class="vehicles-details-button">
+                    <a href="@Url.Action("Details", "Vozilo", new { id = vehicle.VoziloID })" class="vehicles-details-button" data-vehicle-details-link>
                         <span>@L["Details"]</span>
                         <i class="bi bi-arrow-right"></i>
                     </a>

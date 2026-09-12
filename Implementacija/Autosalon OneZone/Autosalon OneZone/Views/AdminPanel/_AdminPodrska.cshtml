@@ -350,12 +350,12 @@
                 },
                 success: function (response) {
                     if (response.successMessage) {
-                        window.showAppFlashMessage(response.successMessage, 'success');
+                        window.showAppToast(response.successMessage, 'success');
                     }
                     loadUpitiList(searchInput.val());
                 },
                 error: function () {
-                    window.showAppFlashMessage(text.statusChangeError, 'error');
+                    window.showAppToast(text.statusChangeError, 'error');
                 }
             });
         });
@@ -372,14 +372,14 @@
                 },
                 success: function (response) {
                     if (response.successMessage) {
-                        window.showAppFlashMessage(response.successMessage, 'success');
+                        window.showAppToast(response.successMessage, 'success');
                     } else {
-                        window.showAppFlashMessage(text.deleteSuccess, 'success');
+                        window.showAppToast(text.deleteSuccess, 'success');
                     }
                     loadUpitiList(searchInput.val());
                 },
                 error: function () {
-                    window.showAppFlashMessage(text.deleteError, 'error');
+                    window.showAppToast(text.deleteError, 'error');
                 }
             });
         });

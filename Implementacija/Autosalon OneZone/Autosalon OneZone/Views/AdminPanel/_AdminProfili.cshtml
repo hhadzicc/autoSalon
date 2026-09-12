@@ -315,7 +315,7 @@
                     addFormContainer.hide();
                     addFormPlaceholder.empty();
                     loadProfiliList(searchInput.val(), 1, currentRoleFilter);
-                    window.showAppFlashMessage(text.saveSuccess, 'success');
+                    window.showAppToast(text.saveSuccess, 'success');
                 },
                 error: function (jqXHR, textStatus) {
                     let errorMessage = text.saveError;
@@ -344,7 +344,7 @@
                         errorMessage += '\n' + jqXHR.status + ' ' + textStatus;
                     }
 
-                    window.showAppFlashMessage(errorMessage, 'error');
+                    window.showAppToast(errorMessage, 'error');
                 }
             });
         });
@@ -360,11 +360,11 @@
                 },
                 data: { id: profilId },
                 success: function (response) {
-                    window.showAppFlashMessage(response.successMessage || text.deleteSuccess, 'success');
+                    window.showAppToast(response.successMessage || text.deleteSuccess, 'success');
                     loadProfiliList(searchInput.val(), 1, currentRoleFilter);
                 },
                 error: function () {
-                    window.showAppFlashMessage(text.deleteError, 'error');
+                    window.showAppToast(text.deleteError, 'error');
                 }
             });
         });

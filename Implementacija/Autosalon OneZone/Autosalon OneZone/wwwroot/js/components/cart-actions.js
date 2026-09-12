@@ -1,34 +1,6 @@
 (() => {
     const minimumLoadingTime = 650;
 
-    const showToast = (message, type, viewText, cartUrl) => {
-        $(".app-toast").remove();
-
-        const isError = type === "error";
-        const $toast = $("<div>", {
-            class: `app-toast ${isError ? "is-error" : "is-success"}`,
-            role: isError ? "alert" : "status"
-        });
-        const $icon = $("<i>", {
-            class: `bi ${isError ? "bi-exclamation-circle-fill" : "bi-check-circle-fill"}`,
-            "aria-hidden": "true"
-        });
-        const $content = $("<div>", { class: "app-toast-content" })
-            .append($("<span>").text(message));
-
-        if (!isError) {
-            $content.append($("<a>", { href: cartUrl, text: viewText }));
-        }
-
-        $toast.append($icon, $content).appendTo(document.body);
-        window.requestAnimationFrame(() => $toast.addClass("is-visible"));
-
-        window.setTimeout(() => {
-            $toast.removeClass("is-visible");
-            window.setTimeout(() => $toast.remove(), 340);
-        }, 4200);
-    };
-
     const updateCartCount = (count) => {
         const $badge = $("[data-cart-count]");
         if ($badge.length === 0) {
@@ -73,7 +45,7 @@
                     $button.prop("disabled", false).removeClass("is-loading");
                     $icon.attr("class", "bi bi-cart3");
                     $label.text(originalText);
-                    showToast(result.message || form.dataset.errorText, "error", "", "");
+                    window.showAppToast(result.message || form.dataset.errorText, { type: "error" });
                     return;
                 }
 
@@ -85,14 +57,18 @@
                 const message = result.alreadyAdded
                     ? result.message
                     : form.dataset.successTemplate.replace("{0}", form.dataset.vehicleName);
-                showToast(message, "success", form.dataset.viewCartText, form.dataset.cartUrl);
+                window.showAppToast(message, {
+                    type: "success",
+                    actionText: form.dataset.viewCartText,
+                    actionHref: form.dataset.cartUrl
+                });
             });
         }).fail((xhr) => {
             afterMinimumLoadingTime(startedAt, () => {
                 $button.prop("disabled", false).removeClass("is-loading");
                 $icon.attr("class", "bi bi-cart3");
                 $label.text(originalText);
-                showToast(xhr.responseJSON?.message || form.dataset.errorText, "error", "", "");
+                window.showAppToast(xhr.responseJSON?.message || form.dataset.errorText, { type: "error" });
             });
         });
     });

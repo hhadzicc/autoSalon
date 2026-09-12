@@ -110,6 +110,7 @@ public sealed class CartService : ICartService
                     : "/img/no-image.png",
                 Godiste = item.Vozilo.Godiste ?? 0,
                 Gorivo = item.Vozilo.Gorivo.ToString(),
+                Kilometraza = item.Vozilo.Kilometraza ?? 0,
                 Cijena = item.CijenaStavke,
                 Kolicina = item.Kolicina
             }).ToList(),

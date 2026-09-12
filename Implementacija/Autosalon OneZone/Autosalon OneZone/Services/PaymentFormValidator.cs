@@ -19,10 +19,6 @@ public static class PaymentFormValidator
         {
             errors.Add(FieldName(fieldPrefix, "imeVlasnika"), localizer["PaymentNameRequired"].Value);
         }
-        else if (!ownerName.Trim().Contains(' '))
-        {
-            errors.Add(FieldName(fieldPrefix, "imeVlasnika"), localizer["PaymentNameFullRequired"].Value);
-        }
 
         var cleanCardNumber = DigitsOnly(cardNumber);
         if (string.IsNullOrWhiteSpace(cardNumber))
@@ -45,12 +41,12 @@ public static class PaymentFormValidator
             out expirationMonth,
             out expirationYear);
 
-        var cleanCvv = DigitsOnly(cvv);
+        var cleanCvv = cvv?.Trim() ?? string.Empty;
         if (string.IsNullOrWhiteSpace(cvv))
         {
             errors.Add(FieldName(fieldPrefix, "cvv"), localizer["PaymentCvvRequired"].Value);
         }
-        else if (cleanCvv.Length != 3)
+        else if (cleanCvv.Length is < 3 or > 4 || !cleanCvv.All(char.IsDigit))
         {
             errors.Add(FieldName(fieldPrefix, "cvv"), localizer["PaymentCvvLength"].Value);
         }

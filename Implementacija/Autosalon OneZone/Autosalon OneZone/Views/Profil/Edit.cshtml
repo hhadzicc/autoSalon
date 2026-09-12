@@ -3,64 +3,72 @@
     ViewData["Title"] = L["EditProfile"];
 }
 
-<section class="inner-page-header">
-    <div class="container text-center">
-        <p class="section-eyebrow">@L["UserProfileEyebrow"]</p>
-        <h1>@L["EditProfile"]</h1>
-        <p>@L["EditProfileHeaderText"]</p>
-    </div>
-</section>
-
 <section class="profile-section">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-7 col-xl-6">
+                <div class="profile-edit-toolbar">
+                    <a asp-controller="Profil" asp-action="Index" class="btn btn-light border rounded-4">
+                        <i class="bi bi-arrow-left me-2"></i>@L["BackToProfile"]
+                    </a>
+                </div>
+
                 <div class="profile-card">
                     <div class="text-center mb-4">
                         <div class="profile-avatar small-avatar">
                             <i class="bi bi-pencil-square"></i>
                         </div>
                         <h2>@L["EditData"]</h2>
-                        <p class="text-muted mb-0">@L["EditDataText"]</p>
                     </div>
 
-                    <div asp-validation-summary="All" class="text-danger validation-summary mb-3"></div>
+                    <div asp-validation-summary="All" class="account-validation-summary validation-summary"></div>
 
-                    <form asp-controller="Profil" asp-action="Edit" method="post">
+                    <form asp-controller="Profil" asp-action="Edit" method="post" novalidate autocomplete="off"
+                          data-account-validation="profile"
+                          data-check-fields-message="@L["Validation.CheckMarkedFields"]">
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label asp-for="Ime" class="form-label">@L["FirstName"]</label>
-                                <input asp-for="Ime" type="text" class="form-control" placeholder="@L["FirstName"]" required pattern="@UserInputPatterns.PersonNameHtml" />
-                                <span asp-validation-for="Ime" class="text-danger"></span>
+                                <input asp-for="Ime" type="text" class="form-control" placeholder="@L["FirstName"]" required maxlength="100" pattern="@UserInputPatterns.PersonNameHtml" autocomplete="off"
+                                       data-account-field="firstName"
+                                       data-required-message="@L["Validation.FirstNameRequired"]"
+                                       data-invalid-message="@L["Validation.FirstNameLettersOnly"]"
+                                       data-max-message="@L["Validation.FirstNameMaxLength"]" />
+                                <span asp-validation-for="Ime" class="account-validation-message"></span>
                             </div>
 
                             <div class="col-md-6">
                                 <label asp-for="Prezime" class="form-label">@L["LastName"]</label>
-                                <input asp-for="Prezime" type="text" class="form-control" placeholder="@L["LastName"]" required pattern="@UserInputPatterns.PersonNameHtml" />
-                                <span asp-validation-for="Prezime" class="text-danger"></span>
+                                <input asp-for="Prezime" type="text" class="form-control" placeholder="@L["LastName"]" required maxlength="100" pattern="@UserInputPatterns.PersonNameHtml" autocomplete="off"
+                                       data-account-field="lastName"
+                                       data-required-message="@L["Validation.LastNameRequired"]"
+                                       data-invalid-message="@L["Validation.LastNameLettersOnly"]"
+                                       data-max-message="@L["Validation.LastNameMaxLength"]" />
+                                <span asp-validation-for="Prezime" class="account-validation-message"></span>
                             </div>
 
                             <div class="col-12">
                                 <label asp-for="Email" class="form-label">@L["EmailAddress"]</label>
-                                <input asp-for="Email" type="email" class="form-control" placeholder="@L["EmailAddress"]" required pattern="@UserInputPatterns.EmailHtml" />
-                                <span asp-validation-for="Email" class="text-danger"></span>
+                                <input asp-for="Email" type="email" class="form-control" placeholder="@L["EmailAddress"]" required pattern="@UserInputPatterns.EmailHtml" autocomplete="off"
+                                       data-account-field="email"
+                                       data-required-message="@L["Validation.EmailRequired"]"
+                                       data-invalid-message="@L["Validation.EmailValid"]" />
+                                <span asp-validation-for="Email" class="account-validation-message"></span>
                             </div>
 
                             <div class="col-12">
                                 <label asp-for="UserName" class="form-label">@L["Username"]</label>
-                                <input asp-for="UserName" type="text" class="form-control" placeholder="@L["Username"]" required pattern="@UserInputPatterns.UsernameHtml" />
-                                <span asp-validation-for="UserName" class="text-danger"></span>
+                                <input asp-for="UserName" type="text" class="form-control" placeholder="@L["Username"]" required maxlength="100" pattern="@UserInputPatterns.UsernameHtml" autocomplete="off"
+                                       data-account-field="username"
+                                       data-required-message="@L["Validation.UsernameRequired"]"
+                                       data-invalid-message="@L["Validation.UsernameAlphanumeric"]"
+                                       data-max-message="@L["Validation.UsernameMaxLength"]"
+                                       data-hint-message="@L["Validation.UsernameHint"]" />
+                                <span asp-validation-for="UserName" class="account-validation-message"></span>
                             </div>
                         </div>
 
-                        <div class="profile-actions">
-                            <div class="profile-actions-left">
-                                <a asp-controller="Profil" asp-action="Index" class="btn btn-light border rounded-4">@L["BackToProfile"]</a>
-                                <button type="button" class="btn btn-outline-secondary rounded-4" id="change-password-btn">
-                                    <i class="bi bi-key me-2"></i>@L["NavChangePassword"]
-                                </button>
-                            </div>
-
+                        <div class="profile-actions profile-submit-actions">
                             <button type="submit" class="btn btn-primary rounded-4">@L["SaveChanges"]</button>
                         </div>
                     </form>
@@ -133,6 +141,7 @@
 </div>
 
 @section Scripts {
+    <script src="~/js/components/account-validation.js" asp-append-version="true"></script>
     <script>
         const profileTexts = {
             currentRequired: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["Validation.CurrentPasswordRequired"].Value)),
@@ -146,34 +155,29 @@
         };
 
         $(document).ready(function() {
-            $("#Ime, #Prezime").on("input", function() {
-                var value = $(this).val();
-                var lettersOnly = /^[\p{L}\s-]*$/u;
+            const passwordModalElement = document.getElementById("passwordChangeModal");
 
-                if (!lettersOnly.test(value)) {
-                    $(this).val(value.replace(/[^\p{L}\s-]/gu, ''));
-                }
-            });
-
-            $("#UserName").on("input", function() {
-                var value = $(this).val();
-                var alphanumericOnly = /^[A-Za-z0-9]*$/;
-
-                if (!alphanumericOnly.test(value)) {
-                    $(this).val(value.replace(/[^A-Za-z0-9]/g, ''));
-                }
-            });
-
-            $("#change-password-btn").click(function() {
+            const openPasswordChangeModal = function() {
                 $("#change-password-form")[0].reset();
                 $("#password-errors").html("");
                 $(".password-error").html("");
-                bootstrap.Modal.getOrCreateInstance(document.getElementById("passwordChangeModal")).show();
+                bootstrap.Modal.getOrCreateInstance(passwordModalElement).show();
+            };
+
+            const openPasswordModalFromHash = function() {
+                if (window.location.hash === "#password") {
+                    openPasswordChangeModal();
+                }
+            };
+
+            window.addEventListener("hashchange", openPasswordModalFromHash);
+            passwordModalElement.addEventListener("hidden.bs.modal", function() {
+                if (window.location.hash === "#password") {
+                    window.history.replaceState(null, "", window.location.pathname + window.location.search);
+                }
             });
 
-            if (window.location.hash === "#password") {
-                $("#change-password-btn").trigger("click");
-            }
+            openPasswordModalFromHash();
 
             $("#submit-password-change").click(function() {
                 let isValid = true;
@@ -223,7 +227,7 @@
                     },
                     success: function(response) {
                         bootstrap.Modal.getInstance(document.getElementById("passwordChangeModal")).hide();
-                        window.showAppFlashMessage(response.message || profileTexts.passwordChanged, "success");
+                        window.showAppToast(response.message || profileTexts.passwordChanged, "success");
                     },
                     error: function(xhr) {
                         if (xhr.responseJSON && xhr.responseJSON.errors) {

@@ -252,13 +252,13 @@
                 const allowedExtensions = /(\.jpg|\.jpeg|\.png|\.gif|\.bmp)$/i;
 
                 if (!allowedExtensions.exec(file.name)) {
-                    window.showAppFlashMessage(text.allowedExtensions, 'error');
+                    window.showAppToast(text.allowedExtensions, 'error');
                     $(this).val('');
                     return false;
                 }
 
                 if (file.size > 5 * 1024 * 1024) {
-                    window.showAppFlashMessage(text.imageSizeLimit, 'error');
+                    window.showAppToast(text.imageSizeLimit, 'error');
                     $(this).val('');
                     return false;
                 }

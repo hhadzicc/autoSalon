@@ -23,7 +23,7 @@
                         <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
                         <div class="login-field">
                             <label asp-for="LoginIdentifier" class="form-label">@L["AuthLoginIdentifier"]</label>
-                            <input asp-for="LoginIdentifier" type="text" class="form-control" placeholder="@L["AuthLoginIdentifierPlaceholder"]" autocomplete="username" required
+                            <input asp-for="LoginIdentifier" type="text" class="form-control" placeholder="@L["AuthLoginIdentifierPlaceholder"]" autocomplete="username" required maxlength="256"
                                    data-account-field="loginIdentifier"
                                    data-required-message="@L["Validation.LoginIdentifierRequired"]"
                                    data-max-message="@L["Validation.LoginIdentifierMaxLength"]" />

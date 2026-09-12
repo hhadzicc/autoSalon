@@ -86,7 +86,7 @@
     <value>Profil</value>
   </data>
   <data name="NavPurchasedItems" xml:space="preserve">
-    <value>Kupljeni artikli</value>
+    <value>Kupljena vozila</value>
   </data>
   <data name="NavChangePassword" xml:space="preserve">
     <value>Promijeni lozinku</value>
@@ -446,13 +446,13 @@
     <value>Nema novih upita.</value>
   </data>
   <data name="DashboardReviews" xml:space="preserve">
-    <value>Recenzije</value>
+    <value>Iskustva kupaca</value>
   </data>
   <data name="DashboardLatestReviewsDesc" xml:space="preserve">
-    <value>Najnovije ocjene vozila.</value>
+    <value>Najnovija verifikovana iskustva kupovine.</value>
   </data>
   <data name="DashboardNoReviews" xml:space="preserve">
-    <value>Nema novih recenzija.</value>
+    <value>Nema novih iskustava kupaca.</value>
   </data>
   <data name="StatusCreated" xml:space="preserve">
     <value>Kreirana</value>
@@ -1036,12 +1036,6 @@
   <data name="BackToList" xml:space="preserve">
     <value>Nazad na listu</value>
   </data>
-  <data name="VehicleDetailsEyebrow" xml:space="preserve">
-    <value>Detalji vozila</value>
-  </data>
-  <data name="VehicleDetailsHeaderText" xml:space="preserve">
-    <value>Pregledajte specifikacije, cijenu, opis i opcije kupovine za odabrano vozilo.</value>
-  </data>
   <data name="Available" xml:space="preserve">
     <value>Dostupno</value>
   </data>
@@ -1055,19 +1049,19 @@
     <value>Nema dostupnog opisa za ovo vozilo.</value>
   </data>
   <data name="Reviews" xml:space="preserve">
-    <value>Recenzije</value>
+    <value>Iskustva kupaca</value>
   </data>
   <data name="UserReviews" xml:space="preserve">
-    <value>Recenzije korisnika</value>
+    <value>Iskustva kupaca</value>
   </data>
   <data name="NoReviewsTitle" xml:space="preserve">
-    <value>Trenutno nema recenzija</value>
+    <value>Trenutno nema iskustava kupaca</value>
   </data>
   <data name="NoReviewsPurchasedText" xml:space="preserve">
-    <value>Kupite ovo vozilo kako biste mogli dodati recenziju.</value>
+    <value>Završite kupovinu kako biste mogli podijeliti svoje iskustvo.</value>
   </data>
   <data name="NoReviewsLoginText" xml:space="preserve">
-    <value>Prijavite se kako biste mogli kupiti i recenzirati ovo vozilo.</value>
+    <value>Prijavite se i završite kupovinu kako biste mogli podijeliti svoje iskustvo.</value>
   </data>
   <data name="Vehicle" xml:space="preserve">
     <value>Vozilo</value>
@@ -1106,10 +1100,10 @@
     <value>* Kalkulator je informativnog karaktera i ne predstavlja ponudu za kredit.</value>
   </data>
   <data name="ReviewComment" xml:space="preserve">
-    <value>Komentar recenzije</value>
+    <value>Komentar iskustva</value>
   </data>
   <data name="ReviewCommentFullText" xml:space="preserve">
-    <value>Pregled punog komentara korisnika.</value>
+    <value>Cijeli komentar iskustva kupca.</value>
   </data>
   <data name="PaymentDetails" xml:space="preserve">
     <value>Podaci za plaćanje</value>
@@ -1154,7 +1148,7 @@
     <value>Ime i prezime su obavezni.</value>
   </data>
   <data name="PaymentHolderFullName" xml:space="preserve">
-    <value>Unesite ime i prezime (mora sadržavati razmak).</value>
+    <value>Unesite ime vlasnika kartice.</value>
   </data>
   <data name="PaymentCardRequired" xml:space="preserve">
     <value>Broj kartice je obavezan.</value>
@@ -1175,7 +1169,7 @@
     <value>CVV kod je obavezan.</value>
   </data>
   <data name="PaymentCvvLength" xml:space="preserve">
-    <value>CVV kod mora sadržavati tačno 3 cifre.</value>
+    <value>Unesite 3 ili 4 cifre.</value>
   </data>
   <data name="CartTitle" xml:space="preserve">
     <value>Korpa</value>
@@ -1187,7 +1181,7 @@
     <value>Vaša korpa</value>
   </data>
   <data name="CartHeaderText" xml:space="preserve">
-    <value>Pregledajte odabrana vozila, izračunajte ratu kredita i nastavite kupovinu.</value>
+    <value>Pregled odabranih vozila i nastavak kupovine.</value>
   </data>
   <data name="CartEmptyTitle" xml:space="preserve">
     <value>Vaša korpa je prazna</value>
@@ -1217,10 +1211,10 @@
     <value>Ukupan iznos</value>
   </data>
   <data name="PaymentDue" xml:space="preserve">
-    <value>Za plaćanje</value>
+    <value>Ukupno za plaćanje</value>
   </data>
   <data name="ContinueToCheckout" xml:space="preserve">
-    <value>Nastavi na checkout</value>
+    <value>Nastavi na plaćanje</value>
   </data>
   <data name="ClearCart" xml:space="preserve">
     <value>Isprazni korpu</value>
@@ -1229,22 +1223,19 @@
     <value>Isprazniti korpu?</value>
   </data>
   <data name="ClearCartConfirmMessage" xml:space="preserve">
-    <value>Da li ste sigurni da želite isprazniti korpu?</value>
+    <value>Ova radnja će ukloniti sva vozila iz vaše korpe i ne može se poništiti.</value>
   </data>
   <data name="ClearCartConfirmItem" xml:space="preserve">
-    <value>Sva vozila iz korpe</value>
+    <value>Iz korpe će biti uklonjeno {0} vozila.</value>
   </data>
   <data name="ClearCartConfirmAction" xml:space="preserve">
     <value>Da, isprazni korpu</value>
   </data>
   <data name="CheckoutTitle" xml:space="preserve">
-    <value>Checkout - završi kupovinu</value>
+    <value>Završi kupovinu</value>
   </data>
   <data name="CheckoutText" xml:space="preserve">
     <value>Odaberite vozila i unesite podatke za plaćanje.</value>
-  </data>
-  <data name="SelectVehiclesForPurchase" xml:space="preserve">
-    <value>Odaberite vozila za kupovinu:</value>
   </data>
   <data name="SelectAtLeastOneVehicle" xml:space="preserve">
     <value>Morate odabrati barem jedno vozilo.</value>
@@ -1285,11 +1276,14 @@
   <data name="BackToVehicles" xml:space="preserve">
     <value>Povratak na vozila</value>
   </data>
+  <data name="BackToCart" xml:space="preserve">
+    <value>Povratak na korpu</value>
+  </data>
   <data name="UserProfileEyebrow" xml:space="preserve">
     <value>Korisnički profil</value>
   </data>
   <data name="ProfileHeaderText" xml:space="preserve">
-    <value>Pregledajte svoje podatke, kupljene artikle i recenzije.</value>
+    <value>Pregledajte svoje podatke, kupljena vozila i iskustva kupovine.</value>
   </data>
   <data name="FullName" xml:space="preserve">
     <value>Ime i prezime</value>
@@ -1297,29 +1291,17 @@
   <data name="QuickActions" xml:space="preserve">
     <value>Brze akcije</value>
   </data>
-  <data name="QuickActionsText" xml:space="preserve">
-    <value>Upravljajte profilom, kupovinama i korpom.</value>
-  </data>
   <data name="EditProfile" xml:space="preserve">
     <value>Uredi profil</value>
   </data>
-  <data name="ProfileReviewsText" xml:space="preserve">
-    <value>Vaše recenzije vozila.</value>
-  </data>
   <data name="RatingOutOfFive" xml:space="preserve">
     <value>Ocjena {0} od 5</value>
-  </data>
-  <data name="NoReviewsToShow" xml:space="preserve">
-    <value>Nema recenzija za prikaz.</value>
   </data>
   <data name="EditProfileHeaderText" xml:space="preserve">
     <value>Ažurirajte osnovne podatke svog korisničkog naloga.</value>
   </data>
   <data name="EditData" xml:space="preserve">
     <value>Uredi podatke</value>
-  </data>
-  <data name="EditDataText" xml:space="preserve">
-    <value>Sačuvajte tačne podatke za prijavu i komunikaciju.</value>
   </data>
   <data name="BackToProfile" xml:space="preserve">
     <value>Nazad na profil</value>
@@ -1336,44 +1318,38 @@
   <data name="PasswordChangedSuccess" xml:space="preserve">
     <value>Lozinka je uspješno promijenjena.</value>
   </data>
-  <data name="Purchases" xml:space="preserve">
-    <value>Kupovine</value>
-  </data>
-  <data name="PurchasedItemsHeaderText" xml:space="preserve">
-    <value>Pregledajte vozila koja ste kupili i dodajte recenziju.</value>
-  </data>
   <data name="YourPurchases" xml:space="preserve">
-    <value>Vaše kupovine</value>
+    <value>Kupljena vozila</value>
   </data>
   <data name="YourPurchasesText" xml:space="preserve">
-    <value>Lista vozila kupljenih kroz aplikaciju.</value>
+    <value>Pregledajte kupljena vozila i upravljajte iskustvima kupovine.</value>
   </data>
   <data name="PurchaseDate" xml:space="preserve">
     <value>Datum kupovine</value>
   </data>
   <data name="ReviewAdded" xml:space="preserve">
-    <value>Recenzija dodana</value>
+    <value>Iskustvo podijeljeno</value>
   </data>
   <data name="YourReview" xml:space="preserve">
-    <value>Vaša recenzija</value>
+    <value>Vaše iskustvo kupovine</value>
   </data>
   <data name="ReviewDate" xml:space="preserve">
-    <value>Datum recenzije</value>
+    <value>Datum iskustva</value>
   </data>
   <data name="EditReview" xml:space="preserve">
-    <value>Izmijeni recenziju</value>
+    <value>Izmijeni iskustvo</value>
   </data>
   <data name="AddReview" xml:space="preserve">
-    <value>Dodaj recenziju</value>
+    <value>Podijeli iskustvo</value>
   </data>
   <data name="RemoveReviewConfirmTitle" xml:space="preserve">
-    <value>Ukloniti recenziju?</value>
+    <value>Ukloniti iskustvo?</value>
   </data>
   <data name="RemoveReviewConfirmMessage" xml:space="preserve">
-    <value>Jeste li sigurni da želite ukloniti ovu recenziju?</value>
+    <value>Jeste li sigurni da želite ukloniti ovo iskustvo kupovine?</value>
   </data>
   <data name="RemoveReviewConfirmAction" xml:space="preserve">
-    <value>Da, ukloni recenziju</value>
+    <value>Da, ukloni iskustvo</value>
   </data>
   <data name="ReviewModalTitle" xml:space="preserve">
     <value>{0} za {1}</value>
@@ -1394,7 +1370,10 @@
     <value>Komentar može imati najviše 1000 znakova.</value>
   </data>
   <data name="NoPurchasedItems" xml:space="preserve">
-    <value>Još uvijek nema kupljenih artikala.</value>
+    <value>Još uvijek nema kupljenih vozila.</value>
+  </data>
+  <data name="DeleteReview" xml:space="preserve">
+    <value>Obriši iskustvo</value>
   </data>
   <data name="ViewVehicleCatalog" xml:space="preserve">
     <value>Pogledaj katalog vozila</value>
@@ -1457,10 +1436,10 @@
     <value>Nema novih upita.</value>
   </data>
   <data name="AdminDashboardLatestReviewsText" xml:space="preserve">
-    <value>Najnovije ocjene vozila.</value>
+    <value>Najnovija verifikovana iskustva kupovine.</value>
   </data>
   <data name="AdminDashboardNoReviews" xml:space="preserve">
-    <value>Nema novih recenzija.</value>
+    <value>Nema novih iskustava kupaca.</value>
   </data>
   <data name="AdminVehiclesTitle" xml:space="preserve">
     <value>Pregled vozila</value>
@@ -1664,13 +1643,13 @@
     <value>opcionalno</value>
   </data>
   <data name="AdminReviewsTitle" xml:space="preserve">
-    <value>Pregled recenzija</value>
+    <value>Iskustva kupaca</value>
   </data>
   <data name="AdminReviewsList" xml:space="preserve">
-    <value>Lista recenzija</value>
+    <value>Lista iskustava</value>
   </data>
   <data name="AdminReviewsListText" xml:space="preserve">
-    <value>Filtrirajte recenzije prema korisniku, vozilu ili sadržaju komentara.</value>
+    <value>Filtrirajte verifikovana iskustva prema kupcu, kupljenom vozilu ili komentaru.</value>
   </data>
   <data name="FilterByUserPlaceholder" xml:space="preserve">
     <value>Filtriraj po korisniku...</value>
@@ -1682,37 +1661,37 @@
     <value>Pretraži po tekstu...</value>
   </data>
   <data name="LoadingReviews" xml:space="preserve">
-    <value>Učitavanje recenzija...</value>
+    <value>Učitavanje iskustava kupaca...</value>
   </data>
   <data name="NoReviewsAvailable" xml:space="preserve">
-    <value>Nema dostupnih recenzija.</value>
+    <value>Nema dostupnih iskustava kupaca.</value>
   </data>
   <data name="ReviewCommentTitle" xml:space="preserve">
-    <value>Komentar recenzije</value>
+    <value>Iskustvo kupovine</value>
   </data>
   <data name="ReviewCommentSubtitle" xml:space="preserve">
-    <value>Pregled punog komentara korisnika.</value>
+    <value>Cijeli komentar verifikovanog kupca.</value>
   </data>
   <data name="Show" xml:space="preserve">
     <value>Prikaži</value>
   </data>
   <data name="DeleteReviewTitle" xml:space="preserve">
-    <value>Obrisati recenziju?</value>
+    <value>Obrisati iskustvo?</value>
   </data>
   <data name="DeleteReviewMessage" xml:space="preserve">
-    <value>Da li ste sigurni da želite obrisati ovu recenziju?</value>
+    <value>Da li ste sigurni da želite obrisati ovo iskustvo kupovine?</value>
   </data>
   <data name="DeleteReviewAction" xml:space="preserve">
-    <value>Da, obriši recenziju</value>
+    <value>Da, obriši iskustvo</value>
   </data>
   <data name="ReviewDeletedSuccess" xml:space="preserve">
-    <value>Recenzija uspješno obrisana.</value>
+    <value>Iskustvo kupca je uspješno obrisano.</value>
   </data>
   <data name="ReviewsLoadError" xml:space="preserve">
-    <value>Greška prilikom učitavanja recenzija:</value>
+    <value>Greška prilikom učitavanja iskustava kupaca:</value>
   </data>
   <data name="ReviewDeleteError" xml:space="preserve">
-    <value>Došlo je do greške prilikom brisanja recenzije.</value>
+    <value>Došlo je do greške prilikom brisanja iskustva kupca.</value>
   </data>
   <data name="RatingWord" xml:space="preserve">
     <value>ocjena</value>
@@ -1858,6 +1837,12 @@
   <data name="CartRemoveSuccess" xml:space="preserve">
     <value>Vozilo je uklonjeno iz korpe.</value>
   </data>
+  <data name="CartVehicleRemovedToast" xml:space="preserve">
+    <value>Vozilo {0} je uklonjeno iz korpe.</value>
+  </data>
+  <data name="Undo" xml:space="preserve">
+    <value>Poništi</value>
+  </data>
   <data name="CartVehicleNotFoundInCart" xml:space="preserve">
     <value>Vozilo nije pronađeno u korpi.</value>
   </data>
@@ -1946,19 +1931,43 @@
     <value>Ocjena mora biti između 1 i 5.</value>
   </data>
   <data name="ReviewPurchasedOnly" xml:space="preserve">
-    <value>Možete dodati recenziju samo za vozila koja ste kupili.</value>
+    <value>Iskustvo možete podijeliti samo nakon završene kupovine vozila.</value>
   </data>
   <data name="ReviewUpdatedSuccess" xml:space="preserve">
-    <value>Recenzija je uspješno ažurirana.</value>
+    <value>Vaše iskustvo kupovine je uspješno ažurirano.</value>
   </data>
   <data name="ReviewAddedSuccess" xml:space="preserve">
-    <value>Recenzija je uspješno dodana.</value>
+    <value>Vaše iskustvo kupovine je uspješno podijeljeno.</value>
   </data>
   <data name="ReviewNotFoundOrNotOwned" xml:space="preserve">
-    <value>Recenzija nije pronađena ili ne pripada vama.</value>
+    <value>Iskustvo nije pronađeno ili ne pripada vama.</value>
   </data>
   <data name="ReviewRemovedSuccess" xml:space="preserve">
-    <value>Recenzija je uspješno uklonjena.</value>
+    <value>Iskustvo kupovine je uspješno uklonjeno.</value>
+  </data>
+  <data name="CustomerExperiencesTitle" xml:space="preserve">
+    <value>Iskustva naših kupaca</value>
+  </data>
+  <data name="CustomerExperiencesSubtitle" xml:space="preserve">
+    <value>Nedavna verifikovana iskustva kupaca koji su kupovali putem Autosalon OneZone.</value>
+  </data>
+  <data name="AverageCustomerRating" xml:space="preserve">
+    <value>Prosječna ocjena kupaca</value>
+  </data>
+  <data name="ExperienceCount" xml:space="preserve">
+    <value>{0} iskustava</value>
+  </data>
+  <data name="VerifiedPurchase" xml:space="preserve">
+    <value>Verifikovana kupovina</value>
+  </data>
+  <data name="PurchasedVehicle" xml:space="preserve">
+    <value>Kupljeno vozilo:</value>
+  </data>
+  <data name="NoCustomerExperiencesTitle" xml:space="preserve">
+    <value>Još nema iskustava kupaca</value>
+  </data>
+  <data name="NoCustomerExperiencesText" xml:space="preserve">
+    <value>Verifikovana iskustva kupaca pojavit će se nakon završenih kupovina.</value>
   </data>
   <data name="EditVehicle" xml:space="preserve">
     <value>Izmijeni vozilo</value>
@@ -2048,7 +2057,7 @@
     <value>Godina nije ispravna.</value>
   </data>
   <data name="PaymentCvvDigits" xml:space="preserve">
-    <value>CVV kod mora sadržavati tačno 3 cifre.</value>
+    <value>Unesite 3 ili 4 cifre.</value>
   </data>
   <data name="CommonTryAgain" xml:space="preserve">
     <value>Došlo je do greške. Molimo pokušajte ponovo.</value>

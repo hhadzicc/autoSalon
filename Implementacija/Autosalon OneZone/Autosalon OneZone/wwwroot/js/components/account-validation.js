@@ -77,18 +77,21 @@
         summary.classList.add("is-visible");
     };
 
-    const validators = {
-        firstName: value => /^[\p{L}]+(?:[ '’\-][\p{L}]+)*$/u.test(value),
-        lastName: value => /^[\p{L}]+(?:[ '’\-][\p{L}]+)*$/u.test(value),
-        username: value => /^[A-Za-z0-9]+$/.test(value),
-        email: value => /^[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$/.test(value)
-    };
+    const matchesInputPattern = input => {
+        const pattern = input.getAttribute("pattern");
+        if (!pattern) {
+            return true;
+        }
 
-    const limits = {
-        firstName: 100,
-        lastName: 100,
-        username: 100,
-        loginIdentifier: 256
+        const flags = input.dataset.accountField === "firstName" || input.dataset.accountField === "lastName"
+            ? "u"
+            : "";
+
+        try {
+            return new RegExp(`^(?:${pattern})$`, flags).test(input.value);
+        } catch {
+            return false;
+        }
     };
 
     const validateSimpleField = (key, force = false) => {
@@ -103,12 +106,12 @@
             return false;
         }
 
-        if (limits[key] && value.length > limits[key]) {
+        if (input.maxLength > 0 && value.length > input.maxLength) {
             setFieldState(input, "error", input.dataset.maxMessage || "");
             return false;
         }
 
-        if (validators[key] && !validators[key](value)) {
+        if (!matchesInputPattern(input)) {
             setFieldState(input, "error", input.dataset.invalidMessage || "");
             return false;
         }

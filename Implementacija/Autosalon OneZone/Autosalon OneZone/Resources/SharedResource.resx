@@ -86,7 +86,7 @@
     <value>Profile</value>
   </data>
   <data name="NavPurchasedItems" xml:space="preserve">
-    <value>Purchased items</value>
+    <value>Purchased vehicles</value>
   </data>
   <data name="NavChangePassword" xml:space="preserve">
     <value>Change password</value>
@@ -446,13 +446,13 @@
     <value>No new inquiries.</value>
   </data>
   <data name="DashboardReviews" xml:space="preserve">
-    <value>Reviews</value>
+    <value>Customer experiences</value>
   </data>
   <data name="DashboardLatestReviewsDesc" xml:space="preserve">
-    <value>Latest vehicle ratings.</value>
+    <value>Latest verified purchase experiences.</value>
   </data>
   <data name="DashboardNoReviews" xml:space="preserve">
-    <value>No new reviews.</value>
+    <value>No new customer experiences.</value>
   </data>
   <data name="StatusCreated" xml:space="preserve">
     <value>Created</value>
@@ -1036,12 +1036,6 @@
   <data name="BackToList" xml:space="preserve">
     <value>Back to list</value>
   </data>
-  <data name="VehicleDetailsEyebrow" xml:space="preserve">
-    <value>Vehicle details</value>
-  </data>
-  <data name="VehicleDetailsHeaderText" xml:space="preserve">
-    <value>Review specifications, price, description and purchase options for the selected vehicle.</value>
-  </data>
   <data name="Available" xml:space="preserve">
     <value>Available</value>
   </data>
@@ -1055,19 +1049,19 @@
     <value>No description is available for this vehicle.</value>
   </data>
   <data name="Reviews" xml:space="preserve">
-    <value>Reviews</value>
+    <value>Customer experiences</value>
   </data>
   <data name="UserReviews" xml:space="preserve">
-    <value>User reviews</value>
+    <value>Customer experiences</value>
   </data>
   <data name="NoReviewsTitle" xml:space="preserve">
-    <value>There are no reviews yet</value>
+    <value>There are no customer experiences yet</value>
   </data>
   <data name="NoReviewsPurchasedText" xml:space="preserve">
-    <value>Buy this vehicle to add a review.</value>
+    <value>Complete a purchase to share your experience.</value>
   </data>
   <data name="NoReviewsLoginText" xml:space="preserve">
-    <value>Log in to buy and review this vehicle.</value>
+    <value>Log in and complete a purchase to share your experience.</value>
   </data>
   <data name="Vehicle" xml:space="preserve">
     <value>Vehicle</value>
@@ -1106,10 +1100,10 @@
     <value>* The calculator is for informational purposes and does not represent a loan offer.</value>
   </data>
   <data name="ReviewComment" xml:space="preserve">
-    <value>Review comment</value>
+    <value>Experience comment</value>
   </data>
   <data name="ReviewCommentFullText" xml:space="preserve">
-    <value>Full user comment preview.</value>
+    <value>Full customer experience comment.</value>
   </data>
   <data name="PaymentDetails" xml:space="preserve">
     <value>Payment details</value>
@@ -1154,7 +1148,7 @@
     <value>Full name is required.</value>
   </data>
   <data name="PaymentHolderFullName" xml:space="preserve">
-    <value>Enter first and last name (must contain a space).</value>
+    <value>Enter the cardholder name.</value>
   </data>
   <data name="PaymentCardRequired" xml:space="preserve">
     <value>Card number is required.</value>
@@ -1175,7 +1169,7 @@
     <value>CVV code is required.</value>
   </data>
   <data name="PaymentCvvLength" xml:space="preserve">
-    <value>CVV code must contain exactly 3 digits.</value>
+    <value>Enter 3 or 4 digits.</value>
   </data>
   <data name="CartTitle" xml:space="preserve">
     <value>Cart</value>
@@ -1187,7 +1181,7 @@
     <value>Your cart</value>
   </data>
   <data name="CartHeaderText" xml:space="preserve">
-    <value>Review selected vehicles, calculate a loan installment and continue shopping.</value>
+    <value>Review selected vehicles and continue shopping.</value>
   </data>
   <data name="CartEmptyTitle" xml:space="preserve">
     <value>Your cart is empty</value>
@@ -1217,10 +1211,10 @@
     <value>Total amount</value>
   </data>
   <data name="PaymentDue" xml:space="preserve">
-    <value>Payment due</value>
+    <value>Total to pay</value>
   </data>
   <data name="ContinueToCheckout" xml:space="preserve">
-    <value>Continue to checkout</value>
+    <value>Continue to payment</value>
   </data>
   <data name="ClearCart" xml:space="preserve">
     <value>Clear cart</value>
@@ -1229,22 +1223,19 @@
     <value>Clear cart?</value>
   </data>
   <data name="ClearCartConfirmMessage" xml:space="preserve">
-    <value>Are you sure you want to clear the cart?</value>
+    <value>This action will remove all vehicles from your cart and cannot be undone.</value>
   </data>
   <data name="ClearCartConfirmItem" xml:space="preserve">
-    <value>All vehicles from the cart</value>
+    <value>{0} vehicle(s) will be removed from the cart.</value>
   </data>
   <data name="ClearCartConfirmAction" xml:space="preserve">
     <value>Yes, clear cart</value>
   </data>
   <data name="CheckoutTitle" xml:space="preserve">
-    <value>Checkout - complete purchase</value>
+    <value>Complete purchase</value>
   </data>
   <data name="CheckoutText" xml:space="preserve">
     <value>Select vehicles and enter payment details.</value>
-  </data>
-  <data name="SelectVehiclesForPurchase" xml:space="preserve">
-    <value>Select vehicles for purchase:</value>
   </data>
   <data name="SelectAtLeastOneVehicle" xml:space="preserve">
     <value>You must select at least one vehicle.</value>
@@ -1285,11 +1276,14 @@
   <data name="BackToVehicles" xml:space="preserve">
     <value>Back to vehicles</value>
   </data>
+  <data name="BackToCart" xml:space="preserve">
+    <value>Back to cart</value>
+  </data>
   <data name="UserProfileEyebrow" xml:space="preserve">
     <value>User profile</value>
   </data>
   <data name="ProfileHeaderText" xml:space="preserve">
-    <value>Review your information, purchased items and reviews.</value>
+    <value>Review your information, purchased vehicles and purchase experiences.</value>
   </data>
   <data name="FullName" xml:space="preserve">
     <value>Full name</value>
@@ -1297,29 +1291,17 @@
   <data name="QuickActions" xml:space="preserve">
     <value>Quick actions</value>
   </data>
-  <data name="QuickActionsText" xml:space="preserve">
-    <value>Manage your profile, purchases and cart.</value>
-  </data>
   <data name="EditProfile" xml:space="preserve">
     <value>Edit profile</value>
   </data>
-  <data name="ProfileReviewsText" xml:space="preserve">
-    <value>Your vehicle reviews.</value>
-  </data>
   <data name="RatingOutOfFive" xml:space="preserve">
     <value>Rating {0} out of 5</value>
-  </data>
-  <data name="NoReviewsToShow" xml:space="preserve">
-    <value>No reviews to display.</value>
   </data>
   <data name="EditProfileHeaderText" xml:space="preserve">
     <value>Update the basic information of your user account.</value>
   </data>
   <data name="EditData" xml:space="preserve">
     <value>Edit data</value>
-  </data>
-  <data name="EditDataText" xml:space="preserve">
-    <value>Keep accurate login and communication information.</value>
   </data>
   <data name="BackToProfile" xml:space="preserve">
     <value>Back to profile</value>
@@ -1336,44 +1318,38 @@
   <data name="PasswordChangedSuccess" xml:space="preserve">
     <value>Password changed successfully.</value>
   </data>
-  <data name="Purchases" xml:space="preserve">
-    <value>Purchases</value>
-  </data>
-  <data name="PurchasedItemsHeaderText" xml:space="preserve">
-    <value>Review the vehicles you purchased and add a review.</value>
-  </data>
   <data name="YourPurchases" xml:space="preserve">
-    <value>Your purchases</value>
+    <value>Purchased vehicles</value>
   </data>
   <data name="YourPurchasesText" xml:space="preserve">
-    <value>List of vehicles purchased through the application.</value>
+    <value>Review purchased vehicles and manage your purchase experiences.</value>
   </data>
   <data name="PurchaseDate" xml:space="preserve">
     <value>Purchase date</value>
   </data>
   <data name="ReviewAdded" xml:space="preserve">
-    <value>Review added</value>
+    <value>Experience shared</value>
   </data>
   <data name="YourReview" xml:space="preserve">
-    <value>Your review</value>
+    <value>Your purchase experience</value>
   </data>
   <data name="ReviewDate" xml:space="preserve">
-    <value>Review date</value>
+    <value>Experience date</value>
   </data>
   <data name="EditReview" xml:space="preserve">
-    <value>Edit review</value>
+    <value>Edit experience</value>
   </data>
   <data name="AddReview" xml:space="preserve">
-    <value>Add review</value>
+    <value>Share experience</value>
   </data>
   <data name="RemoveReviewConfirmTitle" xml:space="preserve">
-    <value>Remove review?</value>
+    <value>Remove experience?</value>
   </data>
   <data name="RemoveReviewConfirmMessage" xml:space="preserve">
-    <value>Are you sure you want to remove this review?</value>
+    <value>Are you sure you want to remove this purchase experience?</value>
   </data>
   <data name="RemoveReviewConfirmAction" xml:space="preserve">
-    <value>Yes, remove review</value>
+    <value>Yes, remove experience</value>
   </data>
   <data name="ReviewModalTitle" xml:space="preserve">
     <value>{0} for {1}</value>
@@ -1394,7 +1370,10 @@
     <value>Comment can have at most 1000 characters.</value>
   </data>
   <data name="NoPurchasedItems" xml:space="preserve">
-    <value>There are no purchased items yet.</value>
+    <value>There are no purchased vehicles yet.</value>
+  </data>
+  <data name="DeleteReview" xml:space="preserve">
+    <value>Delete experience</value>
   </data>
   <data name="ViewVehicleCatalog" xml:space="preserve">
     <value>View vehicle catalog</value>
@@ -1457,10 +1436,10 @@
     <value>No new inquiries.</value>
   </data>
   <data name="AdminDashboardLatestReviewsText" xml:space="preserve">
-    <value>Latest vehicle ratings.</value>
+    <value>Latest verified purchase experiences.</value>
   </data>
   <data name="AdminDashboardNoReviews" xml:space="preserve">
-    <value>No new reviews.</value>
+    <value>No new customer experiences.</value>
   </data>
   <data name="AdminVehiclesTitle" xml:space="preserve">
     <value>Vehicle overview</value>
@@ -1664,13 +1643,13 @@
     <value>optional</value>
   </data>
   <data name="AdminReviewsTitle" xml:space="preserve">
-    <value>Review overview</value>
+    <value>Customer experiences</value>
   </data>
   <data name="AdminReviewsList" xml:space="preserve">
-    <value>Review list</value>
+    <value>Experience list</value>
   </data>
   <data name="AdminReviewsListText" xml:space="preserve">
-    <value>Filter reviews by user, vehicle or comment content.</value>
+    <value>Filter verified experiences by customer, purchased vehicle or comment.</value>
   </data>
   <data name="FilterByUserPlaceholder" xml:space="preserve">
     <value>Filter by user...</value>
@@ -1682,37 +1661,37 @@
     <value>Search by text...</value>
   </data>
   <data name="LoadingReviews" xml:space="preserve">
-    <value>Loading reviews...</value>
+    <value>Loading customer experiences...</value>
   </data>
   <data name="NoReviewsAvailable" xml:space="preserve">
-    <value>No reviews available.</value>
+    <value>No customer experiences available.</value>
   </data>
   <data name="ReviewCommentTitle" xml:space="preserve">
-    <value>Review comment</value>
+    <value>Purchase experience</value>
   </data>
   <data name="ReviewCommentSubtitle" xml:space="preserve">
-    <value>Full user comment preview.</value>
+    <value>Full verified customer comment.</value>
   </data>
   <data name="Show" xml:space="preserve">
     <value>Show</value>
   </data>
   <data name="DeleteReviewTitle" xml:space="preserve">
-    <value>Delete review?</value>
+    <value>Delete experience?</value>
   </data>
   <data name="DeleteReviewMessage" xml:space="preserve">
-    <value>Are you sure you want to delete this review?</value>
+    <value>Are you sure you want to delete this purchase experience?</value>
   </data>
   <data name="DeleteReviewAction" xml:space="preserve">
-    <value>Yes, delete review</value>
+    <value>Yes, delete experience</value>
   </data>
   <data name="ReviewDeletedSuccess" xml:space="preserve">
-    <value>Review deleted successfully.</value>
+    <value>Customer experience deleted successfully.</value>
   </data>
   <data name="ReviewsLoadError" xml:space="preserve">
-    <value>Error loading reviews:</value>
+    <value>Error loading customer experiences:</value>
   </data>
   <data name="ReviewDeleteError" xml:space="preserve">
-    <value>An error occurred while deleting the review.</value>
+    <value>An error occurred while deleting the customer experience.</value>
   </data>
   <data name="RatingWord" xml:space="preserve">
     <value>rating</value>
@@ -1858,6 +1837,12 @@
   <data name="CartRemoveSuccess" xml:space="preserve">
     <value>Vehicle was removed from the cart.</value>
   </data>
+  <data name="CartVehicleRemovedToast" xml:space="preserve">
+    <value>Vehicle {0} was removed from the cart.</value>
+  </data>
+  <data name="Undo" xml:space="preserve">
+    <value>Undo</value>
+  </data>
   <data name="CartVehicleNotFoundInCart" xml:space="preserve">
     <value>Vehicle was not found in the cart.</value>
   </data>
@@ -1946,19 +1931,43 @@
     <value>Rating must be between 1 and 5.</value>
   </data>
   <data name="ReviewPurchasedOnly" xml:space="preserve">
-    <value>You can add a review only for vehicles you purchased.</value>
+    <value>You can share an experience only for a completed vehicle purchase.</value>
   </data>
   <data name="ReviewUpdatedSuccess" xml:space="preserve">
-    <value>Review updated successfully.</value>
+    <value>Your purchase experience was updated successfully.</value>
   </data>
   <data name="ReviewAddedSuccess" xml:space="preserve">
-    <value>Review added successfully.</value>
+    <value>Your purchase experience was shared successfully.</value>
   </data>
   <data name="ReviewNotFoundOrNotOwned" xml:space="preserve">
-    <value>Review was not found or does not belong to you.</value>
+    <value>The experience was not found or does not belong to you.</value>
   </data>
   <data name="ReviewRemovedSuccess" xml:space="preserve">
-    <value>Review removed successfully.</value>
+    <value>Purchase experience removed successfully.</value>
+  </data>
+  <data name="CustomerExperiencesTitle" xml:space="preserve">
+    <value>Our customers' experiences</value>
+  </data>
+  <data name="CustomerExperiencesSubtitle" xml:space="preserve">
+    <value>Recent verified experiences from customers who purchased through Autosalon OneZone.</value>
+  </data>
+  <data name="AverageCustomerRating" xml:space="preserve">
+    <value>Average customer rating</value>
+  </data>
+  <data name="ExperienceCount" xml:space="preserve">
+    <value>{0} experiences</value>
+  </data>
+  <data name="VerifiedPurchase" xml:space="preserve">
+    <value>Verified purchase</value>
+  </data>
+  <data name="PurchasedVehicle" xml:space="preserve">
+    <value>Purchased vehicle:</value>
+  </data>
+  <data name="NoCustomerExperiencesTitle" xml:space="preserve">
+    <value>No customer experiences yet</value>
+  </data>
+  <data name="NoCustomerExperiencesText" xml:space="preserve">
+    <value>Verified customer experiences will appear here after completed purchases.</value>
   </data>
   <data name="EditVehicle" xml:space="preserve">
     <value>Edit vehicle</value>
@@ -2048,7 +2057,7 @@
     <value>Year is invalid.</value>
   </data>
   <data name="PaymentCvvDigits" xml:space="preserve">
-    <value>CVV code must contain exactly 3 digits.</value>
+    <value>Enter 3 or 4 digits.</value>
   </data>
   <data name="CommonTryAgain" xml:space="preserve">
     <value>An error occurred. Please try again.</value>

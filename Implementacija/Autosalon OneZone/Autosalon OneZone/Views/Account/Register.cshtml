@@ -24,7 +24,7 @@
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label asp-for="Ime" class="form-label">@L["FirstName"]</label>
-                                <input asp-for="Ime" type="text" class="form-control" placeholder="@L["FirstName"]" required pattern="@UserInputPatterns.PersonNameHtml" autocomplete="off"
+                                <input asp-for="Ime" type="text" class="form-control" placeholder="@L["FirstName"]" required maxlength="100" pattern="@UserInputPatterns.PersonNameHtml" autocomplete="off"
                                        data-account-field="firstName"
                                        data-required-message="@L["Validation.FirstNameRequired"]"
                                        data-invalid-message="@L["Validation.FirstNameLettersOnly"]"
@@ -34,7 +34,7 @@
 
                             <div class="col-md-6">
                                 <label asp-for="Prezime" class="form-label">@L["LastName"]</label>
-                                <input asp-for="Prezime" type="text" class="form-control" placeholder="@L["LastName"]" required pattern="@UserInputPatterns.PersonNameHtml" autocomplete="off"
+                                <input asp-for="Prezime" type="text" class="form-control" placeholder="@L["LastName"]" required maxlength="100" pattern="@UserInputPatterns.PersonNameHtml" autocomplete="off"
                                        data-account-field="lastName"
                                        data-required-message="@L["Validation.LastNameRequired"]"
                                        data-invalid-message="@L["Validation.LastNameLettersOnly"]"
@@ -44,7 +44,7 @@
 
                             <div class="col-12">
                                 <label asp-for="UserName" class="form-label">@L["Username"]</label>
-                                <input asp-for="UserName" type="text" class="form-control" placeholder="@L["Username"]" required pattern="@UserInputPatterns.UsernameHtml" autocomplete="off"
+                                <input asp-for="UserName" type="text" class="form-control" placeholder="@L["Username"]" required maxlength="100" pattern="@UserInputPatterns.UsernameHtml" autocomplete="off"
                                        data-account-field="username"
                                        data-required-message="@L["Validation.UsernameRequired"]"
                                        data-invalid-message="@L["Validation.UsernameAlphanumeric"]"

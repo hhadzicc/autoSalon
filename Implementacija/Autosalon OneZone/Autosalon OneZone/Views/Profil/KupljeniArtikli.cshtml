@@ -23,7 +23,7 @@
                         @foreach (var item in Model.PurchasedItems)
                         {
                             var reviewActionText = item.HasReview ? L["EditReview"].Value : L["AddReview"].Value;
-                            <article class="purchase-card">
+                            <article class="purchase-card" data-purchase-card data-vehicle-id="@item.VoziloID">
                                 <img src="@item.Slika" alt="@item.Naziv" />
 
                                 <div class="purchase-body">
@@ -37,15 +37,19 @@
 
                                             @if (item.HasReview)
                                             {
-                                                <span class="review-badge">
+                                                <span class="review-badge" data-review-badge>
                                                     <i class="bi bi-check-circle-fill me-1"></i>@L["ReviewAdded"]
                                                 </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="review-badge d-none" data-review-badge></span>
                                             }
                                         </div>
 
                                         @if (item.HasReview)
                                         {
-                                            <div class="purchase-review">
+                                            <div class="purchase-review" data-review-summary>
                                                 <div class="d-flex justify-content-between align-items-center gap-3 flex-wrap">
                                                     <h4>@L["YourReview"]</h4>
                                                     <div class="profile-stars" aria-label="@L["RatingOutOfFive", item.Recenzija.Ocjena]">
@@ -67,26 +71,27 @@
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#reviewModal-@item.VoziloID"
                                                 data-vozilo-id="@item.VoziloID"
-                                                data-vozilo-naziv="@item.Naziv">
+                                                data-vozilo-naziv="@item.Naziv"
+                                                data-add-review-text="@L["AddReview"]"
+                                                data-edit-review-text="@L["EditReview"]">
                                             <i class="bi bi-star-fill me-2"></i>@reviewActionText
                                         </button>
 
-                                        @if (item.HasReview)
-                                        {
-                                            <form asp-action="UkloniRecenziju" method="post">
+                                        <form asp-action="UkloniRecenziju" method="post" class="@(item.HasReview ? string.Empty : "d-none")" data-review-delete-form>
                                                 @Html.AntiForgeryToken()
-                                                <input type="hidden" name="recenzijaId" value="@item.Recenzija.RecenzijaID" />
+                                                <input type="hidden" name="recenzijaId" value="@(item.Recenzija?.RecenzijaID ?? 0)" />
                                                 <button type="submit"
                                                         class="btn btn-outline-danger rounded-4"
                                                         data-confirm-delete="true"
                                                         data-confirm-title="@L["DeleteReviewTitle"]"
                                                         data-confirm-message="@L["DeleteReviewMessage"]"
                                                         data-confirm-item="@item.Naziv"
-                                                        data-confirm-action="@L["DeleteReviewAction"]">
+                                                        data-confirm-action="@L["DeleteReviewAction"]"
+                                                        data-confirm-event-only="true"
+                                                        data-review-delete-trigger="true">
                                                     <i class="bi bi-trash me-2"></i>@L["DeleteReview"]
                                                 </button>
-                                            </form>
-                                        }
+                                        </form>
                                     </div>
                                 </div>
                             </article>
@@ -94,7 +99,9 @@
                             <div class="modal fade" id="reviewModal-@item.VoziloID" tabindex="-1" aria-labelledby="reviewModalLabel-@item.VoziloID" aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-centered">
                                     <div class="modal-content profile-modal">
-                                        <form asp-action="DodajRecenziju" method="post" class="review-form" id="review-form-@item.VoziloID">
+                                        <form asp-action="DodajRecenziju" method="post" class="review-form" id="review-form-@item.VoziloID" data-review-form
+                                              data-add-review-title="@L["ReviewModalTitle", L["AddReview"].Value, item.Naziv]"
+                                              data-edit-review-title="@L["ReviewModalTitle", L["EditReview"].Value, item.Naziv]">
                                             @Html.AntiForgeryToken()
                                             <div class="modal-header">
                                                 <h5 class="modal-title" id="reviewModalLabel-@item.VoziloID">
@@ -153,59 +160,283 @@
 
 @section Scripts {
     <script>
+        window.profileReviewTexts = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(new
+        {
+            editReview = L["EditReview"].Value,
+            reviewAdded = L["ReviewAdded"].Value,
+            yourReview = L["YourReview"].Value,
+            reviewDate = L["ReviewDate"].Value,
+            ratingOutOfFive = L["RatingOutOfFive"].Value
+        }));
+    </script>
+
+    <script>
         $(document).ready(function() {
+            const reviewTexts = window.profileReviewTexts || {};
+
+            const getReviewFormParts = (form) => ({
+                rating: form.querySelector('input[name="ocjena"]:checked'),
+                ratingError: form.querySelector('.rating + .invalid-feedback'),
+                comment: form.querySelector('textarea[name="komentar"]'),
+                commentError: form.querySelector('textarea[name="komentar"] + .invalid-feedback')
+            });
+
+            const validateReviewForm = (form) => {
+                const parts = getReviewFormParts(form);
+                let isValid = true;
+
+                if (!parts.rating) {
+                    form.querySelector('.rating')?.classList.add('is-invalid');
+                    parts.ratingError?.style.setProperty('display', 'block');
+                    isValid = false;
+                } else {
+                    form.querySelector('.rating')?.classList.remove('is-invalid');
+                    parts.ratingError?.style.removeProperty('display');
+                }
+
+                if (!parts.comment || !parts.comment.value.trim()) {
+                    parts.comment?.classList.add('is-invalid');
+                    parts.commentError?.style.setProperty('display', 'block');
+                    isValid = false;
+                } else {
+                    parts.comment.classList.remove('is-invalid');
+                    parts.commentError?.style.removeProperty('display');
+                }
+
+                return isValid;
+            };
+
+            const clearReviewValidation = (form) => {
+                form.querySelector('.rating')?.classList.remove('is-invalid');
+                form.querySelector('textarea[name="komentar"]')?.classList.remove('is-invalid');
+                form.querySelectorAll('.invalid-feedback').forEach(error => error.style.removeProperty('display'));
+            };
+
+            const createTextElement = (tagName, className, text) => {
+                const element = document.createElement(tagName);
+                element.className = className;
+                element.textContent = text || '';
+                return element;
+            };
+
+            const renderReviewSummary = (card, review) => {
+                const main = card.querySelector('.purchase-main');
+                if (!main) return;
+
+                let summary = card.querySelector('[data-review-summary]');
+                if (!summary) {
+                    summary = document.createElement('div');
+                    summary.className = 'purchase-review';
+                    summary.setAttribute('data-review-summary', '');
+                    main.appendChild(summary);
+                }
+
+                summary.replaceChildren();
+
+                const heading = document.createElement('div');
+                heading.className = 'd-flex justify-content-between align-items-center gap-3 flex-wrap';
+                heading.appendChild(createTextElement('h4', '', reviewTexts.yourReview));
+
+                const stars = document.createElement('div');
+                stars.className = 'profile-stars';
+                stars.setAttribute('aria-label', (reviewTexts.ratingOutOfFive || '{0}/5').replace('{0}', review.rating));
+                for (let rating = 1; rating <= 5; rating++) {
+                    const star = document.createElement('i');
+                    star.className = `bi ${rating <= review.rating ? 'bi-star-fill' : 'bi-star'}`;
+                    star.setAttribute('aria-hidden', 'true');
+                    stars.appendChild(star);
+                }
+                heading.appendChild(stars);
+
+                summary.appendChild(heading);
+                summary.appendChild(createTextElement('p', '', review.comment));
+                summary.appendChild(createTextElement('span', '', `${reviewTexts.reviewDate}: ${review.date}`));
+            };
+
+            const updateReviewCard = (form, review) => {
+                const vehicleId = form.querySelector('input[name="voziloId"]')?.value;
+                const card = document.querySelector(`[data-purchase-card][data-vehicle-id="${vehicleId}"]`);
+                if (!card) return;
+
+                renderReviewSummary(card, review);
+
+                const badge = card.querySelector('[data-review-badge]');
+                if (badge) {
+                    badge.classList.remove('d-none');
+                    badge.replaceChildren();
+                    const icon = document.createElement('i');
+                    icon.className = 'bi bi-check-circle-fill me-1';
+                    icon.setAttribute('aria-hidden', 'true');
+                    badge.append(icon, document.createTextNode(reviewTexts.reviewAdded || 'Review added'));
+                }
+
+                const reviewButton = card.querySelector(`[data-vozilo-id="${vehicleId}"]`);
+                if (reviewButton) {
+                    reviewButton.classList.remove('btn-primary');
+                    reviewButton.classList.add('btn-outline-primary');
+                    const icon = document.createElement('i');
+                    icon.className = 'bi bi-star-fill me-2';
+                    icon.setAttribute('aria-hidden', 'true');
+                    reviewButton.replaceChildren(icon, document.createTextNode(reviewButton.dataset.editReviewText || reviewTexts.editReview || 'Edit review'));
+                }
+
+                card.querySelector('[data-review-delete-form]')?.classList.remove('d-none');
+                const reviewId = card.querySelector('[data-review-delete-form] input[name="recenzijaId"]');
+                if (reviewId && review.reviewId) {
+                    reviewId.value = review.reviewId;
+                }
+
+                form.querySelectorAll('input[name="ocjena"]').forEach(input => {
+                    const selected = Number(input.value) === Number(review.rating);
+                    input.checked = selected;
+                    input.defaultChecked = selected;
+                });
+
+                const comment = form.querySelector('textarea[name="komentar"]');
+                if (comment) {
+                    comment.value = review.comment;
+                    comment.defaultValue = review.comment;
+                }
+
+                const modalTitle = form.closest('.modal')?.querySelector('.modal-title');
+                if (modalTitle) {
+                    modalTitle.textContent = form.dataset.editReviewTitle || modalTitle.textContent;
+                }
+            };
+
+            const resetReviewCard = (trigger) => {
+                const card = trigger.closest('[data-purchase-card]');
+                const deleteForm = trigger.closest('[data-review-delete-form]');
+                if (!card || !deleteForm) return;
+
+                const vehicleId = card.dataset.vehicleId;
+                card.querySelector('[data-review-summary]')?.remove();
+
+                const badge = card.querySelector('[data-review-badge]');
+                badge?.classList.add('d-none');
+                badge?.replaceChildren();
+
+                const reviewButton = card.querySelector(`[data-vozilo-id="${vehicleId}"]`);
+                if (reviewButton) {
+                    reviewButton.classList.remove('btn-outline-primary');
+                    reviewButton.classList.add('btn-primary');
+                    const icon = document.createElement('i');
+                    icon.className = 'bi bi-star-fill me-2';
+                    icon.setAttribute('aria-hidden', 'true');
+                    reviewButton.replaceChildren(icon, document.createTextNode(reviewButton.dataset.addReviewText || 'Add review'));
+                }
+
+                deleteForm.classList.add('d-none');
+                const reviewId = deleteForm.querySelector('input[name="recenzijaId"]');
+                if (reviewId) reviewId.value = '0';
+
+                const reviewForm = document.getElementById(`review-form-${vehicleId}`);
+                if (!reviewForm) return;
+
+                reviewForm.reset();
+                reviewForm.querySelectorAll('input[name="ocjena"]').forEach(input => {
+                    input.checked = false;
+                    input.defaultChecked = false;
+                });
+                const comment = reviewForm.querySelector('textarea[name="komentar"]');
+                if (comment) comment.defaultValue = '';
+                const modalTitle = reviewForm.closest('.modal')?.querySelector('.modal-title');
+                if (modalTitle) {
+                    modalTitle.textContent = reviewForm.dataset.addReviewTitle || modalTitle.textContent;
+                }
+            };
+
             $('.modal').on('hidden.bs.modal', function () {
                 const form = $(this).find('form')[0];
                 if (form) {
                     form.reset();
                 }
 
-                $(this).find('.is-invalid').removeClass('is-invalid');
-                $(this).find('.invalid-feedback').hide();
+                clearReviewValidation(this);
             });
 
             $('.review-form').on('submit', function(event) {
-                const form = $(this);
-                const formId = form.attr('id');
-                const voziloId = formId.split('-').pop();
-                let isValid = true;
-
-                if (!form.find('input[name="ocjena"]:checked').length) {
-                    form.find('.rating').addClass('is-invalid');
-                    form.find(`#ocjena-error-${voziloId}`).show();
-                    isValid = false;
-                } else {
-                    form.find('.rating').removeClass('is-invalid');
-                    form.find(`#ocjena-error-${voziloId}`).hide();
+                const form = this;
+                if (!window.appApi || !validateReviewForm(form)) {
+                    if (window.appApi) event.preventDefault();
+                    return;
                 }
 
-                const komentar = form.find('textarea[name="komentar"]').val().trim();
-                if (!komentar) {
-                    form.find('textarea[name="komentar"]').addClass('is-invalid');
-                    form.find('textarea[name="komentar"]').siblings('.invalid-feedback').show();
-                    isValid = false;
-                } else {
-                    form.find('textarea[name="komentar"]').removeClass('is-invalid');
-                    form.find('textarea[name="komentar"]').siblings('.invalid-feedback').hide();
+                event.preventDefault();
+                const submitButton = form.querySelector('button[type="submit"]');
+                const originalText = submitButton?.textContent;
+                if (submitButton) {
+                    submitButton.disabled = true;
+                    submitButton.setAttribute('aria-busy', 'true');
                 }
 
-                if (!isValid) {
-                    event.preventDefault();
-                }
+                window.appApi.postForm(form)
+                    .done(function(result) {
+                        if (!result?.success || !result.review) {
+                            window.showAppToast(result?.message || 'Unable to save the review.', { type: 'error' });
+                            return;
+                        }
+
+                        updateReviewCard(form, result.review);
+                        const modal = form.closest('.modal');
+                        if (modal && window.bootstrap) {
+                            bootstrap.Modal.getOrCreateInstance(modal).hide();
+                        }
+                        window.showAppToast(result.message, { type: 'success' });
+                    })
+                    .fail(function(xhr) {
+                        window.showAppToast(window.appApi.getErrorMessage(xhr, 'Unable to save the review.'), { type: 'error' });
+                    })
+                    .always(function() {
+                        if (submitButton) {
+                            submitButton.disabled = false;
+                            submitButton.removeAttribute('aria-busy');
+                            submitButton.textContent = originalText;
+                        }
+                    });
+            });
+
+            document.addEventListener('app:delete-confirmed', function(event) {
+                const trigger = event.target.closest('[data-review-delete-trigger="true"]');
+                if (!trigger || !window.appApi) return;
+
+                const form = trigger.closest('[data-review-delete-form]');
+                if (!form) return;
+
+                trigger.disabled = true;
+                trigger.setAttribute('aria-busy', 'true');
+
+                window.appApi.postForm(form)
+                    .done(function(result) {
+                        if (!result?.success) {
+                            window.showAppToast(result?.message || 'Unable to delete the review.', { type: 'error' });
+                            return;
+                        }
+
+                        resetReviewCard(trigger);
+                        window.showAppToast(result.message, { type: 'success' });
+                    })
+                    .fail(function(xhr) {
+                        window.showAppToast(window.appApi.getErrorMessage(xhr, 'Unable to delete the review.'), { type: 'error' });
+                    })
+                    .always(function() {
+                        trigger.disabled = false;
+                        trigger.removeAttribute('aria-busy');
+                    });
             });
 
             $('input[name="ocjena"]').on('change', function() {
-                const form = $(this).closest('form');
-                const formId = form.attr('id');
-                const voziloId = formId.split('-').pop();
-                form.find('.rating').removeClass('is-invalid');
-                form.find(`#ocjena-error-${voziloId}`).hide();
+                const form = this.closest('form');
+                if (form) {
+                    form.querySelector('.rating')?.classList.remove('is-invalid');
+                    form.querySelector('.rating + .invalid-feedback')?.style.removeProperty('display');
+                }
             });
 
             $('textarea[name="komentar"]').on('input', function() {
-                if ($(this).val().trim()) {
-                    $(this).removeClass('is-invalid');
-                    $(this).siblings('.invalid-feedback').hide();
+                if (this.value.trim()) {
+                    this.classList.remove('is-invalid');
+                    this.nextElementSibling?.style.removeProperty('display');
                 }
             });
         });

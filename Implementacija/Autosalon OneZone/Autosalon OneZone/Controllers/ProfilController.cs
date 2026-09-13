@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using Autosalon_OneZone.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Globalization;
 using Microsoft.Extensions.Localization;
 using Autosalon_OneZone.Services;
 
@@ -177,22 +178,19 @@ namespace Autosalon_OneZone.Controllers
         {
             if (ocjena < 1 || ocjena > 5)
             {
-                TempData["ErrorMessage"] = _localizer["ReviewRatingRange"].Value;
-                return RedirectToAction("KupljeniArtikli");
+                return ReviewError(_localizer["ReviewRatingRange"].Value);
             }
 
             komentar = komentar?.Trim() ?? string.Empty;
 
             if (string.IsNullOrWhiteSpace(komentar))
             {
-                TempData["ErrorMessage"] = _localizer["CommentRequired"].Value;
-                return RedirectToAction("KupljeniArtikli");
+                return ReviewError(_localizer["CommentRequired"].Value);
             }
 
             if (komentar.Length > 1000)
             {
-                TempData["ErrorMessage"] = _localizer["CommentMaxLength"].Value;
-                return RedirectToAction("KupljeniArtikli");
+                return ReviewError(_localizer["CommentMaxLength"].Value);
             }
 
             var user = await _userManager.GetUserAsync(User);
@@ -204,19 +202,59 @@ namespace Autosalon_OneZone.Controllers
             var result = await _activityService.SaveReviewAsync(user.Id, voziloId, ocjena, komentar);
             if (result == ReviewSaveResult.NotPurchased)
             {
-                TempData["ErrorMessage"] = _localizer["ReviewPurchasedOnly"].Value;
-                return RedirectToAction("KupljeniArtikli");
+                return ReviewError(_localizer["ReviewPurchasedOnly"].Value);
             }
 
-            if (result == ReviewSaveResult.Updated)
+            var successMessage = result == ReviewSaveResult.Updated
+                ? _localizer["ReviewUpdatedSuccess"].Value
+                : _localizer["ReviewAddedSuccess"].Value;
+            var reviewId = await _activityService.GetReviewIdAsync(user.Id, voziloId);
+
+            return ReviewSuccess(successMessage, reviewId, ocjena, komentar);
+        }
+
+        private bool WantsJsonResponse()
+        {
+            var requestedWith = Request.Headers["X-Requested-With"].ToString();
+            var accept = Request.Headers["Accept"].ToString();
+
+            return string.Equals(requestedWith, "XMLHttpRequest", StringComparison.OrdinalIgnoreCase) ||
+                   accept.Contains("application/json", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private IActionResult ReviewError(string message, int statusCode = 400)
+        {
+            if (WantsJsonResponse())
             {
-                TempData["SuccessMessage"] = _localizer["ReviewUpdatedSuccess"].Value;
-            }
-            else
-            {
-                TempData["SuccessMessage"] = _localizer["ReviewAddedSuccess"].Value;
+                return new JsonResult(new { success = false, message })
+                {
+                    StatusCode = statusCode
+                };
             }
 
+            TempData["ErrorMessage"] = message;
+            return RedirectToAction("KupljeniArtikli");
+        }
+
+        private IActionResult ReviewSuccess(string message, int? reviewId, int rating, string comment)
+        {
+            if (WantsJsonResponse())
+            {
+                return Json(new
+                {
+                    success = true,
+                    message,
+                    review = new
+                    {
+                        reviewId,
+                        rating,
+                        comment,
+                        date = DateTime.UtcNow.ToString("dd.MM.yyyy", CultureInfo.InvariantCulture)
+                    }
+                });
+            }
+
+            TempData["SuccessMessage"] = message;
             return RedirectToAction("KupljeniArtikli");
         }
 
@@ -236,7 +274,17 @@ namespace Autosalon_OneZone.Controllers
                 return RedirectToAction("KupljeniArtikli");
             }
 
-            TempData["SuccessMessage"] = _localizer["ReviewRemovedSuccess"].Value;
+            return ReviewMutationSuccess(_localizer["ReviewRemovedSuccess"].Value);
+        }
+
+        private IActionResult ReviewMutationSuccess(string message)
+        {
+            if (WantsJsonResponse())
+            {
+                return Json(new { success = true, message });
+            }
+
+            TempData["SuccessMessage"] = message;
             return RedirectToAction("KupljeniArtikli");
         }
     }

@@ -10,6 +10,7 @@ public interface IProfileActivityService
     Task<ProfileViewModel> GetProfileAsync(ApplicationUser user, string role);
     Task<PurchasedItemsViewModel> GetPurchasedItemsAsync(string userId);
     Task<ReviewSaveResult> SaveReviewAsync(string userId, int vehicleId, int rating, string comment);
+    Task<int?> GetReviewIdAsync(string userId, int vehicleId);
     Task<bool> DeleteReviewAsync(string userId, int reviewId);
 }
 
@@ -126,6 +127,14 @@ public sealed class ProfileActivityService : IProfileActivityService
         review.DatumRecenzije = DateTime.UtcNow;
         await _context.SaveChangesAsync();
         return ReviewSaveResult.Updated;
+    }
+
+    public async Task<int?> GetReviewIdAsync(string userId, int vehicleId)
+    {
+        return await _context.Recenzije
+            .Where(review => review.KorisnikId == userId && review.VoziloID == vehicleId)
+            .Select(review => (int?)review.RecenzijaID)
+            .FirstOrDefaultAsync();
     }
 
     public async Task<bool> DeleteReviewAsync(string userId, int reviewId)

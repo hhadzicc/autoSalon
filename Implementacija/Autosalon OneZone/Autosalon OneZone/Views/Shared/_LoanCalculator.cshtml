@@ -1,4 +1,7 @@
-<div class="loan-card mt-4">
+@using System.Globalization
+@model Autosalon_OneZone.Models.ViewModels.LoanCalculatorViewModel
+
+<div class="loan-card mt-4" data-loan-calculator>
     <div class="loan-card-header">
         <div class="loan-icon">
             <i class="bi bi-calculator"></i>
@@ -11,31 +14,42 @@
 
     <div class="mb-3">
         <label for="loan-amount" class="form-label">@L["LoanAmountEuro"]</label>
-        <input type="number" class="form-control" id="loan-amount" placeholder="@L["EnterAmount"]">
+        <input type="number"
+               class="form-control"
+               id="loan-amount"
+               min="0"
+               step="0.01"
+               value="@(Model.InitialAmount?.ToString(CultureInfo.InvariantCulture))"
+               placeholder="@L["EnterAmount"]"
+               data-loan-amount>
     </div>
 
     <div class="mb-3">
         <label for="loan-period" class="form-label">@L["InstallmentCount"]</label>
-        <select class="form-select" id="loan-period">
-            <option value="12">@L["MonthsCount", 12]</option>
-            <option value="24">@L["MonthsCount", 24]</option>
-            <option value="36" selected>@L["MonthsCount", 36]</option>
-            <option value="48">@L["MonthsCount", 48]</option>
-            <option value="60">@L["MonthsCount", 60]</option>
-            <option value="72">@L["MonthsCount", 72]</option>
+        <select class="form-select" id="loan-period" data-loan-period>
+            @foreach (var period in new[] { 12, 24, 36, 48, 60, 72 })
+            {
+                <option value="@period" selected="@(Model.DefaultPeriod == period)">@L["MonthsCount", period]</option>
+            }
         </select>
     </div>
 
     <div class="mb-3">
         <label for="interest-rate" class="form-label">@L["InterestRate"]</label>
-        <input type="number" class="form-control" id="interest-rate" value="5.0" step="0.1" min="0">
+        <input type="number"
+               class="form-control"
+               id="interest-rate"
+               value="@Model.InterestRate.ToString(CultureInfo.InvariantCulture)"
+               step="0.1"
+               min="0"
+               data-loan-interest>
     </div>
 
-    <button id="calculateBtn" class="btn btn-secondary rounded-4 w-100">@L["Calculate"]</button>
+    <button type="button" class="btn btn-secondary rounded-4 w-100" data-loan-calculate>@L["Calculate"]</button>
 
     <div class="loan-result">
         <span>@L["MonthlyInstallment"]</span>
-        <strong id="loan-result">€0</strong>
+        <strong data-loan-result>€0</strong>
     </div>
 
 </div>

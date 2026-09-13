@@ -224,6 +224,20 @@
 })();
 
 (() => {
+    if (window.updateCartBadge) {
+        return;
+    }
+
+    window.updateCartBadge = function (count) {
+        const normalizedCount = Math.max(0, Number.parseInt(count, 10) || 0);
+        document.querySelectorAll("[data-cart-count]").forEach((badge) => {
+            badge.textContent = String(normalizedCount);
+            badge.classList.toggle("d-none", normalizedCount < 1);
+        });
+    };
+})();
+
+(() => {
     const storageKey = "autosalon-language-switch-scroll-v1";
     const currentLocation = `${window.location.pathname}${window.location.search}`;
 

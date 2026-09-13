@@ -69,9 +69,13 @@
                                         <button type="button"
                                                 class="btn @(item.HasReview ? "btn-outline-primary" : "btn-primary") rounded-4"
                                                 data-bs-toggle="modal"
-                                                data-bs-target="#reviewModal-@item.VoziloID"
+                                                data-bs-target="#reviewModal"
                                                 data-vozilo-id="@item.VoziloID"
                                                 data-vozilo-naziv="@item.Naziv"
+                                                data-review-rating="@(item.Recenzija?.Ocjena)"
+                                                data-review-comment="@(item.Recenzija?.Komentar)"
+                                                data-add-review-title="@L["ReviewModalTitle", L["AddReview"].Value, item.Naziv]"
+                                                data-edit-review-title="@L["ReviewModalTitle", L["EditReview"].Value, item.Naziv]"
                                                 data-add-review-text="@L["AddReview"]"
                                                 data-edit-review-text="@L["EditReview"]">
                                             <i class="bi bi-star-fill me-2"></i>@reviewActionText
@@ -96,51 +100,48 @@
                                 </div>
                             </article>
 
-                            <div class="modal fade" id="reviewModal-@item.VoziloID" tabindex="-1" aria-labelledby="reviewModalLabel-@item.VoziloID" aria-hidden="true">
-                                <div class="modal-dialog modal-dialog-centered">
-                                    <div class="modal-content profile-modal">
-                                        <form asp-action="DodajRecenziju" method="post" class="review-form" id="review-form-@item.VoziloID" data-review-form
-                                              data-add-review-title="@L["ReviewModalTitle", L["AddReview"].Value, item.Naziv]"
-                                              data-edit-review-title="@L["ReviewModalTitle", L["EditReview"].Value, item.Naziv]">
-                                            @Html.AntiForgeryToken()
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="reviewModalLabel-@item.VoziloID">
-                                                    @L["ReviewModalTitle", reviewActionText, item.Naziv]
-                                                </h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@L["Close"]"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <input type="hidden" name="voziloId" value="@item.VoziloID" />
-
-                                                <div class="mb-3">
-                                                    <label class="form-label required">@L["Rating"]</label>
-                                                    <div class="rating">
-                                                        @for (var i = 1; i <= 5; i++)
-                                                        {
-                                                            <div class="form-check form-check-inline">
-                                                                <input class="form-check-input" type="radio" name="ocjena" id="ocjena@i-@item.VoziloID" value="@i" @(item.HasReview && item.Recenzija.Ocjena == i ? "checked" : "")>
-                                                                <label class="form-check-label" for="ocjena@i-@item.VoziloID">@i</label>
-                                                            </div>
-                                                        }
-                                                    </div>
-                                                    <div class="invalid-feedback" id="ocjena-error-@item.VoziloID">@L["RatingRequired"]</div>
-                                                </div>
-
-                                                <div class="mb-3">
-                                                    <label for="komentar-@item.VoziloID" class="form-label required">@L["Comment"]</label>
-                                                    <textarea class="form-control" id="komentar-@item.VoziloID" name="komentar" rows="3" maxlength="1000" required>@(item.HasReview ? item.Recenzija.Komentar : "")</textarea>
-                                                    <div class="invalid-feedback">@L["CommentRequired"]</div>
-                                                </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-light border rounded-4" data-bs-dismiss="modal">@L["Cancel"]</button>
-                                                <button type="submit" class="btn btn-primary rounded-4">@L["CommonSave"]</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
                         }
+                    </div>
+
+                    <div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content profile-modal">
+                                <form asp-action="DodajRecenziju" method="post" class="review-form" id="review-form" data-review-form>
+                                    @Html.AntiForgeryToken()
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="reviewModalLabel">@L["AddReview"]</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@L["Close"]"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <input type="hidden" name="voziloId" value="" />
+
+                                        <div class="mb-3">
+                                            <label class="form-label required">@L["Rating"]</label>
+                                            <div class="rating">
+                                                @for (var i = 1; i <= 5; i++)
+                                                {
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="radio" name="ocjena" id="ocjena-@i" value="@i">
+                                                        <label class="form-check-label" for="ocjena-@i">@i</label>
+                                                    </div>
+                                                }
+                                            </div>
+                                            <div class="invalid-feedback">@L["RatingRequired"]</div>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="review-comment" class="form-label required">@L["Comment"]</label>
+                                            <textarea class="form-control" id="review-comment" name="komentar" rows="3" maxlength="1000" required></textarea>
+                                            <div class="invalid-feedback">@L["CommentRequired"]</div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-light border rounded-4" data-bs-dismiss="modal">@L["Cancel"]</button>
+                                        <button type="submit" class="btn btn-primary rounded-4">@L["CommonSave"]</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
                     </div>
                 }
                 else
@@ -274,6 +275,8 @@
                 if (reviewButton) {
                     reviewButton.classList.remove('btn-primary');
                     reviewButton.classList.add('btn-outline-primary');
+                    reviewButton.dataset.reviewRating = review.rating;
+                    reviewButton.dataset.reviewComment = review.comment;
                     const icon = document.createElement('i');
                     icon.className = 'bi bi-star-fill me-2';
                     icon.setAttribute('aria-hidden', 'true');
@@ -286,22 +289,6 @@
                     reviewId.value = review.reviewId;
                 }
 
-                form.querySelectorAll('input[name="ocjena"]').forEach(input => {
-                    const selected = Number(input.value) === Number(review.rating);
-                    input.checked = selected;
-                    input.defaultChecked = selected;
-                });
-
-                const comment = form.querySelector('textarea[name="komentar"]');
-                if (comment) {
-                    comment.value = review.comment;
-                    comment.defaultValue = review.comment;
-                }
-
-                const modalTitle = form.closest('.modal')?.querySelector('.modal-title');
-                if (modalTitle) {
-                    modalTitle.textContent = form.dataset.editReviewTitle || modalTitle.textContent;
-                }
             };
 
             const resetReviewCard = (trigger) => {
@@ -320,6 +307,8 @@
                 if (reviewButton) {
                     reviewButton.classList.remove('btn-outline-primary');
                     reviewButton.classList.add('btn-primary');
+                    reviewButton.dataset.reviewRating = '';
+                    reviewButton.dataset.reviewComment = '';
                     const icon = document.createElement('i');
                     icon.className = 'bi bi-star-fill me-2';
                     icon.setAttribute('aria-hidden', 'true');
@@ -330,29 +319,34 @@
                 const reviewId = deleteForm.querySelector('input[name="recenzijaId"]');
                 if (reviewId) reviewId.value = '0';
 
-                const reviewForm = document.getElementById(`review-form-${vehicleId}`);
-                if (!reviewForm) return;
-
-                reviewForm.reset();
-                reviewForm.querySelectorAll('input[name="ocjena"]').forEach(input => {
-                    input.checked = false;
-                    input.defaultChecked = false;
-                });
-                const comment = reviewForm.querySelector('textarea[name="komentar"]');
-                if (comment) comment.defaultValue = '';
-                const modalTitle = reviewForm.closest('.modal')?.querySelector('.modal-title');
-                if (modalTitle) {
-                    modalTitle.textContent = reviewForm.dataset.addReviewTitle || modalTitle.textContent;
-                }
             };
 
-            $('.modal').on('hidden.bs.modal', function () {
-                const form = $(this).find('form')[0];
-                if (form) {
-                    form.reset();
-                }
+            $('#reviewModal').on('show.bs.modal', function (event) {
+                const trigger = event.relatedTarget;
+                const form = this.querySelector('[data-review-form]');
+                if (!trigger || !form) return;
 
-                clearReviewValidation(this);
+                form.reset();
+                clearReviewValidation(form);
+
+                form.querySelector('input[name="voziloId"]').value = trigger.dataset.voziloId || '';
+                const rating = Number(trigger.dataset.reviewRating || 0);
+                const ratingInput = form.querySelector(`input[name="ocjena"][value="${rating}"]`);
+                if (ratingInput) ratingInput.checked = true;
+
+                const comment = form.querySelector('textarea[name="komentar"]');
+                if (comment) comment.value = trigger.dataset.reviewComment || '';
+
+                const modalTitle = this.querySelector('.modal-title');
+                if (modalTitle) {
+                    modalTitle.textContent = rating > 0
+                        ? trigger.dataset.editReviewTitle
+                        : trigger.dataset.addReviewTitle;
+                }
+            }).on('hidden.bs.modal', function () {
+                const form = this.querySelector('[data-review-form]');
+                form?.reset();
+                if (form) clearReviewValidation(form);
             });
 
             $('.review-form').on('submit', function(event) {

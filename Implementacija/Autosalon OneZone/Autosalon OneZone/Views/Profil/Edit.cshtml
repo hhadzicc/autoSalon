@@ -216,20 +216,14 @@
                     return;
                 }
 
-                $.ajax({
-                    url: "@Url.Action("ChangePassword", "Profil")",
-                    type: "POST",
-                    data: {
+                window.appApi.post("@Url.Action("ChangePassword", "Profil")", {
                         currentPassword: $("#currentPassword").val(),
                         newPassword: $("#newPassword").val(),
-                        confirmPassword: $("#confirmPassword").val(),
-                        __RequestVerificationToken: $('#change-password-form input[name="__RequestVerificationToken"]').val() || $('input[name="__RequestVerificationToken"]').val()
-                    },
-                    success: function(response) {
+                        confirmPassword: $("#confirmPassword").val()
+                    }).done(function(response) {
                         bootstrap.Modal.getInstance(document.getElementById("passwordChangeModal")).hide();
                         window.showAppToast(response.message || profileTexts.passwordChanged, "success");
-                    },
-                    error: function(xhr) {
+                    }).fail(function(xhr) {
                         if (xhr.responseJSON && xhr.responseJSON.errors) {
                             let errorHtml = "";
                             Object.keys(xhr.responseJSON.errors).forEach(function(key) {
@@ -243,8 +237,7 @@
                         }
 
                         $("#password-errors").html(`<div>${profileTexts.genericError}</div>`);
-                    }
-                });
+                    });
             });
         });
     </script>

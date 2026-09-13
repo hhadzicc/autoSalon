@@ -1,6 +1,6 @@
-@model string
+@model Autosalon_OneZone.Models.ViewModels.PaymentFieldsViewModel
 @{
-    var prefix = Model ?? string.Empty;
+    var prefix = Model.IdPrefix;
     var holderId = $"{prefix}ImeVlasnika";
     var cardId = $"{prefix}BrojKartice";
     var expiryId = $"{prefix}DatumIsteka";
@@ -9,13 +9,13 @@
 
 <div class="form-group mb-3">
     <label for="@holderId" class="form-label">@L["CardHolderName"] <span class="text-danger">*</span></label>
-    <input type="text" class="form-control" id="@holderId" name="ImeVlasnika" required maxlength="100" autocomplete="off">
+    <input type="text" class="form-control" id="@holderId" name="ImeVlasnika" required maxlength="100" autocomplete="cc-name">
     <div class="error-message text-danger mt-1" id="@(holderId)Error"></div>
 </div>
 
 <div class="form-group mb-3">
     <label for="@cardId" class="form-label">@L["CardNumber"] <span class="text-danger">*</span></label>
-    <input type="text" class="form-control" id="@cardId" name="BrojKartice" required placeholder="XXXX XXXX XXXX XXXX" autocomplete="off">
+    <input type="text" class="form-control" id="@cardId" name="BrojKartice" required inputmode="numeric" maxlength="19" placeholder="XXXX XXXX XXXX XXXX" autocomplete="cc-number">
     <div class="error-message text-danger mt-1" id="@(cardId)Error"></div>
 </div>
 
@@ -23,14 +23,14 @@
     <div class="col-md-6">
         <div class="form-group mb-3">
             <label for="@expiryId" class="form-label">@L["ExpiryDate"] <span class="text-danger">*</span></label>
-            <input type="text" class="form-control" id="@expiryId" name="DatumIsteka" required placeholder="MM/YY" autocomplete="off">
+            <input type="text" class="form-control" id="@expiryId" name="DatumIsteka" required inputmode="numeric" maxlength="5" placeholder="MM/YY" autocomplete="cc-exp">
             <div class="error-message text-danger mt-1" id="@(expiryId)Error"></div>
         </div>
     </div>
     <div class="col-md-6">
         <div class="form-group mb-3">
             <label for="@cvvId" class="form-label">@L["CvvCode"] <span class="text-danger">*</span></label>
-    <input type="text" class="form-control" id="@cvvId" name="Cvv" required maxlength="4" placeholder="XXX ili XXXX" autocomplete="off">
+            <input type="text" class="form-control" id="@cvvId" name="Cvv" required inputmode="numeric" maxlength="4" placeholder="XXX / XXXX" autocomplete="cc-csc">
             <div class="error-message text-danger mt-1" id="@(cvvId)Error"></div>
         </div>
     </div>

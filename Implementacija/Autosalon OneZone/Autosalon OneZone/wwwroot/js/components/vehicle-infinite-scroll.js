@@ -57,11 +57,10 @@
         requestUrl.searchParams.set("page", String(nextPage));
 
         return new Promise(resolve => {
-            $.ajax({
+            window.appApi.request({
                 url: requestUrl.toString(),
                 type: "GET",
-                dataType: "html",
-                headers: { "X-Requested-With": "XMLHttpRequest" }
+                dataType: "html"
             }).done((html, _status, xhr) => {
                 const hasMore = xhr.getResponseHeader("X-Has-More") === "true";
                 const cards = html.trim();

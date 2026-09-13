@@ -13,16 +13,6 @@
     var isInCart = ViewData["IsInCart"] as bool? ?? false;
     var returnUrl = Context.Request.Query["returnUrl"].ToString();
     var returningToCart = string.Equals(returnUrl, "/Korpa", StringComparison.OrdinalIgnoreCase);
-
-    string FuelLabel(string value) => value switch
-    {
-        "Benzin" => L["FuelGasoline"].Value,
-        "Dizel" => L["FuelDiesel"].Value,
-        "Plin" => L["FuelGas"].Value,
-        "Elektro" => L["FuelElectric"].Value,
-        "Hibrid" => L["FuelHybrid"].Value,
-        _ => value
-    };
 }
 
 <section class="vehicle-details-section">
@@ -49,7 +39,7 @@
                         <div class="vehicle-title-row">
                             <div>
                                 <h2>@voziloNaziv</h2>
-                                <p class="vehicle-subtitle">@vehicle.Godiste · @FuelLabel(vehicle.Gorivo.ToString()) · @vehicle.Boja</p>
+                                <p class="vehicle-subtitle">@vehicle.Godiste · @L[FuelPresentation.GetResourceKey(vehicle.Gorivo)] · @L[VehicleColorPresentation.GetResourceKey(vehicle.Boja)]</p>
                             </div>
 
                             <div class="vehicle-price">€@cijena.ToString("N0", culture)</div>
@@ -100,11 +90,11 @@
                                 </div>
                                 <div class="spec-item">
                                     <span>@L["VehicleFuel"]</span>
-                                    <strong>@FuelLabel(vehicle.Gorivo.ToString())</strong>
+                                    <strong>@L[FuelPresentation.GetResourceKey(vehicle.Gorivo)]</strong>
                                 </div>
                                 <div class="spec-item">
                                     <span>@L["VehicleColor"]</span>
-                                    <strong>@vehicle.Boja</strong>
+                                    <strong>@L[VehicleColorPresentation.GetResourceKey(vehicle.Boja)]</strong>
                                 </div>
                                 @if (vehicle.Gorivo != Autosalon_OneZone.Models.TipGoriva.Elektro)
                                 {
@@ -190,44 +180,11 @@
 
             <div class="col-lg-4">
                 <aside class="details-sidebar">
-                    <div class="loan-card">
-                        <div class="loan-card-header">
-                            <div class="loan-icon">
-                                <i class="bi bi-calculator"></i>
-                            </div>
-                            <div>
-                                <h3>@L["LoanCalculator"]</h3>
-                                <p>@L["LoanCalculatorText"]</p>
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="loan-amount" class="form-label">@L["LoanAmountEuro"]</label>
-                            <input type="number" class="form-control" id="loan-amount" value="@cijena.ToString(CultureInfo.InvariantCulture)">
-                        </div>
-                        <div class="mb-3">
-                            <label for="loan-period" class="form-label">@L["InstallmentCount"]</label>
-                            <select class="form-select" id="loan-period">
-                                <option value="12">@L["MonthsCount", 12]</option>
-                                <option value="24">@L["MonthsCount", 24]</option>
-                                <option value="36">@L["MonthsCount", 36]</option>
-                                <option value="48">@L["MonthsCount", 48]</option>
-                                <option value="60" selected>@L["MonthsCount", 60]</option>
-                                <option value="72">@L["MonthsCount", 72]</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="interest-rate" class="form-label">@L["InterestRate"]</label>
-                            <input type="number" class="form-control" id="interest-rate" value="5.0" step="0.1" min="0">
-                        </div>
-                        <button id="calculateBtn" class="btn btn-secondary rounded-4 w-100">@L["Calculate"]</button>
-
-                        <div class="loan-result">
-                            <span>@L["MonthlyInstallment"]</span>
-                            <strong id="loan-result">€0</strong>
-                        </div>
-
-                    </div>
+                    @await Html.PartialAsync("_LoanCalculator", new Autosalon_OneZone.Models.ViewModels.LoanCalculatorViewModel
+                    {
+                        InitialAmount = cijena,
+                        DefaultPeriod = 60
+                    })
                 </aside>
             </div>
         </div>
@@ -260,35 +217,7 @@
                 <form id="paymentForm" asp-controller="Korpa" asp-action="IzvrsiPlacanje" method="post" novalidate>
                     @Html.AntiForgeryToken()
                     <input type="hidden" name="VoziloID" value="@vehicle.VoziloID" />
-
-                    <div class="form-group mb-3">
-                        <label for="imeVlasnika" class="form-label">@L["CardHolderName"] <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="imeVlasnika" name="ImeVlasnika" required maxlength="100" autocomplete="off">
-                        <div class="error-message text-danger mt-1" id="imeVlasnikaError"></div>
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label for="brojKartice" class="form-label">@L["CardNumber"] <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="brojKartice" name="BrojKartice" required placeholder="XXXX XXXX XXXX XXXX" autocomplete="off">
-                        <div class="error-message text-danger mt-1" id="brojKarticeError"></div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group mb-3">
-                                <label for="datumIsteka" class="form-label">@L["ExpiryDate"] <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="datumIsteka" name="DatumIsteka" required placeholder="MM/YY" autocomplete="off">
-                                <div class="error-message text-danger mt-1" id="datumIstekaError"></div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group mb-3">
-                                <label for="cvv" class="form-label">@L["CvvCode"] <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="cvv" name="Cvv" required maxlength="4" placeholder="XXX ili XXXX" autocomplete="off">
-                                <div class="error-message text-danger mt-1" id="cvvError"></div>
-                            </div>
-                        </div>
-                    </div>
+                    @await Html.PartialAsync("_PaymentFields", new Autosalon_OneZone.Models.ViewModels.PaymentFieldsViewModel())
 
                     <div class="d-grid gap-2 mt-4">
                         <button type="submit" class="btn btn-success" id="submitPayment">@L["ConfirmPurchase"]</button>
@@ -302,6 +231,8 @@
 @section Scripts {
     <script src="~/js/components/cart-actions.js" asp-append-version="true"></script>
     <script src="~/js/components/vehicle-details-navigation.js" asp-append-version="true"></script>
+    <script src="~/js/components/loan-calculator.js" asp-append-version="true"></script>
+    <script src="~/js/components/payment-form.js" asp-append-version="true"></script>
     <script>
         const paymentTexts = {
             processing: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["Processing"].Value)),
@@ -309,7 +240,6 @@
             paymentFailed: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentFailedPrefix"].Value)),
             requestError: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentRequestError"].Value)),
             holderRequired: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentHolderRequired"].Value)),
-            holderFullName: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentHolderFullName"].Value)),
             cardRequired: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentCardRequired"].Value)),
             cardLength: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentCardLength"].Value)),
             expiryRequired: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentExpiryRequired"].Value)),
@@ -320,232 +250,16 @@
         };
 
         $(document).ready(function() {
-            updateCalculation();
+            const paymentOptions = {
+                buttonSelector: "#submitPayment",
+                errorSelector: "#paymentRequestError",
+                texts: paymentTexts
+            };
 
-            $("#calculateBtn").click(function() {
-                updateCalculation();
+            window.paymentForm.initialize("#paymentForm", paymentOptions);
+            $("#paymentModal").on("show.bs.modal", function() {
+                window.paymentForm.reset("#paymentForm", paymentOptions);
             });
-
-            $("#loan-amount, #loan-period, #interest-rate").on('change input', function() {
-                updateCalculation();
-            });
-
-            function updateCalculation() {
-                var loanAmount = parseFloat($("#loan-amount").val());
-                var loanPeriod = parseInt($("#loan-period").val());
-                var interestRate = parseFloat($("#interest-rate").val());
-
-                if (isNaN(loanAmount) || loanAmount <= 0 ||
-                    isNaN(loanPeriod) || loanPeriod <= 0 ||
-                    isNaN(interestRate) || interestRate < 0) {
-                    $("#loan-result").text("€0");
-                    return;
-                }
-
-                var monthlyRate = (interestRate / 100) / 12;
-                var monthlyPayment = loanAmount * monthlyRate * Math.pow(1 + monthlyRate, loanPeriod) /
-                                    (Math.pow(1 + monthlyRate, loanPeriod) - 1);
-
-                $("#loan-result").text("€" + monthlyPayment.toFixed(2));
-            }
-
-            setupPaymentFormValidation();
-
         });
-
-        function setupPaymentFormValidation() {
-            clearAllErrors();
-
-            $('#paymentModal').on('show.bs.modal', function() {
-                resetPaymentForm();
-            });
-
-            $("#imeVlasnika").on('input', function() {
-                var value = $(this).val();
-                var filteredValue = value.replace(/[^A-Za-z ]/g, '');
-
-                if (value !== filteredValue) {
-                    $(this).val(filteredValue);
-                }
-
-                clearError('imeVlasnika');
-            });
-
-            $("#brojKartice").on('input', function() {
-                var value = $(this).val().replace(/\D/g, '');
-
-                if (value.length > 16) {
-                    value = value.substring(0, 16);
-                }
-
-                var formattedValue = '';
-                for (var i = 0; i < value.length; i++) {
-                    if (i > 0 && i % 4 === 0) {
-                        formattedValue += ' ';
-                    }
-                    formattedValue += value[i];
-                }
-
-                $(this).val(formattedValue);
-                clearError('brojKartice');
-            });
-
-            $("#datumIsteka").on('input', function() {
-                var value = $(this).val().replace(/\D/g, '');
-
-                if (value.length > 4) {
-                    value = value.substring(0, 4);
-                }
-
-                if (value.length > 2) {
-                    value = value.substring(0, 2) + '/' + value.substring(2);
-                }
-
-                $(this).val(value);
-                clearError('datumIsteka');
-            });
-
-            $("#cvv").on('input', function() {
-                var value = $(this).val().replace(/\D/g, '');
-
-                if (value.length > 4) {
-                    value = value.substring(0, 4);
-                }
-
-                $(this).val(value);
-                clearError('cvv');
-            });
-
-            $("#paymentForm").on('submit', function(e) {
-                e.preventDefault();
-                clearAllErrors();
-                clearPaymentError();
-
-                if (!validatePaymentForm()) {
-                    return;
-                }
-
-                $("#submitPayment").prop("disabled", true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> ' + paymentTexts.processing);
-
-                $.ajax({
-                    url: $(this).attr('action'),
-                    type: 'POST',
-                    data: $(this).serialize(),
-                    success: function(response) {
-                        if (response.success) {
-                            window.location.href = response.redirectUrl;
-                            return;
-                        }
-
-                        if (response.errors) {
-                            $.each(response.errors, function(field, message) {
-                                showError(field, message);
-                            });
-                        } else if (response.message) {
-                            showPaymentError(paymentTexts.paymentFailed + response.message);
-                        }
-
-                        $("#submitPayment").prop("disabled", false).html(paymentTexts.confirmPurchase);
-                    },
-                    error: function() {
-                        showPaymentError(paymentTexts.requestError);
-                        $("#submitPayment").prop("disabled", false).html(paymentTexts.confirmPurchase);
-                    }
-                });
-            });
-        }
-
-        function validatePaymentForm() {
-            var isValid = true;
-            var imePrezime = $("#imeVlasnika").val().trim();
-
-            if (!imePrezime) {
-                showError('imeVlasnika', paymentTexts.holderRequired);
-                isValid = false;
-            }
-
-            var brojKartice = $("#brojKartice").val().replace(/\s+/g, '');
-            if (!brojKartice) {
-                showError('brojKartice', paymentTexts.cardRequired);
-                isValid = false;
-            } else if (brojKartice.length !== 16) {
-                showError('brojKartice', paymentTexts.cardLength);
-                isValid = false;
-            }
-
-            var datumIsteka = $("#datumIsteka").val().trim();
-            if (!datumIsteka) {
-                showError('datumIsteka', paymentTexts.expiryRequired);
-                isValid = false;
-            } else {
-                var parts = datumIsteka.split('/');
-                if (parts.length !== 2 || !/^(0[1-9]|1[0-2])$/.test(parts[0]) || !/^\d{2}$/.test(parts[1])) {
-                    showError('datumIsteka', paymentTexts.expiryFormat);
-                    isValid = false;
-                } else {
-                    var month = parseInt(parts[0]);
-                    var year = parseInt("20" + parts[1]);
-                    var now = new Date();
-                    var currentYear = now.getFullYear();
-                    var currentMonth = now.getMonth() + 1;
-
-                    if (year < currentYear || (year === currentYear && month < currentMonth)) {
-                        showError('datumIsteka', paymentTexts.cardExpired);
-                        isValid = false;
-                    }
-                }
-            }
-
-            var cvv = $("#cvv").val().trim();
-            if (!cvv) {
-                showError('cvv', paymentTexts.cvvRequired);
-                isValid = false;
-            } else if (cvv.length < 3 || cvv.length > 4) {
-                showError('cvv', paymentTexts.cvvLength);
-                isValid = false;
-            }
-
-            if (!isValid) {
-                $(".form-control").each(function() {
-                    var id = $(this).attr("id");
-                    if ($("#" + id + "Error").text()) {
-                        $(this).focus();
-                        return false;
-                    }
-                });
-            }
-
-            return isValid;
-        }
-
-        function showError(fieldId, message) {
-            $("#" + fieldId).addClass("is-invalid border-danger");
-            $("#" + fieldId + "Error").text(message);
-        }
-
-        function clearError(fieldId) {
-            $("#" + fieldId).removeClass("is-invalid border-danger");
-            $("#" + fieldId + "Error").text("");
-        }
-
-        function clearAllErrors() {
-            $(".form-control").removeClass("is-invalid border-danger");
-            $(".error-message").text("");
-        }
-
-        function showPaymentError(message) {
-            $("#paymentRequestError").text(message).removeClass("d-none");
-        }
-
-        function clearPaymentError() {
-            $("#paymentRequestError").addClass("d-none").text("");
-        }
-
-        function resetPaymentForm() {
-            $("#paymentForm")[0].reset();
-            clearAllErrors();
-            clearPaymentError();
-            $("#submitPayment").prop("disabled", false).html(paymentTexts.confirmPurchase);
-        }
     </script>
 }

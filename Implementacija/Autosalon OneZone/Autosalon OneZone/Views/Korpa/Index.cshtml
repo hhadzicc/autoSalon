@@ -3,16 +3,6 @@
 @{
     ViewData["Title"] = L["CartTitle"];
     var culture = CultureInfo.CurrentCulture;
-
-    string FuelChipClass(string value) => value switch
-    {
-        "Benzin" => "is-petrol",
-        "Dizel" => "is-diesel",
-        "Plin" => "is-gas",
-        "Elektro" => "is-electric",
-        "Hibrid" => "is-hybrid",
-        _ => "is-default"
-    };
 }
 
 <section class="cart-page-section">
@@ -57,7 +47,7 @@
 
                                 <div class="cart-item-content">
                                     <div>
-                                        <span class="cart-item-badge vehicles-fuel-chip @FuelChipClass(vozilo.Gorivo)">@vozilo.Gorivo</span>
+                                        <span class="cart-item-badge fuel-chip @FuelPresentation.GetChipClass(vozilo.Gorivo)">@L[FuelPresentation.GetResourceKey(vozilo.Gorivo)]</span>
                                         <h3 class="card-title">@vozilo.Naziv</h3>
 
                                         <div class="cart-meta">
@@ -135,7 +125,10 @@
                             </div>
                         </div>
 
-                        @await Html.PartialAsync("_LoanCalculator")
+                        @await Html.PartialAsync("_LoanCalculator", new Autosalon_OneZone.Models.ViewModels.LoanCalculatorViewModel
+                        {
+                            DefaultPeriod = 36
+                        })
                     </aside>
                 </div>
             </div>
@@ -224,7 +217,10 @@
                     <form id="checkoutForm" asp-controller="Korpa" asp-action="IzvrsiPlacanjeSvih" method="post" novalidate>
                         @Html.AntiForgeryToken()
                         <input type="hidden" name="OdabranaVozilaJSON" id="odabranaVozilaJSON" value="" />
-                        @await Html.PartialAsync("_PaymentFields", "checkout")
+                        @await Html.PartialAsync("_PaymentFields", new Autosalon_OneZone.Models.ViewModels.PaymentFieldsViewModel
+                        {
+                            IdPrefix = "checkout"
+                        })
                         <div class="d-grid gap-2 mt-4">
                             <button type="submit" class="btn btn-success" id="checkoutSubmitBtn">@L["ConfirmPurchase"]</button>
                         </div>
@@ -260,7 +256,7 @@
                     <form id="paymentForm" asp-controller="Korpa" asp-action="IzvrsiPlacanje" method="post" novalidate>
                         @Html.AntiForgeryToken()
                         <input type="hidden" name="VoziloID" id="modalVoziloID" value="" />
-                        @await Html.PartialAsync("_PaymentFields", "")
+                        @await Html.PartialAsync("_PaymentFields", new Autosalon_OneZone.Models.ViewModels.PaymentFieldsViewModel())
                         <div class="d-grid gap-2 mt-4">
                             <button type="submit" class="btn btn-success" id="submitPayment">@L["ConfirmPurchase"]</button>
                         </div>
@@ -272,11 +268,13 @@
 }
 
 @section Scripts {
+    <script src="~/js/components/loan-calculator.js" asp-append-version="true"></script>
+    <script src="~/js/components/payment-form.js" asp-append-version="true"></script>
     <script>
         (() => {
             const updateCartSummary = (count) => {
                 $("[data-cart-vehicle-count]").text(count);
-                $("[data-cart-count]").text(count).toggleClass("d-none", count < 1);
+                window.updateCartBadge(count);
 
                 let total = 0;
                 $("#stavkeKorpe .stavka-korpe").each(function() {
@@ -294,16 +292,7 @@
                     actionText: undo?.text,
                     onAction: undo ? (actionButton) => {
                         $(actionButton).prop("disabled", true);
-                        $.ajax({
-                            url: undo.url,
-                            type: "POST",
-                            data: undo.data,
-                            dataType: "json",
-                            headers: {
-                                "Accept": "application/json",
-                                "X-Requested-With": "XMLHttpRequest"
-                            }
-                        }).done((result) => {
+                        window.appApi.post(undo.url, undo.data).done((result) => {
                             if (!result.success) {
                                 $(actionButton).prop("disabled", false);
                                 return;
@@ -341,16 +330,7 @@
 
                 $form.find("button").prop("disabled", true);
 
-                $.ajax({
-                    url: form.action,
-                    type: "POST",
-                    data: $form.serialize(),
-                    dataType: "json",
-                    headers: {
-                        "Accept": "application/json",
-                        "X-Requested-With": "XMLHttpRequest"
-                    }
-                }).done((result) => {
+                window.appApi.postForm(form).done((result) => {
                     if (!result.success) {
                         $form.find("button").prop("disabled", false);
                         return;
@@ -380,16 +360,7 @@
                 const form = this.closest("form");
                 const $form = $(form);
 
-                $.ajax({
-                    url: form.action,
-                    type: "POST",
-                    data: $form.serialize(),
-                    dataType: "json",
-                    headers: {
-                        "Accept": "application/json",
-                        "X-Requested-With": "XMLHttpRequest"
-                    }
-                }).done((result) => {
+                window.appApi.postForm(form).done((result) => {
                     if (!result.success) {
                         window.showAppToast(form.dataset.clearError, { type: "error" });
                         return;
@@ -406,15 +377,12 @@
             });
         })();
 
-        const cartTexts = {
+        const paymentTexts = {
             processing: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["Processing"].Value)),
             confirmPurchase: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["ConfirmPurchase"].Value)),
-            selectOne: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["SelectAtLeastOneVehicle"].Value)),
             paymentFailed: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentFailedPrefix"].Value)),
             requestError: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentRequestError"].Value)),
-            requestErrorWithDetail: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentRequestErrorWithDetail"].Value)),
             holderRequired: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentHolderRequired"].Value)),
-            holderFullName: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentHolderFullName"].Value)),
             cardRequired: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentCardRequired"].Value)),
             cardLength: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentCardLength"].Value)),
             expiryRequired: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentExpiryRequired"].Value)),
@@ -424,52 +392,42 @@
             cvvLength: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentCvvLength"].Value))
         };
 
+        const singlePaymentOptions = {
+            buttonSelector: "#submitPayment",
+            errorSelector: "#paymentRequestError",
+            texts: paymentTexts
+        };
+
+        const checkoutPaymentOptions = {
+            buttonSelector: "#checkoutSubmitBtn",
+            errorSelector: "#checkoutPaymentRequestError",
+            texts: paymentTexts,
+            beforeSubmit: function() {
+                const selected = getSelectedVehicles();
+                if (!selected.length) {
+                    $("#checkoutSelectionWarning").removeClass("d-none");
+                    return false;
+                }
+
+                $("#odabranaVozilaJSON").val(JSON.stringify(selected));
+                return true;
+            }
+        };
+
         $(document).ready(function() {
-            initializeLoanCalculator();
             initializePaymentModal();
             initializeCheckoutModal();
         });
 
-        function initializeLoanCalculator() {
-            updateLoanCalculation();
-            $("#calculateBtn").click(updateLoanCalculation);
-            $("#loan-amount, #loan-period, #interest-rate").on("change input", updateLoanCalculation);
-        }
-
-        function updateLoanCalculation() {
-            var loanAmount = parseFloat($("#loan-amount").val());
-            var loanPeriod = parseInt($("#loan-period").val());
-            var interestRate = parseFloat($("#interest-rate").val());
-
-            if (isNaN(loanAmount) || loanAmount <= 0 || isNaN(loanPeriod) || loanPeriod <= 0 || isNaN(interestRate) || interestRate < 0) {
-                $("#loan-result").text("€0");
-                return;
-            }
-
-            var monthlyRate = (interestRate / 100) / 12;
-            var monthlyPayment = loanAmount * monthlyRate * Math.pow(1 + monthlyRate, loanPeriod) /
-                (Math.pow(1 + monthlyRate, loanPeriod) - 1);
-
-            $("#loan-result").text("€" + monthlyPayment.toFixed(2));
-        }
-
         function initializePaymentModal() {
-            $(".buy-now-btn").on("click", function() {
-                var button = $(this);
+            window.paymentForm.initialize("#paymentForm", singlePaymentOptions);
+            $("#paymentModal").on("show.bs.modal", function(event) {
+                window.paymentForm.reset("#paymentForm", singlePaymentOptions);
+
+                const button = $(event.relatedTarget);
                 $("#modalVoziloID").val(button.data("id"));
                 $("#paymentVehicleName").text(button.data("naziv") || "");
                 $("#modalUkupnaCijena").text("€" + Number(button.data("cijenaNumeric")).toLocaleString());
-            });
-
-            $("#paymentModal").on("show.bs.modal", function() {
-                resetPaymentForm("#paymentForm", "#submitPayment");
-            });
-
-            bindPaymentFields("");
-
-            $("#paymentForm").on("submit", function(e) {
-                e.preventDefault();
-                submitPaymentForm($(this), "#submitPayment");
             });
         }
 
@@ -479,32 +437,18 @@
                 updateCheckoutTotal();
             });
 
-            $(".vozilo-checkbox").on("change", updateCheckoutTotal);
-
             $(".vozilo-checkbox").on("change", function() {
+                updateCheckoutTotal();
                 if ($(".vozilo-checkbox:checked").length) {
                     $("#checkoutSelectionWarning").addClass("d-none");
                 }
             });
 
+            window.paymentForm.initialize("#checkoutForm", checkoutPaymentOptions);
             $("#checkoutModal").on("show.bs.modal", function() {
                 $("#checkoutSelectionWarning").addClass("d-none");
-                clearPaymentError("checkout");
+                window.paymentForm.clear("#checkoutForm", checkoutPaymentOptions);
                 updateCheckoutTotal();
-            });
-            bindPaymentFields("checkout");
-
-            $("#checkoutForm").on("submit", function(e) {
-                e.preventDefault();
-
-                var selected = getSelectedVehicles();
-                if (!selected.length) {
-                    $("#checkoutSelectionWarning").removeClass("d-none");
-                    return;
-                }
-
-                $("#odabranaVozilaJSON").val(JSON.stringify(selected));
-                submitPaymentForm($(this), "#checkoutSubmitBtn");
             });
         }
 
@@ -513,183 +457,18 @@
                 return {
                     id: $(this).data("id"),
                     naziv: $(this).data("naziv"),
-                    cijena: parseFloat($(this).data("cijena"))
+                    cijena: Number.parseFloat($(this).data("cijena"))
                 };
             }).get();
         }
 
         function updateCheckoutTotal() {
-            var total = getSelectedVehicles().reduce(function(sum, item) {
+            const total = getSelectedVehicles().reduce(function(sum, item) {
                 return sum + (Number(item.cijena) || 0);
             }, 0);
 
             $("#checkoutTotal").text("€" + total.toLocaleString(undefined, { maximumFractionDigits: 0 }));
             $("#selectAll").prop("checked", $(".vozilo-checkbox").length === $(".vozilo-checkbox:checked").length);
-        }
-
-        function bindPaymentFields(prefix) {
-            var idPrefix = prefix || "";
-            var holder = "#" + idPrefix + "ImeVlasnika";
-            var card = "#" + idPrefix + "BrojKartice";
-            var expiry = "#" + idPrefix + "DatumIsteka";
-            var cvv = "#" + idPrefix + "Cvv";
-
-            $(holder).on("input", function() {
-                var value = $(this).val();
-                var filteredValue = value.replace(/[^A-Za-z ]/g, "");
-                if (value !== filteredValue) {
-                    $(this).val(filteredValue);
-                }
-                clearError(idPrefix + "ImeVlasnika");
-            });
-
-            $(card).on("input", function() {
-                var value = $(this).val().replace(/\D/g, "").substring(0, 16);
-                var formattedValue = value.replace(/(.{4})/g, "$1 ").trim();
-                $(this).val(formattedValue);
-                clearError(idPrefix + "BrojKartice");
-            });
-
-            $(expiry).on("input", function() {
-                var value = $(this).val().replace(/\D/g, "").substring(0, 4);
-                if (value.length > 2) {
-                    value = value.substring(0, 2) + "/" + value.substring(2);
-                }
-                $(this).val(value);
-                clearError(idPrefix + "DatumIsteka");
-            });
-
-            $(cvv).on("input", function() {
-                $(this).val($(this).val().replace(/\D/g, "").substring(0, 4));
-                clearError(idPrefix + "Cvv");
-            });
-        }
-
-        function submitPaymentForm(form, buttonSelector) {
-            var prefix = form.attr("id") === "checkoutForm" ? "checkout" : "";
-            clearAllErrors(form);
-            clearPaymentError(prefix);
-
-            if (!validatePaymentForm(prefix)) {
-                return;
-            }
-
-            var button = $(buttonSelector);
-            button.prop("disabled", true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> ' + cartTexts.processing);
-
-            $.ajax({
-                url: form.attr("action"),
-                type: "POST",
-                data: form.serialize(),
-                success: function(response) {
-                    if (response.success) {
-                        window.location.href = response.redirectUrl;
-                        return;
-                    }
-
-                        if (response.errors) {
-                            $.each(response.errors, function(field, message) {
-                                showError(prefix + field, message);
-                            });
-                        } else if (response.message) {
-                            showPaymentError(cartTexts.paymentFailed + response.message, prefix);
-                        }
-
-                    button.prop("disabled", false).html(cartTexts.confirmPurchase);
-                },
-                error: function(xhr, status, error) {
-                    var message = error ? cartTexts.requestErrorWithDetail + error : cartTexts.requestError;
-                    showPaymentError(message, prefix);
-                    button.prop("disabled", false).html(cartTexts.confirmPurchase);
-                }
-            });
-        }
-
-        function validatePaymentForm(prefix) {
-            var idPrefix = prefix || "";
-            var isValid = true;
-            var holderValue = $("#" + idPrefix + "ImeVlasnika").val().trim();
-
-            if (!holderValue) {
-                showError(idPrefix + "ImeVlasnika", cartTexts.holderRequired);
-                isValid = false;
-            }
-
-            var cardValue = $("#" + idPrefix + "BrojKartice").val().replace(/\s+/g, "");
-            if (!cardValue) {
-                showError(idPrefix + "BrojKartice", cartTexts.cardRequired);
-                isValid = false;
-            } else if (cardValue.length !== 16) {
-                showError(idPrefix + "BrojKartice", cartTexts.cardLength);
-                isValid = false;
-            }
-
-            var expiryValue = $("#" + idPrefix + "DatumIsteka").val().trim();
-            if (!expiryValue) {
-                showError(idPrefix + "DatumIsteka", cartTexts.expiryRequired);
-                isValid = false;
-            } else {
-                var parts = expiryValue.split("/");
-                if (parts.length !== 2 || !/^(0[1-9]|1[0-2])$/.test(parts[0]) || !/^\d{2}$/.test(parts[1])) {
-                    showError(idPrefix + "DatumIsteka", cartTexts.expiryFormat);
-                    isValid = false;
-                } else {
-                    var month = parseInt(parts[0]);
-                    var year = parseInt("20" + parts[1]);
-                    var now = new Date();
-                    if (year < now.getFullYear() || (year === now.getFullYear() && month < now.getMonth() + 1)) {
-                        showError(idPrefix + "DatumIsteka", cartTexts.cardExpired);
-                        isValid = false;
-                    }
-                }
-            }
-
-            var cvvValue = $("#" + idPrefix + "Cvv").val().trim();
-            if (!cvvValue) {
-                showError(idPrefix + "Cvv", cartTexts.cvvRequired);
-                isValid = false;
-                    } else if (cvvValue.length < 3 || cvvValue.length > 4) {
-                showError(idPrefix + "Cvv", cartTexts.cvvLength);
-                isValid = false;
-            }
-
-            return isValid;
-        }
-
-        function showError(fieldId, message) {
-            $("#" + fieldId).addClass("is-invalid border-danger");
-            $("#" + fieldId + "Error").text(message);
-        }
-
-        function clearError(fieldId) {
-            $("#" + fieldId).removeClass("is-invalid border-danger");
-            $("#" + fieldId + "Error").text("");
-        }
-
-        function clearAllErrors(scope) {
-            var root = scope || $(document);
-            root.find(".form-control").removeClass("is-invalid border-danger");
-            root.find(".error-message").text("");
-        }
-
-        function showPaymentError(message, prefix) {
-            var errorId = prefix === "checkout" ? "#checkoutPaymentRequestError" : "#paymentRequestError";
-            $(errorId).text(message).removeClass("d-none");
-        }
-
-        function clearPaymentError(prefix) {
-            var errorId = prefix === "checkout" ? "#checkoutPaymentRequestError" : "#paymentRequestError";
-            $(errorId).addClass("d-none").text("");
-        }
-
-        function resetPaymentForm(formSelector, buttonSelector) {
-            var form = $(formSelector);
-            if (form.length) {
-                form[0].reset();
-            }
-            clearAllErrors(form);
-            clearPaymentError(formSelector === "#checkoutForm" ? "checkout" : "");
-            $(buttonSelector).prop("disabled", false).html(cartTexts.confirmPurchase);
         }
     </script>
 }

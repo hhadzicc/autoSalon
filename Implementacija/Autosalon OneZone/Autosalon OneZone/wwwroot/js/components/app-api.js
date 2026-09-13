@@ -36,9 +36,14 @@
         return fallback;
     };
 
+    const antiforgeryHeaders = (root = document) => {
+        const token = root.querySelector('input[name="__RequestVerificationToken"]')?.value;
+        return token ? { RequestVerificationToken: token } : {};
+    };
+
     window.appApi = {
         request(options) {
-            const settings = $.extend(true, {
+            const settings = $.extend({}, {
                 dataType: "json",
                 headers: defaultHeaders
             }, options);
@@ -49,13 +54,31 @@
 
         postForm(form, options = {}) {
             const $form = $(form);
-            return this.request($.extend(true, {
+            return this.request($.extend({}, {
                 url: form.action,
                 type: "POST",
                 data: $form.serialize()
             }, options));
         },
 
-        getErrorMessage
+        get(url, data = {}, options = {}) {
+            return this.request($.extend({}, {
+                url,
+                type: "GET",
+                data
+            }, options));
+        },
+
+        post(url, data = {}, options = {}) {
+            return this.request($.extend({}, {
+                url,
+                type: "POST",
+                data,
+                headers: antiforgeryHeaders()
+            }, options));
+        },
+
+        getErrorMessage,
+        antiforgeryHeaders
     };
 })();

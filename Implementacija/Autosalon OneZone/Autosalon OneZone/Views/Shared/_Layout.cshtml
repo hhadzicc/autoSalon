@@ -8,6 +8,8 @@
 
 @{
     var currentPath = Context.Request.Path.Value?.ToLowerInvariant() ?? "";
+    var isHomeArea = currentPath == "/" || currentPath.StartsWith("/home");
+    var isAccountArea = currentPath.StartsWith("/account");
     var isAdminArea = currentPath.StartsWith("/adminpanel");
     var isVehiclesArea = currentPath.StartsWith("/vozilo");
     var isContactArea = currentPath.StartsWith("/home/kontakt");
@@ -15,6 +17,7 @@
     var isProfileArea = currentPath.StartsWith("/profil");
     var isLoginArea = currentPath.StartsWith("/account/login");
     var isRegisterArea = currentPath.StartsWith("/account/register");
+    var isCommerceArea = isCartArea || currentPath.StartsWith("/vozilo/details");
     var successMessage = Convert.ToString(TempData["SuccessMessage"]);
     var errorMessage = Convert.ToString(TempData["ErrorMessage"]);
     var infoMessage = Convert.ToString(TempData["InfoMessage"]);
@@ -46,19 +49,37 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link rel="stylesheet" type="text/css" href="~/css/base/foundation.css" asp-append-version="true">
-    <link rel="stylesheet" type="text/css" href="~/css/pages/home.css" asp-append-version="true">
-    <link rel="stylesheet" type="text/css" href="~/css/pages/authentication.css" asp-append-version="true">
-    <link rel="stylesheet" type="text/css" href="~/css/pages/vehicles.css" asp-append-version="true">
-    <link rel="stylesheet" type="text/css" href="~/css/pages/profile.css" asp-append-version="true">
-    <link rel="stylesheet" type="text/css" href="~/css/pages/commerce.css" asp-append-version="true">
+    <link rel="stylesheet" type="text/css" href="~/css/components/forms.css" asp-append-version="true">
+    <link rel="stylesheet" type="text/css" href="~/css/components/page-header.css" asp-append-version="true">
+    @if (isHomeArea)
+    {
+        <link rel="stylesheet" type="text/css" href="~/css/pages/home.css" asp-append-version="true">
+    }
+    @if (isAccountArea)
+    {
+        <link rel="stylesheet" type="text/css" href="~/css/pages/authentication.css" asp-append-version="true">
+    }
+    @if (isVehiclesArea)
+    {
+        <link rel="stylesheet" type="text/css" href="~/css/pages/vehicles.css" asp-append-version="true">
+    }
+    @if (isProfileArea)
+    {
+        <link rel="stylesheet" type="text/css" href="~/css/pages/profile.css" asp-append-version="true">
+    }
+    @if (isCommerceArea)
+    {
+        <link rel="stylesheet" type="text/css" href="~/css/pages/commerce.css" asp-append-version="true">
+        <link rel="stylesheet" type="text/css" href="~/css/responsive/commerce-responsive.css" asp-append-version="true">
+    }
     <link rel="stylesheet" type="text/css" href="~/css/components/footer.css" asp-append-version="true">
+    <link rel="stylesheet" type="text/css" href="~/css/components/fuel-chip.css" asp-append-version="true">
     <link rel="stylesheet" type="text/css" href="~/css/responsive/site-responsive.css" asp-append-version="true">
-    <link rel="stylesheet" type="text/css" href="~/css/pages/admin-legacy.css" asp-append-version="true">
-    <link rel="stylesheet" type="text/css" href="~/css/pages/admin.css" asp-append-version="true">
-    <link rel="stylesheet" type="text/css" href="~/css/responsive/admin-responsive.css" asp-append-version="true">
-    <link rel="stylesheet" type="text/css" href="~/css/pages/admin-overrides.css" asp-append-version="true">
     <link rel="stylesheet" type="text/css" href="~/css/components/feedback.css" asp-append-version="true">
-    <link rel="stylesheet" type="text/css" href="~/css/pages/admin-final.css" asp-append-version="true">
+    @if (isAdminArea)
+    {
+        <link rel="stylesheet" type="text/css" href="~/css/pages/admin.css" asp-append-version="true">
+    }
     <link rel="stylesheet" type="text/css" href="~/css/components/button-system.css" asp-append-version="true">
     @if (demoOptions.Enabled && demoOptions.ResetEnabled)
     {

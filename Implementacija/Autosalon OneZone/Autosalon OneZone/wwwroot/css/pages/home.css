@@ -285,15 +285,6 @@
     padding: 86px 0;
 }
 
-.section-eyebrow {
-    color: var(--primary);
-    font-size: 0.88rem;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    margin-bottom: 10px;
-}
-
 .section-title {
     font-size: clamp(2rem, 4vw, 3rem);
     line-height: 1.08;
@@ -367,16 +358,6 @@
 
 .home-vehicle-body {
     padding: 24px;
-}
-
-.home-vehicle-tag {
-    padding: 6px 11px;
-    border-radius: 999px;
-    background: #eff6ff;
-    color: var(--primary);
-    font-size: 0.78rem;
-    font-weight: 900;
-    white-space: nowrap;
 }
 
 .home-vehicle-meta {
@@ -477,33 +458,6 @@
 
 .support-card .btn {
     margin-top: 12px;
-}
-
-.inner-page-header {
-    background: linear-gradient(180deg, #ffffff 0%, #f4f7fb 100%);
-    padding: 30px 0 24px;
-    border-bottom: 1px solid #e5e7eb;
-}
-
-.inner-page-header .section-eyebrow {
-    color: var(--primary);
-}
-
-.inner-page-header h1 {
-    color: #111827;
-    font-size: clamp(2.1rem, 3.4vw, 3.4rem);
-    line-height: 1;
-    letter-spacing: -0.04em;
-    font-weight: 900;
-    margin-bottom: 12px;
-}
-
-.inner-page-header p:not(.section-eyebrow) {
-    max-width: 620px;
-    margin-left: auto;
-    margin-right: auto;
-    color: #64748b;
-    font-size: 1rem;
 }
 
 .contact-page-header {

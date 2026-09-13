@@ -241,7 +241,7 @@
     box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
 }
 
-.loan-card #calculateBtn {
+.loan-card [data-loan-calculate] {
     border: 1px solid #d5dce6;
     background-color: #e8edf3;
     color: #111827;
@@ -249,13 +249,13 @@
     transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
-.loan-card #calculateBtn:hover {
+.loan-card [data-loan-calculate]:hover {
     border-color: #c8d1dd;
     background-color: #dfe6ee;
     color: #111827;
 }
 
-.loan-card #calculateBtn:focus-visible {
+.loan-card [data-loan-calculate]:focus-visible {
     border-color: #b9c5d3;
     box-shadow: 0 0 0 4px rgba(148, 163, 184, 0.2);
 }
@@ -291,7 +291,7 @@
 }
 
 .loan-result strong,
-.loan-result #loan-result {
+.loan-result [data-loan-result] {
     display: block;
     color: #15803d;
     font-size: 1.75rem;

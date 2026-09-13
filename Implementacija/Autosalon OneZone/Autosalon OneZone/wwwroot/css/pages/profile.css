@@ -127,48 +127,6 @@
     box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
 }
 
-.profile-actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 14px;
-    flex-wrap: wrap;
-    margin-top: 24px;
-}
-
-.profile-actions-left {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-.profile-actions .btn {
-    min-height: 46px;
-    padding-inline: 22px;
-    font-weight: 900;
-}
-
-.empty-state {
-    display: grid;
-    place-items: center;
-    text-align: center;
-    padding: 34px;
-    border-radius: 22px;
-    background: #f8fafc;
-    border: 1px dashed #cbd5e1;
-    color: #64748b;
-}
-
-.empty-state i {
-    font-size: 2rem;
-    color: var(--primary);
-    margin-bottom: 10px;
-}
-
-.empty-state p {
-    margin-bottom: 0;
-}
-
 .purchase-list {
     display: grid;
     gap: 18px;
@@ -254,57 +212,6 @@
     font-size: 0.9rem;
 }
 
-.modern-modal,
-.profile-modal {
-    border: 0;
-    border-radius: 28px;
-    overflow: hidden;
-    box-shadow: 0 30px 90px rgba(15, 23, 42, 0.28);
-}
-
-.modern-modal-header {
-    padding: 24px 26px;
-    border-bottom: 1px solid #e5e7eb;
-}
-
-.modal-icon {
-    width: 52px;
-    height: 52px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 18px;
-    background: linear-gradient(135deg, #2563eb, #06b6d4);
-    color: #ffffff;
-    font-size: 1.35rem;
-    box-shadow: 0 14px 34px rgba(37, 99, 235, 0.28);
-}
-
-.modern-modal .modal-title,
-.profile-modal .modal-title {
-    font-weight: 900;
-    letter-spacing: -0.03em;
-    color: #111827;
-}
-
-.modern-modal .modal-body {
-    padding: 26px;
-}
-
-.modern-modal-footer {
-    padding: 18px 26px 24px;
-    border-top: 1px solid #e5e7eb;
-    gap: 10px;
-}
-
-.modern-modal .modal-body .btn,
-.modern-modal-footer .btn {
-    min-height: 46px;
-    padding-inline: 22px;
-    font-weight: 900;
-    border-radius: 12px;
-}
-
 .password-hint {
     margin-top: 14px;
     padding: 13px 15px;
@@ -319,12 +226,6 @@
     color: #dc3545;
     font-size: 0.85rem;
     margin-top: 0.25rem;
-}
-
-.required::after {
-    content: "*";
-    color: #dc3545;
-    margin-left: 3px;
 }
 
 .rating.is-invalid {

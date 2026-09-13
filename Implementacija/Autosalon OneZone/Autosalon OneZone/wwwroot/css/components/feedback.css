@@ -89,6 +89,78 @@
     opacity: 1;
 }
 
+.empty-state {
+    display: grid;
+    place-items: center;
+    text-align: center;
+    padding: 34px;
+    border-radius: 22px;
+    background: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    color: #64748b;
+}
+
+.empty-state i {
+    font-size: 2rem;
+    color: var(--primary);
+    margin-bottom: 10px;
+}
+
+.empty-state p {
+    margin-bottom: 0;
+}
+
+.modern-modal,
+.profile-modal {
+    border: 0;
+    border-radius: 28px;
+    overflow: hidden;
+    box-shadow: 0 30px 90px rgba(15, 23, 42, 0.28);
+}
+
+.modern-modal-header {
+    padding: 24px 26px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.modal-icon {
+    width: 52px;
+    height: 52px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #2563eb, #06b6d4);
+    color: #ffffff;
+    font-size: 1.35rem;
+    box-shadow: 0 14px 34px rgba(37, 99, 235, 0.28);
+}
+
+.modern-modal .modal-title,
+.profile-modal .modal-title {
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    color: #111827;
+}
+
+.modern-modal .modal-body {
+    padding: 26px;
+}
+
+.modern-modal-footer {
+    padding: 18px 26px 24px;
+    border-top: 1px solid #e5e7eb;
+    gap: 10px;
+}
+
+.modern-modal .modal-body .btn,
+.modern-modal-footer .btn {
+    min-height: 46px;
+    padding-inline: 22px;
+    font-weight: 900;
+    border-radius: 12px;
+}
+
 .empty-cart-wrap {
     min-height: 360px;
     display: flex;
@@ -261,6 +333,14 @@
 
     .delete-confirm-modal .btn {
         width: 100%;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .modern-modal .modal-dialog,
+    .modal-dialog {
+        margin-left: 12px;
+        margin-right: 12px;
     }
 }
 

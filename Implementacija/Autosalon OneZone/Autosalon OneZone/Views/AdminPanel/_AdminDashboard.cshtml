@@ -228,12 +228,3 @@
         </section>
     </div>
 </div>
-
-<script>
-    $(document).off('click.adminDashboardShortcut', '.dashboard-section-link').on('click.adminDashboardShortcut', '.dashboard-section-link', function () {
-        const section = $(this).data('section');
-        if (window.loadSection && section) {
-            window.loadSection(section);
-        }
-    });
-</script>

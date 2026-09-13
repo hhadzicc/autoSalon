@@ -12,15 +12,13 @@
         ["modelRequired"] = L["Validation.VehicleModelRequiredClient"].Value,
         ["modelMax"] = L["Validation.VehicleModelMaxLength"].Value,
         ["yearRequired"] = L["Validation.VehicleYearRequired"].Value,
-        ["yearMin"] = L["Validation.VehicleYearMin"].Value,
-        ["yearMax"] = L["Validation.VehicleYearMax"].Value,
+        ["yearMin"] = L["Validation.VehicleYearMin", VehicleYearPolicy.MinimumYear].Value,
+        ["yearMax"] = L["Validation.VehicleYearMax", VehicleYearPolicy.MaximumYear].Value,
         ["yearDigits"] = L["Validation.VehicleYearDigits"].Value,
         ["fuelRequired"] = L["Validation.VehicleFuelRequired"].Value,
         ["displacementPositive"] = L["Validation.VehicleDisplacementPositive"].Value,
         ["displacementNumber"] = L["Validation.VehicleDisplacementNumber"].Value,
         ["colorRequired"] = L["Validation.VehicleColorRequiredClient"].Value,
-        ["colorMax"] = L["Validation.VehicleColorMaxLength"].Value,
-        ["colorPattern"] = L["Validation.VehicleColorLettersOnly"].Value,
         ["mileageRequired"] = L["Validation.VehicleMileageRequired"].Value,
         ["mileagePositive"] = L["Validation.VehicleMileagePositive"].Value,
         ["mileageNumber"] = L["Validation.VehicleMileageNumber"].Value,
@@ -35,7 +33,13 @@
     };
 }
 
-<form id="add-edit-vozilo-form" asp-controller="AdminPanel" asp-action="SaveVozilo" method="post" enctype="multipart/form-data">
+<form id="add-edit-vozilo-form"
+      asp-controller="AdminPanel"
+      asp-action="SaveVozilo"
+      method="post"
+      enctype="multipart/form-data"
+      data-validation-texts="@JsonSerializer.Serialize(vehicleFormTexts)"
+      data-is-edit="@isEdit.ToString().ToLowerInvariant()">
     <input type="hidden" asp-for="VoziloID" />
 
     <div class="row g-3">
@@ -53,7 +57,7 @@
 
         <div class="col-md-6">
             <label asp-for="Godiste" class="form-label">@L["VehicleYear"]</label>
-            <input asp-for="Godiste" class="form-control" type="number" min="1900" max="2026" required />
+            <input asp-for="Godiste" class="form-control" type="number" min="@VehicleYearPolicy.MinimumYear" max="@VehicleYearPolicy.MaximumYear" required />
             <span asp-validation-for="Godiste" class="text-danger"></span>
         </div>
 
@@ -61,11 +65,10 @@
             <label asp-for="Gorivo" class="form-label">@L["VehicleFuel"]</label>
             <select asp-for="Gorivo" class="form-control" required>
                 <option value="">@L["SelectFuelType"]</option>
-                <option value="Benzin">@L["FuelGasoline"]</option>
-                <option value="Dizel">@L["FuelDiesel"]</option>
-                <option value="Plin">@L["FuelGas"]</option>
-                <option value="Elektro">@L["FuelElectric"]</option>
-                <option value="Hibrid">@L["FuelHybrid"]</option>
+                @foreach (var fuel in Enum.GetValues<TipGoriva>())
+                {
+                    <option value="@fuel">@L[FuelPresentation.GetResourceKey(fuel)]</option>
+                }
             </select>
             <span asp-validation-for="Gorivo" class="text-danger"></span>
         </div>
@@ -78,7 +81,13 @@
 
         <div class="col-md-6">
             <label asp-for="Boja" class="form-label">@L["VehicleColor"]</label>
-            <input asp-for="Boja" class="form-control" pattern="[\p{L}\s-]+" required />
+            <select asp-for="Boja" class="form-control" required>
+                <option value="">@L["SelectVehicleColor"]</option>
+                @foreach (var color in Enum.GetValues<TipBoje>())
+                {
+                    <option value="@color">@L[VehicleColorPresentation.GetResourceKey(color)]</option>
+                }
+            </select>
             <span asp-validation-for="Boja" class="text-danger"></span>
         </div>
 
@@ -96,7 +105,14 @@
 
         <div class="col-12">
             <label asp-for="Slika" class="form-label">@L["VehicleImage"]</label>
-            <input asp-for="Slika" class="form-control" type="file" accept="image/*" required="@(!isEdit)" />
+            @if (isEdit)
+            {
+                <input asp-for="Slika" class="form-control" type="file" accept="image/*" />
+            }
+            else
+            {
+                <input asp-for="Slika" class="form-control" type="file" accept="image/*" required />
+            }
             <small class="form-text text-muted">@(isEdit ? L["VehicleImageOptional"] : L["VehicleImageRequired"]) · @L["FileExtensionsAllowed"]</small>
             <span asp-validation-for="Slika" class="text-danger"></span>
 
@@ -125,144 +141,3 @@
         </button>
     </div>
 </form>
-
-<script>
-    $(document).ready(function () {
-        const text = @Html.Raw(JsonSerializer.Serialize(vehicleFormTexts));
-        const form = $("#add-edit-vozilo-form");
-
-        $(document).off('submit', '#add-edit-vozilo-form');
-        $(document).off('click', '.edit-vozilo-button');
-        $(document).off('click', '#add-vozilo-button');
-
-        if (!$.validator.methods.pattern) {
-            $.validator.addMethod("pattern", function (value, element, param) {
-                if (this.optional(element)) {
-                    return true;
-                }
-
-                return param instanceof RegExp ? param.test(value) : new RegExp(param, "u").test(value);
-            });
-        }
-
-        form.validate({
-            errorElement: "span",
-            errorClass: "text-danger",
-            highlight: function (element) {
-                $(element).addClass("is-invalid").removeClass("is-valid");
-            },
-            unhighlight: function (element) {
-                $(element).addClass("is-valid").removeClass("is-invalid");
-            },
-            errorPlacement: function (error, element) {
-                error.insertAfter(element);
-            },
-            rules: {
-                Marka: {
-                    required: true,
-                    maxlength: 100
-                },
-                Model: {
-                    required: true,
-                    maxlength: 100
-                },
-                Godiste: {
-                    required: true,
-                    min: 1900,
-                    max: 2026,
-                    digits: true
-                },
-                Gorivo: "required",
-                Kubikaza: {
-                    min: 0,
-                    number: true
-                },
-                Boja: {
-                    required: true,
-                    maxlength: 50,
-                    pattern: /^[\p{L}\s-]+$/u
-                },
-                Kilometraza: {
-                    required: true,
-                    min: 0,
-                    number: true
-                },
-                Cijena: {
-                    required: true,
-                    min: 0.01,
-                    number: true
-                },
-                Slika: {
-                    required: @(!isEdit ? "true" : "false")
-                },
-                Opis: {
-                    required: true,
-                    maxlength: 2000
-                }
-            },
-            messages: {
-                Marka: {
-                    required: text.makeRequired,
-                    maxlength: text.makeMax
-                },
-                Model: {
-                    required: text.modelRequired,
-                    maxlength: text.modelMax
-                },
-                Godiste: {
-                    required: text.yearRequired,
-                    min: text.yearMin,
-                    max: text.yearMax,
-                    digits: text.yearDigits
-                },
-                Gorivo: text.fuelRequired,
-                Kubikaza: {
-                    min: text.displacementPositive,
-                    number: text.displacementNumber
-                },
-                Boja: {
-                    required: text.colorRequired,
-                    maxlength: text.colorMax,
-                    pattern: text.colorPattern
-                },
-                Kilometraza: {
-                    required: text.mileageRequired,
-                    min: text.mileagePositive,
-                    number: text.mileageNumber
-                },
-                Cijena: {
-                    required: text.priceRequired,
-                    min: text.pricePositive,
-                    number: text.priceNumber
-                },
-                Slika: {
-                    required: text.imageRequired
-                },
-                Opis: {
-                    required: text.descriptionRequired,
-                    maxlength: text.descriptionMax
-                }
-            }
-        });
-
-        $(document).off('change.adminVoziloFile', '#add-edit-vozilo-form input[type=file]').on('change.adminVoziloFile', '#add-edit-vozilo-form input[type=file]', function () {
-            const fileInput = $(this)[0];
-            if (fileInput.files.length > 0) {
-                const file = fileInput.files[0];
-                const allowedExtensions = /(\.jpg|\.jpeg|\.png|\.gif|\.bmp)$/i;
-
-                if (!allowedExtensions.exec(file.name)) {
-                    window.showAppToast(text.allowedExtensions, 'error');
-                    $(this).val('');
-                    return false;
-                }
-
-                if (file.size > 5 * 1024 * 1024) {
-                    window.showAppToast(text.imageSizeLimit, 'error');
-                    $(this).val('');
-                    return false;
-                }
-            }
-        });
-    });
-</script>

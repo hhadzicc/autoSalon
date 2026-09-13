@@ -30,7 +30,13 @@
     };
 }
 
-<form id="add-profil-form" asp-controller="AdminPanel" asp-action="SaveProfil" method="post">
+<form id="add-profil-form"
+      asp-controller="AdminPanel"
+      asp-action="SaveProfil"
+      method="post"
+      data-validation-texts="@JsonSerializer.Serialize(profileFormTexts)"
+      data-password-pattern="@PasswordPolicy.Pattern"
+      data-password-min-length="@PasswordPolicy.RequiredLength">
     <input type="hidden" asp-for="UserId" />
 
     <div class="form-group">
@@ -126,105 +132,3 @@
         <button type="button" id="cancel-add-profil" class="btn btn-secondary">@L["Cancel"]</button>
     </div>
 </form>
-
-<script>
-    $(document).ready(function () {
-        const text = @Html.Raw(JsonSerializer.Serialize(profileFormTexts));
-        const form = $("#add-profil-form");
-
-        form.off();
-
-        $("#Ime, #Prezime").on("input", function () {
-            const cleanValue = $(this).val().replace(/[^\p{L}\s-]/gu, '');
-            $(this).val(cleanValue);
-        });
-
-        $("#UserName").on("input", function () {
-            const cleanValue = $(this).val().replace(/[^A-Za-z0-9]/g, '');
-            $(this).val(cleanValue);
-        });
-
-        if (!$.validator.methods.pattern) {
-            $.validator.addMethod("pattern", function (value, element, param) {
-                if (this.optional(element)) {
-                    return true;
-                }
-
-                return param instanceof RegExp ? param.test(value) : new RegExp(param, "u").test(value);
-            });
-        }
-
-        form.validate({
-            errorElement: "span",
-            errorClass: "text-danger",
-            rules: {
-                UserName: {
-                    required: true,
-                    pattern: /^[A-Za-z0-9]+$/
-                },
-                Ime: {
-                    required: true,
-                    pattern: /^[\p{L}\s-]+$/u
-                },
-                Prezime: {
-                    required: true,
-                    pattern: /^[\p{L}\s-]+$/u
-                }
-            },
-            messages: {
-                UserName: {
-                    required: text.usernameRequired,
-                    pattern: text.usernamePattern
-                },
-                Ime: {
-                    required: text.firstNameRequired,
-                    pattern: text.firstNamePattern
-                },
-                Prezime: {
-                    required: text.lastNameRequired,
-                    pattern: text.lastNamePattern
-                }
-            },
-            highlight: function (element) {
-                $(element).addClass("is-invalid").removeClass("is-valid");
-            },
-            unhighlight: function (element) {
-                $(element).addClass("is-valid").removeClass("is-invalid");
-            },
-            errorPlacement: function (error, element) {
-                const wrapper = element.closest(".password-wrapper");
-                if (wrapper.length) {
-                    error.insertAfter(wrapper);
-                } else {
-                    error.insertAfter(element);
-                }
-            }
-        });
-
-        const passwordPattern = new RegExp(@Html.Raw(JsonSerializer.Serialize(PasswordPolicy.Pattern)));
-
-        $("#Password").rules("add", {
-            required: function () {
-                return $("#UserId").val().length === 0;
-            },
-            minlength: @PasswordPolicy.RequiredLength,
-            pattern: passwordPattern,
-            messages: {
-                required: text.passwordRequired,
-                minlength: text.passwordPolicy,
-                pattern: text.passwordPolicy
-            }
-        });
-
-        $("#ConfirmPassword").rules("add", {
-            required: function () {
-                return $("#UserId").val().length === 0 || $("#Password").val().length > 0;
-            },
-            equalTo: "#Password",
-            messages: {
-                required: $("#UserId").val().length === 0 ? text.confirmPasswordRequired : text.confirmNewPasswordRequired,
-                equalTo: text.passwordsMatch
-            }
-        });
-    });
-</script>

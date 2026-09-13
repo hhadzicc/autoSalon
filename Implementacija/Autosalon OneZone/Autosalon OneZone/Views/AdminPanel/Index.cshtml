@@ -9,7 +9,18 @@
     bool isAdmin = user != null && await UserManager.IsInRoleAsync(user, "Administrator");
 }
 
-<section class="admin-section">
+<section class="admin-section"
+         id="admin-panel-root"
+         data-default-section="@(currentSection ?? "Dashboard")"
+         data-is-admin="@isAdmin.ToString().ToLowerInvariant()"
+         data-url-dashboard="@Url.Action("GetDashboardSection", "AdminPanel")"
+         data-url-vozila="@Url.Action("GetVozilaSection", "AdminPanel")"
+         data-url-profili="@Url.Action("GetProfiliSection", "AdminPanel")"
+         data-url-recenzije="@Url.Action("GetRecenzijeSection", "AdminPanel")"
+         data-url-podrska="@Url.Action("GetPodrskaSection", "AdminPanel")"
+         data-text-not-found="@L["AdminSectionNotFound"]"
+         data-text-loading="@L["AdminSectionLoading"]"
+         data-text-load-error="@L["AdminSectionLoadError"]">
     <div class="admin-container">
         <div class="admin-layout">
             <aside class="admin-sidebar">
@@ -64,91 +75,10 @@
 </section>
 
 @section Scripts {
-    <script>
-        $(document).ready(function () {
-            const adminTexts = {
-                notFound: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["AdminSectionNotFound"].Value)),
-                loading: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["AdminSectionLoading"].Value)),
-                loadError: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["AdminSectionLoadError"].Value))
-            };
-            const adminSectionContent = $('#admin-section-content');
-            const adminSidebarLinks = $('.admin-menu-link');
-
-            function loadSection(sectionName, params = {}) {
-                let url = '';
-
-                switch (sectionName) {
-                    case 'Dashboard':
-                        url = '@Url.Action("GetDashboardSection", "AdminPanel")';
-                        break;
-                    case 'Vozila':
-                        url = '@Url.Action("GetVozilaSection", "AdminPanel")';
-                        break;
-                    case 'Profili':
-                        url = '@Url.Action("GetProfiliSection", "AdminPanel")';
-                        break;
-                    case 'Recenzije':
-                        url = '@Url.Action("GetRecenzijeSection", "AdminPanel")';
-                        break;
-                    case 'Podrska':
-                        url = '@Url.Action("GetPodrskaSection", "AdminPanel")';
-                        break;
-                    default:
-                        adminSectionContent.html('<div class="admin-card"><div class="alert alert-warning mb-0">' + adminTexts.notFound + '</div></div>');
-                        return;
-                }
-
-                adminSectionContent.html('<div class="admin-card"><div class="empty-state"><i class="bi bi-hourglass-split"></i><p>' + adminTexts.loading + '</p></div></div>');
-
-                $.get(url, params, function (data) {
-                    $('script.dynamic-partial-script').remove();
-                    const tempDiv = $('<div>').html(data);
-                    const scripts = [];
-
-                    tempDiv.find('script').each(function () {
-                        scripts.push({
-                            src: this.src,
-                            text: this.textContent
-                        });
-                        $(this).remove();
-                    });
-
-                    adminSectionContent.html(tempDiv.html());
-
-                    scripts.forEach(function (scriptData) {
-                        const newScript = document.createElement('script');
-
-                        if (scriptData.src) {
-                            newScript.src = scriptData.src;
-                        } else {
-                            newScript.textContent = scriptData.text;
-                        }
-
-                        newScript.type = 'text/javascript';
-                        newScript.classList.add('dynamic-partial-script');
-                        document.body.appendChild(newScript);
-                    });
-                }).fail(function (jqXHR, textStatus, errorThrown) {
-                    adminSectionContent.html('<div class="admin-card"><div class="alert alert-danger mb-0">' + adminTexts.loadError + errorThrown + '</div></div>');
-                });
-
-                adminSidebarLinks.removeClass('active');
-                $(`.admin-menu-link[data-section="${sectionName}"]`).addClass('active');
-            }
-
-            adminSidebarLinks.on('click', function (e) {
-                e.preventDefault();
-                loadSection($(this).data('section'));
-            });
-
-            let defaultSection = '@(currentSection ?? "Dashboard")';
-
-            if (defaultSection === 'Profili' && !@Json.Serialize(isAdmin)) {
-                defaultSection = 'Dashboard';
-            }
-
-            loadSection(defaultSection);
-            window.loadSection = loadSection;
-        });
-    </script>
+    <script src="~/js/admin/admin-core.js" asp-append-version="true"></script>
+    <script src="~/js/admin/admin-panel.js" asp-append-version="true"></script>
+    <script src="~/js/admin/admin-reviews.js" asp-append-version="true"></script>
+    <script src="~/js/admin/admin-support.js" asp-append-version="true"></script>
+    <script src="~/js/admin/admin-users.js" asp-append-version="true"></script>
+    <script src="~/js/admin/admin-vehicles.js" asp-append-version="true"></script>
 }

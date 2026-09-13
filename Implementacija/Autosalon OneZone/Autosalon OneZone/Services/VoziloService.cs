@@ -231,8 +231,8 @@ namespace Autosalon_OneZone.Services
 
                 query = query.Where(vehicle => vehicle.Gorivo == fuel);
             }
-            if (!string.IsNullOrEmpty(criteria.Color))
-                query = query.Where(vehicle => vehicle.Boja != null && vehicle.Boja.Contains(criteria.Color));
+            if (criteria.Colors.Count > 0)
+                query = query.Where(vehicle => criteria.Colors.Contains(vehicle.Boja));
             if (criteria.EngineDisplacementFrom.HasValue)
                 query = query.Where(vehicle => vehicle.Kubikaza >= criteria.EngineDisplacementFrom.Value);
             if (criteria.EngineDisplacementTo.HasValue)
@@ -274,7 +274,7 @@ namespace Autosalon_OneZone.Services
         int? YearFrom,
         int? YearTo,
         string? Fuel,
-        string? Color,
+        IReadOnlyCollection<TipBoje> Colors,
         decimal? EngineDisplacementFrom,
         decimal? EngineDisplacementTo,
         double? MileageFrom,

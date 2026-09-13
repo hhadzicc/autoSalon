@@ -166,6 +166,33 @@ public class ServiceTests
     }
 
     [Fact]
+    public async Task VoziloService_filters_catalog_by_multiple_exact_colors()
+    {
+        await using var db = CreateContext();
+        await SeedVehicles(db);
+        var service = new VoziloService(db);
+        var criteria = new VehicleSearchCriteria(
+            null,
+            null,
+            null,
+            null,
+            null,
+            new[] { TipBoje.Crna, TipBoje.Srebrna },
+            null,
+            null,
+            null,
+            null,
+            null,
+            null);
+
+        var result = await service.GetVehiclesPageAsync(criteria, 1, 12);
+
+        Assert.Equal(2, result.TotalCount);
+        Assert.All(result.Vehicles, vehicle =>
+            Assert.Contains(vehicle.Boja, new[] { TipBoje.Crna, TipBoje.Srebrna }));
+    }
+
+    [Fact]
     public async Task Customer_experience_summary_contains_only_completed_purchases_and_orders_latest_first()
     {
         await using var db = CreateContext();
@@ -239,15 +266,22 @@ public class ServiceTests
     private static async Task SeedVehicles(ApplicationDbContext db)
     {
         db.Vozila.AddRange(
-            CreateVehicle("Audi", "A4", 2020, 43900, TipGoriva.Dizel, 76000),
-            CreateVehicle("Audi", "e-tron GT", 2022, 129500, TipGoriva.Elektro, 28400),
-            CreateVehicle("BMW", "X5", 2022, 89500, TipGoriva.Dizel, 38500),
-            CreateVehicle("Tesla", "Model 3", 2023, 72800, TipGoriva.Elektro, 21400),
-            CreateVehicle("Volkswagen", "Golf 8", 2021, 37500, TipGoriva.Benzin, 48500));
+            CreateVehicle("Audi", "A4", 2020, 43900, TipGoriva.Dizel, 76000, TipBoje.Crna),
+            CreateVehicle("Audi", "e-tron GT", 2022, 129500, TipGoriva.Elektro, 28400, TipBoje.Bijela),
+            CreateVehicle("BMW", "X5", 2022, 89500, TipGoriva.Dizel, 38500, TipBoje.Srebrna),
+            CreateVehicle("Tesla", "Model 3", 2023, 72800, TipGoriva.Elektro, 21400, TipBoje.Crvena),
+            CreateVehicle("Volkswagen", "Golf 8", 2021, 37500, TipGoriva.Benzin, 48500, TipBoje.Plava));
         await db.SaveChangesAsync();
     }
 
-    private static Vozilo CreateVehicle(string brand, string model, int year, decimal price, TipGoriva fuel = TipGoriva.Benzin, double mileage = 1000)
+    private static Vozilo CreateVehicle(
+        string brand,
+        string model,
+        int year,
+        decimal price,
+        TipGoriva fuel = TipGoriva.Benzin,
+        double mileage = 1000,
+        TipBoje color = TipBoje.Crna)
     {
         return new Vozilo
         {
@@ -256,7 +290,7 @@ public class ServiceTests
             Godiste = year,
             Gorivo = fuel,
             Kubikaza = 2.0m,
-            Boja = "Crna",
+            Boja = color,
             Kilometraza = mileage,
             Cijena = price,
             Opis = "Opis"

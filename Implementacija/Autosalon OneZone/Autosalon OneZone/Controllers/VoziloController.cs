@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Autosalon_OneZone.Services;
+using Autosalon_OneZone.Validation;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Autosalon_OneZone.Models;
@@ -53,13 +54,14 @@ namespace Autosalon_OneZone.Controllers
 
         [HttpGet]
         public async Task<IActionResult> Index(string searchTerm, string sortOrder,
-            int? godisteOd, int? godisteDo, string gorivo, string boja,
+            int? godisteOd, int? godisteDo, string gorivo, string[]? boja,
             decimal? kubikazaOd, decimal? kubikazaDo,
             double? kilometrazaOd, double? kilometrazaDo,
             decimal? cijenaOd, decimal? cijenaDo)
         {
             searchTerm = searchTerm?.Trim();
-            PopulateFilterViewData(searchTerm, sortOrder, godisteOd, godisteDo, gorivo, boja,
+            var colors = ParseColors(boja);
+            PopulateFilterViewData(searchTerm, sortOrder, godisteOd, godisteDo, gorivo, colors,
                 kubikazaOd, kubikazaDo, kilometrazaOd, kilometrazaDo, cijenaOd, cijenaDo);
 
             var criteria = CreateValidatedCriteria(
@@ -68,7 +70,7 @@ namespace Autosalon_OneZone.Controllers
                 godisteOd,
                 godisteDo,
                 gorivo,
-                boja,
+                colors,
                 kubikazaOd,
                 kubikazaDo,
                 kilometrazaOd,
@@ -91,13 +93,13 @@ namespace Autosalon_OneZone.Controllers
 
         [HttpGet]
         public async Task<IActionResult> LoadMore(int page, string searchTerm, string sortOrder,
-            int? godisteOd, int? godisteDo, string gorivo, string boja,
+            int? godisteOd, int? godisteDo, string gorivo, string[]? boja,
             decimal? kubikazaOd, decimal? kubikazaDo,
             double? kilometrazaOd, double? kilometrazaDo,
             decimal? cijenaOd, decimal? cijenaDo)
         {
             var criteria = CreateValidatedCriteria(
-                searchTerm?.Trim(), sortOrder, godisteOd, godisteDo, gorivo, boja,
+                searchTerm?.Trim(), sortOrder, godisteOd, godisteDo, gorivo, ParseColors(boja),
                 kubikazaOd, kubikazaDo, kilometrazaOd, kilometrazaDo,
                 cijenaOd, cijenaDo, includeValidationMessages: false);
             var result = await _voziloService.GetVehiclesPageAsync(criteria, page, PageSize);
@@ -128,7 +130,7 @@ namespace Autosalon_OneZone.Controllers
 
         private void PopulateFilterViewData(
             string? searchTerm, string? sortOrder,
-            int? yearFrom, int? yearTo, string? fuel, string? color,
+            int? yearFrom, int? yearTo, string? fuel, IReadOnlyCollection<TipBoje> colors,
             decimal? displacementFrom, decimal? displacementTo,
             double? mileageFrom, double? mileageTo,
             decimal? priceFrom, decimal? priceTo)
@@ -138,7 +140,7 @@ namespace Autosalon_OneZone.Controllers
             ViewData["GodisteOd"] = yearFrom;
             ViewData["GodisteDo"] = yearTo;
             ViewData["Gorivo"] = fuel;
-            ViewData["Boja"] = color;
+            ViewData["Boje"] = colors;
             ViewData["KubikazaOd"] = displacementFrom;
             ViewData["KubikazaDo"] = displacementTo;
             ViewData["KilometrazaOd"] = mileageFrom;
@@ -149,15 +151,15 @@ namespace Autosalon_OneZone.Controllers
 
         private VehicleSearchCriteria CreateValidatedCriteria(
             string? searchTerm, string? sortOrder,
-            int? yearFrom, int? yearTo, string? fuel, string? color,
+            int? yearFrom, int? yearTo, string? fuel, IReadOnlyCollection<TipBoje> colors,
             decimal? displacementFrom, decimal? displacementTo,
             double? mileageFrom, double? mileageTo,
             decimal? priceFrom, decimal? priceTo,
             bool includeValidationMessages)
         {
-            var currentYear = DateTime.Now.Year;
-            if ((yearFrom.HasValue && (yearFrom < 1900 || yearFrom > currentYear)) ||
-                (yearTo.HasValue && (yearTo < 1900 || yearTo > currentYear)))
+            var currentYear = VehicleYearPolicy.MaximumYear;
+            if ((yearFrom.HasValue && !VehicleYearPolicy.IsValid(yearFrom.Value)) ||
+                (yearTo.HasValue && !VehicleYearPolicy.IsValid(yearTo.Value)))
             {
                 if (includeValidationMessages)
                     ViewData["YearFilterError"] = _localizer["FilterYearRangeError", currentYear].Value;
@@ -181,9 +183,27 @@ namespace Autosalon_OneZone.Controllers
                 includeValidationMessages);
 
             return new VehicleSearchCriteria(
-                searchTerm, sortOrder, yearFrom, yearTo, fuel, color,
+                searchTerm, sortOrder, yearFrom, yearTo, fuel, colors,
                 displacementFrom, displacementTo, mileageFrom, mileageTo,
                 priceFrom, priceTo);
+        }
+
+        private static IReadOnlyList<TipBoje> ParseColors(IEnumerable<string>? values)
+        {
+            if (values == null)
+            {
+                return Array.Empty<TipBoje>();
+            }
+
+            return values
+                .Select(value => Enum.TryParse<TipBoje>(value, ignoreCase: true, out var color) &&
+                                 Enum.IsDefined(typeof(TipBoje), color)
+                    ? (TipBoje?)color
+                    : null)
+                .Where(color => color.HasValue)
+                .Select(color => color!.Value)
+                .Distinct()
+                .ToArray();
         }
 
         private void NormalizeDecimalRange(

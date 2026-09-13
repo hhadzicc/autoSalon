@@ -82,7 +82,7 @@ public sealed class AdminVehicleService : IAdminVehicleService
             vehicle.Godiste = model.Godiste;
             vehicle.Gorivo = fuel;
             vehicle.Kubikaza = model.Kubikaza;
-            vehicle.Boja = model.Boja;
+            vehicle.Boja = model.Boja!.Value;
             vehicle.Kilometraza = model.Kilometraza;
             vehicle.Cijena = model.Cijena;
             vehicle.Opis = model.Opis;

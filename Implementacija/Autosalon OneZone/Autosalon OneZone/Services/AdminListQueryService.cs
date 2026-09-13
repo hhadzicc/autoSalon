@@ -184,7 +184,7 @@ public sealed class AdminListQueryService : IAdminListQueryService
             vehicle.Gorivo.ToString(),
             vehicle.Kilometraza,
             vehicle.Cijena,
-            vehicle.Boja,
+            vehicle.Boja.ToString(),
             vehicle.Kubikaza)).ToList();
 
         return new VehiclePageResult(items, totalCount, PageCount(totalCount), 1, AllItemsPageSize, sort, direction);

@@ -3,35 +3,32 @@
 @model VehicleListingViewModel
 @{
     ViewData["Title"] = L["VehiclesTitle"];
-    var currentYear = DateTime.Now.Year;
+    var currentYear = VehicleYearPolicy.MaximumYear;
     var searchTerm = Model.SearchTerm;
     var clearSearchParameters = Context.Request.Query
         .Where(parameter => !string.Equals(parameter.Key, "searchTerm", StringComparison.OrdinalIgnoreCase))
         .SelectMany(parameter => parameter.Value.Select(value =>
             new KeyValuePair<string, string?>(parameter.Key, value)));
     var clearSearchUrl = $"{Url.Action("Index", "Vozilo")}{QueryString.Create(clearSearchParameters)}";
+    var selectedColors = ViewData["Boje"] as IReadOnlyCollection<TipBoje> ?? Array.Empty<TipBoje>();
+    var availableColors = Enum.GetValues<TipBoje>();
+    const int initiallyVisibleColorCount = 8;
+    var initiallyVisibleColors = availableColors.Take(initiallyVisibleColorCount).ToHashSet();
+    var showAllColors = selectedColors.Any(color => !initiallyVisibleColors.Contains(color));
     var hasActiveFilters =
         ViewData["GodisteOd"] != null ||
         ViewData["GodisteDo"] != null ||
         ViewData["Gorivo"] != null ||
-        ViewData["Boja"] != null ||
+        selectedColors.Count > 0 ||
         ViewData["KubikazaOd"] != null ||
         ViewData["KubikazaDo"] != null ||
         ViewData["KilometrazaOd"] != null ||
         ViewData["KilometrazaDo"] != null ||
         ViewData["CijenaOd"] != null ||
         ViewData["CijenaDo"] != null;
-
-    string FuelLabel(string value) => value switch
-    {
-        "Benzin" => L["FuelGasoline"].Value,
-        "Dizel" => L["FuelDiesel"].Value,
-        "Plin" => L["FuelGas"].Value,
-        "Elektro" => L["FuelElectric"].Value,
-        "Hibrid" => L["FuelHybrid"].Value,
-        _ => value
-    };
-
+    var selectedFuel = Enum.TryParse<TipGoriva>(ViewData["Gorivo"]?.ToString(), out var parsedFuel)
+        ? parsedFuel
+        : (TipGoriva?)null;
 }
 
 <section class="vehicles-hero">
@@ -103,25 +100,17 @@
                     }
 
                     <div class="vehicles-filter-group">
-                        <div>
-                            <label for="gorivo" class="form-label">@L["VehicleFuel"]</label>
-                            <select class="form-select" id="gorivo" name="gorivo">
-                                <option value="">@L["AllFuelTypes"]</option>
-                                @{
-                                    var gorivoOptions = new[] { "Benzin", "Dizel", "Plin", "Elektro", "Hibrid" };
-                                    foreach (var option in gorivoOptions)
-                                    {
-                                        <option value="@option" selected="@(ViewData["Gorivo"]?.ToString() == option)">@FuelLabel(option)</option>
-                                    }
+                        <label for="gorivo" class="form-label">@L["VehicleFuel"]</label>
+                        <select class="form-select" id="gorivo" name="gorivo">
+                            <option value="">@L["AllFuelTypes"]</option>
+                            @{
+                                var gorivoOptions = Enum.GetValues<TipGoriva>();
+                                foreach (var option in gorivoOptions)
+                                {
+                                    <option value="@option" selected="@(selectedFuel == option)">@L[FuelPresentation.GetResourceKey(option)]</option>
                                 }
-                            </select>
-                        </div>
-
-                        <div class="vehicles-filter-field" data-manual-filter-group>
-                            <label for="boja" class="form-label">@L["VehicleColor"]</label>
-                            <input type="text" class="form-control" id="boja" name="boja" autocomplete="off" spellcheck="false" placeholder="@L["EnterColor"]" value="@ViewData["Boja"]">
-                            <button type="submit" class="vehicles-group-apply" data-filter-apply hidden>@L["Apply"]</button>
-                        </div>
+                            }
+                        </select>
                     </div>
 
                     <div class="vehicles-filter-group" data-manual-filter-group>
@@ -188,6 +177,38 @@
                         <button type="submit" class="vehicles-group-apply" data-filter-apply hidden>@L["Apply"]</button>
                     </div>
 
+                    <div class="vehicles-filter-group">
+                        <fieldset class="vehicles-color-filter">
+                            <legend class="form-label">@L["VehicleColor"]</legend>
+                            <div class="vehicles-color-options @(showAllColors ? "is-expanded" : string.Empty)" data-color-options>
+                                @for (var index = 0; index < availableColors.Length; index++)
+                                {
+                                    var color = availableColors[index];
+                                    var colorId = $"boja-{color}";
+                                    var additionalClass = index >= initiallyVisibleColorCount ? "is-extra" : string.Empty;
+                                    <label class="vehicles-color-option @additionalClass" for="@colorId">
+                                        <input type="checkbox"
+                                               id="@colorId"
+                                               name="boja"
+                                               value="@color"
+                                               checked="@selectedColors.Contains(color)" />
+                                        <span class="vehicle-color-swatch @VehicleColorPresentation.GetSwatchClass(color)" aria-hidden="true"></span>
+                                        <span>@L[VehicleColorPresentation.GetResourceKey(color)]</span>
+                                    </label>
+                                }
+                            </div>
+                            <button type="button"
+                                    class="vehicles-color-toggle"
+                                    data-color-toggle
+                                    data-show-label="@L["ShowAllColors"]"
+                                    data-hide-label="@L["ShowFewerColors"]"
+                                    aria-expanded="@showAllColors.ToString().ToLowerInvariant()">
+                                <span data-color-toggle-label>@(showAllColors ? L["ShowFewerColors"] : L["ShowAllColors"])</span>
+                                <i class="bi @(showAllColors ? "bi-chevron-up" : "bi-chevron-down")" aria-hidden="true"></i>
+                            </button>
+                        </fieldset>
+                    </div>
+
                 </form>
             </aside>
 
@@ -231,16 +252,16 @@
                 @if (hasActiveFilters)
                 {
                     <div class="vehicles-active-filters" aria-label="@L["ActiveFilters"]">
-                        @if (ViewData["Gorivo"] != null)
+                        @if (selectedFuel.HasValue)
                         {
                             <button type="button" class="vehicles-filter-chip" data-clear-filter="gorivo">
-                                <span>@FuelLabel(ViewData["Gorivo"]!.ToString()!)</span><i class="bi bi-x" aria-hidden="true"></i>
+                                <span>@L[FuelPresentation.GetResourceKey(selectedFuel.Value)]</span><i class="bi bi-x" aria-hidden="true"></i>
                             </button>
                         }
-                        @if (ViewData["Boja"] != null)
+                        @foreach (var color in selectedColors)
                         {
-                            <button type="button" class="vehicles-filter-chip" data-clear-filter="boja">
-                                <span>@ViewData["Boja"]</span><i class="bi bi-x" aria-hidden="true"></i>
+                            <button type="button" class="vehicles-filter-chip" data-clear-color="@color">
+                                <span>@L[VehicleColorPresentation.GetResourceKey(color)]</span><i class="bi bi-x" aria-hidden="true"></i>
                             </button>
                         }
                         @if (ViewData["GodisteOd"] != null || ViewData["GodisteDo"] != null)
@@ -313,7 +334,13 @@
             $('[data-clear-filters]').click(function() {
                 var searchTerm = '@searchTerm';
 
-                $('#filterForm').find('input:not([name="searchTerm"])').val('');
+                $('#filterForm').find('input:not([name="searchTerm"])').each(function() {
+                    if (this.type === 'checkbox' || this.type === 'radio') {
+                        this.checked = false;
+                    } else {
+                        $(this).val('');
+                    }
+                });
                 $('#filterForm').find('select:not([name="searchTerm"])').val('');
                 $('#sortOrder').val('');
 
@@ -339,12 +366,37 @@
                 $('#filterForm').submit();
             });
 
+            $('[data-clear-color]').click(function() {
+                var color = $(this).attr('data-clear-color');
+                $('#filterForm').find('input[name="boja"][value="' + color + '"]').prop('checked', false);
+                $('#filterForm').submit();
+            });
+
             $('#sortOrder').change(function() {
                 $('#filterForm').submit();
             });
 
             $('#gorivo').change(function() {
                 $('#filterForm').submit();
+            });
+
+            $('.vehicles-color-option input').change(function() {
+                $('#filterForm').submit();
+            });
+
+            $('[data-color-toggle]').click(function() {
+                var button = $(this);
+                var options = button.closest('.vehicles-color-filter').find('[data-color-options]');
+                var expanded = !options.hasClass('is-expanded');
+
+                options.toggleClass('is-expanded', expanded);
+                button.attr('aria-expanded', expanded);
+                button.find('[data-color-toggle-label]').text(
+                    expanded ? button.attr('data-hide-label') : button.attr('data-show-label')
+                );
+                button.find('i')
+                    .toggleClass('bi-chevron-up', expanded)
+                    .toggleClass('bi-chevron-down', !expanded);
             });
 
             $('[data-manual-filter-group] input').on('input', function() {

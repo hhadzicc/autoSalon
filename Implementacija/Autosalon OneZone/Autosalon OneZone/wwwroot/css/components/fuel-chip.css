@@ -1,0 +1,16 @@
+.fuel-chip {
+    flex: 0 0 auto;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 850;
+    line-height: 1.1;
+    white-space: nowrap;
+}
+
+.fuel-chip.is-electric { color: #13793a; background: #eaf8ee; }
+.fuel-chip.is-petrol { color: #a35708; background: #fff3e6; }
+.fuel-chip.is-diesel { color: #315faa; background: #edf3ff; }
+.fuel-chip.is-hybrid { color: #14735f; background: #e9f8f3; }
+.fuel-chip.is-gas { color: #7652a8; background: #f3edfb; }
+.fuel-chip.is-default { color: #475569; background: #f1f5f9; }

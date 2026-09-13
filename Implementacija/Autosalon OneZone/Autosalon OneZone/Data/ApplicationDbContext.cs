@@ -34,6 +34,11 @@ namespace Autosalon_OneZone.Data
                 .Property(e => e.Gorivo)
                 .HasConversion<string>();
 
+            modelBuilder.Entity<Vozilo>()
+                .Property(e => e.Boja)
+                .HasConversion<string>()
+                .HasMaxLength(50);
+
             modelBuilder.Entity<Narudzba>()
                 .Property(e => e.Status)
                 .HasConversion<string>();

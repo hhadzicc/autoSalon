@@ -96,6 +96,17 @@ namespace Autosalon_OneZone.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SaveVozilo(AddVoziloViewModel viewModel)
         {
+            if (viewModel.Godiste.HasValue && !VehicleYearPolicy.IsValid(viewModel.Godiste.Value))
+            {
+                ModelState.Remove(nameof(viewModel.Godiste));
+                ModelState.AddModelError(
+                    nameof(viewModel.Godiste),
+                    _localizer[
+                        "Validation.VehicleYearRange",
+                        VehicleYearPolicy.MinimumYear,
+                        VehicleYearPolicy.MaximumYear]);
+            }
+
             if (viewModel.VoziloID == 0 && viewModel.Slika == null)
             {
                 ModelState.AddModelError("Slika", _localizer["VehicleImageRequiredNew"]);
@@ -130,6 +141,12 @@ namespace Autosalon_OneZone.Controllers
                 !Enum.IsDefined(typeof(TipGoriva), gorivo))
             {
                 ModelState.AddModelError("Gorivo", _localizer["InvalidFuelValue"]);
+            }
+
+            if (!viewModel.Boja.HasValue || !Enum.IsDefined(typeof(TipBoje), viewModel.Boja.Value))
+            {
+                ModelState.Remove(nameof(viewModel.Boja));
+                ModelState.AddModelError(nameof(viewModel.Boja), _localizer["InvalidColorValue"]);
             }
 
             if (!ModelState.IsValid)

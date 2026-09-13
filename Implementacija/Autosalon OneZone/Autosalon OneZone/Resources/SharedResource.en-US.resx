@@ -602,7 +602,7 @@
     <value>Year is required.</value>
   </data>
   <data name="Validation.VehicleYearRange" xml:space="preserve">
-    <value>Year must be between 1900 and 2026.</value>
+    <value>Year must be between {0} and {1}.</value>
   </data>
   <data name="Validation.VehicleFuelRequired" xml:space="preserve">
     <value>Fuel type is required.</value>
@@ -612,12 +612,6 @@
   </data>
   <data name="Validation.VehicleColorRequired" xml:space="preserve">
     <value>Color is required.</value>
-  </data>
-  <data name="Validation.VehicleColorMaxLength" xml:space="preserve">
-    <value>Color cannot be longer than 50 characters.</value>
-  </data>
-  <data name="Validation.VehicleColorLettersOnly" xml:space="preserve">
-    <value>Color can contain only letters.</value>
   </data>
   <data name="Validation.VehicleMileageRequired" xml:space="preserve">
     <value>Mileage is required.</value>
@@ -940,9 +934,24 @@
   <data name="FuelHybrid" xml:space="preserve">
     <value>Hybrid</value>
   </data>
-  <data name="EnterColor" xml:space="preserve">
-    <value>Enter color</value>
-  </data>
+  <data name="VehicleColorWhite" xml:space="preserve"><value>White</value></data>
+  <data name="VehicleColorBlack" xml:space="preserve"><value>Black</value></data>
+  <data name="VehicleColorGray" xml:space="preserve"><value>Gray</value></data>
+  <data name="VehicleColorSilver" xml:space="preserve"><value>Silver</value></data>
+  <data name="VehicleColorGold" xml:space="preserve"><value>Gold</value></data>
+  <data name="VehicleColorBeige" xml:space="preserve"><value>Beige</value></data>
+  <data name="VehicleColorBrown" xml:space="preserve"><value>Brown</value></data>
+  <data name="VehicleColorRed" xml:space="preserve"><value>Red</value></data>
+  <data name="VehicleColorBlue" xml:space="preserve"><value>Blue</value></data>
+  <data name="VehicleColorGreen" xml:space="preserve"><value>Green</value></data>
+  <data name="VehicleColorYellow" xml:space="preserve"><value>Yellow</value></data>
+  <data name="VehicleColorOrange" xml:space="preserve"><value>Orange</value></data>
+  <data name="VehicleColorPurple" xml:space="preserve"><value>Purple</value></data>
+  <data name="VehicleColorPink" xml:space="preserve"><value>Pink</value></data>
+  <data name="VehicleColorMulticolor" xml:space="preserve"><value>Multicolor</value></data>
+  <data name="VehicleColorOther" xml:space="preserve"><value>Other</value></data>
+  <data name="InvalidColorValue" xml:space="preserve"><value>Select a valid vehicle color.</value></data>
+  <data name="SelectVehicleColor" xml:space="preserve"><value>Select color</value></data>
   <data name="YearFrom" xml:space="preserve">
     <value>Year from</value>
   </data>
@@ -2018,10 +2027,10 @@
     <value>Model is required.</value>
   </data>
   <data name="Validation.VehicleYearMin" xml:space="preserve">
-    <value>Year must be at least 1900.</value>
+    <value>Year must be at least {0}.</value>
   </data>
   <data name="Validation.VehicleYearMax" xml:space="preserve">
-    <value>Year cannot be greater than 2026.</value>
+    <value>Year cannot be greater than {0}.</value>
   </data>
   <data name="Validation.VehicleYearDigits" xml:space="preserve">
     <value>Year must be a whole number.</value>
@@ -2175,5 +2184,11 @@
   </data>
   <data name="Validation.PasswordsMatchSuccess" xml:space="preserve">
     <value>Passwords match.</value>
+  </data>
+  <data name="ShowAllColors" xml:space="preserve">
+    <value>Show all colors</value>
+  </data>
+  <data name="ShowFewerColors" xml:space="preserve">
+    <value>Show fewer colors</value>
   </data>
 </root>

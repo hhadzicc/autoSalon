@@ -30,7 +30,6 @@ namespace Autosalon_OneZone.ViewModels.Admin
         public string Model { get; set; } = "";
 
         [Required(ErrorMessage = "Validation.VehicleYearRequired")]
-        [Range(1900, 2026, ErrorMessage = "Validation.VehicleYearRange")]
         [Display(Name = "VehicleYear")]
         public int? Godiste { get; set; }
 
@@ -43,10 +42,8 @@ namespace Autosalon_OneZone.ViewModels.Admin
         public decimal? Kubikaza { get; set; }
 
         [Required(ErrorMessage = "Validation.VehicleColorRequired")]
-        [MaxLength(50, ErrorMessage = "Validation.VehicleColorMaxLength")]
-        [RegularExpression(UserInputPatterns.PersonName, ErrorMessage = "Validation.VehicleColorLettersOnly")]
         [Display(Name = "VehicleColor")]
-        public string? Boja { get; set; }
+        public TipBoje? Boja { get; set; }
 
         [Required(ErrorMessage = "Validation.VehicleMileageRequired")]
         [Range(0, double.MaxValue, ErrorMessage = "Validation.VehicleMileagePositive")]
@@ -68,6 +65,20 @@ namespace Autosalon_OneZone.ViewModels.Admin
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
+            if (Godiste.HasValue && !VehicleYearPolicy.IsValid(Godiste.Value))
+            {
+                yield return new ValidationResult(
+                    "Validation.VehicleYearRange",
+                    new[] { nameof(Godiste) });
+            }
+
+            if (!Boja.HasValue || !System.Enum.IsDefined(typeof(TipBoje), Boja.Value))
+            {
+                yield return new ValidationResult(
+                    "InvalidColorValue",
+                    new[] { nameof(Boja) });
+            }
+
             if (string.IsNullOrWhiteSpace(Gorivo) ||
                 !System.Enum.TryParse<TipGoriva>(Gorivo, ignoreCase: true, out var tipGoriva) ||
                 !System.Enum.IsDefined(typeof(TipGoriva), tipGoriva))

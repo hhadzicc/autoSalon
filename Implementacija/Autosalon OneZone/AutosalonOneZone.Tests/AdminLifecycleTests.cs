@@ -181,6 +181,7 @@ public class AdminLifecycleTests
         var vehicle = await app.Db.Vozila.SingleAsync(v => v.VoziloID == vehicleId);
         Assert.Equal("Audi", vehicle.Marka);
         Assert.Equal("A8", vehicle.Model);
+        Assert.Equal(TipBoje.Crna, vehicle.Boja);
         Assert.False(string.IsNullOrWhiteSpace(vehicle.Slika));
 
         var listJson = ToJson(await admin.GetVozilaJson(searchQuery: "Audi"));
@@ -267,6 +268,22 @@ public class AdminLifecycleTests
         Assert.Contains("Gorivo", JsonSerializer.Serialize(badRequest.Value));
         Assert.False(await app.Db.Vozila.AnyAsync(v => v.Marka == "Rimac" && v.Model == "Nevera"));
         Assert.False(Directory.Exists(uploadFolder));
+    }
+
+    [Fact]
+    public async Task Admin_vehicle_save_rejects_undefined_color()
+    {
+        await using var app = await TestApp.CreateAsync();
+        var admin = CreateAdminController(app);
+        var model = CreateVehicleForm("Volvo", "XC90", 2024, 98000, "Hibrid");
+        model.Boja = (TipBoje)999;
+        model.Slika = CreateImageFile("volvo-xc90.png", "image/png");
+
+        var result = await admin.SaveVozilo(model);
+
+        var badRequest = Assert.IsType<BadRequestObjectResult>(result);
+        Assert.Contains(nameof(model.Boja), JsonSerializer.Serialize(badRequest.Value));
+        Assert.False(await app.Db.Vozila.AnyAsync(v => v.Marka == "Volvo" && v.Model == "XC90"));
     }
 
     [Fact]
@@ -869,7 +886,7 @@ public class AdminLifecycleTests
             Godiste = year,
             Gorivo = fuel,
             Kubikaza = 2.0m,
-            Boja = "Crna",
+            Boja = TipBoje.Crna,
             Kilometraza = mileage,
             Cijena = price,
             Opis = "Test vozilo"
@@ -888,7 +905,7 @@ public class AdminLifecycleTests
             Godiste = year,
             Gorivo = fuel,
             Kubikaza = 2.0m,
-            Boja = "Crna",
+            Boja = TipBoje.Crna,
             Kilometraza = 18000,
             Cijena = price,
             Opis = "Detaljan opis test vozila."

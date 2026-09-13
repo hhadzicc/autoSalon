@@ -602,7 +602,7 @@
     <value>Godište je obavezno.</value>
   </data>
   <data name="Validation.VehicleYearRange" xml:space="preserve">
-    <value>Godište mora biti između 1900 i 2026.</value>
+    <value>Godište mora biti između {0} i {1}.</value>
   </data>
   <data name="Validation.VehicleFuelRequired" xml:space="preserve">
     <value>Gorivo je obavezno.</value>
@@ -612,12 +612,6 @@
   </data>
   <data name="Validation.VehicleColorRequired" xml:space="preserve">
     <value>Boja je obavezna.</value>
-  </data>
-  <data name="Validation.VehicleColorMaxLength" xml:space="preserve">
-    <value>Boja ne može biti duža od 50 karaktera.</value>
-  </data>
-  <data name="Validation.VehicleColorLettersOnly" xml:space="preserve">
-    <value>Boja može sadržavati samo slova.</value>
   </data>
   <data name="Validation.VehicleMileageRequired" xml:space="preserve">
     <value>Kilometraža je obavezna.</value>
@@ -940,9 +934,24 @@
   <data name="FuelHybrid" xml:space="preserve">
     <value>Hibrid</value>
   </data>
-  <data name="EnterColor" xml:space="preserve">
-    <value>Unesite boju</value>
-  </data>
+  <data name="VehicleColorWhite" xml:space="preserve"><value>Bijela</value></data>
+  <data name="VehicleColorBlack" xml:space="preserve"><value>Crna</value></data>
+  <data name="VehicleColorGray" xml:space="preserve"><value>Siva</value></data>
+  <data name="VehicleColorSilver" xml:space="preserve"><value>Srebrna</value></data>
+  <data name="VehicleColorGold" xml:space="preserve"><value>Zlatna</value></data>
+  <data name="VehicleColorBeige" xml:space="preserve"><value>Bež</value></data>
+  <data name="VehicleColorBrown" xml:space="preserve"><value>Smeđa</value></data>
+  <data name="VehicleColorRed" xml:space="preserve"><value>Crvena</value></data>
+  <data name="VehicleColorBlue" xml:space="preserve"><value>Plava</value></data>
+  <data name="VehicleColorGreen" xml:space="preserve"><value>Zelena</value></data>
+  <data name="VehicleColorYellow" xml:space="preserve"><value>Žuta</value></data>
+  <data name="VehicleColorOrange" xml:space="preserve"><value>Narandžasta</value></data>
+  <data name="VehicleColorPurple" xml:space="preserve"><value>Ljubičasta</value></data>
+  <data name="VehicleColorPink" xml:space="preserve"><value>Roza</value></data>
+  <data name="VehicleColorMulticolor" xml:space="preserve"><value>Višebojna</value></data>
+  <data name="VehicleColorOther" xml:space="preserve"><value>Ostalo</value></data>
+  <data name="InvalidColorValue" xml:space="preserve"><value>Odaberite važeću boju vozila.</value></data>
+  <data name="SelectVehicleColor" xml:space="preserve"><value>Odaberite boju</value></data>
   <data name="YearFrom" xml:space="preserve">
     <value>Godište od</value>
   </data>
@@ -2018,10 +2027,10 @@
     <value>Model je obavezan.</value>
   </data>
   <data name="Validation.VehicleYearMin" xml:space="preserve">
-    <value>Godište mora biti najmanje 1900.</value>
+    <value>Godište mora biti najmanje {0}.</value>
   </data>
   <data name="Validation.VehicleYearMax" xml:space="preserve">
-    <value>Godište ne može biti veće od 2026.</value>
+    <value>Godište ne može biti veće od {0}.</value>
   </data>
   <data name="Validation.VehicleYearDigits" xml:space="preserve">
     <value>Godište mora biti cijeli broj.</value>
@@ -2175,5 +2184,11 @@
   </data>
   <data name="Validation.PasswordsMatchSuccess" xml:space="preserve">
     <value>Lozinke se podudaraju.</value>
+  </data>
+  <data name="ShowAllColors" xml:space="preserve">
+    <value>Prikaži sve boje</value>
+  </data>
+  <data name="ShowFewerColors" xml:space="preserve">
+    <value>Prikaži manje boja</value>
   </data>
 </root>

@@ -136,6 +136,129 @@
     font-weight: 850;
 }
 
+.vehicles-color-filter {
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.vehicles-color-options {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.vehicles-color-option {
+    position: relative;
+    display: flex;
+    min-width: 0;
+    min-height: 38px;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 9px;
+    color: #334155;
+    background: #ffffff;
+    border: 1px solid #d8e0eb;
+    border-radius: 9px;
+    font-size: 0.78rem;
+    font-weight: 750;
+    line-height: 1.15;
+    cursor: pointer;
+    transition: border-color 0.18s ease, background-color 0.18s ease, color 0.18s ease;
+}
+
+.vehicles-color-option.is-extra {
+    display: none;
+}
+
+.vehicles-color-options.is-expanded .vehicles-color-option.is-extra {
+    display: flex;
+}
+
+.vehicles-color-option input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+}
+
+.vehicles-color-option:hover {
+    color: #1d4ed8;
+    background: #f8fbff;
+    border-color: #93b4f5;
+}
+
+.vehicles-color-option:has(input:checked) {
+    color: #1d4ed8;
+    background: #eff6ff;
+    border-color: #2563eb;
+    box-shadow: inset 0 0 0 1px #2563eb;
+}
+
+.vehicles-color-option:has(input:focus-visible) {
+    outline: 3px solid rgba(37, 99, 235, 0.2);
+    outline-offset: 2px;
+}
+
+.vehicle-color-swatch {
+    width: 15px;
+    height: 15px;
+    flex: 0 0 15px;
+    border: 1px solid rgba(15, 23, 42, 0.2);
+    border-radius: 50%;
+    background: #cbd5e1;
+}
+
+.vehicle-color-swatch.is-white { background: #ffffff; }
+.vehicle-color-swatch.is-black { background: #111827; }
+.vehicle-color-swatch.is-gray { background: #94a3b8; }
+.vehicle-color-swatch.is-silver { background: #d7dde5; }
+.vehicle-color-swatch.is-gold { background: #d7a928; }
+.vehicle-color-swatch.is-beige { background: #d9c6a5; }
+.vehicle-color-swatch.is-brown { background: #795548; }
+.vehicle-color-swatch.is-red { background: #dc2626; }
+.vehicle-color-swatch.is-blue { background: #2563eb; }
+.vehicle-color-swatch.is-green { background: #16a34a; }
+.vehicle-color-swatch.is-yellow { background: #facc15; }
+.vehicle-color-swatch.is-orange { background: #f97316; }
+.vehicle-color-swatch.is-purple { background: #9333ea; }
+.vehicle-color-swatch.is-pink { background: #ec4899; }
+.vehicle-color-swatch.is-multicolor {
+    background: conic-gradient(#dc2626, #facc15, #16a34a, #2563eb, #9333ea, #dc2626);
+}
+.vehicle-color-swatch.is-other {
+    background: linear-gradient(135deg, #94a3b8 0 45%, #ffffff 45% 55%, #475569 55% 100%);
+}
+
+.vehicles-color-toggle {
+    display: inline-flex;
+    min-height: 34px;
+    align-items: center;
+    gap: 7px;
+    margin-top: 10px;
+    padding: 4px 0;
+    color: #2563eb;
+    background: transparent;
+    border: 0;
+    font-size: 0.78rem;
+    font-weight: 850;
+    cursor: pointer;
+}
+
+.vehicles-color-toggle:hover {
+    color: #1d4ed8;
+}
+
+.vehicles-color-toggle:focus-visible {
+    outline: 3px solid rgba(37, 99, 235, 0.2);
+    outline-offset: 3px;
+}
+
+.vehicles-color-toggle i {
+    font-size: 0.75rem;
+}
+
 .vehicles-filter-panel .form-control,
 .vehicles-filter-panel .form-select,
 .vehicles-sort-control .form-select {
@@ -459,23 +582,6 @@
     font-weight: 900;
     letter-spacing: -0.025em;
 }
-
-.vehicles-fuel-chip {
-    flex: 0 0 auto;
-    padding: 6px 10px;
-    border-radius: 999px;
-    font-size: 0.75rem;
-    font-weight: 850;
-    line-height: 1.1;
-    white-space: nowrap;
-}
-
-.vehicles-fuel-chip.is-electric { color: #13793a; background: #eaf8ee; }
-.vehicles-fuel-chip.is-petrol { color: #a35708; background: #fff3e6; }
-.vehicles-fuel-chip.is-diesel { color: #315faa; background: #edf3ff; }
-.vehicles-fuel-chip.is-hybrid { color: #14735f; background: #e9f8f3; }
-.vehicles-fuel-chip.is-gas { color: #7652a8; background: #f3edfb; }
-.vehicles-fuel-chip.is-default { color: #475569; background: #f1f5f9; }
 
 .vehicles-spec-grid {
     display: grid;

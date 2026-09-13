@@ -6,7 +6,7 @@ namespace Autosalon_OneZone.Models.ViewModels
         public string SlikaUrl { get; set; }
         public string Naziv { get; set; }
         public int Godiste { get; set; }
-        public string Gorivo { get; set; }
+        public TipGoriva Gorivo { get; set; }
         public double Kilometraza { get; set; }
         public decimal Cijena { get; set; }
         public int StavkaId { get; set; }

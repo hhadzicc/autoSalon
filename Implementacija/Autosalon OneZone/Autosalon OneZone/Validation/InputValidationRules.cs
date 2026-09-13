@@ -28,4 +28,15 @@ namespace Autosalon_OneZone.Validation
         public const string PersonName = @"^[\p{L}]+(?:[ '’\-][\p{L}]+)*$";
         public const string PersonNameHtml = @"[\p{L}]+(?:[ '’\-][\p{L}]+)*";
     }
+
+    public static class VehicleYearPolicy
+    {
+        public const int MinimumYear = 1900;
+        public static int MaximumYear => DateTime.UtcNow.Year;
+
+        public static bool IsValid(int year)
+        {
+            return year >= MinimumYear && year <= MaximumYear;
+        }
+    }
 }

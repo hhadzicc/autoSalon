@@ -15,6 +15,26 @@ namespace Autosalon_OneZone.Models
         Hibrid
     }
 
+    public enum TipBoje
+    {
+        Bijela,
+        Crna,
+        Siva,
+        Srebrna,
+        Zlatna,
+        Bez,
+        Smedja,
+        Crvena,
+        Plava,
+        Zelena,
+        Zuta,
+        Narandzasta,
+        Ljubicasta,
+        Roza,
+        Visebojna,
+        Ostalo
+    }
+
     public enum StatusNarudzbe
     {
         Kreirana,
@@ -84,7 +104,7 @@ namespace Autosalon_OneZone.Models
 
         public decimal? Kubikaza { get; set; }
 
-        public string Boja { get; set; }
+        public TipBoje Boja { get; set; }
 
         public double? Kilometraza { get; set; }
         public decimal? Cijena { get; set; }

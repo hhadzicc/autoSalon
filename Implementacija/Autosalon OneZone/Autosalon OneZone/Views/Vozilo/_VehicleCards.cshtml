@@ -6,26 +6,6 @@
 @model IReadOnlyList<VehicleCardViewModel>
 @{
     var culture = CultureInfo.CurrentCulture;
-
-    string FuelLabel(string value) => value switch
-    {
-        "Benzin" => L["FuelGasoline"].Value,
-        "Dizel" => L["FuelDiesel"].Value,
-        "Plin" => L["FuelGas"].Value,
-        "Elektro" => L["FuelElectric"].Value,
-        "Hibrid" => L["FuelHybrid"].Value,
-        _ => value
-    };
-
-    string FuelChipClass(string value) => value switch
-    {
-        "Benzin" => "is-petrol",
-        "Dizel" => "is-diesel",
-        "Plin" => "is-gas",
-        "Elektro" => "is-electric",
-        "Hibrid" => "is-hybrid",
-        _ => "is-default"
-    };
 }
 
 @foreach (var item in Model)
@@ -53,7 +33,7 @@
         <div class="vehicles-card-body">
             <div class="vehicles-card-heading">
                 <h2 class="vehicles-card-title">@vehicle.Marka @vehicle.Model</h2>
-                <span class="vehicles-fuel-chip @FuelChipClass(vehicle.Gorivo.ToString())">@FuelLabel(vehicle.Gorivo.ToString())</span>
+                <span class="fuel-chip @FuelPresentation.GetChipClass(vehicle.Gorivo)">@L[FuelPresentation.GetResourceKey(vehicle.Gorivo)]</span>
             </div>
 
             <dl class="vehicles-spec-grid">
@@ -67,7 +47,7 @@
                 </div>
                 <div>
                     <dt>@L["VehicleColor"]</dt>
-                    <dd>@vehicle.Boja</dd>
+                    <dd>@L[VehicleColorPresentation.GetResourceKey(vehicle.Boja)]</dd>
                 </div>
             </dl>
 

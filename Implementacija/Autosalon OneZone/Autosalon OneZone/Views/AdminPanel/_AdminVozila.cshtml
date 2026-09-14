@@ -17,47 +17,48 @@
         ["empty"] = L["NoVehiclesAvailable"].Value,
         ["unknownVehicle"] = L["UnknownVehicle"].Value,
         ["notAvailable"] = L["NotAvailable"].Value,
+        ["available"] = L["Available"].Value,
+        ["sold"] = L["Sold"].Value,
         ["year"] = L["VehicleYear"].Value,
         ["mileage"] = L["VehicleMileage"].Value,
         ["loadError"] = L["VehicleLoadError"].Value,
         ["addFormLoadError"] = L["VehicleAddFormLoadError"].Value,
         ["editFormLoadError"] = L["VehicleEditFormLoadError"].Value,
         ["saveSuccess"] = L["VehicleSavedSuccess"].Value,
-        ["saveValidationError"] = L["VehicleSaveValidationError"].Value,
         ["saveImageRequiredError"] = L["VehicleSaveImageRequiredError"].Value,
         ["deleteSuccess"] = L["VehicleDeletedSuccess"].Value,
-        ["deleteError"] = L["VehicleDeleteError"].Value
+        ["deleteError"] = L["VehicleDeleteError"].Value,
+        ["loadMore"] = L["AdminLoadMore"].Value
     };
     var fuelLabels = Enum.GetValues<TipGoriva>()
         .ToDictionary(fuel => fuel.ToString(), fuel => L[FuelPresentation.GetResourceKey(fuel)].Value);
+    var fuelClasses = Enum.GetValues<TipGoriva>()
+        .ToDictionary(fuel => fuel.ToString(), FuelPresentation.GetChipClass);
+    var colorLabels = Enum.GetValues<TipBoje>()
+        .ToDictionary(color => color.ToString(), color => L[VehicleColorPresentation.GetResourceKey(color)].Value);
+    var colorClasses = Enum.GetValues<TipBoje>()
+        .ToDictionary(color => color.ToString(), VehicleColorPresentation.GetSwatchClass);
 }
 
-<div class="admin-page-header">
-    <div>
-        <p class="admin-eyebrow">@L["AdminPanel"]</p>
-        <h1>@L["AdminVehiclesTitle"]</h1>
-    </div>
-</div>
-
-<div id="add-vozilo-form-container" class="admin-form-card" style="display: none;">
-    <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
+<div id="vozila-list-view">
+    <div class="admin-page-header">
         <div>
-            <p class="admin-eyebrow mb-1">@L["AdminVehicle"]</p>
-            <h2 id="add-edit-form-title" class="mb-0">@L["AdminAddVehicle"]</h2>
+            <h1>@L["AdminVehiclesTitle"]</h1>
         </div>
     </div>
-    <div id="add-vozilo-form-placeholder"></div>
-</div>
 
-<div class="admin-card"
-     id="vozila-list-container"
-     data-texts="@JsonSerializer.Serialize(vozilaTexts)"
-     data-fuel-labels="@JsonSerializer.Serialize(fuelLabels)"
-     data-list-url="@Url.Action("GetVozilaJson", "AdminPanel")"
-     data-add-form-url="@Url.Action("GetAddVoziloForm", "AdminPanel")"
-     data-edit-form-url="@Url.Action("GetEditVoziloForm", "AdminPanel")"
-     data-delete-url="@Url.Action("DeleteVozilo", "AdminPanel")"
-     data-initial-search="@Model.SearchQuery">
+    <div class="admin-card"
+         id="vozila-list-container"
+         data-texts="@JsonSerializer.Serialize(vozilaTexts)"
+         data-fuel-labels="@JsonSerializer.Serialize(fuelLabels)"
+         data-fuel-classes="@JsonSerializer.Serialize(fuelClasses)"
+         data-color-labels="@JsonSerializer.Serialize(colorLabels)"
+         data-color-classes="@JsonSerializer.Serialize(colorClasses)"
+         data-list-url="@Url.Action("GetVozilaJson", "AdminPanel")"
+         data-add-form-url="@Url.Action("GetAddVoziloForm", "AdminPanel")"
+         data-edit-form-url="@Url.Action("GetEditVoziloForm", "AdminPanel")"
+         data-delete-url="@Url.Action("DeleteVozilo", "AdminPanel")"
+         data-initial-search="@Model.SearchQuery">
     <div class="admin-card-header">
         <div>
             <h2>@L["AdminVehiclesList"]</h2>
@@ -70,12 +71,79 @@
             <i class="bi bi-plus-lg me-2"></i>@L["AdminAddVehicle"]
         </button>
 
-        <div class="admin-filter-chips" aria-label="@L["AdminVehicleFuelFilterAria"]">
-            <button type="button" class="filter-chip active" data-vehicle-fuel="">@L["AllVehicles"]</button>
-            @foreach (var fuel in Enum.GetValues<TipGoriva>())
-            {
-                <button type="button" class="filter-chip" data-vehicle-fuel="@fuel">@L[FuelPresentation.GetResourceKey(fuel)]</button>
-            }
+        <div class="admin-vehicle-filters">
+            <label for="vehicle-status-filter" class="visually-hidden">@L["AdminVehicleStatusFilterAria"]</label>
+            <select id="vehicle-status-filter" class="form-select admin-filter-select" aria-label="@L["AdminVehicleStatusFilterAria"]">
+                <option value="available">@L["AvailableVehicles"]</option>
+                <option value="sold">@L["SoldVehicles"]</option>
+                <option value="all">@L["AllVehicles"]</option>
+            </select>
+
+            <label for="vehicle-fuel-filter" class="visually-hidden">@L["AdminVehicleFuelFilterAria"]</label>
+            <select id="vehicle-fuel-filter" class="form-select admin-filter-select" aria-label="@L["AdminVehicleFuelFilterAria"]">
+                <option value="">@L["AllFuelTypes"]</option>
+                @foreach (var fuel in Enum.GetValues<TipGoriva>())
+                {
+                    <option value="@fuel">@L[FuelPresentation.GetResourceKey(fuel)]</option>
+                }
+            </select>
+
+            <div class="dropdown admin-color-select admin-color-filter"
+                 data-color-picker
+                 data-placeholder="@L["AllColors"]">
+                <label for="vehicle-color-filter" class="visually-hidden">@L["AdminVehicleColorFilterAria"]</label>
+                <select id="vehicle-color-filter"
+                        class="admin-color-native-select"
+                        data-color-select
+                        tabindex="-1"
+                        aria-hidden="true">
+                    <option value="">@L["AllColors"]</option>
+                    @foreach (var color in Enum.GetValues<TipBoje>())
+                    {
+                        <option value="@color">@L[VehicleColorPresentation.GetResourceKey(color)]</option>
+                    }
+                </select>
+                <button type="button"
+                        class="form-select admin-filter-select admin-color-select-toggle"
+                        data-bs-toggle="dropdown"
+                        aria-label="@L["AdminVehicleColorFilterAria"]"
+                        aria-expanded="false">
+                    <span class="vehicle-color-swatch d-none" data-selected-color-swatch aria-hidden="true"></span>
+                    <span data-selected-color-label>@L["AllColors"]</span>
+                </button>
+                <ul class="dropdown-menu admin-color-options">
+                    <li>
+                        <button type="button"
+                                class="dropdown-item admin-color-option admin-color-option-all"
+                                data-color-option
+                                data-value=""
+                                data-label="@L["AllColors"]"
+                                data-swatch-class=""
+                                aria-pressed="true">
+                            <span class="admin-color-all-icon" aria-hidden="true"><i class="bi bi-palette"></i></span>
+                            <span>@L["AllColors"]</span>
+                            <i class="bi bi-check-lg" aria-hidden="true"></i>
+                        </button>
+                    </li>
+                    @foreach (var color in Enum.GetValues<TipBoje>())
+                    {
+                        var colorLabel = L[VehicleColorPresentation.GetResourceKey(color)].Value;
+                        <li>
+                            <button type="button"
+                                    class="dropdown-item admin-color-option"
+                                    data-color-option
+                                    data-value="@color"
+                                    data-label="@colorLabel"
+                                    data-swatch-class="@VehicleColorPresentation.GetSwatchClass(color)"
+                                    aria-pressed="false">
+                                <span class="vehicle-color-swatch @VehicleColorPresentation.GetSwatchClass(color)" aria-hidden="true"></span>
+                                <span>@colorLabel</span>
+                                <i class="bi bi-check-lg" aria-hidden="true"></i>
+                            </button>
+                        </li>
+                    }
+                </ul>
+            </div>
         </div>
 
         <div class="admin-search-compact">
@@ -110,6 +178,7 @@
                         </a>
                     </th>
                     <th>@L["VehicleFuel"]</th>
+                    <th>@L["VehicleColor"]</th>
                     <th>
                         <a href="?sort=kilometraza&direction=asc" class="sortable-th" data-sort-key="kilometraza">
                             @L["VehicleMileage"]
@@ -127,12 +196,27 @@
             </thead>
             <tbody id="vozila-table-body">
                 <tr>
-                    <td colspan="6">@L["LoadingVehicles"]</td>
+                    <td colspan="7">@L["LoadingVehicles"]</td>
                 </tr>
             </tbody>
         </table>
     </div>
 
     <div id="vozila-mobile-list" class="admin-mobile-list"></div>
-    <div id="pagination-controls"></div>
+    <div class="admin-lazy-list-controls" data-admin-lazy-controls></div>
+    </div>
+</div>
+
+<div id="add-vozilo-form-container" class="admin-vehicle-form-view" style="display: none;">
+    <button type="button" id="back-to-vozila-list" class="admin-form-back-button">
+        <i class="bi bi-arrow-left" aria-hidden="true"></i>
+        <span>@L["BackToVehicles"]</span>
+    </button>
+
+    <div class="admin-form-card admin-vehicle-editor-card">
+        <div class="admin-vehicle-editor-header">
+            <h2 id="add-edit-form-title">@L["AdminAddVehicle"]</h2>
+        </div>
+        <div id="add-vozilo-form-placeholder"></div>
+    </div>
 </div>

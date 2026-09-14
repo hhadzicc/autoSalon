@@ -29,13 +29,13 @@
         ["replyGreeting"] = L["ReplyToInquiryGreeting"].Value,
         ["replyBody"] = L["ReplyToInquiryBody"].Value,
         ["inquiryPrefix"] = L["InquiryItemPrefix"].Value,
-        ["untitled"] = L["Untitled"].Value
+        ["untitled"] = L["Untitled"].Value,
+        ["loadMore"] = L["AdminLoadMore"].Value
     };
 }
 
 <div class="admin-page-header">
     <div>
-        <p class="admin-eyebrow">@L["AdminPanel"]</p>
         <h1>@L["AdminSupportTitle"]</h1>
     </div>
 </div>
@@ -81,7 +81,7 @@
     </div>
 
     <div id="podrska-mobile-list" class="admin-mobile-list"></div>
-    <div id="pagination-controls"></div>
+    <div class="admin-lazy-list-controls" data-admin-lazy-controls></div>
 </div>
 
 <div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">

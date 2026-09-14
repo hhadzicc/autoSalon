@@ -47,15 +47,24 @@ namespace Autosalon_OneZone.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index()
+        public IActionResult Index(int? editVehicleId = null, string? returnUrl = null)
         {
             var currentSection = HttpContext.Request.Query["section"].ToString();
+            if (editVehicleId.HasValue)
+            {
+                currentSection = "Vozila";
+            }
+
             if (string.IsNullOrEmpty(currentSection))
             {
                 currentSection = "Dashboard";
             }
 
             ViewBag.CurrentSection = currentSection;
+            ViewBag.EditVehicleId = editVehicleId;
+            ViewBag.ReturnUrl = !string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl)
+                ? returnUrl
+                : null;
             return View();
         }
 
@@ -142,6 +151,11 @@ namespace Autosalon_OneZone.Controllers
             {
                 ModelState.AddModelError("Gorivo", _localizer["InvalidFuelValue"]);
             }
+            else if (gorivo == TipGoriva.Elektro)
+            {
+                ModelState.Remove(nameof(viewModel.Kubikaza));
+                viewModel.Kubikaza = null;
+            }
 
             if (!viewModel.Boja.HasValue || !Enum.IsDefined(typeof(TipBoje), viewModel.Boja.Value))
             {
@@ -198,14 +212,27 @@ namespace Autosalon_OneZone.Controllers
         #region Recenzije sekcija
 
         [HttpGet]
-        public IActionResult GetRecenzijeSection(string? searchQuery = null)
+        public async Task<IActionResult> GetRecenzijeSection(string? searchQuery = null)
         {
-            var viewModel = new Autosalon_OneZone.ViewModels.Admin.RecenzijaListViewModel
-            {
-                SearchQuery = searchQuery
-            };
+            return PartialView("_AdminRecenzije", await _listQueryService.GetReviewSectionAsync(searchQuery));
+        }
 
-            return PartialView("_AdminRecenzije", viewModel);
+        [HttpGet]
+        public async Task<JsonResult> GetReviewCustomerSuggestions(string? query = null, string? selectedId = null)
+        {
+            return Json(new
+            {
+                options = await _listQueryService.GetReviewCustomerSuggestionsAsync(query, selectedId)
+            });
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> GetReviewVehicleSuggestions(string? query = null, int? selectedId = null)
+        {
+            return Json(new
+            {
+                options = await _listQueryService.GetReviewVehicleSuggestionsAsync(query, selectedId)
+            });
         }
         #endregion
         #region Podrška sekcija
@@ -222,9 +249,9 @@ namespace Autosalon_OneZone.Controllers
         }
 
         [HttpGet]
-        public async Task<JsonResult> GetPodrskaJson(string? searchQuery = null, int page = 1)
+        public async Task<JsonResult> GetPodrskaJson(string? searchQuery = null, int page = 1, int? offset = null)
         {
-            var result = await _listQueryService.GetSupportAsync(searchQuery);
+            var result = await _listQueryService.GetSupportAsync(searchQuery, page, offset);
 
             return Json(new
             {
@@ -232,7 +259,9 @@ namespace Autosalon_OneZone.Controllers
                 totalCount = result.TotalCount,
                 totalPages = result.TotalPages,
                 currentPage = result.CurrentPage,
-                pageSize = result.PageSize
+                pageSize = result.PageSize,
+                offset = result.Offset,
+                hasMore = result.Offset + result.Items.Count < result.TotalCount
             });
         }
 
@@ -271,9 +300,29 @@ namespace Autosalon_OneZone.Controllers
         #endregion
 
         [HttpGet]
-        public async Task<JsonResult> GetRecenzijeJson(string? searchQuery = null, string? korisnikFilter = null, string? voziloFilter = null, int page = 1)
+        public async Task<JsonResult> GetRecenzijeJson(
+            string? searchQuery = null,
+            string? korisnikIdFilter = null,
+            string? korisnikFilter = null,
+            int? voziloIdFilter = null,
+            string? voziloFilter = null,
+            int? ocjenaFilter = null,
+            string? sort = null,
+            string? direction = null,
+            int page = 1,
+            int? offset = null)
         {
-            var result = await _listQueryService.GetReviewsAsync(searchQuery, korisnikFilter, voziloFilter);
+            var result = await _listQueryService.GetReviewsAsync(
+                searchQuery,
+                korisnikIdFilter,
+                korisnikFilter,
+                voziloIdFilter,
+                voziloFilter,
+                ocjenaFilter,
+                sort,
+                direction,
+                page,
+                offset);
 
             return Json(new
             {
@@ -281,7 +330,9 @@ namespace Autosalon_OneZone.Controllers
                 totalCount = result.TotalCount,
                 totalPages = result.TotalPages,
                 currentPage = result.CurrentPage,
-                pageSize = result.PageSize
+                pageSize = result.PageSize,
+                offset = result.Offset,
+                hasMore = result.Offset + result.Items.Count < result.TotalCount
             });
         }
 
@@ -303,15 +354,22 @@ namespace Autosalon_OneZone.Controllers
             int page = 1,
             string? sortOrder = null,
             string? gorivoFilter = null,
+            string? bojaFilter = null,
+            string? statusFilter = null,
             string? sort = null,
-            string? direction = null)
+            string? direction = null,
+            int? offset = null)
         {
             var result = await _listQueryService.GetVehiclesAsync(
                 searchQuery,
                 sortOrder,
                 gorivoFilter,
+                bojaFilter,
+                statusFilter,
                 sort,
-                direction);
+                direction,
+                page,
+                offset);
 
             return Json(new
             {
@@ -320,6 +378,8 @@ namespace Autosalon_OneZone.Controllers
                 totalPages = result.TotalPages,
                 currentPage = result.CurrentPage,
                 pageSize = result.PageSize,
+                offset = result.Offset,
+                hasMore = result.Offset + result.Items.Count < result.TotalCount,
                 sort = result.Sort,
                 direction = result.Direction
             });
@@ -327,9 +387,14 @@ namespace Autosalon_OneZone.Controllers
 
         [HttpGet]
         [Authorize(Roles = AppRoles.Administrator)]
-        public async Task<JsonResult> GetProfiliJson(string? searchQuery = null, int page = 1, string? roleFilter = null)
+        public async Task<JsonResult> GetProfiliJson(
+            string? searchQuery = null,
+            int page = 1,
+            string? roleFilter = null,
+            string? userIdFilter = null,
+            int? offset = null)
         {
-            var result = await _listQueryService.GetProfilesAsync(searchQuery, roleFilter);
+            var result = await _listQueryService.GetProfilesAsync(searchQuery, roleFilter, userIdFilter, page, offset);
 
             return Json(new
             {
@@ -337,7 +402,9 @@ namespace Autosalon_OneZone.Controllers
                 totalCount = result.TotalCount,
                 totalPages = result.TotalPages,
                 currentPage = result.CurrentPage,
-                pageSize = result.PageSize
+                pageSize = result.PageSize,
+                offset = result.Offset,
+                hasMore = result.Offset + result.Items.Count < result.TotalCount
             });
         }
 

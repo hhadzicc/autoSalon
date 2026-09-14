@@ -1390,12 +1390,6 @@
   <data name="AdminDashboardTitle" xml:space="preserve">
     <value>Dashboard</value>
   </data>
-  <data name="AdminDashboardVehiclesButton" xml:space="preserve">
-    <value>Vehicles</value>
-  </data>
-  <data name="AdminDashboardInquiriesButton" xml:space="preserve">
-    <value>Inquiries</value>
-  </data>
   <data name="AdminDashboardVehiclesTotal" xml:space="preserve">
     <value>Total in catalog</value>
   </data>
@@ -1407,9 +1401,6 @@
   </data>
   <data name="AdminDashboardActiveInquiries" xml:space="preserve">
     <value>Active inquiries</value>
-  </data>
-  <data name="AdminDashboardPendingProcessing" xml:space="preserve">
-    <value>Awaiting review</value>
   </data>
   <data name="AdminDashboardRevenue" xml:space="preserve">
     <value>Revenue</value>
@@ -1467,6 +1458,12 @@
   </data>
   <data name="AdminVehicleFuelFilterAria" xml:space="preserve">
     <value>Filter vehicles by fuel</value>
+  </data>
+  <data name="AdminVehicleColorFilterAria" xml:space="preserve">
+    <value>Filter vehicles by color</value>
+  </data>
+  <data name="AllColors" xml:space="preserve">
+    <value>All colors</value>
   </data>
   <data name="AllVehicles" xml:space="preserve">
     <value>All vehicles</value>
@@ -1550,7 +1547,7 @@
     <value>An error occurred while deleting the vehicle.</value>
   </data>
   <data name="FileExtensionsAllowed" xml:space="preserve">
-    <value>Allowed formats: jpg, jpeg, png, gif, bmp</value>
+    <value>Allowed formats: jpg, jpeg, png, gif, bmp, webp</value>
   </data>
   <data name="CurrentImage" xml:space="preserve">
     <value>Current image</value>
@@ -1559,7 +1556,7 @@
     <value>Add vehicle</value>
   </data>
   <data name="AllowedImageExtensionsError" xml:space="preserve">
-    <value>Only these file extensions are allowed: .jpg, .jpeg, .png, .gif, .bmp</value>
+    <value>Only these file extensions are allowed: .jpg, .jpeg, .png, .gif, .bmp, .webp</value>
   </data>
   <data name="InvalidImageContentError" xml:space="preserve">
     <value>The uploaded file must be a valid image.</value>
@@ -1575,6 +1572,24 @@
   </data>
   <data name="AdminAddUser" xml:space="preserve">
     <value>Add new user</value>
+  </data>
+  <data name="AdminAddUserDescription" xml:space="preserve">
+    <value>Create an account and assign its access level.</value>
+  </data>
+  <data name="AdminEditUserDescription" xml:space="preserve">
+    <value>Update account details and access level.</value>
+  </data>
+  <data name="BackToUsers" xml:space="preserve">
+    <value>Back to users</value>
+  </data>
+  <data name="Security" xml:space="preserve">
+    <value>Security</value>
+  </data>
+  <data name="AccessLevel" xml:space="preserve">
+    <value>Access level</value>
+  </data>
+  <data name="CreateUser" xml:space="preserve">
+    <value>Create user</value>
   </data>
   <data name="AdminUsersList" xml:space="preserve">
     <value>User list</value>
@@ -1661,13 +1676,13 @@
     <value>Filter verified experiences by customer, purchased vehicle or comment.</value>
   </data>
   <data name="FilterByUserPlaceholder" xml:space="preserve">
-    <value>Filter by user...</value>
+    <value>Search customer...</value>
   </data>
   <data name="FilterByVehiclePlaceholder" xml:space="preserve">
-    <value>Filter by vehicle...</value>
+    <value>Search vehicle...</value>
   </data>
   <data name="SearchByTextPlaceholder" xml:space="preserve">
-    <value>Search by text...</value>
+    <value>Search comment...</value>
   </data>
   <data name="LoadingReviews" xml:space="preserve">
     <value>Loading customer experiences...</value>
@@ -2190,5 +2205,50 @@
   </data>
   <data name="ShowFewerColors" xml:space="preserve">
     <value>Show fewer colors</value>
+  </data>
+  <data name="CommonView" xml:space="preserve">
+    <value>View</value>
+  </data>
+  <data name="BackToCustomerExperiences" xml:space="preserve">
+    <value>Back to customer experiences</value>
+  </data>
+  <data name="ReviewCustomerFilter" xml:space="preserve">
+    <value>Filter by customer</value>
+  </data>
+  <data name="AllCustomers" xml:space="preserve">
+    <value>All customers</value>
+  </data>
+  <data name="ReviewVehicleFilter" xml:space="preserve">
+    <value>Filter by purchased vehicle</value>
+  </data>
+  <data name="AllReviewVehicles" xml:space="preserve">
+    <value>All vehicles</value>
+  </data>
+  <data name="ReviewRatingFilter" xml:space="preserve">
+    <value>Filter by rating</value>
+  </data>
+  <data name="AllRatings" xml:space="preserve">
+    <value>All ratings</value>
+  </data>
+  <data name="ReviewClearFilters" xml:space="preserve">
+    <value>Clear filters</value>
+  </data>
+  <data name="AdminLoadMore" xml:space="preserve">
+    <value>Load more</value>
+  </data>
+  <data name="AdminVehicleStatusFilterAria" xml:space="preserve">
+    <value>Filter vehicles by status</value>
+  </data>
+  <data name="AvailableVehicles" xml:space="preserve">
+    <value>Available vehicles</value>
+  </data>
+  <data name="SoldVehicles" xml:space="preserve">
+    <value>Sold vehicles</value>
+  </data>
+  <data name="Sold" xml:space="preserve">
+    <value>Sold</value>
+  </data>
+  <data name="AdminPurchasedVehicle" xml:space="preserve">
+    <value>Purchased vehicle</value>
   </data>
 </root>

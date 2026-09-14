@@ -1390,12 +1390,6 @@
   <data name="AdminDashboardTitle" xml:space="preserve">
     <value>Dashboard</value>
   </data>
-  <data name="AdminDashboardVehiclesButton" xml:space="preserve">
-    <value>Vozila</value>
-  </data>
-  <data name="AdminDashboardInquiriesButton" xml:space="preserve">
-    <value>Upiti</value>
-  </data>
   <data name="AdminDashboardVehiclesTotal" xml:space="preserve">
     <value>Ukupno u katalogu</value>
   </data>
@@ -1407,9 +1401,6 @@
   </data>
   <data name="AdminDashboardActiveInquiries" xml:space="preserve">
     <value>Aktivni upiti</value>
-  </data>
-  <data name="AdminDashboardPendingProcessing" xml:space="preserve">
-    <value>Čekaju obradu</value>
   </data>
   <data name="AdminDashboardRevenue" xml:space="preserve">
     <value>Promet</value>
@@ -1467,6 +1458,12 @@
   </data>
   <data name="AdminVehicleFuelFilterAria" xml:space="preserve">
     <value>Filter vozila po gorivu</value>
+  </data>
+  <data name="AdminVehicleColorFilterAria" xml:space="preserve">
+    <value>Filter vozila po boji</value>
+  </data>
+  <data name="AllColors" xml:space="preserve">
+    <value>Sve boje</value>
   </data>
   <data name="AllVehicles" xml:space="preserve">
     <value>Sva vozila</value>
@@ -1550,7 +1547,7 @@
     <value>Došlo je do greške prilikom brisanja vozila.</value>
   </data>
   <data name="FileExtensionsAllowed" xml:space="preserve">
-    <value>Dozvoljeni formati: jpg, jpeg, png, gif, bmp</value>
+    <value>Dozvoljeni formati: jpg, jpeg, png, gif, bmp, webp</value>
   </data>
   <data name="CurrentImage" xml:space="preserve">
     <value>Trenutna slika</value>
@@ -1559,7 +1556,7 @@
     <value>Dodaj vozilo</value>
   </data>
   <data name="AllowedImageExtensionsError" xml:space="preserve">
-    <value>Dozvoljena su samo sljedeća proširenja fajlova: .jpg, .jpeg, .png, .gif, .bmp</value>
+    <value>Dozvoljena su samo sljedeća proširenja fajlova: .jpg, .jpeg, .png, .gif, .bmp, .webp</value>
   </data>
   <data name="InvalidImageContentError" xml:space="preserve">
     <value>Uploadovani fajl mora biti validna slika.</value>
@@ -1575,6 +1572,24 @@
   </data>
   <data name="AdminAddUser" xml:space="preserve">
     <value>Dodaj novog korisnika</value>
+  </data>
+  <data name="AdminAddUserDescription" xml:space="preserve">
+    <value>Kreirajte nalog i dodijelite mu nivo pristupa.</value>
+  </data>
+  <data name="AdminEditUserDescription" xml:space="preserve">
+    <value>Ažurirajte podatke naloga i nivo pristupa.</value>
+  </data>
+  <data name="BackToUsers" xml:space="preserve">
+    <value>Nazad na korisnike</value>
+  </data>
+  <data name="Security" xml:space="preserve">
+    <value>Sigurnost</value>
+  </data>
+  <data name="AccessLevel" xml:space="preserve">
+    <value>Nivo pristupa</value>
+  </data>
+  <data name="CreateUser" xml:space="preserve">
+    <value>Kreiraj korisnika</value>
   </data>
   <data name="AdminUsersList" xml:space="preserve">
     <value>Lista korisnika</value>
@@ -1661,13 +1676,13 @@
     <value>Filtrirajte verifikovana iskustva prema kupcu, kupljenom vozilu ili komentaru.</value>
   </data>
   <data name="FilterByUserPlaceholder" xml:space="preserve">
-    <value>Filtriraj po korisniku...</value>
+    <value>Pretraži kupca...</value>
   </data>
   <data name="FilterByVehiclePlaceholder" xml:space="preserve">
-    <value>Filtriraj po vozilu...</value>
+    <value>Pretraži vozilo...</value>
   </data>
   <data name="SearchByTextPlaceholder" xml:space="preserve">
-    <value>Pretraži po tekstu...</value>
+    <value>Pretraži komentar...</value>
   </data>
   <data name="LoadingReviews" xml:space="preserve">
     <value>Učitavanje iskustava kupaca...</value>
@@ -2190,5 +2205,50 @@
   </data>
   <data name="ShowFewerColors" xml:space="preserve">
     <value>Prikaži manje boja</value>
+  </data>
+  <data name="CommonView" xml:space="preserve">
+    <value>Pregledaj</value>
+  </data>
+  <data name="BackToCustomerExperiences" xml:space="preserve">
+    <value>Nazad na iskustva kupaca</value>
+  </data>
+  <data name="ReviewCustomerFilter" xml:space="preserve">
+    <value>Filtriraj prema kupcu</value>
+  </data>
+  <data name="AllCustomers" xml:space="preserve">
+    <value>Svi kupci</value>
+  </data>
+  <data name="ReviewVehicleFilter" xml:space="preserve">
+    <value>Filtriraj prema kupljenom vozilu</value>
+  </data>
+  <data name="AllReviewVehicles" xml:space="preserve">
+    <value>Sva vozila</value>
+  </data>
+  <data name="ReviewRatingFilter" xml:space="preserve">
+    <value>Filtriraj prema ocjeni</value>
+  </data>
+  <data name="AllRatings" xml:space="preserve">
+    <value>Sve ocjene</value>
+  </data>
+  <data name="ReviewClearFilters" xml:space="preserve">
+    <value>Očisti filtere</value>
+  </data>
+  <data name="AdminLoadMore" xml:space="preserve">
+    <value>Učitaj još</value>
+  </data>
+  <data name="AdminVehicleStatusFilterAria" xml:space="preserve">
+    <value>Filtriraj vozila prema statusu</value>
+  </data>
+  <data name="AvailableVehicles" xml:space="preserve">
+    <value>Dostupna vozila</value>
+  </data>
+  <data name="SoldVehicles" xml:space="preserve">
+    <value>Prodana vozila</value>
+  </data>
+  <data name="Sold" xml:space="preserve">
+    <value>Prodano</value>
+  </data>
+  <data name="AdminPurchasedVehicle" xml:space="preserve">
+    <value>Kupljeno vozilo</value>
   </data>
 </root>

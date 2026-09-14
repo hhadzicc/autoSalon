@@ -5,6 +5,18 @@
 
 @{
     var isEdit = Model.VoziloID > 0;
+    var editVehicle = Model as Autosalon_OneZone.ViewModels.Admin.EditVoziloViewModel;
+    var hasExistingImage = !string.IsNullOrWhiteSpace(editVehicle?.PostojecaSlikaPath);
+    var selectedColor = Model.Boja;
+    var selectedColorLabel = selectedColor.HasValue
+        ? L[VehicleColorPresentation.GetResourceKey(selectedColor.Value)].Value
+        : L["SelectVehicleColor"].Value;
+    var selectedFuel = Enum.TryParse<TipGoriva>(Model.Gorivo, true, out var parsedFuel)
+        ? parsedFuel
+        : (TipGoriva?)null;
+    var selectedFuelLabel = selectedFuel.HasValue
+        ? L[FuelPresentation.GetResourceKey(selectedFuel.Value)].Value
+        : L["SelectFuelType"].Value;
     var vehicleFormTexts = new Dictionary<string, string>
     {
         ["makeRequired"] = L["Validation.VehicleMakeRequiredClient"].Value,
@@ -63,31 +75,90 @@
 
         <div class="col-md-6">
             <label asp-for="Gorivo" class="form-label">@L["VehicleFuel"]</label>
-            <select asp-for="Gorivo" class="form-control" required>
-                <option value="">@L["SelectFuelType"]</option>
-                @foreach (var fuel in Enum.GetValues<TipGoriva>())
-                {
-                    <option value="@fuel">@L[FuelPresentation.GetResourceKey(fuel)]</option>
-                }
-            </select>
+            <div class="dropdown admin-option-select" data-option-picker data-placeholder="@L["SelectFuelType"]">
+                <select asp-for="Gorivo" class="admin-option-native-select" data-option-select required tabindex="-1" aria-hidden="true">
+                    <option value="">@L["SelectFuelType"]</option>
+                    @foreach (var fuel in Enum.GetValues<TipGoriva>())
+                    {
+                        <option value="@fuel">@L[FuelPresentation.GetResourceKey(fuel)]</option>
+                    }
+                </select>
+                <button type="button"
+                        class="form-control admin-option-select-toggle dropdown-toggle"
+                        data-bs-toggle="dropdown"
+                        data-validation-proxy-for="Gorivo"
+                        aria-labelledby="Gorivo"
+                        aria-expanded="false">
+                    <span data-selected-option-label>@selectedFuelLabel</span>
+                </button>
+                <ul class="dropdown-menu admin-option-options">
+                    @foreach (var fuel in Enum.GetValues<TipGoriva>())
+                    {
+                        var fuelLabel = L[FuelPresentation.GetResourceKey(fuel)].Value;
+                        <li>
+                            <button type="button"
+                                    class="dropdown-item admin-option-option"
+                                    data-option
+                                    data-value="@fuel"
+                                    data-label="@fuelLabel"
+                                    aria-pressed="@(selectedFuel == fuel ? "true" : "false")">
+                                <span>@fuelLabel</span>
+                                <i class="bi bi-check-lg" aria-hidden="true"></i>
+                            </button>
+                        </li>
+                    }
+                </ul>
+            </div>
             <span asp-validation-for="Gorivo" class="text-danger"></span>
         </div>
 
-        <div class="col-md-6">
+        <div id="vehicle-displacement-field" class="col-md-6">
             <label asp-for="Kubikaza" class="form-label">@L["VehicleDisplacement"]</label>
             <input asp-for="Kubikaza" class="form-control" type="number" min="0" step="0.1" />
             <span asp-validation-for="Kubikaza" class="text-danger"></span>
         </div>
 
         <div class="col-md-6">
-            <label asp-for="Boja" class="form-label">@L["VehicleColor"]</label>
-            <select asp-for="Boja" class="form-control" required>
-                <option value="">@L["SelectVehicleColor"]</option>
-                @foreach (var color in Enum.GetValues<TipBoje>())
-                {
-                    <option value="@color">@L[VehicleColorPresentation.GetResourceKey(color)]</option>
-                }
-            </select>
+            <label asp-for="Boja" class="form-label" id="vehicle-color-label">@L["VehicleColor"]</label>
+            <div class="dropdown admin-color-select" data-color-picker data-placeholder="@L["SelectVehicleColor"]">
+                <select asp-for="Boja" class="admin-color-native-select" data-color-select required tabindex="-1" aria-hidden="true">
+                    <option value="">@L["SelectVehicleColor"]</option>
+                    @foreach (var color in Enum.GetValues<TipBoje>())
+                    {
+                        <option value="@color">@L[VehicleColorPresentation.GetResourceKey(color)]</option>
+                    }
+                </select>
+                <button type="button"
+                        class="form-control admin-color-select-toggle dropdown-toggle"
+                        data-bs-toggle="dropdown"
+                        data-validation-proxy-for="Boja"
+                        aria-labelledby="vehicle-color-label"
+                        aria-expanded="false">
+                    <span class="vehicle-color-swatch @(selectedColor.HasValue ? VehicleColorPresentation.GetSwatchClass(selectedColor.Value) : "d-none")"
+                          data-selected-color-swatch
+                          aria-hidden="true"></span>
+                    <span data-selected-color-label>@selectedColorLabel</span>
+                </button>
+                <ul class="dropdown-menu admin-color-options">
+                    @foreach (var color in Enum.GetValues<TipBoje>())
+                    {
+                        var colorLabel = L[VehicleColorPresentation.GetResourceKey(color)].Value;
+                        <li>
+                            <button type="button"
+                                    class="dropdown-item admin-color-option"
+                                    data-color-option
+                                    data-value="@color"
+                                    data-label="@colorLabel"
+                                    data-swatch-class="@VehicleColorPresentation.GetSwatchClass(color)"
+                                    aria-pressed="@(selectedColor == color ? "true" : "false")">
+                                <span class="vehicle-color-swatch @VehicleColorPresentation.GetSwatchClass(color)" aria-hidden="true"></span>
+                                <span>@colorLabel</span>
+                                <i class="bi bi-check-lg" aria-hidden="true"></i>
+                            </button>
+                        </li>
+                    }
+                </ul>
+            </div>
             <span asp-validation-for="Boja" class="text-danger"></span>
         </div>
 
@@ -107,28 +178,49 @@
             <label asp-for="Slika" class="form-label">@L["VehicleImage"]</label>
             @if (isEdit)
             {
-                <input asp-for="Slika" class="form-control" type="file" accept="image/*" />
+                <input asp-for="Slika" class="form-control" type="file" accept=".jpg,.jpeg,.png,.gif,.bmp,.webp" />
             }
             else
             {
-                <input asp-for="Slika" class="form-control" type="file" accept="image/*" required />
+                <input asp-for="Slika" class="form-control" type="file" accept=".jpg,.jpeg,.png,.gif,.bmp,.webp" required />
             }
             <small class="form-text text-muted">@(isEdit ? L["VehicleImageOptional"] : L["VehicleImageRequired"]) · @L["FileExtensionsAllowed"]</small>
             <span asp-validation-for="Slika" class="text-danger"></span>
-
-            @if (Model is Autosalon_OneZone.ViewModels.Admin.EditVoziloViewModel editVm && !string.IsNullOrEmpty(editVm.PostojecaSlikaPath))
-            {
-                <div class="mt-3">
-                    <img src="~/images/vozila/@editVm.PostojecaSlikaPath" alt="@L["CurrentImage"]" class="admin-current-image" />
-                    <input type="hidden" name="PostojecaSlikaPath" value="@editVm.PostojecaSlikaPath" />
-                </div>
-            }
         </div>
 
         <div class="col-12">
-            <label asp-for="Opis" class="form-label">@L["VehicleDescription"]</label>
-            <textarea asp-for="Opis" class="form-control" rows="4" placeholder="@L["VehicleDescriptionPlaceholder"]" required></textarea>
-            <span asp-validation-for="Opis" class="text-danger"></span>
+            <div id="admin-vehicle-media-layout" class="admin-vehicle-media-layout @(hasExistingImage ? "has-image" : "")">
+                <div id="admin-vehicle-image-column" class="admin-vehicle-image-column @(!hasExistingImage ? "d-none" : "")">
+                    @if (hasExistingImage)
+                    {
+                    <button type="button"
+                            id="current-vehicle-image-preview"
+                            class="admin-image-preview-button"
+                            data-image-preview
+                            data-image-src="@Url.Content($"~/images/vozila/{editVehicle!.PostojecaSlikaPath}")"
+                            aria-label="@L["CurrentImage"]">
+                        <img src="~/images/vozila/@editVehicle!.PostojecaSlikaPath" alt="@L["CurrentImage"]" class="admin-current-image" />
+                        <span class="admin-image-preview-icon" aria-hidden="true"><i class="bi bi-zoom-in"></i></span>
+                    </button>
+                    <input type="hidden" name="PostojecaSlikaPath" value="@editVehicle!.PostojecaSlikaPath" />
+                    }
+
+                    <button type="button"
+                            id="selected-vehicle-image-preview"
+                            class="admin-image-preview-button d-none"
+                            data-image-preview
+                            aria-label="@L["VehicleImage"]">
+                        <img id="selected-vehicle-image" alt="@L["VehicleImage"]" class="admin-current-image" />
+                        <span class="admin-image-preview-icon" aria-hidden="true"><i class="bi bi-zoom-in"></i></span>
+                    </button>
+                </div>
+
+                <div class="admin-description-field">
+                    <label asp-for="Opis" class="form-label">@L["VehicleDescription"]</label>
+                    <textarea asp-for="Opis" class="form-control" rows="7" placeholder="@L["VehicleDescriptionPlaceholder"]" required></textarea>
+                    <span asp-validation-for="Opis" class="text-danger"></span>
+                </div>
+            </div>
         </div>
     </div>
 

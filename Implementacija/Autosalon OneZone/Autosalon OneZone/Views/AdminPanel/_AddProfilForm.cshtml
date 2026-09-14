@@ -14,6 +14,7 @@
 @Html.AntiForgeryToken()
 
 @{
+    var isEdit = !string.IsNullOrEmpty(Model.UserId);
     var profileFormTexts = new Dictionary<string, string>
     {
         ["usernameRequired"] = L["Validation.UsernameRequired"].Value,
@@ -35,100 +36,117 @@
       asp-action="SaveProfil"
       method="post"
       data-validation-texts="@JsonSerializer.Serialize(profileFormTexts)"
+      data-person-name-pattern="@UserInputPatterns.PersonName"
       data-password-pattern="@PasswordPolicy.Pattern"
       data-password-min-length="@PasswordPolicy.RequiredLength">
     <input type="hidden" asp-for="UserId" />
 
-    <div class="form-group">
-        <label asp-for="UserName">@L["Username"]</label>
-        <input asp-for="UserName" class="form-control" pattern="@UserInputPatterns.UsernameHtml" title="@L["Validation.UsernameAlphanumeric"]" required />
-        <span asp-validation-for="UserName" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="Email">@L["Email"]</label>
-        <input asp-for="Email" class="form-control" type="email" required pattern="@UserInputPatterns.EmailHtml" />
-        <span asp-validation-for="Email" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="Ime">@L["FirstName"]</label>
-        <input asp-for="Ime" class="form-control" pattern="@UserInputPatterns.PersonNameHtml" title="@L["Validation.FirstNameLettersOnly"]" required />
-        <span asp-validation-for="Ime" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="Prezime">@L["LastName"]</label>
-        <input asp-for="Prezime" class="form-control" pattern="@UserInputPatterns.PersonNameHtml" title="@L["Validation.LastNameLettersOnly"]" required />
-        <span asp-validation-for="Prezime" class="text-danger"></span>
-    </div>
-
-    @if (string.IsNullOrEmpty(Model.UserId))
-    {
+    <div class="admin-user-form-grid">
         <div class="form-group">
-            <label asp-for="Password">@L["Password"]</label>
-            <div class="password-wrapper">
-                <input asp-for="Password" class="form-control password-input" type="password" required minlength="@PasswordPolicy.RequiredLength" pattern="@PasswordPolicy.HtmlPattern" title="@L["PasswordPolicyError"]" autocomplete="new-password" />
-                <button type="button" class="password-toggle" aria-label="@L["ShowPassword"]">
-                    <i class="bi bi-eye"></i>
-                </button>
-            </div>
-            <span asp-validation-for="Password" class="text-danger"></span>
+            <label asp-for="UserName" class="form-label">@L["Username"]</label>
+            <input asp-for="UserName" class="form-control" pattern="@UserInputPatterns.UsernameHtml" title="@L["Validation.UsernameAlphanumeric"]" required maxlength="100" />
+            <span asp-validation-for="UserName" class="text-danger"></span>
         </div>
 
         <div class="form-group">
-            <label asp-for="ConfirmPassword">@L["ConfirmPassword"]</label>
-            <div class="password-wrapper">
-                <input asp-for="ConfirmPassword" class="form-control password-input" type="password" required autocomplete="new-password" />
-                <button type="button" class="password-toggle" aria-label="@L["ShowPassword"]">
-                    <i class="bi bi-eye"></i>
-                </button>
-            </div>
-            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-        </div>
-    }
-    else
-    {
-        <div class="form-group">
-            <label asp-for="Password">@L["NewPassword"] <span class="text-muted fw-normal">(@L["Optional"])</span></label>
-            <div class="password-wrapper">
-                <input asp-for="Password" class="form-control password-input" type="password" autocomplete="new-password" placeholder="@L["AdminNewPasswordPlaceholder"]" minlength="@PasswordPolicy.RequiredLength" pattern="@PasswordPolicy.HtmlPattern" title="@L["PasswordPolicyError"]" />
-                <button type="button" class="password-toggle" aria-label="@L["ShowPassword"]">
-                    <i class="bi bi-eye"></i>
-                </button>
-            </div>
-            <span asp-validation-for="Password" class="text-danger"></span>
+            <label asp-for="Email" class="form-label">@L["Email"]</label>
+            <input asp-for="Email" class="form-control" type="email" required pattern="@UserInputPatterns.EmailHtml" />
+            <span asp-validation-for="Email" class="text-danger"></span>
         </div>
 
         <div class="form-group">
-            <label asp-for="ConfirmPassword">@L["ConfirmNewPassword"] <span class="text-muted fw-normal">(@L["Optional"])</span></label>
-            <div class="password-wrapper">
-                <input asp-for="ConfirmPassword" class="form-control password-input" type="password" autocomplete="new-password" placeholder="@L["AdminConfirmNewPasswordPlaceholder"]" />
-                <button type="button" class="password-toggle" aria-label="@L["ShowPassword"]">
-                    <i class="bi bi-eye"></i>
-                </button>
-            </div>
-            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            <label asp-for="Ime" class="form-label">@L["FirstName"]</label>
+            <input asp-for="Ime" class="form-control" pattern="@UserInputPatterns.PersonNameHtml" title="@L["Validation.FirstNameLettersOnly"]" required maxlength="100" />
+            <span asp-validation-for="Ime" class="text-danger"></span>
         </div>
-    }
 
-    @if (Model.DostupneRole != null && Model.DostupneRole.Any())
-    {
         <div class="form-group">
-            <label>@L["Role"]</label>
-            @foreach (var role in Model.DostupneRole)
+            <label asp-for="Prezime" class="form-label">@L["LastName"]</label>
+            <input asp-for="Prezime" class="form-control" pattern="@UserInputPatterns.PersonNameHtml" title="@L["Validation.LastNameLettersOnly"]" required maxlength="100" />
+            <span asp-validation-for="Prezime" class="text-danger"></span>
+        </div>
+    </div>
+
+    <section class="admin-user-form-section" aria-labelledby="admin-user-security-title">
+        <h3 id="admin-user-security-title">@L["Security"]</h3>
+        <div class="admin-user-form-grid">
+            @if (!isEdit)
             {
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="OdabraneRole" value="@role.Name"
-                    @(Model.OdabraneRole != null && Model.OdabraneRole.Contains(role.Name) ? "checked" : "") />
-                    <label class="form-check-label">@RoleLabel(role.Name)</label>
+                <div class="form-group">
+                    <label asp-for="Password" class="form-label">@L["Password"]</label>
+                    <div class="password-wrapper">
+                        <input asp-for="Password" class="form-control password-input" type="password" required minlength="@PasswordPolicy.RequiredLength" pattern="@PasswordPolicy.HtmlPattern" title="@L["PasswordPolicyError"]" autocomplete="new-password" />
+                        <button type="button" class="password-toggle" aria-label="@L["ShowPassword"]">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="ConfirmPassword" class="form-label">@L["ConfirmPassword"]</label>
+                    <div class="password-wrapper">
+                        <input asp-for="ConfirmPassword" class="form-control password-input" type="password" required autocomplete="new-password" />
+                        <button type="button" class="password-toggle" aria-label="@L["ShowPassword"]">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
+                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                </div>
+            }
+            else
+            {
+                <div class="form-group">
+                    <label asp-for="Password" class="form-label">@L["NewPassword"] <span class="text-muted fw-normal">(@L["Optional"])</span></label>
+                    <div class="password-wrapper">
+                        <input asp-for="Password" class="form-control password-input" type="password" autocomplete="new-password" placeholder="@L["AdminNewPasswordPlaceholder"]" minlength="@PasswordPolicy.RequiredLength" pattern="@PasswordPolicy.HtmlPattern" title="@L["PasswordPolicyError"]" />
+                        <button type="button" class="password-toggle" aria-label="@L["ShowPassword"]">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="ConfirmPassword" class="form-label">@L["ConfirmNewPassword"] <span class="text-muted fw-normal">(@L["Optional"])</span></label>
+                    <div class="password-wrapper">
+                        <input asp-for="ConfirmPassword" class="form-control password-input" type="password" autocomplete="new-password" placeholder="@L["AdminConfirmNewPasswordPlaceholder"]" />
+                        <button type="button" class="password-toggle" aria-label="@L["ShowPassword"]">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
+                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                 </div>
             }
         </div>
+    </section>
+
+    @if (Model.DostupneRole != null && Model.DostupneRole.Any())
+    {
+        <section class="admin-user-form-section" aria-labelledby="admin-user-access-title">
+            <h3 id="admin-user-access-title">@L["AccessLevel"]</h3>
+            <div class="admin-role-options">
+                @foreach (var role in Model.DostupneRole)
+                {
+                    var roleName = role.Name ?? string.Empty;
+                    var isSelected = Model.OdabraneRole != null && Model.OdabraneRole.Contains(roleName);
+                    <label class="admin-role-option admin-role-option-@roleName.ToLowerInvariant()">
+                        <input type="radio"
+                               name="OdabraneRole"
+                               value="@roleName"
+                               checked="@isSelected" />
+                        <span class="admin-role-option-indicator" aria-hidden="true"></span>
+                        <span>@RoleLabel(roleName)</span>
+                    </label>
+                }
+            </div>
+        </section>
     }
 
-    <div class="form-group mt-3">
-        <button type="submit" class="btn btn-primary">@L["Save"]</button>
-        <button type="button" id="cancel-add-profil" class="btn btn-secondary">@L["Cancel"]</button>
+    <div class="profile-actions admin-user-form-actions">
+        <button type="button" id="cancel-add-profil" class="btn btn-light border rounded-4">@L["Cancel"]</button>
+        <button type="submit" class="btn btn-primary rounded-4">
+            @(isEdit ? L["SaveChanges"] : L["CreateUser"])
+        </button>
     </div>
 </form>

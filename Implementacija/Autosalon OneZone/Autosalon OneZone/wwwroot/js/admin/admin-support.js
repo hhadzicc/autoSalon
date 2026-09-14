@@ -10,6 +10,13 @@
         const $mobileList = $("#podrska-mobile-list");
         const $searchInput = $("#podrska-search-input");
         const $searchButton = $("#podrska-search-button");
+        const pageParams = new URLSearchParams(window.location.search);
+        let activeListRequest = null;
+        const pager = window.adminLazyList.create({
+            element: root.querySelector("[data-admin-lazy-controls]"),
+            loadMoreText: text.loadMore,
+            onLoadMore: (offset) => loadTickets(offset, true)
+        });
 
         const emailLink = (value) => {
             const email = value || text.notAvailable;
@@ -88,10 +95,13 @@
                 + `<i class="bi bi-trash me-1"></i>${escapeHtml(text.delete)}</button></div>`;
         };
 
-        const renderTickets = (tickets) => {
-            $tableBody.empty();
-            $mobileList.empty();
+        const renderTickets = (tickets, append = false) => {
+            if (!append) {
+                $tableBody.empty();
+                $mobileList.empty();
+            }
             if (!tickets?.length) {
+                if (append) return;
                 const empty = `<div class="empty-state"><i class="bi bi-inbox"></i><p>${escapeHtml(text.empty)}</p></div>`;
                 $tableBody.html(`<tr><td colspan="5">${empty}</td></tr>`);
                 $mobileList.html(empty);
@@ -106,30 +116,58 @@
                 const title = escapeHtml(rawTitle);
                 const ticketActions = actions(ticket);
 
-                $tableBody.append(`<tr><td class="date-cell">${date}</td>`
+                $tableBody.append(`<tr data-admin-item-id="${ticket.upitID}"><td class="date-cell">${date}</td>`
                     + `<td><div class="user-cell" title="${escapeAttribute(rawEmail || text.notAvailable)}"><span class="user-avatar"><i class="bi bi-envelope-fill"></i></span><strong>${email}</strong></div></td>`
                     + `<td><strong class="table-text-truncate" title="${escapeAttribute(rawTitle)}">${title}</strong></td>`
                     + `<td>${statusBadge(ticket.status)}</td><td>${ticketActions}</td></tr>`);
 
-                $mobileList.append(`<article class="support-mobile-card"><div class="mobile-card-top"><span class="date-cell">${date}</span>${statusBadge(ticket.status)}</div>`
+                $mobileList.append(`<article class="support-mobile-card" data-admin-item-id="${ticket.upitID}"><div class="mobile-card-top"><span class="date-cell">${date}</span>${statusBadge(ticket.status)}</div>`
                     + `<h3>${title}</h3><p class="mobile-user">${email}</p><div class="review-mobile-meta">`
-                    + `<div><span>${escapeHtml(text.status)}</span><strong>${escapeHtml(statusLabel(ticket.status))}</strong></div>`
+                    + `<div><span>${escapeHtml(text.status)}</span><strong data-support-status-label>${escapeHtml(statusLabel(ticket.status))}</strong></div>`
                     + `<div><span>${escapeHtml(text.customer)}</span><strong>${email}</strong></div></div>`
                     + `<div class="mobile-actions">${ticketActions}</div></article>`);
             });
         };
 
-        const loadTickets = () => {
-            $tableBody.html(`<tr><td colspan="5">${escapeHtml(text.loading)}</td></tr>`);
-            $mobileList.html(`<div class="empty-state"><i class="bi bi-hourglass-split"></i><p>${escapeHtml(text.loading)}</p></div>`);
-            window.appApi.get(root.dataset.listUrl, { searchQuery: $searchInput.val(), page: 1 })
-                .done((data) => renderTickets(data?.upiti || []))
-                .fail((xhr) => {
+        const updateUrl = () => {
+            const params = new URLSearchParams();
+            params.set("section", "Podrska");
+            if ($searchInput.val()) params.set("searchQuery", $searchInput.val());
+            window.history.replaceState({}, "", `${window.location.pathname}?${params}`);
+        };
+
+        const loadTickets = (offset = 0, append = false) => {
+            activeListRequest?.abort();
+            if (append) {
+                pager.setLoading(true);
+            } else {
+                pager.reset();
+                window.adminCore.setLoading(root, true);
+                updateUrl();
+            }
+            const request = window.appApi.get(root.dataset.listUrl, { searchQuery: $searchInput.val(), offset })
+                .done((data) => {
+                    const tickets = data?.upiti || [];
+                    renderTickets(tickets, append);
+                    pager.update(data, tickets.length, append);
+                })
+                .fail((xhr, statusText) => {
+                    if (statusText === "abort") return;
+                    if (append) {
+                        window.showAppToast(window.adminCore.errorMessage(xhr, text.loadError), "error");
+                        return;
+                    }
                     const message = escapeHtml(window.adminCore.errorMessage(xhr, text.loadError));
-                    const error = `<div class="alert alert-danger mb-0">${escapeHtml(text.loadError)} ${message}</div>`;
+                    const error = `<div class="alert alert-danger mb-0">${message}</div>`;
                     $tableBody.html(`<tr><td colspan="5">${error}</td></tr>`);
                     $mobileList.html(error);
+                }).always(() => {
+                    if (activeListRequest !== request) return;
+                    activeListRequest = null;
+                    pager.setLoading(false);
+                    if (!append) window.adminCore.setLoading(root, false);
                 });
+            activeListRequest = request;
         };
 
         $(document).off("click.adminSupportToggle", ".status-dropdown-toggle")
@@ -170,15 +208,25 @@
                     status: $(this).data("status")
                 }).done((response) => {
                     if (response.successMessage) window.showAppToast(response.successMessage, "success");
-                    loadTickets();
+                    const id = String($(this).data("upit-id"));
+                    const status = String($(this).data("status"));
+                    const label = statusLabel(status);
+                    const $items = $(root).find(`[data-admin-item-id="${CSS.escape(id)}"]`);
+                    $items.find(".support-status-badge").replaceWith(statusBadge(status));
+                    $items.find("[data-support-status-label]").text(label);
+                    $items.find(".status-option").removeClass("active")
+                        .filter(`[data-status="${CSS.escape(status)}"]`).addClass("active");
+                    $items.find(".view-message-button").attr("data-status", encodeURIComponent(label));
                 }).fail(() => window.showAppToast(text.statusChangeError, "error"));
             });
 
         $(document).off("app:delete-confirmed.adminSupport", ".delete-podrska-button")
             .on("app:delete-confirmed.adminSupport", ".delete-podrska-button", function () {
-                window.appApi.post(root.dataset.deleteUrl, { id: $(this).data("id") }).done((response) => {
+                const id = $(this).data("id");
+                window.appApi.post(root.dataset.deleteUrl, { id }).done((response) => {
                     window.showAppToast(response.successMessage || text.deleteSuccess, "success");
-                    loadTickets();
+                    window.adminCore.removeRenderedItem(root, id, () => renderTickets([]));
+                    pager.removeItem();
                 }).fail(() => window.showAppToast(text.deleteError, "error"));
             });
 
@@ -190,7 +238,11 @@
             }
         });
 
-        if (!$searchInput.val() && root.dataset.initialSearch) $searchInput.val(root.dataset.initialSearch);
+        if (!$searchInput.val()) {
+            $searchInput.val(pageParams.get("section") === "Podrska"
+                ? pageParams.get("searchQuery") || root.dataset.initialSearch
+                : root.dataset.initialSearch);
+        }
         loadTickets();
     };
 

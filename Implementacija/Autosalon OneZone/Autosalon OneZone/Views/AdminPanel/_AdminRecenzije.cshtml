@@ -2,9 +2,10 @@
 @using System.Text.Json
 
 @{
+    var canViewUsers = User.IsInRole(Autosalon_OneZone.Authorization.AppRoles.Administrator);
     var recenzijeTexts = new Dictionary<string, string>
     {
-        ["show"] = L["Show"].Value,
+        ["view"] = L["CommonView"].Value,
         ["delete"] = L["CommonDelete"].Value,
         ["deleteTitle"] = L["DeleteReviewTitle"].Value,
         ["deleteMessage"] = L["DeleteReviewMessage"].Value,
@@ -15,13 +16,14 @@
         ["loadError"] = L["ReviewsLoadError"].Value,
         ["deleteSuccess"] = L["ReviewDeletedSuccess"].Value,
         ["deleteError"] = L["ReviewDeleteError"].Value,
-        ["ratingWord"] = L["RatingWord"].Value
+        ["ratingWord"] = L["RatingWord"].Value,
+        ["backToExperiences"] = L["BackToCustomerExperiences"].Value,
+        ["loadMore"] = L["AdminLoadMore"].Value
     };
 }
 
 <div class="admin-page-header">
     <div>
-        <p class="admin-eyebrow">@L["AdminPanel"]</p>
         <h1>@L["AdminReviewsTitle"]</h1>
     </div>
 </div>
@@ -30,7 +32,11 @@
      id="recenzije-list-container"
      data-texts="@JsonSerializer.Serialize(recenzijeTexts)"
      data-list-url="@Url.Action("GetRecenzijeJson", "AdminPanel")"
-     data-delete-url="@Url.Action("DeleteRecenzija", "AdminPanel")">
+     data-delete-url="@Url.Action("DeleteRecenzija", "AdminPanel")"
+     data-users-url="@Url.Action("Index", "AdminPanel")"
+     data-vehicle-details-url="@Url.Action("Details", "Vozilo")"
+     data-can-view-users="@canViewUsers.ToString().ToLowerInvariant()"
+     data-initial-search="@Model.SearchQuery">
     <div class="admin-toolbar admin-toolbar-stacked">
         <div>
             <h2>@L["AdminReviewsList"]</h2>
@@ -38,12 +44,98 @@
         </div>
 
         <div class="admin-filter-form review-filter-form">
-            <input type="text" id="recenzija-user-filter" class="form-control" placeholder="@L["FilterByUserPlaceholder"]" value="@Model.KorisnikFilter" />
-            <input type="text" id="recenzija-vozilo-filter" class="form-control" placeholder="@L["FilterByVehiclePlaceholder"]" value="@Model.VoziloFilter" />
-            <input type="text" id="recenzija-text-search" class="form-control" placeholder="@L["SearchByTextPlaceholder"]" value="@Model.SearchQuery" />
-            <button id="recenzija-filter-search-button" class="btn btn-primary" type="button">
-                <i class="bi bi-funnel-fill me-2"></i>@L["ApplyFilters"]
-            </button>
+            <label class="visually-hidden" for="recenzija-user-filter">@L["ReviewCustomerFilter"]</label>
+            <div class="admin-combobox" data-admin-combobox data-suggestions-url="@Url.Action("GetReviewCustomerSuggestions", "AdminPanel")">
+                <input type="text"
+                       id="recenzija-user-filter"
+                       class="form-control"
+                       placeholder="@L["FilterByUserPlaceholder"]"
+                       autocomplete="off"
+                       role="combobox"
+                       aria-autocomplete="list"
+                       aria-expanded="false"
+                       aria-controls="recenzija-user-suggestions"
+                       data-combobox-input />
+                <input type="hidden" id="recenzija-user-id-filter" data-combobox-value />
+                <button type="button"
+                        class="admin-combobox-toggle"
+                        tabindex="-1"
+                        aria-label="@L["ReviewCustomerFilter"]"
+                        data-open-label="@L["ReviewCustomerFilter"]"
+                        data-clear-label="@L["ClearSearch"]"
+                        data-combobox-toggle>
+                    <i class="bi bi-search" aria-hidden="true"></i>
+                </button>
+                <div id="recenzija-user-suggestions" class="admin-combobox-menu" role="listbox" hidden data-combobox-menu>
+                    <button type="button" class="admin-combobox-option" role="option" data-combobox-option data-combobox-static data-value="" data-label="@L["AllCustomers"]">@L["AllCustomers"]</button>
+                </div>
+            </div>
+
+            <label class="visually-hidden" for="recenzija-vozilo-filter">@L["ReviewVehicleFilter"]</label>
+            <div class="admin-combobox" data-admin-combobox data-suggestions-url="@Url.Action("GetReviewVehicleSuggestions", "AdminPanel")">
+                <input type="text"
+                       id="recenzija-vozilo-filter"
+                       class="form-control"
+                       placeholder="@L["FilterByVehiclePlaceholder"]"
+                       autocomplete="off"
+                       role="combobox"
+                       aria-autocomplete="list"
+                       aria-expanded="false"
+                       aria-controls="recenzija-vehicle-suggestions"
+                       data-combobox-input />
+                <input type="hidden" id="recenzija-vozilo-id-filter" data-combobox-value />
+                <button type="button"
+                        class="admin-combobox-toggle"
+                        tabindex="-1"
+                        aria-label="@L["ReviewVehicleFilter"]"
+                        data-open-label="@L["ReviewVehicleFilter"]"
+                        data-clear-label="@L["ClearSearch"]"
+                        data-combobox-toggle>
+                    <i class="bi bi-search" aria-hidden="true"></i>
+                </button>
+                <div id="recenzija-vehicle-suggestions" class="admin-combobox-menu" role="listbox" hidden data-combobox-menu>
+                    <button type="button" class="admin-combobox-option" role="option" data-combobox-option data-combobox-static data-value="" data-label="@L["AllReviewVehicles"]">@L["AllReviewVehicles"]</button>
+                </div>
+            </div>
+
+            <label class="visually-hidden" for="recenzija-rating-filter">@L["ReviewRatingFilter"]</label>
+            <select id="recenzija-rating-filter" class="form-select" aria-label="@L["ReviewRatingFilter"]">
+                <option value="">@L["AllRatings"]</option>
+                @for (var rating = 5; rating >= 1; rating--)
+                {
+                    <option value="@rating">@rating ★</option>
+                }
+            </select>
+
+            <div class="admin-clearable-filter" data-admin-clearable>
+                <input type="text"
+                       id="recenzija-text-search"
+                       class="form-control"
+                       placeholder="@L["SearchByTextPlaceholder"]"
+                       value="@Model.SearchQuery"
+                       data-clearable-input />
+                <button type="button"
+                        class="admin-filter-field-action"
+                        aria-label="@L["CommonSearch"]"
+                        data-open-label="@L["CommonSearch"]"
+                        data-clear-label="@L["ClearSearch"]"
+                        data-clearable-action>
+                    <i class="bi bi-search" aria-hidden="true"></i>
+                </button>
+            </div>
+
+            <div class="review-filter-actions">
+                <button id="recenzija-clear-all"
+                        class="btn admin-clear-all-button is-inactive"
+                        type="button"
+                        disabled
+                        aria-hidden="true">
+                    <i class="bi bi-arrow-counterclockwise me-2" aria-hidden="true"></i>@L["ReviewClearFilters"]
+                </button>
+                <button id="recenzija-filter-search-button" class="btn btn-primary" type="button">
+                    <i class="bi bi-funnel-fill me-2"></i>@L["Apply"]
+                </button>
+            </div>
         </div>
     </div>
 
@@ -51,10 +143,18 @@
         <table class="table admin-table align-middle mb-0">
             <thead>
                 <tr>
-                    <th>@L["Date"]</th>
+                    <th>
+                        <a href="#" class="review-sort-link active" data-sort-key="datum">
+                            @L["Date"] <i class="bi bi-arrow-down-short" aria-hidden="true"></i>
+                        </a>
+                    </th>
                     <th>@L["Customer"]</th>
-                    <th>@L["AdminVehicle"]</th>
-                    <th>@L["Rating"]</th>
+                    <th>@L["AdminPurchasedVehicle"]</th>
+                    <th>
+                        <a href="#" class="review-sort-link" data-sort-key="ocjena">
+                            @L["Rating"] <i class="bi bi-arrow-down-up" aria-hidden="true"></i>
+                        </a>
+                    </th>
                     <th class="text-end">@L["Actions"]</th>
                 </tr>
             </thead>
@@ -67,7 +167,7 @@
     </div>
 
     <div id="recenzije-mobile-list" class="admin-mobile-list"></div>
-    <div id="pagination-controls"></div>
+    <div class="admin-lazy-list-controls" data-admin-lazy-controls></div>
 </div>
 
 <div class="modal fade" id="komentarModal" tabindex="-1" aria-labelledby="komentarModalLabel" aria-hidden="true">
@@ -88,7 +188,7 @@
             <div class="modal-body">
                 <div class="review-meta-grid">
                     <div><span>@L["Customer"]</span><strong id="komentarModalKorisnik">-</strong></div>
-                    <div><span>@L["AdminVehicle"]</span><strong id="komentarModalVozilo">-</strong></div>
+                    <div><span>@L["AdminPurchasedVehicle"]</span><strong id="komentarModalVozilo">-</strong></div>
                     <div><span>@L["Rating"]</span><strong id="komentarModalOcjena">-</strong></div>
                     <div><span>@L["Date"]</span><strong id="komentarModalDatum">-</strong></div>
                 </div>

@@ -32,84 +32,96 @@
         ["deleteError"] = L["UserDeleteError"].Value,
         ["roleAdministrator"] = L["RoleAdministrator"].Value,
         ["roleSeller"] = L["RoleSeller"].Value,
-        ["roleBuyer"] = L["RoleBuyer"].Value
+        ["roleBuyer"] = L["RoleBuyer"].Value,
+        ["addUserDescription"] = L["AdminAddUserDescription"].Value,
+        ["editUserDescription"] = L["AdminEditUserDescription"].Value,
+        ["loadMore"] = L["AdminLoadMore"].Value
     };
 }
 
-<div class="admin-page-header">
-    <div>
-        <p class="admin-eyebrow">@L["AdminPanel"]</p>
-        <h1>@L["AdminUsersTitle"]</h1>
-    </div>
-</div>
-
-<div id="add-profil-form-container" class="admin-form-card" style="display: none;">
-    <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
+<div id="profili-list-view">
+    <div class="admin-page-header">
         <div>
-            <p class="admin-eyebrow mb-1">@L["AdminUser"]</p>
-            <h2 id="add-edit-profil-form-title" class="mb-0">@L["AdminAddUser"]</h2>
+            <h1>@L["AdminUsersTitle"]</h1>
         </div>
+        <button type="button" id="back-to-customer-experiences" class="btn btn-light border rounded-4" hidden>
+            <i class="bi bi-arrow-left me-2" aria-hidden="true"></i>@L["BackToCustomerExperiences"]
+        </button>
     </div>
-    <div id="add-profil-form-placeholder"></div>
-</div>
 
-<div class="admin-card"
-     id="profili-list-container"
-     data-texts="@JsonSerializer.Serialize(profiliTexts)"
-     data-current-user-id="@currentUserId"
-     data-current-user-is-admin="@currentUserIsAdmin.ToString().ToLowerInvariant()"
-     data-list-url="@Url.Action("GetProfiliJson", "AdminPanel")"
-     data-add-form-url="@Url.Action("GetAddProfilForm", "AdminPanel")"
-     data-edit-form-url="@Url.Action("GetEditProfilForm", "AdminPanel")"
-     data-delete-url="@Url.Action("DeleteProfil", "AdminPanel")"
-     data-initial-search="@Model.SearchQuery">
-    <div class="admin-toolbar admin-toolbar-stacked">
-        <div>
-            <h2>@L["AdminUsersList"]</h2>
-            <span>@L["AdminUsersListText"]</span>
-        </div>
-
-        <div class="admin-users-toolbar">
-            <button id="add-profil-button" class="btn btn-primary rounded-4 add-admin-btn" type="button">
-                <i class="bi bi-person-plus-fill me-2"></i>@L["AdminAddUser"]
-            </button>
-
-            <div class="role-filter-chips" aria-label="@L["AdminUserRoleFilterAria"]">
-                <button type="button" class="role-chip active" data-role-filter="all">@L["AllUsers"]</button>
-                <button type="button" class="role-chip" data-role-filter="Administrator">@L["Admins"]</button>
-                <button type="button" class="role-chip" data-role-filter="Prodavac">@L["Sellers"]</button>
-                <button type="button" class="role-chip" data-role-filter="Kupac">@L["Buyers"]</button>
+    <div class="admin-card"
+         id="profili-list-container"
+         data-texts="@JsonSerializer.Serialize(profiliTexts)"
+         data-current-user-id="@currentUserId"
+         data-current-user-is-admin="@currentUserIsAdmin.ToString().ToLowerInvariant()"
+         data-list-url="@Url.Action("GetProfiliJson", "AdminPanel")"
+         data-add-form-url="@Url.Action("GetAddProfilForm", "AdminPanel")"
+         data-edit-form-url="@Url.Action("GetEditProfilForm", "AdminPanel")"
+         data-delete-url="@Url.Action("DeleteProfil", "AdminPanel")"
+         data-initial-search="@Model.SearchQuery">
+        <div class="admin-toolbar admin-toolbar-stacked">
+            <div>
+                <h2>@L["AdminUsersList"]</h2>
+                <span>@L["AdminUsersListText"]</span>
             </div>
 
-            <div class="admin-search-compact">
-                <input type="text" id="profil-search-input" class="form-control" placeholder="@L["AdminSearchUsersPlaceholder"]" value="@Model.SearchQuery" />
-                <button id="profil-search-button" class="search-submit-btn" type="button" aria-label="@L["CommonSearch"]">
-                    <i class="bi bi-search"></i>
+            <div class="admin-users-toolbar">
+                <button id="add-profil-button" class="btn btn-primary rounded-4 add-admin-btn" type="button">
+                    <i class="bi bi-person-plus-fill me-2"></i>@L["AdminAddUser"]
                 </button>
+
+                <div class="role-filter-chips" aria-label="@L["AdminUserRoleFilterAria"]">
+                    <button type="button" class="role-chip active" data-role-filter="all">@L["AllUsers"]</button>
+                    <button type="button" class="role-chip" data-role-filter="Administrator">@L["Admins"]</button>
+                    <button type="button" class="role-chip" data-role-filter="Prodavac">@L["Sellers"]</button>
+                    <button type="button" class="role-chip" data-role-filter="Kupac">@L["Buyers"]</button>
+                </div>
+
+                <div class="admin-search-compact">
+                    <input type="text" id="profil-search-input" class="form-control" placeholder="@L["AdminSearchUsersPlaceholder"]" value="@Model.SearchQuery" />
+                    <button id="profil-search-button" class="search-submit-btn" type="button" aria-label="@L["CommonSearch"]">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="table-responsive admin-table-wrapper">
-        <table class="table admin-table admin-users-table align-middle mb-0">
-            <thead>
-                <tr>
-                    <th>@L["Username"]</th>
-                    <th>@L["Email"]</th>
-                    <th>@L["FirstName"]</th>
-                    <th>@L["LastName"]</th>
-                    <th>@L["Role"]</th>
-                    <th class="text-end">@L["Actions"]</th>
-                </tr>
-            </thead>
-            <tbody id="profili-table-body">
-                <tr>
-                    <td colspan="6">@L["LoadingUsers"]</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+        <div class="table-responsive admin-table-wrapper">
+            <table class="table admin-table admin-users-table align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>@L["Username"]</th>
+                        <th>@L["Email"]</th>
+                        <th>@L["FirstName"]</th>
+                        <th>@L["LastName"]</th>
+                        <th>@L["Role"]</th>
+                        <th class="text-end">@L["Actions"]</th>
+                    </tr>
+                </thead>
+                <tbody id="profili-table-body">
+                    <tr>
+                        <td colspan="6">@L["LoadingUsers"]</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
-    <div id="profili-mobile-list" class="admin-mobile-list"></div>
-    <div id="profil-pagination-controls"></div>
+        <div id="profili-mobile-list" class="admin-mobile-list"></div>
+        <div class="admin-lazy-list-controls" data-admin-lazy-controls></div>
+    </div>
+</div>
+
+<div id="add-profil-form-container" class="admin-user-form-view" style="display: none;">
+    <button type="button" id="back-to-profili-list" class="admin-form-back-button">
+        <i class="bi bi-arrow-left" aria-hidden="true"></i>
+        <span>@L["BackToUsers"]</span>
+    </button>
+
+    <div class="admin-form-card admin-user-editor-card">
+        <div class="admin-user-editor-header">
+            <h2 id="add-edit-profil-form-title">@L["AdminAddUser"]</h2>
+            <p id="add-edit-profil-form-description">@L["AdminAddUserDescription"]</p>
+        </div>
+        <div id="add-profil-form-placeholder"></div>
+    </div>
 </div>

@@ -11,8 +11,10 @@
 
 <section class="admin-section"
          id="admin-panel-root"
-         data-default-section="@(currentSection ?? "Dashboard")"
-         data-is-admin="@isAdmin.ToString().ToLowerInvariant()"
+          data-default-section="@(currentSection ?? "Dashboard")"
+          data-is-admin="@isAdmin.ToString().ToLowerInvariant()"
+          data-edit-vehicle-id="@ViewBag.EditVehicleId"
+          data-return-url="@ViewBag.ReturnUrl"
          data-url-dashboard="@Url.Action("GetDashboardSection", "AdminPanel")"
          data-url-vozila="@Url.Action("GetVozilaSection", "AdminPanel")"
          data-url-profili="@Url.Action("GetProfiliSection", "AdminPanel")"
@@ -77,6 +79,9 @@
 @section Scripts {
     <script src="~/js/admin/admin-core.js" asp-append-version="true"></script>
     <script src="~/js/admin/admin-panel.js" asp-append-version="true"></script>
+    <script src="~/js/admin/admin-combobox.js" asp-append-version="true"></script>
+    <script src="~/js/admin/admin-filter-controls.js" asp-append-version="true"></script>
+    <script src="~/js/admin/admin-lazy-list.js" asp-append-version="true"></script>
     <script src="~/js/admin/admin-reviews.js" asp-append-version="true"></script>
     <script src="~/js/admin/admin-support.js" asp-append-version="true"></script>
     <script src="~/js/admin/admin-users.js" asp-append-version="true"></script>

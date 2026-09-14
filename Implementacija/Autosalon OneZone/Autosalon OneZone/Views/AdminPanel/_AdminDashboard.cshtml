@@ -1,28 +1,11 @@
 @model Autosalon_OneZone.ViewModels.Admin.AdminDashboardViewModel
 @using Autosalon_OneZone.Models
+@using Autosalon_OneZone.Authorization
 @using System.Globalization
 @using System.Linq
 
 @functions {
     private static string FormatDate(DateTime date) => date.ToString("dd-MM-yyyy", CultureInfo.CurrentCulture);
-
-    private string OrderStatusLabel(StatusNarudzbe status) => status switch
-    {
-        StatusNarudzbe.Placena => L["StatusPaid"].Value,
-        StatusNarudzbe.UObradi => L["StatusInProgress"].Value,
-        StatusNarudzbe.Isporucena => L["StatusDelivered"].Value,
-        StatusNarudzbe.Otkazana => L["StatusCanceled"].Value,
-        _ => L["StatusCreated"].Value
-    };
-
-    private static string OrderStatusClass(StatusNarudzbe status) => status switch
-    {
-        StatusNarudzbe.Placena => "success",
-        StatusNarudzbe.Isporucena => "success",
-        StatusNarudzbe.UObradi => "warning",
-        StatusNarudzbe.Otkazana => "secondary",
-        _ => "info"
-    };
 
     private string SupportStatusLabel(StatusUpita status) => status switch
     {
@@ -44,16 +27,26 @@
 
 <div class="admin-page-header dashboard-page-header">
     <div>
-        <p class="admin-eyebrow">@L["AdminPanel"]</p>
         <h1>@L["AdminDashboardTitle"]</h1>
     </div>
 
     <div class="dashboard-header-actions">
-        <button type="button" class="btn btn-primary rounded-4 dashboard-section-link" data-section="Vozila">
-            <i class="bi bi-car-front-fill me-2"></i>@L["AdminDashboardVehiclesButton"]
-        </button>
-        <button type="button" class="btn btn-light border rounded-4 dashboard-section-link" data-section="Podrska">
-            <i class="bi bi-headset me-2"></i>@L["AdminDashboardInquiriesButton"]
+        @if (User.IsInRole(AppRoles.Administrator))
+        {
+            <button type="button"
+                    class="btn btn-primary rounded-4 dashboard-create-link"
+                    data-section="Profili"
+                    data-form-trigger="#add-profil-button"
+                    data-return-section="Dashboard">
+                <i class="bi bi-person-plus-fill me-2"></i>@L["AdminAddUser"]
+            </button>
+        }
+        <button type="button"
+                class="btn @(User.IsInRole(AppRoles.Administrator) ? "btn-outline-primary" : "btn-primary") rounded-4 dashboard-create-link"
+                data-section="Vozila"
+                data-form-trigger="#add-vozilo-button"
+                data-return-section="Dashboard">
+            <i class="bi bi-plus-lg me-2"></i>@L["AdminAddVehicle"]
         </button>
     </div>
 </div>
@@ -87,15 +80,6 @@
     </article>
 
     <article class="dashboard-stat-card">
-        <span class="dashboard-stat-icon stat-amber"><i class="bi bi-headset"></i></span>
-        <div>
-            <span>@L["AdminDashboardActiveInquiries"]</span>
-            <strong>@Model.BrojAktivnihUpita</strong>
-            <p>@L["AdminDashboardPendingProcessing"]</p>
-        </div>
-    </article>
-
-    <article class="dashboard-stat-card dashboard-stat-wide">
         <span class="dashboard-stat-icon stat-emerald"><i class="bi bi-cash-stack"></i></span>
         <div>
             <span>@L["AdminDashboardRevenue"]</span>
@@ -143,9 +127,6 @@
                             </div>
                             <div class="dashboard-list-bottom">
                                 <span title="@vozila">@vozila</span>
-                                <span class="support-status-badge status-@OrderStatusClass(kupovina.Status)">
-                                    @OrderStatusLabel(kupovina.Status)
-                                </span>
                             </div>
                         </div>
                     </article>
@@ -161,9 +142,14 @@
                     <h2>@L["AdminDashboardSupportInquiries"]</h2>
                     <p>@L["AdminDashboardLatestInquiriesText"]</p>
                 </div>
-                <button type="button" class="btn btn-light border rounded-4 dashboard-section-link" data-section="Podrska">
-                    @L["AdminDashboardOpen"]
-                </button>
+                <div class="dashboard-panel-header-actions">
+                    <span class="dashboard-active-inquiries-count" title="@L["AdminDashboardActiveInquiries"]">
+                        @Model.BrojAktivnihUpita
+                    </span>
+                    <button type="button" class="btn btn-light border rounded-4 dashboard-section-link" data-section="Podrska">
+                        @L["AdminDashboardOpen"]
+                    </button>
+                </div>
             </div>
 
             @if (!Model.ZadnjiUpiti.Any())

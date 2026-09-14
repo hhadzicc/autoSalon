@@ -81,7 +81,7 @@ public sealed class AdminVehicleService : IAdminVehicleService
             vehicle.Model = model.Model;
             vehicle.Godiste = model.Godiste;
             vehicle.Gorivo = fuel;
-            vehicle.Kubikaza = model.Kubikaza;
+            vehicle.Kubikaza = fuel == TipGoriva.Elektro ? null : model.Kubikaza;
             vehicle.Boja = model.Boja!.Value;
             vehicle.Kilometraza = model.Kilometraza;
             vehicle.Cijena = model.Cijena;

@@ -34,7 +34,8 @@ public sealed class AdminProfileService : IAdminProfileService
 
     public async Task<AddProfilViewModel> GetCreateModelAsync() => new()
     {
-        DostupneRole = await _roleManager.Roles.AsNoTracking().ToListAsync()
+        DostupneRole = await _roleManager.Roles.AsNoTracking().ToListAsync(),
+        OdabraneRole = new List<string> { AppRoles.Buyer }
     };
 
     public async Task<AddProfilViewModel?> GetEditModelAsync(string id)

@@ -1,5 +1,6 @@
 @using Microsoft.AspNetCore.Identity
 @using System.Globalization
+@using Autosalon_OneZone.Authorization
 @inject SignInManager<Autosalon_OneZone.Models.ApplicationUser> SignInManager
 
 @model Autosalon_OneZone.Models.ViewModels.VehicleDetailsViewModel
@@ -11,8 +12,13 @@
     var cijena = vehicle.Cijena ?? 0;
     var slikaUrl = !string.IsNullOrEmpty(vehicle.Slika) ? Url.Content($"~/images/vozila/{vehicle.Slika}") : Url.Content("~/img/no-image.png");
     var isInCart = ViewData["IsInCart"] as bool? ?? false;
-    var returnUrl = Context.Request.Query["returnUrl"].ToString();
+    var returnUrl = ViewData["ReturnUrl"] as string ?? string.Empty;
     var returningToCart = string.Equals(returnUrl, "/Korpa", StringComparison.OrdinalIgnoreCase);
+    var returningToExperiences = returnUrl.Contains("section=Recenzije", StringComparison.OrdinalIgnoreCase);
+    var canManageVehicles = User.IsInRole(AppRoles.Administrator) || User.IsInRole(AppRoles.Seller);
+    var isBuyer = User.IsInRole(AppRoles.Buyer);
+    var isAvailableForPurchase = Model.IsAvailableForPurchase;
+    var currentUrl = string.Concat(Context.Request.PathBase, Context.Request.Path, Context.Request.QueryString);
 }
 
 <section class="vehicle-details-section">
@@ -21,18 +27,27 @@
             <button type="button"
                     class="vehicle-back-button"
                     data-vehicle-back
-                    data-return-url="@(returningToCart ? Url.Action("Index", "Korpa") : "")"
+                    data-return-url="@returnUrl"
                     data-fallback-url="@Url.Action("Index", returningToCart ? "Korpa" : "Vozilo")">
                 <i class="bi bi-arrow-left" aria-hidden="true"></i>
-                <span>@L[returningToCart ? "BackToCart" : "BackToVehicles"]</span>
+                <span>@L[returningToCart ? "BackToCart" : returningToExperiences ? "BackToCustomerExperiences" : "BackToVehicles"]</span>
             </button>
         </div>
 
         <div class="row g-4 align-items-start">
-            <div class="col-lg-8">
+            <div class="@(isAvailableForPurchase ? "col-lg-8" : "col-lg-10 mx-auto")">
                 <article class="vehicle-details-card">
                     <div class="vehicle-gallery">
-                        <img src="@slikaUrl" alt="@voziloNaziv">
+                        <button type="button"
+                                class="vehicle-gallery-preview"
+                                data-image-preview
+                                data-image-src="@slikaUrl"
+                                aria-label="@L["CurrentImage"]">
+                            <img src="@slikaUrl" alt="@voziloNaziv">
+                            <span class="vehicle-gallery-preview-icon" aria-hidden="true">
+                                <i class="bi bi-zoom-in"></i>
+                            </span>
+                        </button>
                     </div>
 
                     <div class="vehicle-details-body">
@@ -40,13 +55,32 @@
                             <div>
                                 <h2>@voziloNaziv</h2>
                                 <p class="vehicle-subtitle">@vehicle.Godiste · @L[FuelPresentation.GetResourceKey(vehicle.Gorivo)] · @L[VehicleColorPresentation.GetResourceKey(vehicle.Boja)]</p>
+                                @if (!isAvailableForPurchase)
+                                {
+                                    <span class="vehicle-availability-badge is-sold">
+                                        <i class="bi bi-lock-fill" aria-hidden="true"></i>@L["Sold"]
+                                    </span>
+                                }
                             </div>
 
-                            <div class="vehicle-price">€@cijena.ToString("N0", culture)</div>
+                            <div class="vehicle-price-actions">
+                                <div class="vehicle-price">€@cijena.ToString("N0", culture)</div>
+
+                                @if (canManageVehicles)
+                                {
+                                    <a href="@Url.Action("Index", "AdminPanel", new { section = "Vozila", editVehicleId = vehicle.VoziloID, returnUrl = currentUrl })"
+                                       class="btn btn-primary vehicle-edit-button">
+                                        <i class="bi bi-pencil-square" aria-hidden="true"></i>
+                                        <span>@L["EditVehicle"]</span>
+                                    </a>
+                                }
+                            </div>
                         </div>
 
-                        <div class="vehicle-actions">
-                            @if (SignInManager.IsSignedIn(User))
+                        @if (isAvailableForPurchase && !canManageVehicles)
+                        {
+                            <div class="vehicle-actions">
+                            @if (isBuyer)
                             {
                                 <form class="add-to-cart-form"
                                       asp-controller="Korpa"
@@ -72,13 +106,14 @@
                                     <i class="bi bi-lightning-charge-fill me-2"></i>@L["BuyNow"]
                                 </button>
                             }
-                            else
+                            else if (!SignInManager.IsSignedIn(User))
                             {
                                 <a href="@Url.Action("Login", "Account", new { returnUrl = Context.Request.Path })" class="btn btn-primary rounded-4">
                                     <i class="bi bi-person-check me-2"></i>@L["LoginToBuy"]
                                 </a>
                             }
-                        </div>
+                            </div>
+                        }
 
                         <div class="details-block">
                             <h3>@L["Specifications"]</h3>
@@ -117,7 +152,9 @@
                     </div>
                 </article>
 
-                <section class="reviews-card customer-experiences-card">
+                @if (isAvailableForPurchase)
+                {
+                    <section class="reviews-card customer-experiences-card">
                     <div class="reviews-header">
                         <div>
                             <h2>@L["CustomerExperiencesTitle"]</h2>
@@ -175,91 +212,104 @@
                             <p>@L["NoCustomerExperiencesText"]</p>
                         </div>
                     }
-                </section>
+                    </section>
+                }
             </div>
 
-            <div class="col-lg-4">
-                <aside class="details-sidebar">
-                    @await Html.PartialAsync("_LoanCalculator", new Autosalon_OneZone.Models.ViewModels.LoanCalculatorViewModel
-                    {
-                        InitialAmount = cijena,
-                        DefaultPeriod = 60
-                    })
-                </aside>
-            </div>
+            @if (isAvailableForPurchase)
+            {
+                <div class="col-lg-4">
+                    <aside class="details-sidebar">
+                        @await Html.PartialAsync("_LoanCalculator", new Autosalon_OneZone.Models.ViewModels.LoanCalculatorViewModel
+                        {
+                            InitialAmount = cijena,
+                            DefaultPeriod = 60
+                        })
+                    </aside>
+                </div>
+            }
         </div>
     </div>
 </section>
 
-<div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content modern-modal">
-            <div class="modal-header modern-modal-header">
-                <div class="d-flex align-items-center gap-3">
-                    <div class="modal-icon">
-                        <i class="bi bi-credit-card-fill"></i>
+@if (isBuyer && isAvailableForPurchase)
+{
+    <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content modern-modal">
+                <div class="modal-header modern-modal-header">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="modal-icon">
+                            <i class="bi bi-credit-card-fill"></i>
+                        </div>
+                        <div>
+                            <h5 class="modal-title" id="paymentModalLabel">@L["PaymentDetails"]</h5>
+                            <p class="payment-vehicle-name mb-0">@voziloNaziv</p>
+                            <p class="mb-0 text-muted small">@L["PaymentDetailsText"]</p>
+                        </div>
                     </div>
-                    <div>
-                        <h5 class="modal-title" id="paymentModalLabel">@L["PaymentDetails"]</h5>
-                        <p class="payment-vehicle-name mb-0">@voziloNaziv</p>
-                        <p class="mb-0 text-muted small">@L["PaymentDetailsText"]</p>
-                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@L["Close"]"></button>
                 </div>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@L["Close"]"></button>
-            </div>
-            <div class="modal-body">
-                <div class="payment-total-alert mb-4">
-                    <strong>@L["TotalToPay"]</strong> <span class="text-success fw-bold">€@cijena.ToString("N0", culture)</span>
-                </div>
-
-                <div class="payment-modal-error alert alert-danger d-none py-2 px-3 mb-3" id="paymentRequestError" role="alert"></div>
-
-                <form id="paymentForm" asp-controller="Korpa" asp-action="IzvrsiPlacanje" method="post" novalidate>
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" name="VoziloID" value="@vehicle.VoziloID" />
-                    @await Html.PartialAsync("_PaymentFields", new Autosalon_OneZone.Models.ViewModels.PaymentFieldsViewModel())
-
-                    <div class="d-grid gap-2 mt-4">
-                        <button type="submit" class="btn btn-success" id="submitPayment">@L["ConfirmPurchase"]</button>
+                <div class="modal-body">
+                    <div class="payment-total-alert mb-4">
+                        <strong>@L["TotalToPay"]</strong> <span class="text-success fw-bold">€@cijena.ToString("N0", culture)</span>
                     </div>
-                </form>
+
+                    <div class="payment-modal-error alert alert-danger d-none py-2 px-3 mb-3" id="paymentRequestError" role="alert"></div>
+
+                    <form id="paymentForm" asp-controller="Korpa" asp-action="IzvrsiPlacanje" method="post" novalidate>
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="VoziloID" value="@vehicle.VoziloID" />
+                        @await Html.PartialAsync("_PaymentFields", new Autosalon_OneZone.Models.ViewModels.PaymentFieldsViewModel())
+
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-success" id="submitPayment">@L["ConfirmPurchase"]</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
+}
 
 @section Scripts {
-    <script src="~/js/components/cart-actions.js" asp-append-version="true"></script>
     <script src="~/js/components/vehicle-details-navigation.js" asp-append-version="true"></script>
-    <script src="~/js/components/loan-calculator.js" asp-append-version="true"></script>
-    <script src="~/js/components/payment-form.js" asp-append-version="true"></script>
-    <script>
-        const paymentTexts = {
-            processing: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["Processing"].Value)),
-            confirmPurchase: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["ConfirmPurchase"].Value)),
-            paymentFailed: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentFailedPrefix"].Value)),
-            requestError: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentRequestError"].Value)),
-            holderRequired: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentHolderRequired"].Value)),
-            cardRequired: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentCardRequired"].Value)),
-            cardLength: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentCardLength"].Value)),
-            expiryRequired: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentExpiryRequired"].Value)),
-            expiryFormat: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentExpiryFormat"].Value)),
-            cardExpired: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentCardExpired"].Value)),
-            cvvRequired: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentCvvRequired"].Value)),
-            cvvLength: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentCvvLength"].Value))
-        };
-
-        $(document).ready(function() {
-            const paymentOptions = {
-                buttonSelector: "#submitPayment",
-                errorSelector: "#paymentRequestError",
-                texts: paymentTexts
+    @if (isAvailableForPurchase)
+    {
+        <script src="~/js/components/loan-calculator.js" asp-append-version="true"></script>
+    }
+    @if (isBuyer && isAvailableForPurchase)
+    {
+        <script src="~/js/components/cart-actions.js" asp-append-version="true"></script>
+        <script src="~/js/components/payment-form.js" asp-append-version="true"></script>
+        <script>
+            const paymentTexts = {
+                processing: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["Processing"].Value)),
+                confirmPurchase: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["ConfirmPurchase"].Value)),
+                paymentFailed: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentFailedPrefix"].Value)),
+                requestError: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentRequestError"].Value)),
+                holderRequired: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentHolderRequired"].Value)),
+                cardRequired: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentCardRequired"].Value)),
+                cardLength: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentCardLength"].Value)),
+                expiryRequired: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentExpiryRequired"].Value)),
+                expiryFormat: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentExpiryFormat"].Value)),
+                cardExpired: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentCardExpired"].Value)),
+                cvvRequired: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentCvvRequired"].Value)),
+                cvvLength: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["PaymentCvvLength"].Value))
             };
 
-            window.paymentForm.initialize("#paymentForm", paymentOptions);
-            $("#paymentModal").on("show.bs.modal", function() {
-                window.paymentForm.reset("#paymentForm", paymentOptions);
+            $(document).ready(function() {
+                const paymentOptions = {
+                    buttonSelector: "#submitPayment",
+                    errorSelector: "#paymentRequestError",
+                    texts: paymentTexts
+                };
+
+                window.paymentForm.initialize("#paymentForm", paymentOptions);
+                $("#paymentModal").on("show.bs.modal", function() {
+                    window.paymentForm.reset("#paymentForm", paymentOptions);
+                });
             });
-        });
-    </script>
+        </script>
+    }
 }

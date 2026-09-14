@@ -16,7 +16,7 @@ using Autosalon_OneZone.Authorization;
 
 namespace Autosalon_OneZone.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = AppRoles.Buyer)]
     public class KorpaController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -212,7 +212,6 @@ namespace Autosalon_OneZone.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize]
         public async Task<IActionResult> IzvrsiPlacanjeSvih(string OdabranaVozilaJSON, string ImeVlasnika, string BrojKartice, string DatumIsteka, string Cvv)
         {
             try
@@ -319,7 +318,7 @@ namespace Autosalon_OneZone.Controllers
             var narudzba = await _checkoutService.GetOrderAsync(
                 id,
                 user.Id,
-                User.IsInRole(AppRoles.Administrator));
+                canViewAllOrders: false);
 
             if (narudzba == null)
             {

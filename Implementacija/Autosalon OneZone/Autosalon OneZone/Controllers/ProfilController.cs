@@ -13,6 +13,7 @@ using System;
 using System.Globalization;
 using Microsoft.Extensions.Localization;
 using Autosalon_OneZone.Services;
+using Autosalon_OneZone.Authorization;
 
 namespace Autosalon_OneZone.Controllers
 {
@@ -161,6 +162,7 @@ namespace Autosalon_OneZone.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = AppRoles.Buyer)]
         public async Task<IActionResult> KupljeniArtikli()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -174,6 +176,7 @@ namespace Autosalon_OneZone.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = AppRoles.Buyer)]
         public async Task<IActionResult> DodajRecenziju(int voziloId, int ocjena, string komentar)
         {
             if (ocjena < 1 || ocjena > 5)
@@ -260,6 +263,7 @@ namespace Autosalon_OneZone.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = AppRoles.Buyer)]
         public async Task<IActionResult> UkloniRecenziju(int recenzijaId)
         {
             var user = await _userManager.GetUserAsync(User);

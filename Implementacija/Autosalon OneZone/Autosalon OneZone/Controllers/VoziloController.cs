@@ -8,6 +8,7 @@ using System.Linq;
 using Microsoft.Extensions.Localization;
 using Autosalon_OneZone.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
+using Autosalon_OneZone.Authorization;
 
 namespace Autosalon_OneZone.Controllers
 {
@@ -32,23 +33,33 @@ namespace Autosalon_OneZone.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Details(int id)
+        public async Task<IActionResult> Details(int id, string? returnUrl = null)
         {
-            var vozilo = await _voziloService.GetVehicleDetailsAsync(id);
+            var canManageVehicles = User.IsInRole(AppRoles.Administrator) || User.IsInRole(AppRoles.Seller);
+            var vozilo = await _voziloService.GetVehicleDetailsAsync(id, canManageVehicles);
 
             if (vozilo == null)
             {
                 return NotFound();
             }
 
+            var isAvailableForPurchase = !canManageVehicles ||
+                await _voziloService.IsAvailableForPurchaseAsync(id);
+
             var userId = _userManager.GetUserId(User);
-            ViewData["IsInCart"] = !string.IsNullOrEmpty(userId) &&
+            ViewData["IsInCart"] = isAvailableForPurchase && User.IsInRole(AppRoles.Buyer) && !string.IsNullOrEmpty(userId) &&
                 (await _cartService.GetVehicleIdsAsync(userId, new[] { id })).Contains(id);
+            ViewData["ReturnUrl"] = !string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl)
+                ? returnUrl
+                : null;
 
             return View(new VehicleDetailsViewModel
             {
                 Vehicle = vozilo,
-                CustomerExperiences = await _voziloService.GetCustomerExperienceSummaryAsync()
+                IsAvailableForPurchase = isAvailableForPurchase,
+                CustomerExperiences = isAvailableForPurchase
+                    ? await _voziloService.GetCustomerExperienceSummaryAsync()
+                    : new CustomerExperienceSummaryViewModel()
             });
         }
 
@@ -113,7 +124,7 @@ namespace Autosalon_OneZone.Controllers
             IReadOnlyList<Vozilo> vehicles)
         {
             var userId = _userManager.GetUserId(User);
-            var vehicleIdsInCart = string.IsNullOrEmpty(userId)
+            var vehicleIdsInCart = !User.IsInRole(AppRoles.Buyer) || string.IsNullOrEmpty(userId)
                 ? new HashSet<int>()
                 : await _cartService.GetVehicleIdsAsync(
                     userId,

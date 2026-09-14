@@ -284,6 +284,44 @@
     font-weight: 900;
 }
 
+.image-preview-dialog {
+    width: min(1180px, calc(100% - 32px));
+    max-width: none;
+}
+
+.image-preview-modal {
+    position: relative;
+    overflow: hidden;
+    border: 0;
+    border-radius: 8px;
+    background: #020617;
+    box-shadow: 0 30px 90px rgba(15, 23, 42, 0.38);
+}
+
+.image-preview-modal img {
+    display: block;
+    width: 100%;
+    max-height: calc(100vh - 64px);
+    object-fit: contain;
+}
+
+.image-preview-toolbar {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.image-preview-toolbar .btn-close {
+    padding: 10px;
+    border-radius: 50%;
+    background-color: rgba(15, 23, 42, 0.82);
+    opacity: 1;
+}
+
 @media (max-width: 767.98px) {
     .app-toast {
         right: 16px;

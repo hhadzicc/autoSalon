@@ -1,6 +1,7 @@
 @using Microsoft.AspNetCore.Identity
 @using System.Globalization
 @using Autosalon_OneZone.Models.ViewModels
+@using Autosalon_OneZone.Authorization
 @inject SignInManager<Autosalon_OneZone.Models.ApplicationUser> SignInManager
 
 @model IReadOnlyList<VehicleCardViewModel>
@@ -20,8 +21,10 @@
     var mileageText = vehicle.Kilometraza.HasValue
         ? $"{vehicle.Kilometraza.Value.ToString("N0", culture)} km"
         : L["MileageNotEntered"].Value;
+    var canManageVehicles = User.IsInRole(AppRoles.Administrator) || User.IsInRole(AppRoles.Seller);
+    var isBuyer = User.IsInRole(AppRoles.Buyer);
 
-    <article class="vehicles-card">
+    <article class="vehicles-card" id="vehicle-@vehicle.VoziloID">
         <a href="@Url.Action("Details", "Vozilo", new { id = vehicle.VoziloID })" class="vehicles-card-image-link" data-vehicle-details-link>
             <img src="@imageUrl"
                  class="vehicles-card-image"
@@ -59,7 +62,16 @@
                         <i class="bi bi-arrow-right"></i>
                     </a>
 
-                    @if (SignInManager.IsSignedIn(User))
+                    @if (canManageVehicles)
+                    {
+                        <a href="@Url.Action("Index", "AdminPanel", new { section = "Vozila", editVehicleId = vehicle.VoziloID })"
+                           class="vehicles-cart-button"
+                           data-vehicle-edit-link>
+                            <i class="bi bi-pencil-square"></i>
+                            <span>@L["Edit"]</span>
+                        </a>
+                    }
+                    else if (isBuyer)
                     {
                         <form class="add-to-cart-form"
                               asp-controller="Korpa"
@@ -83,7 +95,7 @@
                             </button>
                         </form>
                     }
-                    else
+                    else if (!SignInManager.IsSignedIn(User))
                     {
                         <a href="@Url.Action("Login", "Account", new { returnUrl = Url.Action("Index", "Vozilo") })" class="vehicles-cart-button">
                             <i class="bi bi-box-arrow-in-right"></i>

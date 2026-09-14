@@ -1,4 +1,5 @@
 @model Autosalon_OneZone.Models.ViewModels.ProfileViewModel
+@using Autosalon_OneZone.Authorization
 @{
     ViewData["Title"] = L["NavMyProfile"];
 }
@@ -40,9 +41,12 @@
                         <a href="@Url.Action("Edit", "Profil")" class="btn btn-primary btn-lg rounded-4">
                             <i class="bi bi-pencil-square me-2"></i>@L["EditProfile"]
                         </a>
-                        <a href="@Url.Action("KupljeniArtikli", "Profil")" class="btn btn-outline-primary btn-lg rounded-4">
-                            <i class="bi bi-bag-check me-2"></i>@L["NavPurchasedItems"]
-                        </a>
+                        @if (User.IsInRole(AppRoles.Buyer))
+                        {
+                            <a href="@Url.Action("KupljeniArtikli", "Profil")" class="btn btn-outline-primary btn-lg rounded-4">
+                                <i class="bi bi-bag-check me-2"></i>@L["NavPurchasedItems"]
+                            </a>
+                        }
                     </div>
                 </div>
             </div>

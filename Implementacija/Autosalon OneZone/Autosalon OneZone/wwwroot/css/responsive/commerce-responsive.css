@@ -10,6 +10,7 @@
     .cart-actions { width: 100%; min-width: 0; }
     .vehicle-gallery img { height: 300px; }
     .vehicle-title-row { flex-direction: column; align-items: flex-start; }
+    .vehicle-price-actions { align-items: flex-start; }
     .vehicle-price { white-space: normal; }
     .vehicle-actions { display: grid; grid-template-columns: 1fr 1fr; }
     .vehicle-actions .btn,
@@ -39,7 +40,9 @@
     .summary-total { flex-direction: column; align-items: flex-start; gap: 6px; }
     .loan-card-header { align-items: flex-start; }
     .vehicle-gallery { padding: 16px 16px 0; }
-    .vehicle-gallery img { height: 230px; border-radius: 20px; }
+    .vehicle-gallery-preview,
+    .vehicle-gallery img { border-radius: 20px; }
+    .vehicle-gallery img { height: 230px; }
     .vehicle-details-body { padding: 22px; }
     .vehicle-title-row h2 { font-size: 2rem; }
     .vehicle-actions,

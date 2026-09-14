@@ -3,6 +3,7 @@ namespace Autosalon_OneZone.Models.ViewModels;
 public sealed class VehicleDetailsViewModel
 {
     public required Vozilo Vehicle { get; init; }
+    public bool IsAvailableForPurchase { get; init; }
     public CustomerExperienceSummaryViewModel CustomerExperiences { get; init; } = new();
 }
 

@@ -93,6 +93,52 @@
 })();
 
 (() => {
+    if (window.imagePreviewInitialized) {
+        return;
+    }
+
+    window.imagePreviewInitialized = true;
+
+    document.addEventListener("click", function (event) {
+        const trigger = event.target.closest("[data-image-preview]");
+        if (!trigger || !window.bootstrap) return;
+
+        const modalElement = document.getElementById("globalImagePreviewModal");
+        const image = document.getElementById("globalImagePreview");
+        const source = trigger.dataset.imageSrc || trigger.querySelector("img")?.currentSrc;
+        if (!modalElement || !image || !source) return;
+
+        event.preventDefault();
+        image.src = source;
+        image.alt = trigger.querySelector("img")?.alt || "";
+        bootstrap.Modal.getOrCreateInstance(modalElement).show();
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const modalElement = document.getElementById("globalImagePreviewModal");
+        const image = document.getElementById("globalImagePreview");
+        if (!modalElement || !image) return;
+
+        modalElement.addEventListener("hidden.bs.modal", () => image.removeAttribute("src"));
+    });
+})();
+
+(() => {
+    if (window.numberInputWheelGuardInitialized) {
+        return;
+    }
+
+    window.numberInputWheelGuardInitialized = true;
+
+    document.addEventListener("wheel", function () {
+        const activeElement = document.activeElement;
+        if (activeElement instanceof HTMLInputElement && activeElement.type === "number") {
+            activeElement.blur();
+        }
+    }, { capture: true });
+})();
+
+(() => {
     if (window.showAppToast) {
         return;
     }
@@ -239,7 +285,7 @@
 
 (() => {
     const storageKey = "autosalon-language-switch-scroll-v1";
-    const currentLocation = `${window.location.pathname}${window.location.search}`;
+    const currentLocation = () => `${window.location.pathname}${window.location.search}${window.location.hash}`;
 
     try {
         const savedState = sessionStorage.getItem(storageKey);
@@ -248,7 +294,7 @@
             sessionStorage.removeItem(storageKey);
             const { returnUrl, scrollY } = JSON.parse(savedState);
 
-            if (returnUrl === currentLocation && Number.isFinite(scrollY)) {
+            if (returnUrl === currentLocation() && Number.isFinite(scrollY)) {
                 if ("scrollRestoration" in history) {
                     history.scrollRestoration = "manual";
                 }
@@ -264,9 +310,15 @@
 
     document.querySelectorAll(".language-switch-form").forEach(form => {
         form.addEventListener("submit", () => {
+            const returnUrl = currentLocation();
+            const returnUrlInput = form.querySelector('input[name="returnUrl"]');
+            if (returnUrlInput) {
+                returnUrlInput.value = returnUrl;
+            }
+
             try {
                 sessionStorage.setItem(storageKey, JSON.stringify({
-                    returnUrl: currentLocation,
+                    returnUrl,
                     scrollY: window.scrollY
                 }));
             } catch {

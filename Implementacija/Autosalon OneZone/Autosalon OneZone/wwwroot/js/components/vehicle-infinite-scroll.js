@@ -30,8 +30,15 @@
     };
 
     document.addEventListener("click", event => {
-        if (event.target.closest("[data-vehicle-details-link]")) {
-            saveCatalogState();
+        const navigationLink = event.target.closest("[data-vehicle-details-link], [data-vehicle-edit-link]");
+        if (!navigationLink) return;
+
+        saveCatalogState();
+
+        if (navigationLink.matches("[data-vehicle-edit-link]")) {
+            const editUrl = new URL(navigationLink.href, window.location.origin);
+            editUrl.searchParams.set("returnUrl", `${window.location.pathname}${window.location.search}`);
+            navigationLink.href = editUrl.toString();
         }
     });
 

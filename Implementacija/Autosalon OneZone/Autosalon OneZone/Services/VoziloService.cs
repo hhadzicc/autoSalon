@@ -13,7 +13,8 @@ namespace Autosalon_OneZone.Services
         Task<bool> DeleteVoziloAsync(int id);
         Task<IEnumerable<Vozilo>> FilterVozilaAsync(string marka, string model, int? godisteOd, int? godisteDo, TipGoriva? gorivo, decimal? cijenaOd, decimal? cijenaDo);
         Task<IEnumerable<Vozilo>> SearchVozilaAsync(string searchTerm);
-        Task<Vozilo?> GetVehicleDetailsAsync(int id);
+        Task<Vozilo?> GetVehicleDetailsAsync(int id, bool includeUnavailable = false);
+        Task<bool> IsAvailableForPurchaseAsync(int id);
         Task<CustomerExperienceSummaryViewModel> GetCustomerExperienceSummaryAsync(int limit = 3);
         Task<VehicleSearchResult> GetVehiclesPageAsync(
             VehicleSearchCriteria criteria,
@@ -144,13 +145,22 @@ namespace Autosalon_OneZone.Services
                 .ToListAsync();
         }
 
-        public async Task<Vozilo?> GetVehicleDetailsAsync(int id)
+        public async Task<Vozilo?> GetVehicleDetailsAsync(int id, bool includeUnavailable = false)
         {
-            return await _context.Vozila
+            var query = _context.Vozila.AsNoTracking();
+            if (!includeUnavailable)
+            {
+                query = query.AvailableForPurchase();
+            }
+
+            return await query.FirstOrDefaultAsync(item => item.VoziloID == id);
+        }
+
+        public Task<bool> IsAvailableForPurchaseAsync(int id) =>
+            _context.Vozila
                 .AsNoTracking()
                 .AvailableForPurchase()
-                .FirstOrDefaultAsync(item => item.VoziloID == id);
-        }
+                .AnyAsync(vehicle => vehicle.VoziloID == id);
 
         public async Task<CustomerExperienceSummaryViewModel> GetCustomerExperienceSummaryAsync(int limit = 3)
         {

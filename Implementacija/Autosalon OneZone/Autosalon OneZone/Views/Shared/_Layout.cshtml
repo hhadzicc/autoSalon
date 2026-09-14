@@ -1,5 +1,6 @@
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.Extensions.Options
+@using Autosalon_OneZone.Authorization
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 @inject Autosalon_OneZone.Services.ICartService CartService
@@ -12,7 +13,6 @@
     var isAccountArea = currentPath.StartsWith("/account");
     var isAdminArea = currentPath.StartsWith("/adminpanel");
     var isVehiclesArea = currentPath.StartsWith("/vozilo");
-    var isContactArea = currentPath.StartsWith("/home/kontakt");
     var isCartArea = currentPath.StartsWith("/korpa");
     var isProfileArea = currentPath.StartsWith("/profil");
     var isLoginArea = currentPath.StartsWith("/account/login");
@@ -29,7 +29,8 @@
     var demoOptions = DemoOptionsAccessor.Value;
     var nextDemoResetUtc = DemoResetSchedule.NextResetUtc;
     var cartItemCount = 0;
-    if (SignInManager.IsSignedIn(User))
+    var isBuyer = User.IsInRole(AppRoles.Buyer);
+    if (SignInManager.IsSignedIn(User) && isBuyer)
     {
         var currentUserId = UserManager.GetUserId(User);
         if (!string.IsNullOrWhiteSpace(currentUserId))
@@ -74,6 +75,7 @@
     }
     <link rel="stylesheet" type="text/css" href="~/css/components/footer.css" asp-append-version="true">
     <link rel="stylesheet" type="text/css" href="~/css/components/fuel-chip.css" asp-append-version="true">
+    <link rel="stylesheet" type="text/css" href="~/css/components/vehicle-color-swatch.css" asp-append-version="true">
     <link rel="stylesheet" type="text/css" href="~/css/responsive/site-responsive.css" asp-append-version="true">
     <link rel="stylesheet" type="text/css" href="~/css/components/feedback.css" asp-append-version="true">
     @if (isAdminArea)
@@ -145,19 +147,18 @@
                     <li class="nav-item">
                         <a class="nav-link @(isVehiclesArea ? "active" : "")" href="/Vozilo">@L["NavVehicles"]</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link @(isContactArea ? "active" : "")" href="/Home/Kontakt">@L["NavContact"]</a>
-                    </li>
-
                     @if (SignInManager.IsSignedIn(User))
                     {
-                        <li class="nav-item">
-                            <a class="nav-link cart-link @(isCartArea ? "active" : "")" href="/Korpa">
-                                <i class="bi bi-cart-fill me-lg-1"></i>@L["NavCart"]
-                                <span class="cart-count-badge @(cartItemCount == 0 ? "d-none" : null)"
-                                      data-cart-count>@cartItemCount</span>
-                            </a>
-                        </li>
+                        @if (isBuyer)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link cart-link @(isCartArea ? "active" : "")" href="/Korpa">
+                                    <i class="bi bi-cart-fill me-lg-1"></i>@L["NavCart"]
+                                    <span class="cart-count-badge @(cartItemCount == 0 ? "d-none" : null)"
+                                          data-cart-count>@cartItemCount</span>
+                                </a>
+                            </li>
+                        }
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle @(isProfileArea ? "active" : "")" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="bi bi-person-circle me-lg-1"></i>@L["NavMyProfile"]
@@ -168,11 +169,14 @@
                                         <i class="bi bi-person-fill me-2"></i>@L["NavProfile"]
                                     </a>
                                 </li>
-                                <li>
-                                    <a class="dropdown-item" href="/Profil/KupljeniArtikli">
-                                        <i class="bi bi-bag-check-fill me-2"></i>@L["NavPurchasedItems"]
-                                    </a>
-                                </li>
+                                @if (isBuyer)
+                                {
+                                    <li>
+                                        <a class="dropdown-item" href="/Profil/KupljeniArtikli">
+                                            <i class="bi bi-bag-check-fill me-2"></i>@L["NavPurchasedItems"]
+                                        </a>
+                                    </li>
+                                }
                                 <li>
                                     <a class="dropdown-item" href="/Profil/Edit#password">
                                         <i class="bi bi-key-fill me-2"></i>@L["NavChangePassword"]
@@ -283,6 +287,18 @@
         </div>
     </div>
 
+    <div class="modal fade" id="globalImagePreviewModal" tabindex="-1" aria-labelledby="globalImagePreviewTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl image-preview-dialog">
+            <div class="modal-content image-preview-modal">
+                <div class="image-preview-toolbar">
+                    <h2 class="visually-hidden" id="globalImagePreviewTitle">@L["CurrentImage"]</h2>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="@L["Close"]"></button>
+                </div>
+                <img id="globalImagePreview" alt="@L["CurrentImage"]" />
+            </div>
+        </div>
+    </div>
+
     <script>
         window.appInitialToasts = [
             { message: @Json.Serialize(successMessage), type: "success" },
@@ -321,6 +337,7 @@
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/components/app-api.js" asp-append-version="true"></script>
+    <script src="~/js/components/vehicle-color-picker.js" asp-append-version="true"></script>
     @if (demoOptions.Enabled && demoOptions.ResetEnabled && nextDemoResetUtc.HasValue)
     {
         <script>

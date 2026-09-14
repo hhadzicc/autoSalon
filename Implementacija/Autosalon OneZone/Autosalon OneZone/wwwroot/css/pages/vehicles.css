@@ -201,36 +201,6 @@
     outline-offset: 2px;
 }
 
-.vehicle-color-swatch {
-    width: 15px;
-    height: 15px;
-    flex: 0 0 15px;
-    border: 1px solid rgba(15, 23, 42, 0.2);
-    border-radius: 50%;
-    background: #cbd5e1;
-}
-
-.vehicle-color-swatch.is-white { background: #ffffff; }
-.vehicle-color-swatch.is-black { background: #111827; }
-.vehicle-color-swatch.is-gray { background: #94a3b8; }
-.vehicle-color-swatch.is-silver { background: #d7dde5; }
-.vehicle-color-swatch.is-gold { background: #d7a928; }
-.vehicle-color-swatch.is-beige { background: #d9c6a5; }
-.vehicle-color-swatch.is-brown { background: #795548; }
-.vehicle-color-swatch.is-red { background: #dc2626; }
-.vehicle-color-swatch.is-blue { background: #2563eb; }
-.vehicle-color-swatch.is-green { background: #16a34a; }
-.vehicle-color-swatch.is-yellow { background: #facc15; }
-.vehicle-color-swatch.is-orange { background: #f97316; }
-.vehicle-color-swatch.is-purple { background: #9333ea; }
-.vehicle-color-swatch.is-pink { background: #ec4899; }
-.vehicle-color-swatch.is-multicolor {
-    background: conic-gradient(#dc2626, #facc15, #16a34a, #2563eb, #9333ea, #dc2626);
-}
-.vehicle-color-swatch.is-other {
-    background: linear-gradient(135deg, #94a3b8 0 45%, #ffffff 45% 55%, #475569 55% 100%);
-}
-
 .vehicles-color-toggle {
     display: inline-flex;
     min-height: 34px;

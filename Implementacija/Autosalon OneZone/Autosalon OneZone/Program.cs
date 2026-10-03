@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc.Razor;
 using System.Globalization;
 using System.Net;
+using System.Security.Claims;
 using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,6 +29,13 @@ builder.Services.AddOptions<DemoOptions>()
     .Validate(
         options => !options.ResetEnabled || options.ResetIntervalMinutes >= 5,
         "Demo reset interval must be at least 5 minutes when periodic reset is enabled.")
+    .ValidateOnStart();
+builder.Services.AddOptions<SupportWorkflowOptions>()
+    .Bind(builder.Configuration.GetSection("SupportWorkflow"))
+    .Validate(
+        options => options.ReminderAfterDays > 0 &&
+                   options.CloseAnsweredAfterDays > options.ReminderAfterDays,
+        "Support workflow day limits are invalid.")
     .ValidateOnStart();
 
 var stripeSettings = builder.Configuration.GetSection("Stripe").Get<StripeSettings>() ?? new StripeSettings();
@@ -125,6 +133,7 @@ builder.Services.AddScoped<IAdminModerationService, AdminModerationService>();
 builder.Services.AddScoped<IAdminVehicleService, AdminVehicleService>();
 builder.Services.AddScoped<IAdminProfileService, AdminProfileService>();
 builder.Services.AddScoped<IHomeService, HomeService>();
+builder.Services.AddScoped<ISupportService, SupportService>();
 builder.Services.AddScoped<IProfileActivityService, ProfileActivityService>();
 builder.Services.AddScoped<IProfileAccountService, ProfileAccountService>();
 builder.Services.AddScoped<IAccountRegistrationService, AccountRegistrationService>();
@@ -133,6 +142,8 @@ builder.Services.AddScoped<IAccountAuthenticationService, AccountAuthenticationS
 builder.Services.AddSingleton<DemoResetSchedule>();
 builder.Services.AddScoped<IDemoDataResetService, DemoDataResetService>();
 builder.Services.AddHostedService<DemoDataResetBackgroundService>();
+builder.Services.AddHostedService<SupportEmailOutboxBackgroundService>();
+builder.Services.AddHostedService<SupportLifecycleBackgroundService>();
 builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
 {
     options.TokenLifespan = TimeSpan.FromMinutes(30);
@@ -151,6 +162,18 @@ builder.Services.AddRateLimiter(options =>
             {
                 PermitLimit = 5,
                 Window = TimeSpan.FromMinutes(15),
+                QueueLimit = 0,
+                AutoReplenishment = true
+            }));
+    options.AddPolicy("support-messages", context =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            context.User.FindFirstValue(ClaimTypes.NameIdentifier) ??
+            context.Connection.RemoteIpAddress?.ToString() ??
+            "unknown",
+            _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 12,
+                Window = TimeSpan.FromMinutes(10),
                 QueueLimit = 0,
                 AutoReplenishment = true
             }));
@@ -207,7 +230,6 @@ app.UseStaticFiles(new StaticFileOptions
 });
 
 app.UseRouting();
-app.UseRateLimiter();
 
 var supportedCultures = new[]
 {
@@ -223,6 +245,7 @@ app.UseRequestLocalization(new RequestLocalizationOptions
 });
 
 app.UseAuthentication();
+app.UseRateLimiter();
 app.UseAuthorization();
 
 app.MapControllerRoute(

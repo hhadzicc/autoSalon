@@ -54,8 +54,14 @@ a {
 }
 
 .navbar-brand {
-    letter-spacing: -0.04em;
-    font-size: 23px;
+    letter-spacing: 0;
+}
+
+.brand-name {
+    color: #ffffff;
+    font-size: 1.35rem;
+    font-weight: 900;
+    line-height: 1;
 }
 
 .brand-icon {
@@ -126,6 +132,35 @@ a {
     font-size: 0.72rem;
     font-weight: 900;
     line-height: 1;
+}
+
+.support-nav-badge,
+.support-menu-count {
+    min-width: 20px;
+    height: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 5px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: #ef4444;
+    color: #ffffff;
+    font-size: 0.72rem;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.support-menu-count {
+    flex: 0 0 auto;
+    margin-left: auto;
+}
+
+.user-menu .support-menu-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    white-space: nowrap;
 }
 
 .dropdown-menu {

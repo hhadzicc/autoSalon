@@ -46,10 +46,18 @@ namespace Autosalon_OneZone.Models
 
     public enum StatusUpita
     {
-        Poslat,
+        CekaPodrsku,
         UObradi,
-        Odgovoren,
+        CekaKorisnika,
+        Rijesen,
         Zatvoren
+    }
+
+    public enum TipAutoraPorukePodrske
+    {
+        Korisnik,
+        Osoblje,
+        Sistem
     }
 
     public enum StatusPlacanja
@@ -81,11 +89,17 @@ namespace Autosalon_OneZone.Models
 
         public ICollection<Podrska> PodrskaUpiti { get; set; }
 
+        public ICollection<Podrska> DodijeljeniUpiti { get; set; }
+
+        public ICollection<PorukaPodrske> PorukePodrske { get; set; }
+
         public ApplicationUser()
         {
             Narudzbe = new HashSet<Narudzba>();
             Recenzije = new HashSet<Recenzija>();
             PodrskaUpiti = new HashSet<Podrska>();
+            DodijeljeniUpiti = new HashSet<Podrska>();
+            PorukePodrske = new HashSet<PorukaPodrske>();
         }
     }
 
@@ -296,10 +310,10 @@ namespace Autosalon_OneZone.Models
         public string Naslov { get; set; }
 
         [Required]
-        public string Sadrzaj { get; set; }
+        public DateTime DatumUpita { get; set; }
 
         [Required]
-        public DateTime DatumUpita { get; set; }
+        public DateTime DatumZadnjeAktivnosti { get; set; }
 
         [Required]
         public StatusUpita Status { get; set; }
@@ -308,5 +322,92 @@ namespace Autosalon_OneZone.Models
         public string KorisnikId { get; set; }
 
         public ApplicationUser Korisnik { get; set; }
+
+        public string? DodijeljenKorisnikId { get; set; }
+
+        public ApplicationUser? DodijeljenKorisnik { get; set; }
+
+        public DateTime? DatumDodjele { get; set; }
+
+        public DateTime? DatumRjesavanja { get; set; }
+
+        public DateTime? DatumZatvaranja { get; set; }
+
+        public DateTime? DatumPodsjetnika { get; set; }
+
+        [Required]
+        [MaxLength(10)]
+        public string Jezik { get; set; } = "en-US";
+
+        [Timestamp]
+        public byte[] RowVersion { get; set; } = Array.Empty<byte>();
+
+        public ICollection<PorukaPodrske> Poruke { get; set; } = new HashSet<PorukaPodrske>();
+    }
+
+    public class PorukaPodrske
+    {
+        [Key]
+        public int PorukaPodrskeID { get; set; }
+
+        [Required]
+        public int UpitID { get; set; }
+
+        public Podrska Upit { get; set; }
+
+        public string? PosiljalacId { get; set; }
+
+        public ApplicationUser? Posiljalac { get; set; }
+
+        [Required]
+        public TipAutoraPorukePodrske TipAutora { get; set; }
+
+        [Required]
+        [MaxLength(5000)]
+        public string Sadrzaj { get; set; }
+
+        [Required]
+        public DateTime DatumSlanja { get; set; }
+
+        public DateTime? ProcitanaUtc { get; set; }
+
+        public EmailPodrskeOutbox? EmailOutbox { get; set; }
+    }
+
+    public class EmailPodrskeOutbox
+    {
+        [Key]
+        public int EmailPodrskeOutboxID { get; set; }
+
+        [Required]
+        public int PorukaPodrskeID { get; set; }
+
+        public PorukaPodrske Poruka { get; set; }
+
+        [Required]
+        [EmailAddress]
+        [MaxLength(256)]
+        public string Primalac { get; set; }
+
+        [Required]
+        [MaxLength(10)]
+        public string Jezik { get; set; } = "en-US";
+
+        [Required]
+        public DateTime KreiranoUtc { get; set; }
+
+        [Required]
+        public DateTime SljedeciPokusajUtc { get; set; }
+
+        public int BrojPokusaja { get; set; }
+
+        public DateTime? PoslanoUtc { get; set; }
+
+        [MaxLength(2000)]
+        public string? ZadnjaGreska { get; set; }
+
+        [Required]
+        [MaxLength(2048)]
+        public string DetaljiUrl { get; set; }
     }
 }

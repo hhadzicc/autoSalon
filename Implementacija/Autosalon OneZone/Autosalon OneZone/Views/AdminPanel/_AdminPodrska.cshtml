@@ -1,17 +1,31 @@
 @model Autosalon_OneZone.ViewModels.Admin.PodrskaListViewModel
 @using Autosalon_OneZone.Models
 @using System.Text.Json
+@using Microsoft.AspNetCore.Identity
+@using Autosalon_OneZone.Authorization
+@inject UserManager<ApplicationUser> UserManager
 
 @{
     var podrskaTexts = new Dictionary<string, string>
     {
         ["show"] = L["Show"].Value,
         ["reply"] = L["Reply"].Value,
+        ["take"] = L["TakeTicket"].Value,
+        ["takeOver"] = L["TakeOverTicket"].Value,
+        ["release"] = L["ReleaseTicket"].Value,
+        ["closeTicket"] = L["CloseTicket"].Value,
+        ["replyPlaceholder"] = L["SupportReplyPlaceholder"].Value,
+        ["assignedTo"] = L["AssignedTo"].Value,
+        ["unassigned"] = L["Unassigned"].Value,
+        ["systemReopened"] = L["SupportSystemReopened"].Value,
+        ["systemClosed"] = L["SupportSystemClosed"].Value,
+        ["systemReminder"] = L["SupportSystemReminder"].Value,
+        ["systemAutoClosed"] = L["SupportSystemAutoClosed"].Value,
         ["delete"] = L["CommonDelete"].Value,
         ["status"] = L["Status"].Value,
-        ["statusSent"] = L["StatusSent"].Value,
+        ["statusWaitingSupport"] = L["SupportStatus.CekaPodrsku"].Value,
         ["statusInProgress"] = L["StatusInProgress"].Value,
-        ["statusAnswered"] = L["StatusAnswered"].Value,
+        ["statusAnswered"] = L["SupportStatus.CekaKorisnika"].Value,
         ["statusClosed"] = L["StatusClosed"].Value,
         ["deleteTitle"] = L["DeleteInquiryTitle"].Value,
         ["deleteMessage"] = L["DeleteInquiryMessage"].Value,
@@ -21,6 +35,7 @@
         ["notAvailable"] = L["NotAvailable"].Value,
         ["loadError"] = L["InquiriesLoadError"].Value,
         ["statusChangeError"] = L["StatusChangeError"].Value,
+        ["messageValidationError"] = L["SupportMessageValidationError"].Value,
         ["deleteSuccess"] = L["InquiryDeletedSuccess"].Value,
         ["deleteError"] = L["InquiryDeleteError"].Value,
         ["email"] = L["Email"].Value,
@@ -32,6 +47,8 @@
         ["untitled"] = L["Untitled"].Value,
         ["loadMore"] = L["AdminLoadMore"].Value
     };
+    var currentUserId = UserManager.GetUserId(User) ?? "";
+    var isAdministrator = User.IsInRole(AppRoles.Administrator);
 }
 
 <div class="admin-page-header">
@@ -44,20 +61,38 @@
      id="podrska-list-container"
      data-texts="@JsonSerializer.Serialize(podrskaTexts)"
      data-list-url="@Url.Action("GetPodrskaJson", "AdminPanel")"
-     data-status-url="@Url.Action("UpdatePodrskaStatus", "AdminPanel")"
+     data-details-url="@Url.Action("GetPodrskaDetalji", "AdminPanel")"
+     data-take-url="@Url.Action("PreuzmiPodrsku", "AdminPanel")"
+     data-release-url="@Url.Action("OslobodiPodrsku", "AdminPanel")"
+     data-reply-url="@Url.Action("OdgovoriNaPodrsku", "AdminPanel")"
+     data-close-url="@Url.Action("ZatvoriPodrsku", "AdminPanel")"
      data-delete-url="@Url.Action("DeletePodrska", "AdminPanel")"
+     data-current-user-id="@currentUserId"
+     data-is-administrator="@isAdministrator.ToString().ToLowerInvariant()"
      data-initial-search="@Model.SearchQuery">
-    <div class="admin-toolbar">
+    <div class="admin-toolbar admin-toolbar-stacked">
         <div>
             <h2>@L["AdminSupportList"]</h2>
             <span>@L["AdminSupportListText"]</span>
         </div>
 
-        <div class="admin-search-compact">
-            <input type="text" id="podrska-search-input" class="form-control" placeholder="@L["AdminSearchSupportPlaceholder"]" value="@Model.SearchQuery" />
-            <button id="podrska-search-button" class="search-submit-btn" type="button" aria-label="@L["CommonSearch"]">
-                <i class="bi bi-search"></i>
-            </button>
+        <div class="admin-users-toolbar support-list-toolbar">
+            <div class="admin-filter-chips support-status-filter-chips" aria-label="@L["Status"]">
+                <button type="button" class="filter-chip support-queue-chip active" data-queue-filter="new">@L["SupportQueue.New"]</button>
+                <button type="button" class="filter-chip support-queue-chip" data-queue-filter="mine">@L["SupportQueue.Mine"]</button>
+                <button type="button" class="filter-chip support-queue-chip" data-queue-filter="closed">@L["SupportQueue.Closed"]</button>
+                @if (isAdministrator)
+                {
+                    <button type="button" class="filter-chip support-queue-chip" data-queue-filter="all">@L["SupportQueue.All"]</button>
+                }
+            </div>
+
+            <div class="admin-search-compact">
+                <input type="text" id="podrska-search-input" class="form-control" placeholder="@L["AdminSearchSupportPlaceholder"]" value="@Model.SearchQuery" />
+                <button id="podrska-search-button" class="search-submit-btn" type="button" aria-label="@L["CommonSearch"]">
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
         </div>
     </div>
 
@@ -65,7 +100,11 @@
         <table class="table admin-table admin-support-table align-middle mb-0">
             <thead>
                 <tr>
-                    <th>@L["Date"]</th>
+                    <th>
+                        <a href="#" class="review-sort-link support-sort-link active" data-sort-key="datum">
+                            @L["Date"] <i class="bi bi-arrow-down-short"></i>
+                        </a>
+                    </th>
                     <th>@L["UserEmail"]</th>
                     <th>@L["InquiryTitle"]</th>
                     <th>@L["Status"]</th>
@@ -85,7 +124,7 @@
 </div>
 
 <div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content modern-modal">
             <div class="modal-header modern-modal-header">
                 <div class="d-flex align-items-center gap-3">
@@ -94,24 +133,34 @@
                     </div>
                     <div>
                         <h5 class="modal-title" id="messageModalLabel">@L["MessageModalTitle"]</h5>
-                        <p class="mb-0 text-muted small">@L["MessageModalSubtitle"]</p>
+                        <p class="mb-0 text-muted small" id="messageModalCustomer">@L["MessageModalSubtitle"]</p>
                     </div>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@L["Close"]"></button>
             </div>
             <div class="modal-body">
-                <div class="support-meta-grid">
+                <div class="support-meta-grid support-conversation-meta">
                     <div><span>@L["UserEmail"]</span><strong id="messageModalEmail">-</strong></div>
                     <div><span>@L["InquiryTitle"]</span><strong id="messageModalTitle">-</strong></div>
-                    <div><span>@L["Date"]</span><strong id="messageModalDate">-</strong></div>
                     <div><span>@L["Status"]</span><strong id="messageModalStatus">-</strong></div>
+                    <div><span>@L["AssignedTo"]</span><strong id="messageModalAssignee">-</strong></div>
                 </div>
-                <div class="message-box" id="messageModalBody"></div>
+                <div class="admin-support-thread" id="messageModalThread"></div>
+                <div class="admin-support-composer" id="messageModalComposer">
+                    <label for="messageModalReplyText">@L["Reply"]</label>
+                    <textarea id="messageModalReplyText" class="form-control" rows="4" minlength="10" maxlength="4000" aria-describedby="messageModalReplyError" placeholder="@L["SupportReplyPlaceholder"]"></textarea>
+                    <p class="invalid-feedback d-none" id="messageModalReplyError" role="alert">@L["SupportMessageValidationError"]</p>
+                    <div class="admin-support-composer-actions">
+                        <button type="button" class="btn btn-primary" id="messageModalSendReply"><i class="bi bi-send-fill me-2"></i>@L["SendReply"]</button>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer modern-modal-footer">
-                <a id="messageModalReply" href="#" class="btn btn-primary rounded-4">
-                    <i class="bi bi-reply-fill me-2"></i>@L["Reply"]
-                </a>
+                <div class="support-ticket-admin-actions">
+                    <button type="button" class="btn btn-primary" id="messageModalTake"><i class="bi bi-person-check me-2"></i>@L["TakeTicket"]</button>
+                    <button type="button" class="btn btn-outline-secondary" id="messageModalRelease">@L["ReleaseTicket"]</button>
+                    <button type="button" class="btn btn-outline-danger" id="messageModalClose">@L["CloseTicket"]</button>
+                </div>
                 <button type="button" class="btn btn-light border rounded-4" data-bs-dismiss="modal">@L["Close"]</button>
             </div>
         </div>

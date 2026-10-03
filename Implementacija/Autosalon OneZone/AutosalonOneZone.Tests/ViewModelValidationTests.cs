@@ -235,9 +235,9 @@ public class ViewModelValidationTests
         yield return ["review low rating", new Recenzija { Ocjena = 0, DatumRecenzije = DateTime.UtcNow, KorisnikId = "u", VoziloID = 1 }, nameof(Recenzija.Ocjena)];
         yield return ["review high rating", new Recenzija { Ocjena = 6, DatumRecenzije = DateTime.UtcNow, KorisnikId = "u", VoziloID = 1 }, nameof(Recenzija.Ocjena)];
         yield return ["review long comment", new Recenzija { Ocjena = 4, Komentar = new string('a', 1001), DatumRecenzije = DateTime.UtcNow, KorisnikId = "u", VoziloID = 1 }, nameof(Recenzija.Komentar)];
-        yield return ["support missing title", new Podrska { Naslov = "", Sadrzaj = "x", DatumUpita = DateTime.UtcNow, Status = StatusUpita.Poslat, KorisnikId = "u" }, nameof(Podrska.Naslov)];
-        yield return ["support long title", new Podrska { Naslov = new string('a', 201), Sadrzaj = "x", DatumUpita = DateTime.UtcNow, Status = StatusUpita.Poslat, KorisnikId = "u" }, nameof(Podrska.Naslov)];
-        yield return ["support missing content", new Podrska { Naslov = "x", Sadrzaj = "", DatumUpita = DateTime.UtcNow, Status = StatusUpita.Poslat, KorisnikId = "u" }, nameof(Podrska.Sadrzaj)];
+        yield return ["support missing title", new Podrska { Naslov = "", DatumUpita = DateTime.UtcNow, DatumZadnjeAktivnosti = DateTime.UtcNow, Status = StatusUpita.CekaPodrsku, KorisnikId = "u" }, nameof(Podrska.Naslov)];
+        yield return ["support long title", new Podrska { Naslov = new string('a', 201), DatumUpita = DateTime.UtcNow, DatumZadnjeAktivnosti = DateTime.UtcNow, Status = StatusUpita.CekaPodrsku, KorisnikId = "u" }, nameof(Podrska.Naslov)];
+        yield return ["support message missing content", new PorukaPodrske { UpitID = 1, TipAutora = TipAutoraPorukePodrske.Korisnik, Sadrzaj = "", DatumSlanja = DateTime.UtcNow }, nameof(PorukaPodrske.Sadrzaj)];
         yield return ["card invalid number", new Kartica { BrojKartice = "abc", DatumIsteka = "12/30", Cvv = "123", ImeVlasnika = "Test" }, nameof(Kartica.BrojKartice)];
         yield return ["card missing owner", new Kartica { BrojKartice = "4242424242424242", DatumIsteka = "12/30", Cvv = "123", ImeVlasnika = "" }, nameof(Kartica.ImeVlasnika)];
     }

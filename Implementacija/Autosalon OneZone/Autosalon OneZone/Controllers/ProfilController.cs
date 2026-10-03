@@ -14,6 +14,7 @@ using System.Globalization;
 using Microsoft.Extensions.Localization;
 using Autosalon_OneZone.Services;
 using Autosalon_OneZone.Authorization;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace Autosalon_OneZone.Controllers
 {
@@ -25,18 +26,21 @@ namespace Autosalon_OneZone.Controllers
         private readonly IStringLocalizer<SharedResource> _localizer;
         private readonly IProfileActivityService _activityService;
         private readonly IProfileAccountService _accountService;
+        private readonly ISupportService _supportService;
 
         public ProfilController(
             UserManager<ApplicationUser> userManager,
             ILogger<ProfilController> logger,
             IProfileActivityService activityService,
             IProfileAccountService accountService,
+            ISupportService supportService,
             IStringLocalizer<SharedResource>? localizer = null)
         {
             _userManager = userManager;
             _logger = logger;
             _activityService = activityService;
             _accountService = accountService;
+            _supportService = supportService;
             _localizer = localizer ?? new FallbackStringLocalizer<SharedResource>();
         }
 
@@ -290,6 +294,98 @@ namespace Autosalon_OneZone.Controllers
 
             TempData["SuccessMessage"] = message;
             return RedirectToAction("KupljeniArtikli");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Podrska(string? returnUrl = null)
+        {
+            var userId = _userManager.GetUserId(User);
+            if (string.IsNullOrWhiteSpace(userId))
+            {
+                return Challenge();
+            }
+
+            var profileUrl = Url.Action(nameof(Index), "Profil");
+            ViewData["ReturnUrl"] = Url.IsLocalUrl(returnUrl) &&
+                string.Equals(returnUrl, profileUrl, StringComparison.OrdinalIgnoreCase)
+                    ? returnUrl
+                    : null;
+
+            return View(await _supportService.GetUserTicketsAsync(userId));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> PodrskaDetalji(int id)
+        {
+            var userId = _userManager.GetUserId(User);
+            if (string.IsNullOrWhiteSpace(userId))
+            {
+                return Challenge();
+            }
+
+            var conversation = await _supportService.GetUserConversationAsync(id, userId);
+            return conversation == null ? NotFound() : View(conversation);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [EnableRateLimiting("support-messages")]
+        public async Task<IActionResult> PosaljiPorukuPodrske(int id, SupportMessageInputViewModel input)
+        {
+            var userId = _userManager.GetUserId(User);
+            if (string.IsNullOrWhiteSpace(userId))
+            {
+                return Challenge();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                var conversation = await _supportService.GetUserConversationAsync(id, userId);
+                if (conversation == null)
+                {
+                    return NotFound();
+                }
+
+                ViewData["SupportReplyError"] = _localizer["SupportMessageValidationError"].Value;
+                return View(nameof(PodrskaDetalji), conversation);
+            }
+
+            var result = await _supportService.SendUserMessageAsync(id, userId, input.Message);
+            if (result.Status == SupportOperationStatus.NotFound)
+            {
+                return NotFound();
+            }
+            if (result.Status != SupportOperationStatus.Success)
+            {
+                TempData["ErrorMessage"] = _localizer["SupportTicketClosedError"].Value;
+                return RedirectToAction(nameof(PodrskaDetalji), new { id });
+            }
+
+            TempData["SuccessMessage"] = _localizer["SupportFollowUpSent"].Value;
+            return RedirectToAction(nameof(PodrskaDetalji), new { id });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> PonovoOtvoriPodrsku(int id)
+        {
+            var userId = _userManager.GetUserId(User);
+            if (string.IsNullOrWhiteSpace(userId))
+            {
+                return Challenge();
+            }
+
+            var result = await _supportService.ReopenAsync(id, userId);
+            if (result.Status == SupportOperationStatus.NotFound)
+            {
+                return NotFound();
+            }
+
+            TempData[result.Status == SupportOperationStatus.Success ? "SuccessMessage" : "InfoMessage"] =
+                result.Status == SupportOperationStatus.Success
+                    ? _localizer["SupportTicketReopened"].Value
+                    : _localizer["SupportTicketAlreadyOpen"].Value;
+            return RedirectToAction(nameof(PodrskaDetalji), new { id });
         }
     }
 }

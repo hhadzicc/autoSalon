@@ -1,0 +1,74 @@
+@model Autosalon_OneZone.Models.ViewModels.SupportConversationViewModel
+@using Autosalon_OneZone.Models
+@{
+    ViewData["Title"] = Model.Title;
+    var isClosed = Model.Status == StatusUpita.Zatvoren;
+    var supportReplyError = ViewData["SupportReplyError"] as string;
+}
+
+<section class="support-portal-section">
+    <div class="container support-conversation-shell">
+        <a asp-action="Podrska" class="support-back-link"><i class="bi bi-arrow-left"></i>@L["BackToSupportTickets"]</a>
+
+        <div class="support-conversation-header">
+            <div>
+                <span class="support-ticket-number">#@Model.Id</span>
+                <h1>@Model.Title</h1>
+                <p>@L["SupportStartedOn"] @Model.CreatedUtc.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</p>
+            </div>
+            <span class="support-status status-@Model.Status.ToString().ToLowerInvariant()">@L[$"SupportStatus.{Model.Status}"]</span>
+        </div>
+
+        <div class="support-thread" aria-label="@L["SupportConversation"]">
+            @foreach (var message in Model.Messages)
+            {
+                var isCustomer = message.SenderType == TipAutoraPorukePodrske.Korisnik;
+                var isSystem = message.SenderType == TipAutoraPorukePodrske.Sistem;
+                <article class="support-message @(isSystem ? "is-system" : isCustomer ? "is-customer" : "is-staff")">
+                    @if (isSystem)
+                    {
+                        <span><i class="bi bi-info-circle me-1"></i>@L[message.Content]</span>
+                    }
+                    else
+                    {
+                        <div class="support-message-meta">
+                            <strong>@message.SenderName</strong>
+                            <time datetime="@message.SentUtc.ToString("O")">@message.SentUtc.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</time>
+                        </div>
+                        <p>@message.Content</p>
+                    }
+                </article>
+            }
+        </div>
+
+        @if (isClosed)
+        {
+            <div class="support-closed-panel">
+                <div><strong>@L["SupportTicketClosed"]</strong><span>@L["SupportTicketClosedText"]</span></div>
+                <form asp-action="PonovoOtvoriPodrsku" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <button type="submit" class="btn btn-outline-primary">@L["ReopenSupportTicket"]</button>
+                </form>
+            </div>
+        }
+        else
+        {
+            <form asp-action="PosaljiPorukuPodrske" method="post" class="support-reply-form" data-support-reply-form novalidate>
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model.Id" />
+                <label for="support-message">@L["YourReply"]</label>
+                <textarea id="support-message" class="form-control @(supportReplyError == null ? "" : "is-invalid")" name="Message" rows="5" minlength="10" maxlength="4000" aria-describedby="support-message-error" aria-invalid="@(supportReplyError == null ? null : "true")" placeholder="@L["SupportReplyPlaceholder"]"></textarea>
+                <p id="support-message-error" class="invalid-feedback @(supportReplyError == null ? "d-none" : "d-block")" role="alert">@(supportReplyError ?? L["SupportMessageValidationError"].Value)</p>
+                <div class="support-reply-actions">
+                    <span>@L["SupportReplyHint"]</span>
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-send-fill me-2"></i>@L["SendReply"]</button>
+                </div>
+            </form>
+        }
+    </div>
+</section>
+
+@section Scripts {
+    <script src="~/js/components/support-reply-validation.js" asp-append-version="true"></script>
+}

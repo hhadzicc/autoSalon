@@ -29,6 +29,12 @@
     font-weight: 900;
 }
 
+.profile-edit-toolbar .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .profile-submit-actions {
     justify-content: flex-end;
 }
@@ -232,5 +238,275 @@
     padding: 10px;
     border: 1px solid #dc3545;
     border-radius: 14px;
+}
+
+.support-portal-section {
+    min-height: calc(100vh - 220px);
+    padding: 48px 0 72px;
+    background: #f4f7fb;
+}
+
+.support-portal-shell,
+.support-conversation-shell {
+    max-width: 980px;
+}
+
+.support-page-heading,
+.support-conversation-header,
+.support-closed-panel,
+.support-reply-actions,
+.support-ticket-row,
+.support-ticket-main,
+.support-ticket-meta,
+.support-message-meta {
+    display: flex;
+    align-items: center;
+}
+
+.support-page-heading,
+.support-conversation-header {
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 26px;
+}
+
+.support-page-heading h1,
+.support-conversation-header h1 {
+    margin: 8px 0 5px;
+    font-size: 2.2rem;
+    font-weight: 900;
+}
+
+.support-page-heading p,
+.support-conversation-header p {
+    margin: 0;
+    color: #64748b;
+}
+
+.support-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #2563eb;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.support-ticket-list,
+.support-thread {
+    overflow: hidden;
+    background: #ffffff;
+    border: 1px solid #dfe6ef;
+    border-radius: 8px;
+}
+
+.support-ticket-row {
+    justify-content: space-between;
+    gap: 24px;
+    padding: 20px 22px;
+    color: #0f172a;
+    text-decoration: none;
+    border-bottom: 1px solid #e8edf4;
+}
+
+.support-ticket-row:last-child {
+    border-bottom: 0;
+}
+
+.support-ticket-row:hover {
+    background: #f8fafc;
+}
+
+.support-ticket-main,
+.support-ticket-meta {
+    gap: 14px;
+}
+
+.support-ticket-icon {
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    flex: 0 0 44px;
+    border-radius: 8px;
+    background: #eaf2ff;
+    color: #2563eb;
+}
+
+.support-ticket-row h2 {
+    margin: 0 0 5px;
+    font-size: 1.05rem;
+    font-weight: 900;
+}
+
+.support-ticket-row span,
+.support-ticket-number {
+    color: #64748b;
+    font-size: 0.88rem;
+}
+
+.support-status {
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+    padding: 6px 11px;
+    border-radius: 999px;
+    background: #e8eef7;
+    color: #334155;
+    font-size: 0.78rem;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+.support-status.status-cekapodrsku { background: #dff3ff; color: #0369a1; }
+.support-status.status-uobradi { background: #fff0c7; color: #92400e; }
+.support-status.status-cekakorisnika { background: #eee8ff; color: #5b21b6; }
+.support-status.status-rijesen { background: #d9f8e5; color: #087a3e; }
+.support-status.status-zatvoren { background: #e8eef3; color: #475569; }
+
+.support-unread-count {
+    min-width: 24px;
+    height: 24px;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    background: #2563eb;
+    color: #ffffff !important;
+    font-weight: 900;
+}
+
+.support-empty-state {
+    padding: 70px 24px;
+    text-align: center;
+    background: #ffffff;
+    border: 1px solid #dfe6ef;
+    border-radius: 8px;
+}
+
+.support-empty-state i {
+    font-size: 2.4rem;
+    color: #2563eb;
+}
+
+.support-empty-state h2 {
+    margin: 16px 0 8px;
+    font-size: 1.35rem;
+    font-weight: 900;
+}
+
+.support-thread {
+    padding: 24px;
+}
+
+.support-message {
+    width: min(78%, 680px);
+    margin-bottom: 18px;
+    padding: 16px 18px;
+    border: 1px solid #dfe6ef;
+    border-radius: 8px;
+    background: #f8fafc;
+}
+
+.support-message.is-customer {
+    margin-left: auto;
+    background: #edf4ff;
+    border-color: #cfe0ff;
+}
+
+.support-message.is-system {
+    width: 100%;
+    padding: 9px 12px;
+    text-align: center;
+    color: #64748b;
+    background: transparent;
+    border: 0;
+    font-size: 0.86rem;
+}
+
+.support-message-meta {
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 8px;
+    font-size: 0.82rem;
+}
+
+.support-message-meta time {
+    color: #64748b;
+}
+
+.support-message p {
+    margin: 0;
+    line-height: 1.65;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.support-reply-form,
+.support-closed-panel {
+    margin-top: 20px;
+    padding: 20px;
+    background: #ffffff;
+    border: 1px solid #dfe6ef;
+    border-radius: 8px;
+}
+
+.support-reply-form label {
+    display: block;
+    margin-bottom: 9px;
+    font-weight: 900;
+}
+
+.support-reply-form textarea {
+    width: 100%;
+    min-height: 130px;
+    padding: 14px;
+    resize: vertical;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+}
+
+.support-reply-form textarea.is-invalid {
+    border-color: #dc3545;
+}
+
+.support-reply-form .invalid-feedback {
+    margin-top: 7px;
+    font-weight: 700;
+}
+
+.support-reply-actions,
+.support-closed-panel {
+    justify-content: space-between;
+    gap: 18px;
+}
+
+.support-reply-actions {
+    margin-top: 14px;
+}
+
+.support-reply-actions span,
+.support-closed-panel span {
+    display: block;
+    color: #64748b;
+    font-size: 0.88rem;
+}
+
+@media (max-width: 767.98px) {
+    .support-page-heading,
+    .support-conversation-header,
+    .support-closed-panel,
+    .support-reply-actions,
+    .support-ticket-row {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .support-ticket-meta {
+        justify-content: flex-end;
+    }
+
+    .support-message {
+        width: 94%;
+    }
 }
 

@@ -1,0 +1,55 @@
+@model Autosalon_OneZone.Models.ViewModels.SupportTicketListViewModel
+@{
+    ViewData["Title"] = L["MySupportTickets"];
+    var returnUrl = ViewData["ReturnUrl"] as string;
+}
+
+<section class="support-portal-section">
+    <div class="container support-portal-shell">
+        <div class="support-page-heading">
+            <div>
+                @if (!string.IsNullOrWhiteSpace(returnUrl))
+                {
+                    <a href="@returnUrl" class="support-back-link"><i class="bi bi-arrow-left"></i>@L["BackToProfile"]</a>
+                }
+                <h1>@L["MySupportTickets"]</h1>
+                <p>@L["MySupportTicketsText"]</p>
+            </div>
+            <a asp-controller="Home" asp-action="Kontakt" class="btn btn-primary"><i class="bi bi-plus-lg me-2"></i>@L["NewSupportTicket"]</a>
+        </div>
+
+        @if (Model.Tickets.Count == 0)
+        {
+            <div class="support-empty-state">
+                <i class="bi bi-chat-square-text"></i>
+                <h2>@L["NoUserSupportTickets"]</h2>
+                <p>@L["NoUserSupportTicketsText"]</p>
+            </div>
+        }
+        else
+        {
+            <div class="support-ticket-list">
+                @foreach (var ticket in Model.Tickets)
+                {
+                    <a asp-action="PodrskaDetalji" asp-route-id="@ticket.Id" class="support-ticket-row">
+                        <div class="support-ticket-main">
+                            <div class="support-ticket-icon"><i class="bi bi-chat-left-text-fill"></i></div>
+                            <div>
+                                <h2>@ticket.Title</h2>
+                                <span>#@ticket.Id · @ticket.LastActivityUtc.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</span>
+                            </div>
+                        </div>
+                        <div class="support-ticket-meta">
+                            <span class="support-status status-@ticket.Status.ToString().ToLowerInvariant()">@L[$"SupportStatus.{ticket.Status}"]</span>
+                            @if (ticket.UnreadCount > 0)
+                            {
+                                <span class="support-unread-count">@ticket.UnreadCount</span>
+                            }
+                            <i class="bi bi-chevron-right"></i>
+                        </div>
+                    </a>
+                }
+            </div>
+        }
+    </div>
+</section>

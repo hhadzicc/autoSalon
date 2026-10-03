@@ -2,6 +2,7 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Encodings.Web;
 using Microsoft.Extensions.Localization;
+using System.Globalization;
 
 namespace Autosalon_OneZone.Services
 {
@@ -87,6 +88,68 @@ namespace Autosalon_OneZone.Services
             throw new InvalidOperationException("Password reset email could not be sent.");
         }
 
+        public async Task SendSupportReplyEmailAsync(
+            string toEmail,
+            string displayName,
+            string subject,
+            string message,
+            string detailsUrl,
+            string culture)
+        {
+            var enabled = _configuration.GetValue("Resend:Enabled", false);
+            if (!enabled)
+            {
+                return;
+            }
+
+            var apiKey = _configuration["Resend:ApiKey"];
+            var fromEmail = _configuration["Resend:FromEmail"];
+            if (string.IsNullOrWhiteSpace(apiKey) || string.IsNullOrWhiteSpace(fromEmail))
+            {
+                throw new InvalidOperationException("Email delivery is enabled, but Resend configuration is missing.");
+            }
+
+            var emailCulture = CultureInfo.GetCultureInfo(
+                culture.StartsWith("bs", StringComparison.OrdinalIgnoreCase) ? "bs-Latn-BA" : "en-US");
+            var previousCulture = CultureInfo.CurrentCulture;
+            var previousUiCulture = CultureInfo.CurrentUICulture;
+            try
+            {
+                CultureInfo.CurrentCulture = emailCulture;
+                CultureInfo.CurrentUICulture = emailCulture;
+                using var request = new HttpRequestMessage(HttpMethod.Post, "emails");
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
+                request.Content = JsonContent.Create(new
+                {
+                    from = fromEmail,
+                    to = new[] { toEmail },
+                    subject = string.Format(_localizer["SupportReplyEmailSubject"].Value, subject),
+                    html = BuildSupportReplyHtml(displayName, subject, message, detailsUrl),
+                    text = BuildSupportReplyText(displayName, subject, message, detailsUrl)
+                });
+
+                using var response = await _httpClient.SendAsync(request);
+                if (response.IsSuccessStatusCode)
+                {
+                    _logger.LogInformation("Support reply email queued for {Email}.", toEmail);
+                    return;
+                }
+
+                var responseBody = await response.Content.ReadAsStringAsync();
+                _logger.LogError(
+                    "Resend failed to queue support reply email for {Email}. Status: {StatusCode}. Body: {Body}",
+                    toEmail,
+                    response.StatusCode,
+                    responseBody);
+                throw new InvalidOperationException("Support reply email could not be sent.");
+            }
+            finally
+            {
+                CultureInfo.CurrentCulture = previousCulture;
+                CultureInfo.CurrentUICulture = previousUiCulture;
+            }
+        }
+
         private string BuildPasswordResetHtml(string displayName, string resetLink, DateTime expiresAtUtc)
         {
             var safeName = HtmlEncoder.Default.Encode(string.IsNullOrWhiteSpace(displayName) ? _localizer["PasswordResetEmailGreetingNameFallback"].Value : displayName);
@@ -156,6 +219,65 @@ namespace Autosalon_OneZone.Services
                 {resetLink}
 
                 {_localizer["PasswordResetEmailIgnore"].Value}
+                """;
+        }
+
+        private string BuildSupportReplyHtml(string displayName, string subject, string message, string detailsUrl)
+        {
+            var name = string.IsNullOrWhiteSpace(displayName)
+                ? _localizer["PasswordResetEmailGreetingNameFallback"].Value
+                : displayName;
+            var safeSubject = HtmlEncoder.Default.Encode(subject);
+            var safeMessage = HtmlEncoder.Default.Encode(message)
+                .Replace("\r\n", "\n")
+                .Replace("\r", "\n")
+                .Replace("\n", "<br>");
+            var safeUrl = HtmlEncoder.Default.Encode(detailsUrl);
+
+            return $$"""
+                <!doctype html>
+                <html>
+                <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head>
+                <body style="margin:0;background:#f4f7fb;font-family:Inter,Arial,sans-serif;color:#0f172a;">
+                  <div style="padding:28px 16px;">
+                    <div style="max-width:640px;margin:0 auto;background:#fff;border:1px solid #e5e7eb;border-radius:20px;overflow:hidden;">
+                      <div style="background:#0f172a;padding:30px 32px;color:#fff;">
+                        <div style="font-size:12px;font-weight:800;color:#bfdbfe;margin-bottom:12px;">Autosalon OneZone</div>
+                        <h1 style="font-size:26px;margin:0;">{{HtmlEncoder.Default.Encode(_localizer["SupportReplyEmailTitle"].Value)}}</h1>
+                      </div>
+                      <div style="padding:32px;">
+                        <p style="font-size:16px;line-height:1.7;">{{HtmlEncoder.Default.Encode(string.Format(_localizer["SupportReplyEmailGreeting"].Value, name))}}</p>
+                        <p style="color:#475569;">{{HtmlEncoder.Default.Encode(_localizer["SupportReplyEmailIntro"].Value)}}</p>
+                        <div style="font-weight:800;margin:24px 0 8px;">{{safeSubject}}</div>
+                        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:18px;line-height:1.7;">{{safeMessage}}</div>
+                        <div style="text-align:center;margin:28px 0;">
+                          <a href="{{safeUrl}}" style="display:inline-block;background:#2563eb;color:#fff;text-decoration:none;border-radius:12px;padding:13px 22px;font-weight:800;">{{HtmlEncoder.Default.Encode(_localizer["SupportReplyEmailButton"].Value)}}</a>
+                        </div>
+                        <p style="font-size:13px;color:#64748b;margin:0;">{{HtmlEncoder.Default.Encode(_localizer["SupportReplyEmailFooter"].Value)}}</p>
+                      </div>
+                    </div>
+                  </div>
+                </body>
+                </html>
+                """;
+        }
+
+        private string BuildSupportReplyText(string displayName, string subject, string message, string detailsUrl)
+        {
+            var name = string.IsNullOrWhiteSpace(displayName)
+                ? _localizer["PasswordResetEmailGreetingNameFallback"].Value
+                : displayName;
+            return $"""
+                {_localizer["SupportReplyEmailTitle"].Value}
+
+                {string.Format(_localizer["SupportReplyEmailGreeting"].Value, name)}
+                {_localizer["SupportReplyEmailIntro"].Value}
+
+                {subject}
+                {message}
+
+                {_localizer["SupportReplyEmailButton"].Value}: {detailsUrl}
+                {_localizer["SupportReplyEmailFooter"].Value}
                 """;
         }
     }

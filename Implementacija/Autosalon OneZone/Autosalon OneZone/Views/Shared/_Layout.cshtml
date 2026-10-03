@@ -4,6 +4,7 @@
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 @inject Autosalon_OneZone.Services.ICartService CartService
+@inject Autosalon_OneZone.Services.ISupportService SupportService
 @inject IOptions<Autosalon_OneZone.Services.DemoOptions> DemoOptionsAccessor
 @inject Autosalon_OneZone.Services.DemoResetSchedule DemoResetSchedule
 
@@ -29,6 +30,7 @@
     var demoOptions = DemoOptionsAccessor.Value;
     var nextDemoResetUtc = DemoResetSchedule.NextResetUtc;
     var cartItemCount = 0;
+    var unreadSupportCount = 0;
     var isBuyer = User.IsInRole(AppRoles.Buyer);
     if (SignInManager.IsSignedIn(User) && isBuyer)
     {
@@ -36,6 +38,14 @@
         if (!string.IsNullOrWhiteSpace(currentUserId))
         {
             cartItemCount = await CartService.GetItemCountAsync(currentUserId);
+        }
+    }
+    if (SignInManager.IsSignedIn(User))
+    {
+        var currentUserId = UserManager.GetUserId(User);
+        if (!string.IsNullOrWhiteSpace(currentUserId))
+        {
+            unreadSupportCount = await SupportService.GetUnreadUserCountAsync(currentUserId);
         }
     }
 }
@@ -92,9 +102,9 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark custom-navbar sticky-top">
         <div class="container-xxl align-items-center">
-            <a class="navbar-brand fw-bold text-white d-flex align-items-center gap-2" href="/">
+            <a class="navbar-brand text-white d-flex align-items-center gap-2" href="/" aria-label="Autosalon OneZone">
                 <span class="brand-icon"><i class="bi bi-car-front-fill"></i></span>
-                Autosalon OneZone
+                <span class="brand-name">OneZone</span>
             </a>
 
             @if (demoOptions.Enabled && demoOptions.ResetEnabled && nextDemoResetUtc.HasValue)
@@ -139,7 +149,7 @@
                     {
                         <li class="nav-item">
                             <a class="nav-link @(isAdminArea ? "active" : "")" href="/AdminPanel/Index">
-                                @L["NavAdminPanel"]
+                                @(User.IsInRole(AppRoles.Administrator) ? L["NavAdminPanel"] : L["NavSellerPanel"])
                             </a>
                         </li>
                     }
@@ -162,6 +172,10 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle @(isProfileArea ? "active" : "")" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="bi bi-person-circle me-lg-1"></i>@L["NavMyProfile"]
+                                @if (unreadSupportCount > 0)
+                                {
+                                    <span class="support-nav-badge">@Math.Min(unreadSupportCount, 99)</span>
+                                }
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end user-menu">
                                 <li>
@@ -177,6 +191,15 @@
                                         </a>
                                     </li>
                                 }
+                                <li>
+                                    <a class="dropdown-item support-menu-link" href="/Profil/Podrska">
+                                        <span><i class="bi bi-chat-square-text-fill me-2"></i>@L["MySupportTickets"]</span>
+                                        @if (unreadSupportCount > 0)
+                                        {
+                                            <span class="support-menu-count">@Math.Min(unreadSupportCount, 99)</span>
+                                        }
+                                    </a>
+                                </li>
                                 <li>
                                     <a class="dropdown-item" href="/Profil/Edit#password">
                                         <i class="bi bi-key-fill me-2"></i>@L["NavChangePassword"]
@@ -251,7 +274,7 @@
                 <div class="col-lg-5">
                     <div class="d-flex justify-content-lg-end gap-3 flex-wrap">
                         <a asp-controller="Home" asp-action="Privacy">@L["FooterPrivacy"]</a>
-                        <a href="#">@L["FooterTerms"]</a>
+                        <a asp-controller="Home" asp-action="Terms">@L["FooterTerms"]</a>
                     </div>
                 </div>
             </div>

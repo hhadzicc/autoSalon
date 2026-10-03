@@ -13,7 +13,14 @@ public interface IAdminListQueryService
     Task<RecenzijaListViewModel> GetReviewSectionAsync(string? searchQuery);
     Task<IReadOnlyList<AdminFilterOption>> GetReviewCustomerSuggestionsAsync(string? query, string? selectedId);
     Task<IReadOnlyList<AdminFilterOption>> GetReviewVehicleSuggestionsAsync(string? query, int? selectedId);
-    Task<AdminPageResult<SupportListItem>> GetSupportAsync(string? searchQuery, int page, int? offset);
+    Task<AdminPageResult<SupportListItem>> GetSupportAsync(
+        string? searchQuery,
+        string? queueFilter,
+        string currentUserId,
+        bool isAdministrator,
+        string? direction,
+        int page,
+        int? offset);
     Task<AdminPageResult<ReviewListItem>> GetReviewsAsync(
         string? searchQuery,
         string? userIdFilter,
@@ -159,36 +166,92 @@ public sealed class AdminListQueryService : IAdminListQueryService
             .ToList();
     }
 
-    public async Task<AdminPageResult<SupportListItem>> GetSupportAsync(string? searchQuery, int page, int? offset)
+    public async Task<AdminPageResult<SupportListItem>> GetSupportAsync(
+        string? searchQuery,
+        string? queueFilter,
+        string currentUserId,
+        bool isAdministrator,
+        string? direction,
+        int page,
+        int? offset)
     {
         var query = _context.PodrskaUpiti
             .AsNoTracking()
             .Include(request => request.Korisnik)
+            .Include(request => request.DodijeljenKorisnik)
             .AsQueryable();
 
         if (!string.IsNullOrEmpty(searchQuery))
         {
             query = query.Where(request =>
                 (request.Naslov != null && request.Naslov.Contains(searchQuery)) ||
-                (request.Sadrzaj != null && request.Sadrzaj.Contains(searchQuery)) ||
+                request.Poruke.Any(message => message.Sadrzaj.Contains(searchQuery)) ||
                 (request.Korisnik != null && request.Korisnik.Email!.Contains(searchQuery)));
         }
 
-        query = query
-            .OrderByDescending(request => request.DatumUpita)
-            .ThenByDescending(request => request.UpitID);
+        var normalizedQueue = queueFilter?.ToLowerInvariant() ?? "new";
+        query = normalizedQueue switch
+        {
+            "mine" => query.Where(request =>
+                request.DodijeljenKorisnikId == currentUserId &&
+                request.Status != StatusUpita.Zatvoren),
+            "closed" => query.Where(request =>
+                request.Status == StatusUpita.Zatvoren &&
+                (isAdministrator || request.DodijeljenKorisnikId == currentUserId)),
+            "all" when isAdministrator => query,
+            "all" => query.Where(request =>
+                request.DodijeljenKorisnikId == currentUserId ||
+                (request.DodijeljenKorisnikId == null && request.Status != StatusUpita.Zatvoren)),
+            _ => query.Where(request =>
+                request.DodijeljenKorisnikId == null &&
+                request.Status != StatusUpita.Zatvoren)
+        };
+
+        var ascending = string.Equals(direction, "asc", StringComparison.OrdinalIgnoreCase);
+        if (normalizedQueue == "mine")
+        {
+            query = ascending
+                ? query.OrderBy(request => request.Status == StatusUpita.UObradi ? 0 : 1)
+                    .ThenBy(request => request.DatumZadnjeAktivnosti)
+                    .ThenBy(request => request.UpitID)
+                : query.OrderBy(request => request.Status == StatusUpita.UObradi ? 0 : 1)
+                    .ThenByDescending(request => request.DatumZadnjeAktivnosti)
+                    .ThenByDescending(request => request.UpitID);
+        }
+        else
+        {
+            query = ascending
+                ? query.OrderBy(request => request.DatumZadnjeAktivnosti).ThenBy(request => request.UpitID)
+                : query.OrderByDescending(request => request.DatumZadnjeAktivnosti).ThenByDescending(request => request.UpitID);
+        }
         var pageResult = await PaginateAsync(query, page, offset);
+        var pageTicketIds = pageResult.Items.Select(request => request.UpitID).ToArray();
+        var unreadCounts = pageTicketIds.Length == 0
+            ? new Dictionary<int, int>()
+            : await _context.PorukePodrske
+                .AsNoTracking()
+                .Where(message =>
+                    pageTicketIds.Contains(message.UpitID) &&
+                    message.TipAutora == TipAutoraPorukePodrske.Korisnik &&
+                    message.ProcitanaUtc == null)
+                .GroupBy(message => message.UpitID)
+                .ToDictionaryAsync(group => group.Key, group => group.Count());
         var items = pageResult.Items.Select(request => new SupportListItem(
                 request.UpitID,
-                request.DatumUpita,
+                request.DatumZadnjeAktivnosti,
                 request.KorisnikId,
                 request.Korisnik != null ? request.Korisnik.Email ?? "N/A" : "N/A",
                 request.Korisnik != null
                     ? ((request.Korisnik.Ime ?? "") + " " + (request.Korisnik.Prezime ?? "")).Trim()
                     : "",
                 request.Naslov,
-                request.Sadrzaj,
-                request.Status.ToString()))
+                request.Status.ToString(),
+                request.DodijeljenKorisnikId,
+                request.DodijeljenKorisnik == null
+                    ? ""
+                    : ((request.DodijeljenKorisnik.Ime ?? "") + " " + (request.DodijeljenKorisnik.Prezime ?? "")).Trim(),
+                unreadCounts.GetValueOrDefault(request.UpitID),
+                request.RowVersion.Length == 0 ? "" : Convert.ToBase64String(request.RowVersion)))
             .ToList();
 
         return ToPageResult(items, pageResult);
@@ -538,8 +601,11 @@ public sealed record SupportListItem(
     [property: JsonPropertyName("korisnikEmail")] string UserEmail,
     [property: JsonPropertyName("korisnikIme")] string UserName,
     [property: JsonPropertyName("naslov")] string Title,
-    [property: JsonPropertyName("sadrzaj")] string Content,
-    [property: JsonPropertyName("status")] string Status);
+    [property: JsonPropertyName("status")] string Status,
+    [property: JsonPropertyName("dodijeljenKorisnikId")] string? AssignedAgentId,
+    [property: JsonPropertyName("dodijeljenKorisnikIme")] string AssignedAgentName,
+    [property: JsonPropertyName("neprocitano")] int UnreadCount,
+    [property: JsonPropertyName("rowVersion")] string RowVersion);
 
 public sealed record ReviewListItem(
     [property: JsonPropertyName("recenzijaID")] int ReviewId,

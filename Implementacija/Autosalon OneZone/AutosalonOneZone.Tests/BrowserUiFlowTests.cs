@@ -6,11 +6,11 @@ namespace AutosalonOneZone.Tests;
 
 public class BrowserUiFlowTests
 {
-    private const string AdminLogin = "admin";
-    private const string AdminPassword = "Admin123!";
+    private static string AdminLogin => Environment.GetEnvironmentVariable("AUTOSALON_E2E_ADMIN_LOGIN") ?? "admin";
+    private static string AdminPassword => Environment.GetEnvironmentVariable("AUTOSALON_E2E_ADMIN_PASSWORD") ?? "Admin123!";
 
     [Fact]
-    public async Task Admin_support_status_dropdown_is_visible_clickable_and_persists_status()
+    public async Task Admin_can_take_support_ticket_reply_and_wait_for_customer()
     {
         if (!TryGetBaseUrl(out var baseUrl))
         {
@@ -23,6 +23,9 @@ public class BrowserUiFlowTests
 
         var title = "E2E status " + Guid.NewGuid().ToString("N")[..8];
         await CreateSupportInquiryAsync(page, baseUrl, title);
+        Assert.Contains("/Profil/PodrskaDetalji/", page.Url, StringComparison.OrdinalIgnoreCase);
+        await page.WaitForSelectorAsync(".support-thread");
+        await page.WaitForSelectorAsync(".support-reply-form");
 
         await page.GotoAsync(Url(baseUrl, "/AdminPanel?section=Podrska"));
         await page.WaitForSelectorAsync("#podrska-search-input");
@@ -33,33 +36,22 @@ public class BrowserUiFlowTests
             title);
 
         var row = page.Locator("#podrska-table-body tr").Filter(new() { HasTextString = title }).First;
-        await row.Locator(".status-dropdown-toggle").ClickAsync();
+        await row.Locator(".view-message-button").ClickAsync();
+        await page.WaitForSelectorAsync("#messageModal.show");
 
-        var menuIsUsable = await page.EvaluateAsync<bool>(
-            @"() => {
-                const menu = document.querySelector('#podrska-table-body .dropdown-menu.show');
-                if (!menu) return false;
-                const rect = menu.getBoundingClientRect();
-                const items = menu.querySelectorAll('.status-option');
-                return items.length === 4 &&
-                    rect.width > 0 &&
-                    rect.height > 100 &&
-                    rect.top >= 0 &&
-                    rect.bottom <= window.innerHeight;
-            }");
+        var takeResponseTask = page.WaitForResponseAsync(response =>
+            response.Url.Contains("PreuzmiPodrsku", StringComparison.OrdinalIgnoreCase));
+        await page.ClickAsync("#messageModalTake");
+        Assert.True((await takeResponseTask).Ok);
 
-        Assert.True(menuIsUsable, "Status dropdown should be visible in the viewport and expose all status options.");
-
-        var updateResponseTask = page.WaitForResponseAsync(response =>
-            response.Url.Contains("UpdatePodrskaStatus", StringComparison.OrdinalIgnoreCase));
-
-        await row.Locator(".status-option[data-status='UObradi']").ClickAsync();
-
-        var updateResponse = await updateResponseTask;
-        Assert.True(updateResponse.Ok, $"Status update returned HTTP {(int)updateResponse.Status}.");
+        await page.FillAsync("#messageModalReplyText", "Automated support workflow response.");
+        var replyResponseTask = page.WaitForResponseAsync(response =>
+            response.Url.Contains("OdgovoriNaPodrsku", StringComparison.OrdinalIgnoreCase));
+        await page.ClickAsync("#messageModalSendWaiting");
+        Assert.True((await replyResponseTask).Ok);
 
         await page.WaitForFunctionAsync(
-            "expectedTitle => document.querySelector('#podrska-table-body')?.innerText.includes(expectedTitle) && document.querySelector('#podrska-table-body')?.innerText.includes('U obradi')",
+            "expectedTitle => document.querySelector('#podrska-table-body')?.innerText.includes(expectedTitle) && document.querySelector('#podrska-table-body')?.innerText.includes('Čeka kupca')",
             title);
 
         var persistedStatus = await page.EvaluateAsync<string>(
@@ -70,7 +62,7 @@ public class BrowserUiFlowTests
             }",
             title);
 
-        Assert.Equal("UObradi", persistedStatus);
+        Assert.Equal("CekaKorisnika", persistedStatus);
     }
 
     [Fact]
@@ -150,7 +142,7 @@ public class BrowserUiFlowTests
         await page.GotoAsync(Url(baseUrl, "/Home/Kontakt"));
         await page.WaitForSelectorAsync("#contact-form");
         await page.FillAsync("input[name='Naslov']", title);
-        await page.FillAsync("textarea[name='Sadrzaj']", "Automated support status dropdown test.");
+        await page.FillAsync("textarea[name='Sadrzaj']", "Automated support conversation workflow test.");
         await page.ClickAsync("#send-message");
         await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
     }

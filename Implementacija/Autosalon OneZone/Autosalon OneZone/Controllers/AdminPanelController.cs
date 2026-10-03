@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Localization;
 using Autosalon_OneZone.Authorization;
 using Autosalon_OneZone.Services;
+using Autosalon_OneZone.Models.ViewModels;
 
 namespace Autosalon_OneZone.Controllers
 {
@@ -28,6 +29,7 @@ namespace Autosalon_OneZone.Controllers
         private readonly IAdminModerationService _moderationService;
         private readonly IAdminVehicleService _vehicleService;
         private readonly IAdminProfileService _profileService;
+        private readonly ISupportService _supportService;
 
 
         public AdminPanelController(
@@ -36,6 +38,7 @@ namespace Autosalon_OneZone.Controllers
             IAdminModerationService moderationService,
             IAdminVehicleService vehicleService,
             IAdminProfileService profileService,
+            ISupportService supportService,
             IStringLocalizer<SharedResource>? localizer = null)
         {
             _localizer = localizer ?? new FallbackStringLocalizer<SharedResource>();
@@ -44,6 +47,7 @@ namespace Autosalon_OneZone.Controllers
             _moderationService = moderationService;
             _vehicleService = vehicleService;
             _profileService = profileService;
+            _supportService = supportService;
         }
 
         [HttpGet]
@@ -71,7 +75,11 @@ namespace Autosalon_OneZone.Controllers
         [HttpGet]
         public async Task<IActionResult> GetDashboardSection()
         {
-            return PartialView("_AdminDashboard", await _dashboardService.GetDashboardAsync());
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
+            var isAdministrator = User.IsInRole(AppRoles.Administrator);
+            return PartialView(
+                "_AdminDashboard",
+                await _dashboardService.GetDashboardAsync(currentUserId, isAdministrator));
         }
 
 
@@ -249,9 +257,21 @@ namespace Autosalon_OneZone.Controllers
         }
 
         [HttpGet]
-        public async Task<JsonResult> GetPodrskaJson(string? searchQuery = null, int page = 1, int? offset = null)
+        public async Task<JsonResult> GetPodrskaJson(
+            string? searchQuery = null,
+            string queueFilter = "new",
+            string direction = "desc",
+            int page = 1,
+            int? offset = null)
         {
-            var result = await _listQueryService.GetSupportAsync(searchQuery, page, offset);
+            var result = await _listQueryService.GetSupportAsync(
+                searchQuery,
+                queueFilter,
+                User.FindFirstValue(ClaimTypes.NameIdentifier)!,
+                User.IsInRole(AppRoles.Administrator),
+                direction,
+                page,
+                offset);
 
             return Json(new
             {
@@ -266,7 +286,7 @@ namespace Autosalon_OneZone.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = AppRoles.AdministratorOrSeller)]
+        [Authorize(Roles = AppRoles.Administrator)]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeletePodrska(int id)
         {
@@ -278,23 +298,92 @@ namespace Autosalon_OneZone.Controllers
             return Ok(new { successMessage = _localizer["SupportDeleteSuccess"].Value });
         }
 
-        [HttpPost]
-        [Authorize(Roles = AppRoles.AdministratorOrSeller)]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdatePodrskaStatus(int id, string status)
+        [HttpGet]
+        public async Task<IActionResult> GetPodrskaDetalji(int id)
         {
-            var result = await _moderationService.UpdateSupportStatusAsync(id, status);
-            if (result == SupportStatusUpdateResult.NotFound)
+            var conversation = await _supportService.GetStaffConversationAsync(
+                id,
+                User.FindFirstValue(ClaimTypes.NameIdentifier)!,
+                User.IsInRole(AppRoles.Administrator));
+            return conversation == null ? NotFound() : Json(conversation);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> PreuzmiPodrsku(int id, string rowVersion)
+        {
+            var result = await _supportService.TakeAsync(
+                id,
+                User.FindFirstValue(ClaimTypes.NameIdentifier)!,
+                rowVersion,
+                User.IsInRole(AppRoles.Administrator));
+            return SupportResult(result, "SupportTicketTaken");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> OslobodiPodrsku(int id, string rowVersion)
+        {
+            var result = await _supportService.ReleaseAsync(
+                id,
+                User.FindFirstValue(ClaimTypes.NameIdentifier)!,
+                rowVersion,
+                User.IsInRole(AppRoles.Administrator));
+            return SupportResult(result, "SupportTicketReleased");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> OdgovoriNaPodrsku(int id, SupportStaffReplyViewModel input)
+        {
+            if (!ModelState.IsValid)
             {
-                return NotFound();
+                return BadRequest(new { errorMessage = _localizer["SupportMessageValidationError"].Value });
             }
 
-            if (result == SupportStatusUpdateResult.Updated)
-            {
-                return Ok(new { successMessage = _localizer["StatusChangedSuccess"].Value });
-            }
+            var detailsUrl = Url.Action(
+                "PodrskaDetalji",
+                "Profil",
+                new { id },
+                Request.Scheme) ?? string.Empty;
+            var result = await _supportService.ReplyAsync(
+                id,
+                User.FindFirstValue(ClaimTypes.NameIdentifier)!,
+                input,
+                detailsUrl);
+            return SupportResult(result, "SupportReplySent");
+        }
 
-            return BadRequest(_localizer["InvalidStatus"].Value);
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ZatvoriPodrsku(int id, string rowVersion)
+        {
+            var result = await _supportService.CloseAsync(
+                id,
+                User.FindFirstValue(ClaimTypes.NameIdentifier)!,
+                rowVersion,
+                User.IsInRole(AppRoles.Administrator));
+            return SupportResult(result, "SupportTicketClosedSuccess");
+        }
+
+        private IActionResult SupportResult(SupportOperationResult result, string successKey)
+        {
+            return result.Status switch
+            {
+                SupportOperationStatus.Success => Ok(new
+                {
+                    successMessage = _localizer[successKey].Value,
+                    conversation = result.Conversation
+                }),
+                SupportOperationStatus.NotFound => NotFound(new { errorMessage = _localizer["SupportTicketNotFound"].Value }),
+                SupportOperationStatus.Forbidden => Conflict(new
+                {
+                    errorMessage = _localizer["SupportTicketAssignedToOther", result.AssignedAgentName ?? ""].Value,
+                    conversation = result.Conversation
+                }),
+                SupportOperationStatus.Conflict => Conflict(new { errorMessage = _localizer["SupportTicketConcurrencyError"].Value }),
+                _ => BadRequest(new { errorMessage = _localizer["SupportTicketInvalidState"].Value })
+            };
         }
 
         #endregion

@@ -659,7 +659,7 @@
     <value>Details</value>
   </data>
   <data name="HomeHeroBadge" xml:space="preserve">
-    <value>Verified vehicles. A simpler way to buy.</value>
+    <value>Verified vehicles · Secure purchase</value>
   </data>
   <data name="HomeHeroTitleStart" xml:space="preserve">
     <value>Find a vehicle that looks good, drives better and</value>
@@ -1314,6 +1314,9 @@
   </data>
   <data name="BackToProfile" xml:space="preserve">
     <value>Back to profile</value>
+  </data>
+  <data name="BackToHome" xml:space="preserve">
+    <value>Back to home</value>
   </data>
   <data name="SaveChanges" xml:space="preserve">
     <value>Save changes</value>
@@ -2251,4 +2254,108 @@
   <data name="AdminPurchasedVehicle" xml:space="preserve">
     <value>Purchased vehicle</value>
   </data>
+  <data name="MySupportTickets" xml:space="preserve"><value>My support inquiries</value></data>
+  <data name="MySupportTicketsText" xml:space="preserve"><value>Follow your conversations with our support team.</value></data>
+  <data name="NewSupportTicket" xml:space="preserve"><value>New inquiry</value></data>
+  <data name="NoUserSupportTickets" xml:space="preserve"><value>No support inquiries yet</value></data>
+  <data name="NoUserSupportTicketsText" xml:space="preserve"><value>Your conversations with support will appear here.</value></data>
+  <data name="BackToSupportTickets" xml:space="preserve"><value>Back to inquiries</value></data>
+  <data name="SupportStartedOn" xml:space="preserve"><value>Started on</value></data>
+  <data name="SupportConversation" xml:space="preserve"><value>Support conversation</value></data>
+  <data name="SupportTicketClosed" xml:space="preserve"><value>This inquiry is closed</value></data>
+  <data name="SupportTicketClosedText" xml:space="preserve"><value>Reopen it if you need to continue the conversation.</value></data>
+  <data name="ReopenSupportTicket" xml:space="preserve"><value>Reopen inquiry</value></data>
+  <data name="YourReply" xml:space="preserve"><value>Your reply</value></data>
+  <data name="SupportReplyPlaceholder" xml:space="preserve"><value>Write your message...</value></data>
+  <data name="SupportReplyHint" xml:space="preserve"><value>Your message will reopen the inquiry for the support team.</value></data>
+  <data name="SendReply" xml:space="preserve"><value>Send reply</value></data>
+  <data name="SupportStatus.CekaPodrsku" xml:space="preserve"><value>New</value></data>
+  <data name="SupportStatus.UObradi" xml:space="preserve"><value>In progress</value></data>
+  <data name="SupportStatus.CekaKorisnika" xml:space="preserve"><value>Answered</value></data>
+  <data name="SupportStatus.Rijesen" xml:space="preserve"><value>Answered</value></data>
+  <data name="SupportStatus.Zatvoren" xml:space="preserve"><value>Closed</value></data>
+  <data name="Validation.SupportMessageLength" xml:space="preserve"><value>The message must contain between 10 and 4000 characters.</value></data>
+  <data name="SupportMessageValidationError" xml:space="preserve"><value>Enter a message between 10 and 4000 characters.</value></data>
+  <data name="SupportQueue.New" xml:space="preserve"><value>New</value></data>
+  <data name="SupportQueue.Mine" xml:space="preserve"><value>My inquiries</value></data>
+  <data name="SupportQueue.Closed" xml:space="preserve"><value>Closed</value></data>
+  <data name="SupportQueue.All" xml:space="preserve"><value>All inquiries</value></data>
+  <data name="SupportTicketClosedError" xml:space="preserve"><value>This inquiry is closed. Reopen it before sending another message.</value></data>
+  <data name="SupportFollowUpSent" xml:space="preserve"><value>Your reply was sent successfully.</value></data>
+  <data name="SupportTicketReopened" xml:space="preserve"><value>The inquiry was reopened successfully.</value></data>
+  <data name="SupportTicketAlreadyOpen" xml:space="preserve"><value>The inquiry is already open.</value></data>
+  <data name="TakeTicket" xml:space="preserve"><value>Take inquiry</value></data>
+  <data name="TakeOverTicket" xml:space="preserve"><value>Take over</value></data>
+  <data name="ReleaseTicket" xml:space="preserve"><value>Release</value></data>
+  <data name="CloseTicket" xml:space="preserve"><value>Close inquiry</value></data>
+  <data name="AssignedTo" xml:space="preserve"><value>Assigned to</value></data>
+  <data name="Unassigned" xml:space="preserve"><value>Unassigned</value></data>
+  <data name="SupportTicketTaken" xml:space="preserve"><value>The inquiry is now assigned to you.</value></data>
+  <data name="SupportTicketReleased" xml:space="preserve"><value>The inquiry was released.</value></data>
+  <data name="SupportReplySent" xml:space="preserve"><value>The reply was sent successfully.</value></data>
+  <data name="SupportTicketClosedSuccess" xml:space="preserve"><value>The inquiry was closed.</value></data>
+  <data name="SupportTicketNotFound" xml:space="preserve"><value>The support inquiry was not found.</value></data>
+  <data name="SupportTicketAssignedToOther" xml:space="preserve"><value>This inquiry is assigned to {0}.</value></data>
+  <data name="SupportTicketConcurrencyError" xml:space="preserve"><value>The inquiry changed while you were working. Reload it and try again.</value></data>
+  <data name="SupportTicketInvalidState" xml:space="preserve"><value>This action is not available for the current inquiry status.</value></data>
+  <data name="SupportSystemReopened" xml:space="preserve"><value>The inquiry was reopened.</value></data>
+  <data name="SupportSystemClosed" xml:space="preserve"><value>The inquiry was closed.</value></data>
+  <data name="SupportSystemReminder" xml:space="preserve"><value>We are waiting for your reply. This inquiry will close automatically after seven days of inactivity.</value></data>
+  <data name="SupportSystemAutoClosed" xml:space="preserve"><value>The inquiry was closed automatically due to inactivity.</value></data>
+  <data name="SupportReplyEmailSubject" xml:space="preserve"><value>Reply to your inquiry: {0}</value></data>
+  <data name="SupportReplyEmailTitle" xml:space="preserve"><value>You received a support reply</value></data>
+  <data name="SupportReplyEmailGreeting" xml:space="preserve"><value>Hello {0},</value></data>
+  <data name="SupportReplyEmailIntro" xml:space="preserve"><value>Our support team replied to your inquiry.</value></data>
+  <data name="SupportReplyEmailButton" xml:space="preserve"><value>Open conversation</value></data>
+  <data name="SupportReplyEmailFooter" xml:space="preserve"><value>Please reply through the Autosalon OneZone application so the conversation stays together.</value></data>
+  <data name="NavSellerPanel" xml:space="preserve"><value>Seller Panel</value></data>
+  <data name="SellerPanel" xml:space="preserve"><value>Seller panel</value></data>
+  <data name="SellerMenu" xml:space="preserve"><value>Seller menu</value></data>
+  <data name="SellerDashboardAvailable" xml:space="preserve"><value>Available</value></data>
+  <data name="SellerDashboardAvailableDesc" xml:space="preserve"><value>Ready for purchase</value></data>
+  <data name="SellerDashboardSold" xml:space="preserve"><value>Sold</value></data>
+  <data name="SellerDashboardSoldDesc" xml:space="preserve"><value>Purchased vehicles</value></data>
+  <data name="SellerDashboardMyInquiries" xml:space="preserve"><value>My inquiries</value></data>
+  <data name="SellerDashboardMyInquiriesDesc" xml:space="preserve"><value>Assigned active inquiries</value></data>
+  <data name="SellerDashboardLatestInquiriesText" xml:space="preserve"><value>New and your active inquiries.</value></data>
+  <data name="LegalLastUpdated" xml:space="preserve"><value>Last updated: October 4, 2026</value></data>
+  <data name="LegalPageContents" xml:space="preserve"><value>On this page</value></data>
+  <data name="LegalContactSupport" xml:space="preserve"><value>Contact support</value></data>
+  <data name="PrivacyIntro" xml:space="preserve"><value>This page explains which data OneZone processes while you use the demo application and how that data is used.</value></data>
+  <data name="PrivacyDemoTitle" xml:space="preserve"><value>Important demo notice</value></data>
+  <data name="PrivacyDemoText" xml:space="preserve"><value>OneZone is a portfolio and demonstration application. Do not enter real card details or other sensitive information. Demo content is periodically restored to its initial state, currently every 60 minutes.</value></data>
+  <data name="PrivacyDataTitle" xml:space="preserve"><value>Data we process</value></data>
+  <data name="PrivacyDataText" xml:space="preserve"><value>We process only the information needed to demonstrate dealership and account features:</value></data>
+  <data name="PrivacyDataAccount" xml:space="preserve"><value>first and last name, email address, username, and information required to sign in;</value></data>
+  <data name="PrivacyDataActivity" xml:space="preserve"><value>cart contents, demo orders, reviews, support inquiries, and messages in those conversations;</value></data>
+  <data name="PrivacyDataTechnical" xml:space="preserve"><value>essential cookies for authentication and language selection, plus basic server logs required for security and operation.</value></data>
+  <data name="PrivacyPurposeTitle" xml:space="preserve"><value>How we use data</value></data>
+  <data name="PrivacyPurposeText" xml:space="preserve"><value>Data is used to sign you in, manage your profile, display your cart and purchased vehicles, record demo orders, publish customer experiences, communicate through support, and protect the application from misuse. We do not use it for advertising or user profiling.</value></data>
+  <data name="PrivacyPaymentsTitle" xml:space="preserve"><value>Simulated payments</value></data>
+  <data name="PrivacyPaymentsText" xml:space="preserve"><value>No real charge is made in demo mode. After a successful simulation, the order record contains only a masked card number, cardholder name, and expiration date; the CVV is replaced with a placeholder and is not retained in its original form. Use test data only.</value></data>
+  <data name="PrivacyRetentionTitle" xml:space="preserve"><value>Retention and demo resets</value></data>
+  <data name="PrivacyRetentionText" xml:space="preserve"><value>Demo orders, payments, carts, reviews, inquiries, and catalog data are periodically deleted or restored to their initial values. A user account may remain active after a reset so sign-in continues to work. A demo reset is therefore not a substitute for an account deletion request.</value></data>
+  <data name="PrivacySharingTitle" xml:space="preserve"><value>Access and sharing</value></data>
+  <data name="PrivacySharingText" xml:space="preserve"><value>We do not sell data. Authorized administrators and sellers see only the information required for their role. When email notifications are enabled, the necessary message data may be processed by the configured email provider and hosting infrastructure.</value></data>
+  <data name="PrivacyRightsTitle" xml:space="preserve"><value>Your choices</value></data>
+  <data name="PrivacyRightsText" xml:space="preserve"><value>You can update basic information through your profile. To request access, correction, or deletion of your account and related data, contact support. Never send a password or card details in a support message.</value></data>
+  <data name="TermsTitle" xml:space="preserve"><value>Terms of use</value></data>
+  <data name="TermsIntro" xml:space="preserve"><value>These terms explain how the OneZone demo application may be used and what its features represent.</value></data>
+  <data name="TermsDemoTitle" xml:space="preserve"><value>A demo, not a real dealership</value></data>
+  <data name="TermsDemoText" xml:space="preserve"><value>OneZone is a portfolio and demonstration project. Vehicles, prices, availability, and user accounts are provided to demonstrate the software and do not constitute a real sales offer.</value></data>
+  <data name="TermsAccountsTitle" xml:space="preserve"><value>User accounts</value></data>
+  <data name="TermsAccountsText" xml:space="preserve"><value>An account is required for purchases, reviews, and inquiries. You are responsible for the information you enter and for keeping your sign-in details secure. Demo accounts and data should not be treated as permanent storage.</value></data>
+  <data name="TermsPurchasesTitle" xml:space="preserve"><value>Purchases and payments</value></data>
+  <data name="TermsPurchasesText" xml:space="preserve"><value>All purchases, loans, and card payments in demo mode are simulated. No real charge is made, no purchase contract is created, and no vehicle is actually reserved or delivered.</value></data>
+  <data name="TermsContentTitle" xml:space="preserve"><value>Vehicles and user content</value></data>
+  <data name="TermsContentText" xml:space="preserve"><value>Specifications, photographs, mileage, and prices are used to demonstrate the catalog. Reviews and messages may be moderated or removed, and all demo content may disappear during an automatic reset.</value></data>
+  <data name="TermsConductTitle" xml:space="preserve"><value>Acceptable use</value></data>
+  <data name="TermsConductText" xml:space="preserve"><value>Use the application reasonably and only to try its available features. You must not:</value></data>
+  <data name="TermsConductSecurity" xml:space="preserve"><value>attempt to access another account, administrative functions, or data without authorization;</value></data>
+  <data name="TermsConductContent" xml:space="preserve"><value>submit abusive, unlawful, or misleading content through reviews or support;</value></data>
+  <data name="TermsConductAutomation" xml:space="preserve"><value>deliberately overload the application, bypass request limits, or disrupt the demo for other users.</value></data>
+  <data name="TermsAvailabilityTitle" xml:space="preserve"><value>Availability and liability</value></data>
+  <data name="TermsAvailabilityText" xml:space="preserve"><value>The application is provided as is, without a guarantee of continuous availability or data persistence. The service may restart, change, or reset without notice. Do not rely on it for real purchases or storage of important information.</value></data>
+  <data name="TermsChangesTitle" xml:space="preserve"><value>Changes and questions</value></data>
+  <data name="TermsChangesText" xml:space="preserve"><value>These terms may be updated when application features or hosting arrangements change. The date at the top shows the latest version. Contact support with questions about use.</value></data>
 </root>

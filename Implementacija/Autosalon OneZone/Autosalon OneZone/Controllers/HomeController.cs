@@ -9,6 +9,9 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Localization;
 using Autosalon_OneZone.Services;
+using Microsoft.AspNetCore.Authorization;
+using System.Globalization;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace Autosalon_OneZone.Controllers
 {
@@ -18,16 +21,19 @@ namespace Autosalon_OneZone.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IStringLocalizer<SharedResource> _localizer;
         private readonly IHomeService _homeService;
+        private readonly ISupportService _supportService;
 
         public HomeController(
             ILogger<HomeController> logger,
             UserManager<ApplicationUser> userManager,
             IHomeService homeService,
+            ISupportService supportService,
             IStringLocalizer<SharedResource>? localizer = null)
         {
             _logger = logger;
             _userManager = userManager;
             _homeService = homeService;
+            _supportService = supportService;
             _localizer = localizer ?? new FallbackStringLocalizer<SharedResource>();
         }
 
@@ -46,6 +52,8 @@ namespace Autosalon_OneZone.Controllers
         }
 
         [HttpPost]
+        [Authorize]
+        [EnableRateLimiting("support-messages")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Kontakt(KontaktViewModel model)
         {
@@ -56,29 +64,20 @@ namespace Autosalon_OneZone.Controllers
 
             try
             {
-                if (User.Identity.IsAuthenticated)
+                var user = await _userManager.GetUserAsync(User);
+                if (user != null)
                 {
-                    var user = await _userManager.GetUserAsync(User);
-                    if (user != null)
-                    {
-                        await _homeService.AddSupportRequestAsync(user.Id, model.Naslov, model.Sadrzaj);
-                    }
-                    else
-                    {
-                        TempData["ErrorMessage"] = _localizer["ContactAccountProblem"].Value;
-                        return View(model);
-                    }
-                }
-                else
-                {
-                    string subject = Uri.EscapeDataString(model.Naslov);
-                    string body = Uri.EscapeDataString(model.Sadrzaj);
-                    string mailtoUrl = $"mailto:autosalon@autosalon.com?subject={subject}&body={body}";
-                    return Redirect(mailtoUrl);
+                    var ticketId = await _supportService.CreateTicketAsync(
+                        user.Id,
+                        model.Naslov,
+                        model.Sadrzaj,
+                        CultureInfo.CurrentUICulture.Name);
+                    TempData["SuccessMessage"] = _localizer["ContactMessageSent"].Value;
+                    return RedirectToAction("PodrskaDetalji", "Profil", new { id = ticketId });
                 }
 
-                TempData["SuccessMessage"] = _localizer["ContactMessageSent"].Value;
-                return RedirectToAction(nameof(Index));
+                TempData["ErrorMessage"] = _localizer["ContactAccountProblem"].Value;
+                return View(model);
             }
             catch (Exception ex)
             {
@@ -90,6 +89,12 @@ namespace Autosalon_OneZone.Controllers
 
         [HttpGet]
         public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult Terms()
         {
             return View();
         }

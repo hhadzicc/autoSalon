@@ -21,6 +21,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Options;
 
 namespace AutosalonOneZone.Tests;
 
@@ -510,63 +511,163 @@ public class AdminLifecycleTests
     }
 
     [Fact]
-    public async Task Admin_support_status_can_change_and_invalid_status_is_rejected()
+    public async Task Admin_support_ticket_can_be_taken_and_replied_to()
     {
         await using var app = await TestApp.CreateAsync();
         var user = await CreateUserAsync(app, "supportbuyer", "supportbuyer@example.com", "Kupac");
-        var ticket = new Podrska
+        var adminUser = await CreateUserAsync(app, "supportadmin", "supportadmin@example.com", "Administrator");
+        var ticket = await AddSupportTicketAsync(app.Db, user, "Status test", "Molim promjenu statusa.");
+        var admin = CreateAdminController(app, adminUser, "Administrator");
+
+        Assert.IsType<OkObjectResult>(await admin.PreuzmiPodrsku(ticket.UpitID, ""));
+        Assert.IsType<OkObjectResult>(await admin.OdgovoriNaPodrsku(ticket.UpitID, new SupportStaffReplyViewModel
         {
-            KorisnikId = user.Id,
-            Naslov = "Status test",
-            Sadrzaj = "Molim promjenu statusa.",
-            DatumUpita = DateTime.UtcNow.AddMinutes(-5),
-            Status = StatusUpita.Poslat
-        };
-        app.Db.PodrskaUpiti.Add(ticket);
-        await app.Db.SaveChangesAsync();
+            Message = "Poštovani, provjerili smo Vaš upit.",
+            RowVersion = "",
+            Resolve = false
+        }));
 
-        var admin = CreateAdminController(app);
-        var validResult = await admin.UpdatePodrskaStatus(ticket.UpitID, "UObradi");
-
-        Assert.IsType<OkObjectResult>(validResult);
-        Assert.Equal(StatusUpita.UObradi, (await app.Db.PodrskaUpiti.FindAsync(ticket.UpitID)).Status);
-
-        var invalidResult = await admin.UpdatePodrskaStatus(ticket.UpitID, "NijeStatus");
-
-        Assert.IsType<BadRequestObjectResult>(invalidResult);
-        Assert.Equal(StatusUpita.UObradi, (await app.Db.PodrskaUpiti.FindAsync(ticket.UpitID)).Status);
+        var updated = await app.Db.PodrskaUpiti
+            .Include(item => item.Poruke)
+            .SingleAsync(item => item.UpitID == ticket.UpitID);
+        Assert.Equal(StatusUpita.CekaKorisnika, updated.Status);
+        Assert.Equal(adminUser.Id, updated.DodijeljenKorisnikId);
+        Assert.Contains(updated.Poruke, message =>
+            message.TipAutora == TipAutoraPorukePodrske.Osoblje &&
+            message.Sadrzaj == "Poštovani, provjerili smo Vaš upit.");
     }
 
     [Fact]
-    public async Task Admin_support_status_rejects_undefined_numeric_enum_value()
+    public async Task Support_assignment_response_contains_current_agent_and_release_clears_it()
     {
         await using var app = await TestApp.CreateAsync();
-        var user = await CreateUserAsync(app, "numericstatus", "numericstatus@example.com", "Kupac");
-        var ticket = new Podrska
-        {
-            KorisnikId = user.Id,
-            Naslov = "Numeric status",
-            Sadrzaj = "Status ne smije prihvatiti nepoznat broj.",
-            DatumUpita = DateTime.UtcNow,
-            Status = StatusUpita.Poslat
-        };
-        app.Db.PodrskaUpiti.Add(ticket);
-        await app.Db.SaveChangesAsync();
+        var customer = await CreateUserAsync(app, "assignmentbuyer", "assignmentbuyer@example.com", "Kupac");
+        var agent = await CreateUserAsync(app, "assignmentagent", "assignmentagent@example.com", "Prodavac");
+        var support = CreateSupportService(app);
+        var ticketId = await support.CreateTicketAsync(
+            customer.Id,
+            "Provjera dodjele",
+            "Potrebna mi je pomoć sa informacijama o vozilu.",
+            "bs-Latn-BA");
 
-        var result = await CreateAdminController(app).UpdatePodrskaStatus(ticket.UpitID, "999");
+        var taken = await support.TakeAsync(ticketId, agent.Id, "", false);
 
-        Assert.IsType<BadRequestObjectResult>(result);
-        Assert.Equal(StatusUpita.Poslat, (await app.Db.PodrskaUpiti.FindAsync(ticket.UpitID)).Status);
+        Assert.Equal(SupportOperationStatus.Success, taken.Status);
+        Assert.Equal(agent.Id, taken.Conversation?.AssignedAgentId);
+        Assert.Equal("Demo Korisnik", taken.Conversation?.AssignedAgentName);
+
+        var released = await support.ReleaseAsync(ticketId, agent.Id, "", false);
+
+        Assert.Equal(SupportOperationStatus.Success, released.Status);
+        Assert.Null(released.Conversation?.AssignedAgentId);
+        Assert.Equal(string.Empty, released.Conversation?.AssignedAgentName);
     }
 
     [Fact]
-    public async Task Admin_support_status_missing_ticket_returns_not_found()
+    public async Task Seller_cannot_reply_to_a_ticket_assigned_to_another_agent()
     {
         await using var app = await TestApp.CreateAsync();
+        var user = await CreateUserAsync(app, "assignedbuyer", "assignedbuyer@example.com", "Kupac");
+        var firstSeller = await CreateUserAsync(app, "sellerone", "sellerone@example.com", "Prodavac");
+        var secondSeller = await CreateUserAsync(app, "sellertwo", "sellertwo@example.com", "Prodavac");
+        var ticket = await AddSupportTicketAsync(app.Db, user, "Dodjela", "Potrebna mi je pomoć oko kupovine.");
 
-        var result = await CreateAdminController(app).UpdatePodrskaStatus(404404, "UObradi");
+        Assert.IsType<OkObjectResult>(await CreateAdminController(app, firstSeller, "Prodavac")
+            .PreuzmiPodrsku(ticket.UpitID, ""));
+        var result = await CreateAdminController(app, secondSeller, "Prodavac")
+            .OdgovoriNaPodrsku(ticket.UpitID, new SupportStaffReplyViewModel
+            {
+                Message = "Ovaj odgovor ne smije biti sačuvan.",
+                RowVersion = ""
+            });
 
-        Assert.IsType<NotFoundResult>(result);
+        Assert.IsType<ConflictObjectResult>(result);
+        Assert.DoesNotContain(await app.Db.PorukePodrske.ToListAsync(), message =>
+            message.Sadrzaj == "Ovaj odgovor ne smije biti sačuvan.");
+    }
+
+    [Fact]
+    public async Task Admin_support_take_missing_ticket_returns_not_found()
+    {
+        await using var app = await TestApp.CreateAsync();
+        var adminUser = await CreateUserAsync(app, "missingadmin", "missingadmin@example.com", "Administrator");
+
+        var result = await CreateAdminController(app, adminUser, "Administrator").PreuzmiPodrsku(404404, "");
+
+        Assert.IsType<NotFoundObjectResult>(result);
+    }
+
+    [Fact]
+    public async Task Customer_follow_up_returns_ticket_to_support_and_closed_ticket_can_be_reopened()
+    {
+        await using var app = await TestApp.CreateAsync();
+        var customer = await CreateUserAsync(app, "flowbuyer", "flowbuyer@example.com", "Kupac");
+        var agent = await CreateUserAsync(app, "flowagent", "flowagent@example.com", "Prodavac");
+        var support = CreateSupportService(app);
+        var ticketId = await support.CreateTicketAsync(
+            customer.Id,
+            "Cijeli tok",
+            "Trebaju mi dodatne informacije o finansiranju.",
+            "bs-Latn-BA");
+
+        Assert.Equal(SupportOperationStatus.Success, (await support.TakeAsync(ticketId, agent.Id, "", false)).Status);
+        Assert.Equal(SupportOperationStatus.Success, (await support.ReplyAsync(
+            ticketId,
+            agent.Id,
+            new SupportStaffReplyViewModel
+            {
+                Message = "Koji period otplate Vam najviše odgovara?",
+                RowVersion = ""
+            },
+            "https://example.test/Profil/PodrskaDetalji/1")).Status);
+
+        var followUp = await support.SendUserMessageAsync(
+            ticketId,
+            customer.Id,
+            "Najviše bi mi odgovarao period od pet godina.");
+        Assert.Equal(SupportOperationStatus.Success, followUp.Status);
+        Assert.Equal(StatusUpita.CekaPodrsku, followUp.Conversation?.Status);
+        Assert.Equal(agent.Id, followUp.Conversation?.AssignedAgentId);
+
+        Assert.Equal(SupportOperationStatus.Success, (await support.CloseAsync(ticketId, agent.Id, "", false)).Status);
+        var reopen = await support.ReopenAsync(ticketId, customer.Id);
+        Assert.Equal(SupportOperationStatus.Success, reopen.Status);
+        Assert.Equal(StatusUpita.CekaPodrsku, reopen.Conversation?.Status);
+        Assert.Contains(reopen.Conversation!.Messages, message =>
+            message.SenderType == TipAutoraPorukePodrske.Sistem &&
+            message.Content == "SupportSystemReopened");
+    }
+
+    [Fact]
+    public async Task Staff_reply_queues_email_only_outside_demo_mode()
+    {
+        await using var app = await TestApp.CreateAsync();
+        var customer = await CreateUserAsync(app, "emailbuyer", "emailbuyer@example.com", "Kupac");
+        var agent = await CreateUserAsync(app, "emailagent", "emailagent@example.com", "Prodavac");
+        var support = CreateSupportService(app, demoEnabled: false, emailEnabled: true);
+        var ticketId = await support.CreateTicketAsync(
+            customer.Id,
+            "Email odgovor",
+            "Molim odgovor i putem elektronske pošte.",
+            "en-US");
+
+        await support.TakeAsync(ticketId, agent.Id, "", false);
+        var result = await support.ReplyAsync(
+            ticketId,
+            agent.Id,
+            new SupportStaffReplyViewModel
+            {
+                Message = "Your support response is ready in the application.",
+                RowVersion = ""
+            },
+            "https://example.test/Profil/PodrskaDetalji/1");
+
+        Assert.Equal(SupportOperationStatus.Success, result.Status);
+        var outbox = await app.Db.EmailPodrskeOutbox.SingleAsync();
+        Assert.Equal(customer.Email, outbox.Primalac);
+        Assert.Equal("en-US", outbox.Jezik);
+        Assert.Equal("https://example.test/Profil/PodrskaDetalji/1", outbox.DetaljiUrl);
+        Assert.Null(outbox.PoslanoUtc);
     }
 
     [Fact]
@@ -651,17 +752,19 @@ public class AdminLifecycleTests
             {
                 KorisnikId = user.Id,
                 Naslov = "Prvi upit",
-                Sadrzaj = "Dugi sadrzaj koji treba ostati samo za modal prikaz.",
                 DatumUpita = DateTime.UtcNow.AddDays(-2),
-                Status = StatusUpita.Poslat
+                DatumZadnjeAktivnosti = DateTime.UtcNow.AddDays(-2),
+                Status = StatusUpita.CekaPodrsku,
+                Poruke = [new PorukaPodrske { PosiljalacId = user.Id, TipAutora = TipAutoraPorukePodrske.Korisnik, Sadrzaj = "Dugi sadrzaj koji treba ostati samo za modal prikaz.", DatumSlanja = DateTime.UtcNow.AddDays(-2) }]
             },
             new Podrska
             {
                 KorisnikId = user.Id,
                 Naslov = "Zadnji upit",
-                Sadrzaj = "Tekst za pretragu statusa.",
                 DatumUpita = DateTime.UtcNow,
-                Status = StatusUpita.Odgovoren
+                DatumZadnjeAktivnosti = DateTime.UtcNow,
+                Status = StatusUpita.CekaKorisnika,
+                Poruke = [new PorukaPodrske { PosiljalacId = user.Id, TipAutora = TipAutoraPorukePodrske.Korisnik, Sadrzaj = "Tekst za pretragu statusa.", DatumSlanja = DateTime.UtcNow }]
             });
         await app.Db.SaveChangesAsync();
 
@@ -671,8 +774,8 @@ public class AdminLifecycleTests
         Assert.Single(tickets);
         Assert.Equal("Zadnji upit", tickets[0].GetProperty("naslov").GetString());
         Assert.Equal("supportjson@example.com", tickets[0].GetProperty("korisnikEmail").GetString());
-        Assert.Equal("Odgovoren", tickets[0].GetProperty("status").GetString());
-        Assert.Equal("Tekst za pretragu statusa.", tickets[0].GetProperty("sadrzaj").GetString());
+        Assert.Equal("CekaKorisnika", tickets[0].GetProperty("status").GetString());
+        Assert.False(tickets[0].TryGetProperty("sadrzaj", out _));
     }
 
     [Fact]
@@ -761,16 +864,18 @@ public class AdminLifecycleTests
         Assert.Equal("desc", json.GetProperty("direction").GetString());
     }
 
-    private static AdminPanelController CreateAdminController(TestApp app)
+    private static AdminPanelController CreateAdminController(TestApp app, ApplicationUser user = null, params string[] roles)
     {
         var controller = new AdminPanelController(
             new AdminDashboardService(app.Db),
-            new AdminListQueryService(app.Db, app.UserManager),
+            new AdminListQueryService(app.Db),
             new AdminModerationService(app.Db),
             new AdminVehicleService(app.Db, app.Environment),
-            new AdminProfileService(app.Db, app.UserManager, app.RoleManager));
+            new AdminProfileService(app.Db, app.UserManager, app.RoleManager),
+            CreateSupportService(app));
 
-        ConfigureController(controller, app.Provider);
+        ConfigureController(controller, app.Provider, user, roles);
+        controller.Url = new TestUrlHelper(controller.ControllerContext);
         return controller;
     }
 
@@ -815,14 +920,15 @@ public class AdminLifecycleTests
             app.UserManager,
             NullLogger<ProfilController>.Instance,
             new ProfileActivityService(app.Db),
-            new ProfileAccountService(app.UserManager, app.SignInManager));
+            new ProfileAccountService(app.UserManager, app.SignInManager),
+            CreateSupportService(app));
 
         ConfigureController(controller, app.Provider, user);
         controller.Url = new TestUrlHelper(controller.ControllerContext);
         return controller;
     }
 
-    private static void ConfigureController(Controller controller, IServiceProvider provider, ApplicationUser user = null)
+    private static void ConfigureController(Controller controller, IServiceProvider provider, ApplicationUser user = null, params string[] roles)
     {
         var httpContext = new DefaultHttpContext
         {
@@ -831,12 +937,13 @@ public class AdminLifecycleTests
 
         if (user != null)
         {
-            httpContext.User = new ClaimsPrincipal(new ClaimsIdentity(
-            [
+            var claims = new List<Claim>
+            {
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
-                new Claim(ClaimTypes.Name, user.UserName ?? user.Email ?? user.Id),
-                new Claim(ClaimTypes.Role, "Kupac")
-            ], "TestAuth"));
+                new Claim(ClaimTypes.Name, user.UserName ?? user.Email ?? user.Id)
+            };
+            claims.AddRange((roles.Length == 0 ? ["Kupac"] : roles).Select(role => new Claim(ClaimTypes.Role, role)));
+            httpContext.User = new ClaimsPrincipal(new ClaimsIdentity(claims, "TestAuth"));
             httpContext.Request.Headers.Referer = "/Vozilo";
         }
 
@@ -845,6 +952,44 @@ public class AdminLifecycleTests
             HttpContext = httpContext
         };
         controller.TempData = new TempDataDictionary(httpContext, new TestTempDataProvider());
+    }
+
+    private static SupportService CreateSupportService(
+        TestApp app,
+        bool demoEnabled = true,
+        bool emailEnabled = false) => new(
+        app.Db,
+        Options.Create(new DemoOptions { Enabled = demoEnabled }),
+        Options.Create(new ResendEmailOptions { Enabled = emailEnabled }));
+
+    private static async Task<Podrska> AddSupportTicketAsync(
+        ApplicationDbContext db,
+        ApplicationUser user,
+        string title,
+        string content)
+    {
+        var now = DateTime.UtcNow;
+        var ticket = new Podrska
+        {
+            KorisnikId = user.Id,
+            Naslov = title,
+            DatumUpita = now,
+            DatumZadnjeAktivnosti = now,
+            Status = StatusUpita.CekaPodrsku,
+            Poruke =
+            [
+                new PorukaPodrske
+                {
+                    PosiljalacId = user.Id,
+                    TipAutora = TipAutoraPorukePodrske.Korisnik,
+                    Sadrzaj = content,
+                    DatumSlanja = now
+                }
+            ]
+        };
+        db.PodrskaUpiti.Add(ticket);
+        await db.SaveChangesAsync();
+        return ticket;
     }
 
     private static async Task<ApplicationUser> CreateUserAsync(TestApp app, string userName, string email, string role)
@@ -965,9 +1110,10 @@ public class AdminLifecycleTests
         {
             KorisnikId = user.Id,
             Naslov = "Pomoc",
-            Sadrzaj = "Test upit",
             DatumUpita = DateTime.UtcNow,
-            Status = StatusUpita.Poslat
+            DatumZadnjeAktivnosti = DateTime.UtcNow,
+            Status = StatusUpita.CekaPodrsku,
+            Poruke = [new PorukaPodrske { PosiljalacId = user.Id, TipAutora = TipAutoraPorukePodrske.Korisnik, Sadrzaj = "Test upit", DatumSlanja = DateTime.UtcNow }]
         });
 
         var order = new Narudzba
@@ -1121,6 +1267,14 @@ public class AdminLifecycleTests
             Messages.Add(new PasswordResetMessage(toEmail, displayName, resetLink, expiresAtUtc));
             return Task.CompletedTask;
         }
+
+        public Task SendSupportReplyEmailAsync(
+            string toEmail,
+            string displayName,
+            string subject,
+            string message,
+            string detailsUrl,
+            string culture) => Task.CompletedTask;
     }
 
     private sealed record PasswordResetMessage(

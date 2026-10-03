@@ -233,6 +233,32 @@ public sealed class AdminProfileService : IAdminProfileService
             await _context.SaveChangesAsync();
         }
 
+        var assignedTickets = await _context.PodrskaUpiti
+            .Where(ticket => ticket.DodijeljenKorisnikId == id)
+            .ToListAsync();
+        foreach (var ticket in assignedTickets)
+        {
+            ticket.DodijeljenKorisnikId = null;
+            ticket.DatumDodjele = null;
+            if (ticket.Status != StatusUpita.Zatvoren)
+            {
+                ticket.Status = StatusUpita.CekaPodrsku;
+            }
+        }
+
+        var authoredSupportMessages = await _context.PorukePodrske
+            .Where(message => message.PosiljalacId == id)
+            .ToListAsync();
+        foreach (var message in authoredSupportMessages)
+        {
+            message.PosiljalacId = null;
+        }
+
+        if (assignedTickets.Count > 0 || authoredSupportMessages.Count > 0)
+        {
+            await _context.SaveChangesAsync();
+        }
+
         var deleteResult = await _userManager.DeleteAsync(user);
         return deleteResult.Succeeded
             ? ProfileDeleteResult.Deleted()

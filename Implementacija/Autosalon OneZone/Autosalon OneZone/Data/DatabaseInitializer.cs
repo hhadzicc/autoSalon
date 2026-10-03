@@ -851,9 +851,15 @@ namespace Autosalon_OneZone.Data
             }
 
             var purchaseUser = buyerUser ?? reviewUsers[0];
-            var vehicleByName = vehicles.ToDictionary(
-                vehicle => $"{vehicle.Marka} {vehicle.Model}",
-                StringComparer.OrdinalIgnoreCase);
+            var vehicleByName = vehicles
+                .OrderBy(vehicle => vehicle.VoziloID)
+                .GroupBy(
+                    vehicle => $"{vehicle.Marka} {vehicle.Model}",
+                    StringComparer.OrdinalIgnoreCase)
+                .ToDictionary(
+                    group => group.Key,
+                    group => group.First(),
+                    StringComparer.OrdinalIgnoreCase);
 
             var demoReviews = new[]
             {
@@ -976,9 +982,9 @@ namespace Autosalon_OneZone.Data
             var supportUser = buyerUser ?? reviewUsers[0];
             var demoInquiries = new[]
             {
-                new { Title = "Pitanje oko rezervacije vozila", Body = "Zanima me koliko dugo mogu rezervisati vozilo prije kupovine.", Status = StatusUpita.Poslat },
+                new { Title = "Pitanje oko rezervacije vozila", Body = "Zanima me koliko dugo mogu rezervisati vozilo prije kupovine.", Status = StatusUpita.CekaPodrsku },
                 new { Title = "Provjera dostupnosti testne vožnje", Body = "Da li je moguće zakazati testnu vožnju za vikend?", Status = StatusUpita.UObradi },
-                new { Title = "Informacije o finansiranju", Body = "Molim vas za više informacija o opcijama plaćanja na rate.", Status = StatusUpita.Odgovoren }
+                new { Title = "Informacije o finansiranju", Body = "Molim vas za više informacija o opcijama plaćanja na rate.", Status = StatusUpita.CekaKorisnika }
             };
 
             var addedInquiries = 0;
@@ -989,14 +995,41 @@ namespace Autosalon_OneZone.Data
                     continue;
                 }
 
-                dbContext.PodrskaUpiti.Add(new Podrska
+                var inquiryDate = DateTime.UtcNow.AddDays(-(addedInquiries + 1));
+                var ticket = new Podrska
                 {
                     KorisnikId = supportUser.Id,
                     Naslov = inquiry.Title,
-                    Sadrzaj = inquiry.Body,
                     Status = inquiry.Status,
-                    DatumUpita = DateTime.UtcNow.AddDays(-(addedInquiries + 1))
-                });
+                    DatumUpita = inquiryDate,
+                    DatumZadnjeAktivnosti = inquiryDate,
+                    Jezik = "bs-Latn-BA",
+                    DodijeljenKorisnikId = inquiry.Status == StatusUpita.CekaPodrsku ? null : sellerUser?.Id,
+                    DatumDodjele = inquiry.Status == StatusUpita.CekaPodrsku ? null : inquiryDate,
+                    Poruke = new List<PorukaPodrske>
+                    {
+                        new()
+                        {
+                            PosiljalacId = supportUser.Id,
+                            TipAutora = TipAutoraPorukePodrske.Korisnik,
+                            Sadrzaj = inquiry.Body,
+                            DatumSlanja = inquiryDate
+                        }
+                    }
+                };
+                if (inquiry.Status == StatusUpita.CekaKorisnika && sellerUser != null)
+                {
+                    var replyDate = inquiryDate.AddHours(3);
+                    ticket.Poruke.Add(new PorukaPodrske
+                    {
+                        PosiljalacId = sellerUser.Id,
+                        TipAutora = TipAutoraPorukePodrske.Osoblje,
+                        Sadrzaj = "Rado ćemo vam pripremiti ponudu. Da li vam više odgovara kartično plaćanje ili kredit?",
+                        DatumSlanja = replyDate
+                    });
+                    ticket.DatumZadnjeAktivnosti = replyDate;
+                }
+                dbContext.PodrskaUpiti.Add(ticket);
                 addedInquiries++;
             }
 

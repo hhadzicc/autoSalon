@@ -21,6 +21,8 @@ namespace Autosalon_OneZone.Data
         public DbSet<Kredit> Krediti { get; set; }
         public DbSet<Recenzija> Recenzije { get; set; }
         public DbSet<Podrska> PodrskaUpiti { get; set; }
+        public DbSet<PorukaPodrske> PorukePodrske { get; set; }
+        public DbSet<EmailPodrskeOutbox> EmailPodrskeOutbox { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -51,6 +53,10 @@ namespace Autosalon_OneZone.Data
                 .Property(e => e.Status)
                 .HasConversion<string>();
 
+            modelBuilder.Entity<PorukaPodrske>()
+                .Property(e => e.TipAutora)
+                .HasConversion<string>();
+
             modelBuilder.Entity<ApplicationUser>()
                 .HasMany(u => u.Narudzbe)
                 .WithOne(n => n.Korisnik)
@@ -78,6 +84,30 @@ namespace Autosalon_OneZone.Data
                 .HasMany(u => u.PodrskaUpiti)
                 .WithOne(p => p.Korisnik)
                 .HasForeignKey(p => p.KorisnikId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ApplicationUser>()
+                .HasMany(u => u.DodijeljeniUpiti)
+                .WithOne(p => p.DodijeljenKorisnik)
+                .HasForeignKey(p => p.DodijeljenKorisnikId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<ApplicationUser>()
+                .HasMany(u => u.PorukePodrske)
+                .WithOne(p => p.Posiljalac)
+                .HasForeignKey(p => p.PosiljalacId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Podrska>()
+                .HasMany(p => p.Poruke)
+                .WithOne(p => p.Upit)
+                .HasForeignKey(p => p.UpitID)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<PorukaPodrske>()
+                .HasOne(p => p.EmailOutbox)
+                .WithOne(e => e.Poruka)
+                .HasForeignKey<EmailPodrskeOutbox>(e => e.PorukaPodrskeID)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Vozilo>()
@@ -164,8 +194,32 @@ namespace Autosalon_OneZone.Data
                 .IsRequired()
                 .HasMaxLength(200);
             modelBuilder.Entity<Podrska>()
+                .Property(p => p.Jezik)
+                .IsRequired()
+                .HasMaxLength(10);
+            var supportRowVersion = modelBuilder.Entity<Podrska>()
+                .Property(p => p.RowVersion)
+                .IsRowVersion();
+            if (Database.ProviderName?.Contains("Sqlite", StringComparison.OrdinalIgnoreCase) == true)
+            {
+                supportRowVersion.ValueGeneratedNever();
+            }
+            modelBuilder.Entity<Podrska>()
+                .HasIndex(p => new { p.Status, p.DatumZadnjeAktivnosti });
+            modelBuilder.Entity<Podrska>()
+                .HasIndex(p => p.DodijeljenKorisnikId);
+
+            modelBuilder.Entity<PorukaPodrske>()
                 .Property(p => p.Sadrzaj)
-                .IsRequired();
+                .IsRequired()
+                .HasMaxLength(5000);
+            modelBuilder.Entity<PorukaPodrske>()
+                .HasIndex(p => new { p.UpitID, p.DatumSlanja });
+            modelBuilder.Entity<PorukaPodrske>()
+                .HasIndex(p => new { p.UpitID, p.TipAutora, p.ProcitanaUtc });
+
+            modelBuilder.Entity<EmailPodrskeOutbox>()
+                .HasIndex(e => new { e.PoslanoUtc, e.SljedeciPokusajUtc });
 
             modelBuilder.Entity<Kartica>()
                 .Property(c => c.BrojKartice)

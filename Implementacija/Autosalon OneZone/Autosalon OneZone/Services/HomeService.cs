@@ -8,7 +8,6 @@ namespace Autosalon_OneZone.Services;
 public interface IHomeService
 {
     Task<HomeIndexViewModel> GetHomePageAsync();
-    Task AddSupportRequestAsync(string userId, string title, string content);
 }
 
 public sealed class HomeService : IHomeService
@@ -97,16 +96,4 @@ public sealed class HomeService : IHomeService
 
     private static string VehicleKey(Vozilo vehicle) => $"{vehicle.Marka}|{vehicle.Model}";
 
-    public async Task AddSupportRequestAsync(string userId, string title, string content)
-    {
-        _context.PodrskaUpiti.Add(new Podrska
-        {
-            KorisnikId = userId,
-            Naslov = title,
-            Sadrzaj = content,
-            DatumUpita = DateTime.Now,
-            Status = StatusUpita.Poslat
-        });
-        await _context.SaveChangesAsync();
-    }
 }

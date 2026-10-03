@@ -25,6 +25,7 @@ public class AuthorizationContractTests
     [InlineData(nameof(AdminPanelController.GetEditProfilForm))]
     [InlineData(nameof(AdminPanelController.SaveProfil))]
     [InlineData(nameof(AdminPanelController.DeleteProfil))]
+    [InlineData(nameof(AdminPanelController.DeletePodrska))]
     public void Administrator_only_admin_actions_are_explicitly_restricted(string actionName)
     {
         var method = FindAction(actionName);
@@ -34,15 +35,19 @@ public class AuthorizationContractTests
     }
 
     [Theory]
-    [InlineData(nameof(AdminPanelController.DeletePodrska))]
-    [InlineData(nameof(AdminPanelController.UpdatePodrskaStatus))]
+    [InlineData(nameof(AdminPanelController.PreuzmiPodrsku))]
+    [InlineData(nameof(AdminPanelController.OslobodiPodrsku))]
+    [InlineData(nameof(AdminPanelController.OdgovoriNaPodrsku))]
+    [InlineData(nameof(AdminPanelController.ZatvoriPodrsku))]
     public void Support_mutations_are_available_to_admin_and_seller_roles(string actionName)
     {
         var method = FindAction(actionName);
 
         Assert.NotNull(method.GetCustomAttribute<HttpPostAttribute>());
         Assert.NotNull(method.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>());
-        Assert.Contains(method.GetCustomAttributes<AuthorizeAttribute>(), attribute => attribute.Roles == "Administrator,Prodavac");
+        var controllerAuthorize = typeof(AdminPanelController).GetCustomAttribute<AuthorizeAttribute>();
+        Assert.Equal("Administrator,Prodavac", controllerAuthorize?.Roles);
+        Assert.Null(method.GetCustomAttribute<AllowAnonymousAttribute>());
     }
 
     [Theory]

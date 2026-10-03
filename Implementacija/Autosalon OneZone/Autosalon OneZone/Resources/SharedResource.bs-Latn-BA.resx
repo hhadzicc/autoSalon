@@ -659,7 +659,7 @@
     <value>Detalji</value>
   </data>
   <data name="HomeHeroBadge" xml:space="preserve">
-    <value>Provjerena vozila. Jednostavnija kupovina.</value>
+    <value>Provjerena vozila · Sigurna kupovina</value>
   </data>
   <data name="HomeHeroTitleStart" xml:space="preserve">
     <value>Pronađite vozilo koje izgleda dobro, vozi bolje i</value>
@@ -1314,6 +1314,9 @@
   </data>
   <data name="BackToProfile" xml:space="preserve">
     <value>Nazad na profil</value>
+  </data>
+  <data name="BackToHome" xml:space="preserve">
+    <value>Nazad na početnu</value>
   </data>
   <data name="SaveChanges" xml:space="preserve">
     <value>Sačuvaj izmjene</value>
@@ -2159,10 +2162,10 @@
     <value>Vozila</value>
   </data>
   <data name="DemoModeTitle" xml:space="preserve">
-    <value>Demo način</value>
+    <value>Demo mod</value>
   </data>
   <data name="DemoModeAriaLabel" xml:space="preserve">
-    <value>Demo način. Plaćanja su simulirana i podaci se periodično resetuju.</value>
+    <value>Demo mod. Plaćanja su simulirana i podaci se periodično resetuju.</value>
   </data>
   <data name="DemoModeTooltip" xml:space="preserve">
     <value>Plaćanja su simulirana. Podaci se automatski resetuju svakih {0} minuta.</value>
@@ -2251,4 +2254,108 @@
   <data name="AdminPurchasedVehicle" xml:space="preserve">
     <value>Kupljeno vozilo</value>
   </data>
+  <data name="MySupportTickets" xml:space="preserve"><value>Moji upiti</value></data>
+  <data name="MySupportTicketsText" xml:space="preserve"><value>Pratite razgovore sa našim timom za podršku.</value></data>
+  <data name="NewSupportTicket" xml:space="preserve"><value>Novi upit</value></data>
+  <data name="NoUserSupportTickets" xml:space="preserve"><value>Još nemate upita</value></data>
+  <data name="NoUserSupportTicketsText" xml:space="preserve"><value>Vaši razgovori sa podrškom pojavit će se ovdje.</value></data>
+  <data name="BackToSupportTickets" xml:space="preserve"><value>Nazad na upite</value></data>
+  <data name="SupportStartedOn" xml:space="preserve"><value>Pokrenuto</value></data>
+  <data name="SupportConversation" xml:space="preserve"><value>Razgovor sa podrškom</value></data>
+  <data name="SupportTicketClosed" xml:space="preserve"><value>Ovaj upit je zatvoren</value></data>
+  <data name="SupportTicketClosedText" xml:space="preserve"><value>Ponovo ga otvorite ako želite nastaviti razgovor.</value></data>
+  <data name="ReopenSupportTicket" xml:space="preserve"><value>Ponovo otvori upit</value></data>
+  <data name="YourReply" xml:space="preserve"><value>Vaš odgovor</value></data>
+  <data name="SupportReplyPlaceholder" xml:space="preserve"><value>Napišite poruku...</value></data>
+  <data name="SupportReplyHint" xml:space="preserve"><value>Vaša poruka vraća upit timu za podršku.</value></data>
+  <data name="SendReply" xml:space="preserve"><value>Pošalji odgovor</value></data>
+  <data name="SupportStatus.CekaPodrsku" xml:space="preserve"><value>Novi</value></data>
+  <data name="SupportStatus.UObradi" xml:space="preserve"><value>U obradi</value></data>
+  <data name="SupportStatus.CekaKorisnika" xml:space="preserve"><value>Odgovoreno</value></data>
+  <data name="SupportStatus.Rijesen" xml:space="preserve"><value>Odgovoreno</value></data>
+  <data name="SupportStatus.Zatvoren" xml:space="preserve"><value>Zatvoren</value></data>
+  <data name="Validation.SupportMessageLength" xml:space="preserve"><value>Poruka mora sadržavati između 10 i 4000 znakova.</value></data>
+  <data name="SupportMessageValidationError" xml:space="preserve"><value>Unesite poruku između 10 i 4000 znakova.</value></data>
+  <data name="SupportQueue.New" xml:space="preserve"><value>Novi</value></data>
+  <data name="SupportQueue.Mine" xml:space="preserve"><value>Moji upiti</value></data>
+  <data name="SupportQueue.Closed" xml:space="preserve"><value>Zatvoreni</value></data>
+  <data name="SupportQueue.All" xml:space="preserve"><value>Svi upiti</value></data>
+  <data name="SupportTicketClosedError" xml:space="preserve"><value>Ovaj upit je zatvoren. Ponovo ga otvorite prije slanja poruke.</value></data>
+  <data name="SupportFollowUpSent" xml:space="preserve"><value>Vaš odgovor je uspješno poslan.</value></data>
+  <data name="SupportTicketReopened" xml:space="preserve"><value>Upit je ponovo otvoren.</value></data>
+  <data name="SupportTicketAlreadyOpen" xml:space="preserve"><value>Upit je već otvoren.</value></data>
+  <data name="TakeTicket" xml:space="preserve"><value>Preuzmi upit</value></data>
+  <data name="TakeOverTicket" xml:space="preserve"><value>Preuzmi od agenta</value></data>
+  <data name="ReleaseTicket" xml:space="preserve"><value>Oslobodi</value></data>
+  <data name="CloseTicket" xml:space="preserve"><value>Zatvori upit</value></data>
+  <data name="AssignedTo" xml:space="preserve"><value>Dodijeljeno</value></data>
+  <data name="Unassigned" xml:space="preserve"><value>Nije dodijeljeno</value></data>
+  <data name="SupportTicketTaken" xml:space="preserve"><value>Upit je sada dodijeljen vama.</value></data>
+  <data name="SupportTicketReleased" xml:space="preserve"><value>Upit je oslobođen.</value></data>
+  <data name="SupportReplySent" xml:space="preserve"><value>Odgovor je uspješno poslan.</value></data>
+  <data name="SupportTicketClosedSuccess" xml:space="preserve"><value>Upit je zatvoren.</value></data>
+  <data name="SupportTicketNotFound" xml:space="preserve"><value>Upit za podršku nije pronađen.</value></data>
+  <data name="SupportTicketAssignedToOther" xml:space="preserve"><value>Ovaj upit je dodijeljen agentu {0}.</value></data>
+  <data name="SupportTicketConcurrencyError" xml:space="preserve"><value>Upit je promijenjen tokom vašeg rada. Učitajte ga ponovo.</value></data>
+  <data name="SupportTicketInvalidState" xml:space="preserve"><value>Ova akcija nije dostupna za trenutno stanje upita.</value></data>
+  <data name="SupportSystemReopened" xml:space="preserve"><value>Upit je ponovo otvoren.</value></data>
+  <data name="SupportSystemClosed" xml:space="preserve"><value>Upit je zatvoren.</value></data>
+  <data name="SupportSystemReminder" xml:space="preserve"><value>Čekamo vaš odgovor. Upit će se automatski zatvoriti nakon sedam dana neaktivnosti.</value></data>
+  <data name="SupportSystemAutoClosed" xml:space="preserve"><value>Upit je automatski zatvoren zbog neaktivnosti.</value></data>
+  <data name="SupportReplyEmailSubject" xml:space="preserve"><value>Odgovor na vaš upit: {0}</value></data>
+  <data name="SupportReplyEmailTitle" xml:space="preserve"><value>Dobili ste odgovor podrške</value></data>
+  <data name="SupportReplyEmailGreeting" xml:space="preserve"><value>Poštovani/a {0},</value></data>
+  <data name="SupportReplyEmailIntro" xml:space="preserve"><value>Naš tim za podršku odgovorio je na vaš upit.</value></data>
+  <data name="SupportReplyEmailButton" xml:space="preserve"><value>Otvori razgovor</value></data>
+  <data name="SupportReplyEmailFooter" xml:space="preserve"><value>Odgovorite kroz aplikaciju Autosalon OneZone kako bi cijeli razgovor ostao na jednom mjestu.</value></data>
+  <data name="NavSellerPanel" xml:space="preserve"><value>Panel prodavca</value></data>
+  <data name="SellerPanel" xml:space="preserve"><value>Panel prodavca</value></data>
+  <data name="SellerMenu" xml:space="preserve"><value>Meni prodavca</value></data>
+  <data name="SellerDashboardAvailable" xml:space="preserve"><value>Dostupna</value></data>
+  <data name="SellerDashboardAvailableDesc" xml:space="preserve"><value>Spremna za prodaju</value></data>
+  <data name="SellerDashboardSold" xml:space="preserve"><value>Prodana</value></data>
+  <data name="SellerDashboardSoldDesc" xml:space="preserve"><value>Kupljena vozila</value></data>
+  <data name="SellerDashboardMyInquiries" xml:space="preserve"><value>Moji upiti</value></data>
+  <data name="SellerDashboardMyInquiriesDesc" xml:space="preserve"><value>Aktivni upiti dodijeljeni vama</value></data>
+  <data name="SellerDashboardLatestInquiriesText" xml:space="preserve"><value>Novi i vaši aktivni upiti.</value></data>
+  <data name="LegalLastUpdated" xml:space="preserve"><value>Posljednje ažuriranje: 4. oktobar 2026.</value></data>
+  <data name="LegalPageContents" xml:space="preserve"><value>Sadržaj stranice</value></data>
+  <data name="LegalContactSupport" xml:space="preserve"><value>Kontaktirajte podršku</value></data>
+  <data name="PrivacyIntro" xml:space="preserve"><value>Ovdje je objašnjeno koje podatke OneZone obrađuje tokom korišćenja demo aplikacije i kako se ti podaci koriste.</value></data>
+  <data name="PrivacyDemoTitle" xml:space="preserve"><value>Važno za demo režim</value></data>
+  <data name="PrivacyDemoText" xml:space="preserve"><value>OneZone je portfolio i demonstraciona aplikacija. Ne unosite stvarne kartične podatke niti druge osjetljive informacije. Demo sadržaj se periodično vraća na početno stanje, trenutno svakih 60 minuta.</value></data>
+  <data name="PrivacyDataTitle" xml:space="preserve"><value>Podaci koje obrađujemo</value></data>
+  <data name="PrivacyDataText" xml:space="preserve"><value>Obrađujemo samo podatke potrebne za prikaz funkcija autosalona i korisničkog naloga:</value></data>
+  <data name="PrivacyDataAccount" xml:space="preserve"><value>ime, prezime, email adresa, korisničko ime i podaci potrebni za prijavu;</value></data>
+  <data name="PrivacyDataActivity" xml:space="preserve"><value>korpa, demo narudžbe, recenzije, upiti za podršku i poruke u tim razgovorima;</value></data>
+  <data name="PrivacyDataTechnical" xml:space="preserve"><value>neophodni kolačići za prijavu, odabrani jezik i osnovni serverski zapisi potrebni za sigurnost i rad aplikacije.</value></data>
+  <data name="PrivacyPurposeTitle" xml:space="preserve"><value>Zašto koristimo podatke</value></data>
+  <data name="PrivacyPurposeText" xml:space="preserve"><value>Podaci se koriste za prijavu i upravljanje profilom, prikaz korpe i kupljenih vozila, evidentiranje demo narudžbi, objavu iskustava kupaca, komunikaciju sa podrškom te zaštitu aplikacije od zloupotrebe. Ne koristimo ih za oglašavanje niti profilisanje korisnika.</value></data>
+  <data name="PrivacyPaymentsTitle" xml:space="preserve"><value>Simulirana plaćanja</value></data>
+  <data name="PrivacyPaymentsText" xml:space="preserve"><value>U demo režimu nema stvarne naplate. Nakon uspješne simulacije zapis narudžbe sadrži samo maskirani broj kartice, ime vlasnika i datum isteka; CVV se zamjenjuje oznakom i ne čuva se u izvornom obliku. Koristite isključivo testne podatke.</value></data>
+  <data name="PrivacyRetentionTitle" xml:space="preserve"><value>Čuvanje i reset podataka</value></data>
+  <data name="PrivacyRetentionText" xml:space="preserve"><value>Demo narudžbe, plaćanja, korpe, recenzije, upiti i katalog periodično se brišu ili vraćaju na početne vrijednosti. Korisnički račun može ostati aktivan nakon reseta kako bi prijava nastavila raditi. Zato demo reset nije zamjena za zahtjev za brisanje naloga.</value></data>
+  <data name="PrivacySharingTitle" xml:space="preserve"><value>Pristup i dijeljenje</value></data>
+  <data name="PrivacySharingText" xml:space="preserve"><value>Podatke ne prodajemo. Ovlašteni administratori i prodavci vide samo informacije potrebne za svoje funkcije. Kada su email obavijesti uključene, potrebni podaci poruke mogu biti obrađeni preko konfigurisanog email servisa i hosting infrastrukture.</value></data>
+  <data name="PrivacyRightsTitle" xml:space="preserve"><value>Vaše mogućnosti</value></data>
+  <data name="PrivacyRightsText" xml:space="preserve"><value>Osnovne podatke možete izmijeniti kroz profil. Za uvid, ispravku ili brisanje naloga i povezanih podataka pošaljite upit podršci. Ne šaljite lozinku ili kartične podatke kroz poruku podrške.</value></data>
+  <data name="TermsTitle" xml:space="preserve"><value>Uslovi korišćenja</value></data>
+  <data name="TermsIntro" xml:space="preserve"><value>Ovi uslovi opisuju kako se OneZone demo aplikacija može koristiti i šta njene funkcije predstavljaju.</value></data>
+  <data name="TermsDemoTitle" xml:space="preserve"><value>Demo, a ne stvarni autosalon</value></data>
+  <data name="TermsDemoText" xml:space="preserve"><value>OneZone je portfolio i demonstracioni projekat. Prikazana vozila, cijene, dostupnost i korisnički nalozi služe za demonstraciju softvera i ne predstavljaju stvarnu prodajnu ponudu.</value></data>
+  <data name="TermsAccountsTitle" xml:space="preserve"><value>Korisnički nalozi</value></data>
+  <data name="TermsAccountsText" xml:space="preserve"><value>Za kupovinu, recenzije i upite potreban je korisnički nalog. Korisnik je odgovoran za podatke koje unosi i za čuvanje pristupnih podataka. Demo naloge i podatke nije potrebno tretirati kao trajnu pohranu.</value></data>
+  <data name="TermsPurchasesTitle" xml:space="preserve"><value>Kupovina i plaćanje</value></data>
+  <data name="TermsPurchasesText" xml:space="preserve"><value>Sve kupovine, krediti i kartična plaćanja u demo režimu su simulirani. Ne vrši se stvarna naplata, ne nastaje ugovor o kupovini i nijedno vozilo se stvarno ne rezerviše ili isporučuje.</value></data>
+  <data name="TermsContentTitle" xml:space="preserve"><value>Vozila i korisnički sadržaj</value></data>
+  <data name="TermsContentText" xml:space="preserve"><value>Specifikacije, fotografije, kilometraža i cijene služe za demonstraciju kataloga. Recenzije i poruke mogu biti moderirane ili uklonjene, a sav demo sadržaj može nestati prilikom automatskog reseta.</value></data>
+  <data name="TermsConductTitle" xml:space="preserve"><value>Dozvoljeno korišćenje</value></data>
+  <data name="TermsConductText" xml:space="preserve"><value>Aplikaciju koristite razumno i samo za isprobavanje dostupnih funkcija. Nije dozvoljeno:</value></data>
+  <data name="TermsConductSecurity" xml:space="preserve"><value>pokušavati pristup tuđem nalogu, administratorskim funkcijama ili podacima bez ovlaštenja;</value></data>
+  <data name="TermsConductContent" xml:space="preserve"><value>slati uvredljiv, nezakonit ili obmanjujući sadržaj kroz recenzije i podršku;</value></data>
+  <data name="TermsConductAutomation" xml:space="preserve"><value>namjerno preopterećivati aplikaciju, zaobilaziti ograničenja zahtjeva ili ometati demo drugim korisnicima.</value></data>
+  <data name="TermsAvailabilityTitle" xml:space="preserve"><value>Dostupnost i odgovornost</value></data>
+  <data name="TermsAvailabilityText" xml:space="preserve"><value>Aplikacija se pruža u postojećem stanju, bez garancije stalne dostupnosti ili trajnosti podataka. Servis se može ponovo pokrenuti, izmijeniti ili resetovati bez prethodne najave. Ne oslanjajte se na njega za stvarne kupovine ili čuvanje važnih podataka.</value></data>
+  <data name="TermsChangesTitle" xml:space="preserve"><value>Izmjene i pitanja</value></data>
+  <data name="TermsChangesText" xml:space="preserve"><value>Uslovi se mogu ažurirati kada se promijene funkcije aplikacije ili način hostovanja. Datum na vrhu stranice pokazuje posljednju verziju. Za pitanja o korišćenju obratite se podršci.</value></data>
 </root>

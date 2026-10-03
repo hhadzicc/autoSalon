@@ -6,10 +6,14 @@ namespace Autosalon_OneZone.ViewModels.Admin
 {
     public class AdminDashboardViewModel
     {
+        public bool IsAdministrator { get; set; }
         public int BrojVozila { get; set; }
+        public int BrojDostupnihVozila { get; set; }
+        public int BrojProdatihVozila { get; set; }
         public int BrojKorisnika { get; set; }
         public int BrojNarudzbi { get; set; }
         public int BrojAktivnihUpita { get; set; }
+        public int BrojMojihAktivnihUpita { get; set; }
         public decimal UkupanPromet { get; set; }
         public List<DashboardKupovinaViewModel> ZadnjeKupovine { get; set; } = new();
         public List<DashboardUpitViewModel> ZadnjiUpiti { get; set; } = new();

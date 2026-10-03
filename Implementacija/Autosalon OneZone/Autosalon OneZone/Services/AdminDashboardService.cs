@@ -7,7 +7,7 @@ namespace Autosalon_OneZone.Services;
 
 public interface IAdminDashboardService
 {
-    Task<AdminDashboardViewModel> GetDashboardAsync();
+    Task<AdminDashboardViewModel> GetDashboardAsync(string currentUserId, bool isAdministrator);
 }
 
 public sealed class AdminDashboardService : IAdminDashboardService
@@ -19,7 +19,7 @@ public sealed class AdminDashboardService : IAdminDashboardService
         _context = context;
     }
 
-    public async Task<AdminDashboardViewModel> GetDashboardAsync()
+    public async Task<AdminDashboardViewModel> GetDashboardAsync(string currentUserId, bool isAdministrator)
     {
         var recentPurchases = await _context.Narudzbe
             .AsNoTracking()
@@ -30,10 +30,23 @@ public sealed class AdminDashboardService : IAdminDashboardService
             .Take(5)
             .ToListAsync();
 
-        var recentSupportRequests = await _context.PodrskaUpiti
+        var visibleSupportRequests = _context.PodrskaUpiti
             .AsNoTracking()
+            .Where(request => request.Status != StatusUpita.Zatvoren);
+
+        if (!isAdministrator)
+        {
+            visibleSupportRequests = visibleSupportRequests.Where(request =>
+                request.DodijeljenKorisnikId == null ||
+                request.DodijeljenKorisnikId == currentUserId);
+        }
+
+        var recentSupportRequests = await visibleSupportRequests
             .Include(request => request.Korisnik)
-            .OrderByDescending(request => request.DatumUpita)
+            .OrderBy(request => request.Status == StatusUpita.CekaPodrsku
+                ? 0
+                : request.Status == StatusUpita.UObradi ? 1 : 2)
+            .ThenByDescending(request => request.DatumZadnjeAktivnosti)
             .Take(5)
             .ToListAsync();
 
@@ -45,16 +58,28 @@ public sealed class AdminDashboardService : IAdminDashboardService
             .Take(5)
             .ToListAsync();
 
+        var vehicleCount = await _context.Vozila.CountAsync();
+        var availableVehicleCount = await _context.Vozila.AvailableForPurchase().CountAsync();
+
         return new AdminDashboardViewModel
         {
-            BrojVozila = await _context.Vozila.CountAsync(),
-            BrojKorisnika = await _context.Users.CountAsync(),
-            BrojNarudzbi = await _context.Narudzbe.CountAsync(),
-            BrojAktivnihUpita = await _context.PodrskaUpiti.CountAsync(request =>
-                request.Status == StatusUpita.Poslat || request.Status == StatusUpita.UObradi),
-            UkupanPromet = await _context.Narudzbe
-                .Where(order => order.Status != StatusNarudzbe.Otkazana)
-                .SumAsync(order => (decimal?)order.UkupnaCijena) ?? 0,
+            IsAdministrator = isAdministrator,
+            BrojVozila = vehicleCount,
+            BrojDostupnihVozila = availableVehicleCount,
+            BrojProdatihVozila = vehicleCount - availableVehicleCount,
+            BrojKorisnika = isAdministrator ? await _context.Users.CountAsync() : 0,
+            BrojNarudzbi = isAdministrator ? await _context.Narudzbe.CountAsync() : 0,
+            BrojAktivnihUpita = await visibleSupportRequests.CountAsync(),
+            BrojMojihAktivnihUpita = isAdministrator
+                ? 0
+                : await _context.PodrskaUpiti.CountAsync(request =>
+                    request.Status != StatusUpita.Zatvoren &&
+                    request.DodijeljenKorisnikId == currentUserId),
+            UkupanPromet = isAdministrator
+                ? await _context.Narudzbe
+                    .Where(order => order.Status != StatusNarudzbe.Otkazana)
+                    .SumAsync(order => (decimal?)order.UkupnaCijena) ?? 0
+                : 0,
             ZadnjeKupovine = recentPurchases.Select(order => new DashboardKupovinaViewModel
             {
                 NarudzbaID = order.NarudzbaID,
@@ -71,7 +96,7 @@ public sealed class AdminDashboardService : IAdminDashboardService
             ZadnjiUpiti = recentSupportRequests.Select(request => new DashboardUpitViewModel
             {
                 UpitID = request.UpitID,
-                DatumUpita = request.DatumUpita,
+                DatumUpita = request.DatumZadnjeAktivnosti,
                 Naslov = request.Naslov,
                 KorisnikEmail = request.Korisnik?.Email ?? "N/A",
                 Status = request.Status

@@ -9,17 +9,19 @@
 
     private string SupportStatusLabel(StatusUpita status) => status switch
     {
-        StatusUpita.UObradi => L["StatusInProgress"].Value,
-        StatusUpita.Odgovoren => L["StatusAnswered"].Value,
-        StatusUpita.Zatvoren => L["StatusClosed"].Value,
-        _ => L["StatusSent"].Value
+        StatusUpita.CekaPodrsku => L["SupportStatus.CekaPodrsku"].Value,
+        StatusUpita.UObradi => L["SupportStatus.UObradi"].Value,
+        StatusUpita.CekaKorisnika => L["SupportStatus.CekaKorisnika"].Value,
+        StatusUpita.Rijesen => L["SupportStatus.Rijesen"].Value,
+        _ => L["SupportStatus.Zatvoren"].Value
     };
 
     private static string SupportStatusClass(StatusUpita status) => status switch
     {
-        StatusUpita.Poslat => "info",
+        StatusUpita.CekaPodrsku => "info",
         StatusUpita.UObradi => "warning",
-        StatusUpita.Odgovoren => "success",
+        StatusUpita.CekaKorisnika => "waiting",
+        StatusUpita.Rijesen => "waiting",
         StatusUpita.Zatvoren => "secondary",
         _ => "secondary"
     };
@@ -61,32 +63,64 @@
         </div>
     </article>
 
-    <article class="dashboard-stat-card">
-        <span class="dashboard-stat-icon stat-cyan"><i class="bi bi-people-fill"></i></span>
-        <div>
-            <span>@L["AdminUsersTitle"]</span>
-            <strong>@Model.BrojKorisnika</strong>
-            <p>@L["AdminDashboardUsersTotal"]</p>
-        </div>
-    </article>
+    @if (Model.IsAdministrator)
+    {
+        <article class="dashboard-stat-card">
+            <span class="dashboard-stat-icon stat-cyan"><i class="bi bi-people-fill"></i></span>
+            <div>
+                <span>@L["AdminUsersTitle"]</span>
+                <strong>@Model.BrojKorisnika</strong>
+                <p>@L["AdminDashboardUsersTotal"]</p>
+            </div>
+        </article>
 
-    <article class="dashboard-stat-card">
-        <span class="dashboard-stat-icon stat-green"><i class="bi bi-bag-check-fill"></i></span>
-        <div>
-            <span>@L["DashboardOrders"]</span>
-            <strong>@Model.BrojNarudzbi</strong>
-            <p>@L["AdminDashboardOrdersTotal"]</p>
-        </div>
-    </article>
+        <article class="dashboard-stat-card">
+            <span class="dashboard-stat-icon stat-green"><i class="bi bi-bag-check-fill"></i></span>
+            <div>
+                <span>@L["DashboardOrders"]</span>
+                <strong>@Model.BrojNarudzbi</strong>
+                <p>@L["AdminDashboardOrdersTotal"]</p>
+            </div>
+        </article>
 
-    <article class="dashboard-stat-card">
-        <span class="dashboard-stat-icon stat-emerald"><i class="bi bi-cash-stack"></i></span>
-        <div>
-            <span>@L["AdminDashboardRevenue"]</span>
-            <strong>€@Model.UkupanPromet.ToString("N0", CultureInfo.CurrentCulture)</strong>
-            <p>@L["AdminDashboardRevenueDesc"]</p>
-        </div>
-    </article>
+        <article class="dashboard-stat-card">
+            <span class="dashboard-stat-icon stat-emerald"><i class="bi bi-cash-stack"></i></span>
+            <div>
+                <span>@L["AdminDashboardRevenue"]</span>
+                <strong>€@Model.UkupanPromet.ToString("N0", CultureInfo.CurrentCulture)</strong>
+                <p>@L["AdminDashboardRevenueDesc"]</p>
+            </div>
+        </article>
+    }
+    else
+    {
+        <article class="dashboard-stat-card">
+            <span class="dashboard-stat-icon stat-green"><i class="bi bi-check-circle-fill"></i></span>
+            <div>
+                <span>@L["SellerDashboardAvailable"]</span>
+                <strong>@Model.BrojDostupnihVozila</strong>
+                <p>@L["SellerDashboardAvailableDesc"]</p>
+            </div>
+        </article>
+
+        <article class="dashboard-stat-card">
+            <span class="dashboard-stat-icon stat-cyan"><i class="bi bi-bag-check-fill"></i></span>
+            <div>
+                <span>@L["SellerDashboardSold"]</span>
+                <strong>@Model.BrojProdatihVozila</strong>
+                <p>@L["SellerDashboardSoldDesc"]</p>
+            </div>
+        </article>
+
+        <article class="dashboard-stat-card">
+            <span class="dashboard-stat-icon stat-emerald"><i class="bi bi-headset"></i></span>
+            <div>
+                <span>@L["SellerDashboardMyInquiries"]</span>
+                <strong>@Model.BrojMojihAktivnihUpita</strong>
+                <p>@L["SellerDashboardMyInquiriesDesc"]</p>
+            </div>
+        </article>
+    }
 </div>
 
 <div class="dashboard-content-grid">
@@ -140,7 +174,7 @@
             <div class="dashboard-panel-header">
                 <div>
                     <h2>@L["AdminDashboardSupportInquiries"]</h2>
-                    <p>@L["AdminDashboardLatestInquiriesText"]</p>
+                    <p>@L[Model.IsAdministrator ? "AdminDashboardLatestInquiriesText" : "SellerDashboardLatestInquiriesText"]</p>
                 </div>
                 <div class="dashboard-panel-header-actions">
                     <span class="dashboard-active-inquiries-count" title="@L["AdminDashboardActiveInquiries"]">

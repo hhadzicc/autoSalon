@@ -3,10 +3,12 @@
 @inject UserManager<ApplicationUser> UserManager
 
 @{
-    ViewData["Title"] = L["AdminPanel"];
     var currentSection = ViewBag.CurrentSection;
     var user = await UserManager.GetUserAsync(User);
     bool isAdmin = user != null && await UserManager.IsInRoleAsync(user, "Administrator");
+    var panelTitleKey = isAdmin ? "AdminPanel" : "SellerPanel";
+    var menuTitleKey = isAdmin ? "AdminMenu" : "SellerMenu";
+    ViewData["Title"] = L[panelTitleKey];
 }
 
 <section class="admin-section"
@@ -26,12 +28,7 @@
     <div class="admin-container">
         <div class="admin-layout">
             <aside class="admin-sidebar">
-                <div class="admin-sidebar-title">
-                    <i class="bi bi-speedometer2"></i>
-                    <span>@L["AdminMenu"]</span>
-                </div>
-
-                <nav class="admin-menu" aria-label="@L["AdminMenu"]">
+                <nav class="admin-menu" aria-label="@L[menuTitleKey]">
                     <a href="#" class="admin-menu-link" data-section="Dashboard">
                         <i class="bi bi-grid-1x2-fill"></i>
                         @L["Dashboard"]

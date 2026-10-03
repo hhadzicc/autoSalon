@@ -2,10 +2,71 @@
     ViewData["Title"] = L["PrivacyTitle"];
 }
 
-<section class="inner-page-header">
-    <div class="container text-center">
-        <p class="section-eyebrow">@L["FooterPrivacy"]</p>
-        <h1>@L["PrivacyTitle"]</h1>
-        <p>@L["PrivacyText"]</p>
+<section class="legal-page">
+    <div class="container legal-shell">
+        <header class="legal-header">
+            <h1>@L["PrivacyTitle"]</h1>
+            <p>@L["PrivacyIntro"]</p>
+            <span class="legal-updated"><i class="bi bi-calendar3" aria-hidden="true"></i>@L["LegalLastUpdated"]</span>
+        </header>
+
+        <div class="legal-document">
+            <nav class="legal-nav" aria-label="@L["LegalPageContents"]">
+                <strong>@L["LegalPageContents"]</strong>
+                <a href="#demo">@L["PrivacyDemoTitle"]</a>
+                <a href="#data">@L["PrivacyDataTitle"]</a>
+                <a href="#purpose">@L["PrivacyPurposeTitle"]</a>
+                <a href="#payments">@L["PrivacyPaymentsTitle"]</a>
+                <a href="#retention">@L["PrivacyRetentionTitle"]</a>
+                <a href="#sharing">@L["PrivacySharingTitle"]</a>
+                <a href="#rights">@L["PrivacyRightsTitle"]</a>
+            </nav>
+
+            <article class="legal-content">
+                <section id="demo" class="legal-notice">
+                    <div class="legal-notice-icon"><i class="bi bi-info-circle-fill" aria-hidden="true"></i></div>
+                    <div>
+                        <h2>@L["PrivacyDemoTitle"]</h2>
+                        <p>@L["PrivacyDemoText"]</p>
+                    </div>
+                </section>
+
+                <section id="data">
+                    <h2>@L["PrivacyDataTitle"]</h2>
+                    <p>@L["PrivacyDataText"]</p>
+                    <ul>
+                        <li>@L["PrivacyDataAccount"]</li>
+                        <li>@L["PrivacyDataActivity"]</li>
+                        <li>@L["PrivacyDataTechnical"]</li>
+                    </ul>
+                </section>
+
+                <section id="purpose">
+                    <h2>@L["PrivacyPurposeTitle"]</h2>
+                    <p>@L["PrivacyPurposeText"]</p>
+                </section>
+
+                <section id="payments">
+                    <h2>@L["PrivacyPaymentsTitle"]</h2>
+                    <p>@L["PrivacyPaymentsText"]</p>
+                </section>
+
+                <section id="retention">
+                    <h2>@L["PrivacyRetentionTitle"]</h2>
+                    <p>@L["PrivacyRetentionText"]</p>
+                </section>
+
+                <section id="sharing">
+                    <h2>@L["PrivacySharingTitle"]</h2>
+                    <p>@L["PrivacySharingText"]</p>
+                </section>
+
+                <section id="rights">
+                    <h2>@L["PrivacyRightsTitle"]</h2>
+                    <p>@L["PrivacyRightsText"]</p>
+                    <a asp-controller="Home" asp-action="Kontakt" class="legal-contact-link">@L["LegalContactSupport"] <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+                </section>
+            </article>
+        </div>
     </div>
 </section>

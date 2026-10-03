@@ -1,0 +1,72 @@
+@{
+    ViewData["Title"] = L["TermsTitle"];
+}
+
+<section class="legal-page">
+    <div class="container legal-shell">
+        <header class="legal-header">
+            <h1>@L["TermsTitle"]</h1>
+            <p>@L["TermsIntro"]</p>
+            <span class="legal-updated"><i class="bi bi-calendar3" aria-hidden="true"></i>@L["LegalLastUpdated"]</span>
+        </header>
+
+        <div class="legal-document">
+            <nav class="legal-nav" aria-label="@L["LegalPageContents"]">
+                <strong>@L["LegalPageContents"]</strong>
+                <a href="#demo">@L["TermsDemoTitle"]</a>
+                <a href="#accounts">@L["TermsAccountsTitle"]</a>
+                <a href="#purchases">@L["TermsPurchasesTitle"]</a>
+                <a href="#content">@L["TermsContentTitle"]</a>
+                <a href="#conduct">@L["TermsConductTitle"]</a>
+                <a href="#availability">@L["TermsAvailabilityTitle"]</a>
+                <a href="#changes">@L["TermsChangesTitle"]</a>
+            </nav>
+
+            <article class="legal-content">
+                <section id="demo" class="legal-notice">
+                    <div class="legal-notice-icon"><i class="bi bi-info-circle-fill" aria-hidden="true"></i></div>
+                    <div>
+                        <h2>@L["TermsDemoTitle"]</h2>
+                        <p>@L["TermsDemoText"]</p>
+                    </div>
+                </section>
+
+                <section id="accounts">
+                    <h2>@L["TermsAccountsTitle"]</h2>
+                    <p>@L["TermsAccountsText"]</p>
+                </section>
+
+                <section id="purchases">
+                    <h2>@L["TermsPurchasesTitle"]</h2>
+                    <p>@L["TermsPurchasesText"]</p>
+                </section>
+
+                <section id="content">
+                    <h2>@L["TermsContentTitle"]</h2>
+                    <p>@L["TermsContentText"]</p>
+                </section>
+
+                <section id="conduct">
+                    <h2>@L["TermsConductTitle"]</h2>
+                    <p>@L["TermsConductText"]</p>
+                    <ul>
+                        <li>@L["TermsConductSecurity"]</li>
+                        <li>@L["TermsConductContent"]</li>
+                        <li>@L["TermsConductAutomation"]</li>
+                    </ul>
+                </section>
+
+                <section id="availability">
+                    <h2>@L["TermsAvailabilityTitle"]</h2>
+                    <p>@L["TermsAvailabilityText"]</p>
+                </section>
+
+                <section id="changes">
+                    <h2>@L["TermsChangesTitle"]</h2>
+                    <p>@L["TermsChangesText"]</p>
+                    <a asp-controller="Home" asp-action="Kontakt" class="legal-contact-link">@L["LegalContactSupport"] <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+                </section>
+            </article>
+        </div>
+    </div>
+</section>

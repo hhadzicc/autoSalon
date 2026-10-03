@@ -433,12 +433,14 @@
             if (!$form.valid()) return;
             window.appApi.request({ url: $form.attr("action"), type: $form.attr("method"), data: new FormData(this), processData: false, contentType: false })
                 .done((response) => {
-                    window.showAppToast(response.successMessage || text.saveSuccess, "success");
+                    const successMessage = response.successMessage || text.saveSuccess;
                     if (externalReturnUrl) {
+                        window.queueAppToast(successMessage, "success");
                         window.location.assign(externalReturnUrl);
                         return;
                     }
 
+                    window.showAppToast(successMessage, "success");
                     formReturnSection = "";
                     showListView(true);
                 }).fail((xhr) => {

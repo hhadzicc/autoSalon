@@ -85,21 +85,28 @@
                                 <article class="hero-carousel-slide @(index == 0 ? "is-active" : null)"
                                          data-hero-carousel-slide
                                          aria-hidden="@(index == 0 ? "false" : "true")">
-                                    @if (!string.IsNullOrWhiteSpace(heroVehicleImage))
-                                    {
-                                        <div class="car-image" style="background-image: url('@heroVehicleImage');"></div>
-                                    }
-                                    else
-                                    {
-                                        <div class="car-image car-image-placeholder">
-                                            <i class="bi bi-car-front-fill"></i>
-                                            <span>@L["ImageUnavailable"]</span>
-                                        </div>
-                                    }
+                                    <a href="@Url.Action("Details", "Vozilo", new { id = heroVehicle.VoziloID, returnUrl = "/" })"
+                                       class="hero-vehicle-image-link"
+                                       aria-label="@($"{L["ViewDetails"]}: {heroVehicleName}")">
+                                        @if (!string.IsNullOrWhiteSpace(heroVehicleImage))
+                                        {
+                                            <div class="car-image" style="background-image: url('@heroVehicleImage');"></div>
+                                        }
+                                        else
+                                        {
+                                            <div class="car-image car-image-placeholder">
+                                                <i class="bi bi-car-front-fill"></i>
+                                                <span>@L["ImageUnavailable"]</span>
+                                            </div>
+                                        }
+                                    </a>
 
                                     <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start gap-3 mb-4">
                                         <div>
-                                            <h2 class="fw-black mb-1">@heroVehicleName</h2>
+                                            <h2 class="fw-black mb-1">
+                                                <a href="@Url.Action("Details", "Vozilo", new { id = heroVehicle.VoziloID, returnUrl = "/" })"
+                                                   class="hero-vehicle-title-link">@heroVehicleName</a>
+                                            </h2>
                                         </div>
                                         <span class="price-badge">@heroVehiclePrice</span>
                                     </div>
@@ -125,7 +132,7 @@
                                         </div>
                                     </div>
 
-                                    <a href="@Url.Action("Details", "Vozilo", new { id = heroVehicle.VoziloID })" class="oz-btn oz-btn-light">
+                                    <a href="@Url.Action("Details", "Vozilo", new { id = heroVehicle.VoziloID, returnUrl = "/" })" class="oz-btn oz-btn-light">
                                         <span>@L["ViewDetails"]</span>
                                     </a>
                                 </article>
@@ -253,13 +260,16 @@
 
                     <div class="col-md-6 col-lg-4">
                         <article class="home-vehicle-card h-100">
-                            <a href="@Url.Action("Details", "Vozilo", new { id = vehicle.VoziloID })" class="home-vehicle-image-link">
+                            <a href="@Url.Action("Details", "Vozilo", new { id = vehicle.VoziloID, returnUrl = "/" })" class="home-vehicle-image-link">
                                 <img src="@cardImage" class="home-vehicle-image" alt="@vehicle.Marka @vehicle.Model">
                             </a>
 
                             <div class="home-vehicle-body">
                                 <div class="d-flex justify-content-between align-items-start gap-3 mb-2">
-                                    <h3 class="h4 fw-black mb-0">@vehicle.Marka @vehicle.Model</h3>
+                                    <h3 class="h4 fw-black mb-0">
+                                        <a href="@Url.Action("Details", "Vozilo", new { id = vehicle.VoziloID, returnUrl = "/" })"
+                                           class="home-vehicle-title-link">@vehicle.Marka @vehicle.Model</a>
+                                    </h3>
                                     <span class="fuel-chip @FuelPresentation.GetChipClass(vehicle.Gorivo)">@L[FuelPresentation.GetResourceKey(vehicle.Gorivo)]</span>
                                 </div>
 
@@ -267,7 +277,7 @@
 
                                 <div class="d-flex justify-content-between align-items-center pt-3 border-top">
                                     <span class="home-vehicle-price">@cardPrice</span>
-                                    <a href="@Url.Action("Details", "Vozilo", new { id = vehicle.VoziloID })" class="home-details-link oz-text-link">@L["Details"]</a>
+                                    <a href="@Url.Action("Details", "Vozilo", new { id = vehicle.VoziloID, returnUrl = "/" })" class="home-details-link oz-text-link">@L["Details"]</a>
                                 </div>
                             </div>
                         </article>

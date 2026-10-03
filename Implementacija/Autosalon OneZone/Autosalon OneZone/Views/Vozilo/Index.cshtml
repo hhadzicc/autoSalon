@@ -255,39 +255,57 @@
                     <div class="vehicles-active-filters" aria-label="@L["ActiveFilters"]">
                         @if (selectedFuel.HasValue)
                         {
-                            <button type="button" class="vehicles-filter-chip" data-clear-filter="gorivo">
-                                <span>@L[FuelPresentation.GetResourceKey(selectedFuel.Value)]</span><i class="bi bi-x" aria-hidden="true"></i>
-                            </button>
+                            <span class="vehicles-filter-chip">
+                                <span class="vehicles-filter-chip-label">@L[FuelPresentation.GetResourceKey(selectedFuel.Value)]</span>
+                                <button type="button" class="vehicles-filter-chip-remove" data-clear-filter="gorivo" aria-label="@L["ClearFiltersShort"]">
+                                    <i class="bi bi-x" aria-hidden="true"></i>
+                                </button>
+                            </span>
                         }
                         @foreach (var color in selectedColors)
                         {
-                            <button type="button" class="vehicles-filter-chip" data-clear-color="@color">
-                                <span>@L[VehicleColorPresentation.GetResourceKey(color)]</span><i class="bi bi-x" aria-hidden="true"></i>
-                            </button>
+                            <span class="vehicles-filter-chip">
+                                <span class="vehicles-filter-chip-label">@L[VehicleColorPresentation.GetResourceKey(color)]</span>
+                                <button type="button" class="vehicles-filter-chip-remove" data-clear-color="@color" aria-label="@L["ClearFiltersShort"]">
+                                    <i class="bi bi-x" aria-hidden="true"></i>
+                                </button>
+                            </span>
                         }
                         @if (ViewData["GodisteOd"] != null || ViewData["GodisteDo"] != null)
                         {
-                            <button type="button" class="vehicles-filter-chip" data-clear-filter="godisteOd,godisteDo">
-                                <span>@L["VehicleYear"]: @(ViewData["GodisteOd"] ?? "…")–@(ViewData["GodisteDo"] ?? "…")</span><i class="bi bi-x" aria-hidden="true"></i>
-                            </button>
+                            <span class="vehicles-filter-chip">
+                                <span class="vehicles-filter-chip-label">@(ViewData["GodisteOd"] ?? "…")–@(ViewData["GodisteDo"] ?? "…")</span>
+                                <button type="button" class="vehicles-filter-chip-remove" data-clear-filter="godisteOd,godisteDo" aria-label="@L["ClearFiltersShort"]">
+                                    <i class="bi bi-x" aria-hidden="true"></i>
+                                </button>
+                            </span>
                         }
                         @if (ViewData["CijenaOd"] != null || ViewData["CijenaDo"] != null)
                         {
-                            <button type="button" class="vehicles-filter-chip" data-clear-filter="cijenaOd,cijenaDo">
-                                <span>@L["VehiclePrice"]: €@(ViewData["CijenaOd"] ?? "…")–€@(ViewData["CijenaDo"] ?? "…")</span><i class="bi bi-x" aria-hidden="true"></i>
-                            </button>
+                            <span class="vehicles-filter-chip">
+                                <span class="vehicles-filter-chip-label">€@(ViewData["CijenaOd"] ?? "…")–€@(ViewData["CijenaDo"] ?? "…")</span>
+                                <button type="button" class="vehicles-filter-chip-remove" data-clear-filter="cijenaOd,cijenaDo" aria-label="@L["ClearFiltersShort"]">
+                                    <i class="bi bi-x" aria-hidden="true"></i>
+                                </button>
+                            </span>
                         }
                         @if (ViewData["KilometrazaOd"] != null || ViewData["KilometrazaDo"] != null)
                         {
-                            <button type="button" class="vehicles-filter-chip" data-clear-filter="kilometrazaOd,kilometrazaDo">
-                                <span>@L["VehicleMileage"]: @(ViewData["KilometrazaOd"] ?? "…")–@(ViewData["KilometrazaDo"] ?? "…") km</span><i class="bi bi-x" aria-hidden="true"></i>
-                            </button>
+                            <span class="vehicles-filter-chip">
+                                <span class="vehicles-filter-chip-label">@(ViewData["KilometrazaOd"] ?? "…")–@(ViewData["KilometrazaDo"] ?? "…") km</span>
+                                <button type="button" class="vehicles-filter-chip-remove" data-clear-filter="kilometrazaOd,kilometrazaDo" aria-label="@L["ClearFiltersShort"]">
+                                    <i class="bi bi-x" aria-hidden="true"></i>
+                                </button>
+                            </span>
                         }
                         @if (ViewData["KubikazaOd"] != null || ViewData["KubikazaDo"] != null)
                         {
-                            <button type="button" class="vehicles-filter-chip" data-clear-filter="kubikazaOd,kubikazaDo">
-                                <span>@L["VehicleDisplacement"]: @(ViewData["KubikazaOd"] ?? "…")–@(ViewData["KubikazaDo"] ?? "…")</span><i class="bi bi-x" aria-hidden="true"></i>
-                            </button>
+                            <span class="vehicles-filter-chip">
+                                <span class="vehicles-filter-chip-label">@(ViewData["KubikazaOd"] ?? "…")–@(ViewData["KubikazaDo"] ?? "…")</span>
+                                <button type="button" class="vehicles-filter-chip-remove" data-clear-filter="kubikazaOd,kubikazaDo" aria-label="@L["ClearFiltersShort"]">
+                                    <i class="bi bi-x" aria-hidden="true"></i>
+                                </button>
+                            </span>
                         }
                         <button type="button" class="vehicles-clear-all-chips" data-clear-filters>@L["ClearFiltersShort"]</button>
                     </div>

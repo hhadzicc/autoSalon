@@ -35,6 +35,7 @@
       asp-controller="AdminPanel"
       asp-action="SaveProfil"
       method="post"
+      autocomplete="off"
       data-validation-texts="@JsonSerializer.Serialize(profileFormTexts)"
       data-person-name-pattern="@UserInputPatterns.PersonName"
       data-password-pattern="@PasswordPolicy.Pattern"
@@ -44,25 +45,25 @@
     <div class="admin-user-form-grid">
         <div class="form-group">
             <label asp-for="UserName" class="form-label">@L["Username"]</label>
-            <input asp-for="UserName" class="form-control" pattern="@UserInputPatterns.UsernameHtml" title="@L["Validation.UsernameAlphanumeric"]" required maxlength="100" />
+            <input asp-for="UserName" class="form-control" pattern="@UserInputPatterns.UsernameHtml" title="@L["Validation.UsernameAlphanumeric"]" required maxlength="100" autocomplete="off" />
             <span asp-validation-for="UserName" class="text-danger"></span>
         </div>
 
         <div class="form-group">
             <label asp-for="Email" class="form-label">@L["Email"]</label>
-            <input asp-for="Email" class="form-control" type="email" required pattern="@UserInputPatterns.EmailHtml" />
+            <input asp-for="Email" class="form-control" type="email" required pattern="@UserInputPatterns.EmailHtml" autocomplete="off" />
             <span asp-validation-for="Email" class="text-danger"></span>
         </div>
 
         <div class="form-group">
             <label asp-for="Ime" class="form-label">@L["FirstName"]</label>
-            <input asp-for="Ime" class="form-control" pattern="@UserInputPatterns.PersonNameHtml" title="@L["Validation.FirstNameLettersOnly"]" required maxlength="100" />
+            <input asp-for="Ime" class="form-control" pattern="@UserInputPatterns.PersonNameHtml" title="@L["Validation.FirstNameLettersOnly"]" required maxlength="100" autocomplete="off" />
             <span asp-validation-for="Ime" class="text-danger"></span>
         </div>
 
         <div class="form-group">
             <label asp-for="Prezime" class="form-label">@L["LastName"]</label>
-            <input asp-for="Prezime" class="form-control" pattern="@UserInputPatterns.PersonNameHtml" title="@L["Validation.LastNameLettersOnly"]" required maxlength="100" />
+            <input asp-for="Prezime" class="form-control" pattern="@UserInputPatterns.PersonNameHtml" title="@L["Validation.LastNameLettersOnly"]" required maxlength="100" autocomplete="off" />
             <span asp-validation-for="Prezime" class="text-danger"></span>
         </div>
     </div>
@@ -75,7 +76,7 @@
                 <div class="form-group">
                     <label asp-for="Password" class="form-label">@L["Password"]</label>
                     <div class="password-wrapper">
-                        <input asp-for="Password" class="form-control password-input" type="password" required minlength="@PasswordPolicy.RequiredLength" pattern="@PasswordPolicy.HtmlPattern" title="@L["PasswordPolicyError"]" autocomplete="new-password" />
+                        <input asp-for="Password" class="form-control password-input" type="password" required minlength="@PasswordPolicy.RequiredLength" pattern="@PasswordPolicy.HtmlPattern" title="@L["PasswordPolicyError"]" autocomplete="off" />
                         <button type="button" class="password-toggle" aria-label="@L["ShowPassword"]">
                             <i class="bi bi-eye"></i>
                         </button>
@@ -86,7 +87,7 @@
                 <div class="form-group">
                     <label asp-for="ConfirmPassword" class="form-label">@L["ConfirmPassword"]</label>
                     <div class="password-wrapper">
-                        <input asp-for="ConfirmPassword" class="form-control password-input" type="password" required autocomplete="new-password" />
+                        <input asp-for="ConfirmPassword" class="form-control password-input" type="password" required autocomplete="off" />
                         <button type="button" class="password-toggle" aria-label="@L["ShowPassword"]">
                             <i class="bi bi-eye"></i>
                         </button>
@@ -99,7 +100,7 @@
                 <div class="form-group">
                     <label asp-for="Password" class="form-label">@L["NewPassword"] <span class="text-muted fw-normal">(@L["Optional"])</span></label>
                     <div class="password-wrapper">
-                        <input asp-for="Password" class="form-control password-input" type="password" autocomplete="new-password" placeholder="@L["AdminNewPasswordPlaceholder"]" minlength="@PasswordPolicy.RequiredLength" pattern="@PasswordPolicy.HtmlPattern" title="@L["PasswordPolicyError"]" />
+                        <input asp-for="Password" class="form-control password-input" type="password" autocomplete="off" placeholder="@L["AdminNewPasswordPlaceholder"]" minlength="@PasswordPolicy.RequiredLength" pattern="@PasswordPolicy.HtmlPattern" title="@L["PasswordPolicyError"]" />
                         <button type="button" class="password-toggle" aria-label="@L["ShowPassword"]">
                             <i class="bi bi-eye"></i>
                         </button>
@@ -110,7 +111,7 @@
                 <div class="form-group">
                     <label asp-for="ConfirmPassword" class="form-label">@L["ConfirmNewPassword"] <span class="text-muted fw-normal">(@L["Optional"])</span></label>
                     <div class="password-wrapper">
-                        <input asp-for="ConfirmPassword" class="form-control password-input" type="password" autocomplete="new-password" placeholder="@L["AdminConfirmNewPasswordPlaceholder"]" />
+                        <input asp-for="ConfirmPassword" class="form-control password-input" type="password" autocomplete="off" placeholder="@L["AdminConfirmNewPasswordPlaceholder"]" />
                         <button type="button" class="password-toggle" aria-label="@L["ShowPassword"]">
                             <i class="bi bi-eye"></i>
                         </button>

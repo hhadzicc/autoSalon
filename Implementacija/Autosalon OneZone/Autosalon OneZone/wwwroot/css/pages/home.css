@@ -284,9 +284,37 @@
     transition: transform 0.35s ease, filter 0.35s ease;
 }
 
-.featured-car-card:hover .car-image {
+.hero-vehicle-image-link {
+    display: block;
+    overflow: hidden;
+    margin-bottom: 22px;
+    border-radius: 24px;
+}
+
+.hero-vehicle-image-link .car-image {
+    margin-bottom: 0;
+}
+
+.hero-vehicle-image-link:hover .car-image,
+.hero-vehicle-image-link:focus-visible .car-image {
     transform: scale(1.025);
     filter: brightness(1.05);
+}
+
+.hero-vehicle-image-link:focus-visible,
+.hero-vehicle-title-link:focus-visible,
+.home-vehicle-title-link:focus-visible {
+    outline: 3px solid #38bdf8;
+    outline-offset: 4px;
+}
+
+.hero-vehicle-title-link {
+    color: inherit;
+    transition: color 0.2s ease;
+}
+
+.hero-vehicle-title-link:hover {
+    color: #7dd3fc;
 }
 
 .hero-carousel-viewport {
@@ -537,8 +565,23 @@
     transition: 0.25s ease;
 }
 
-.home-vehicle-card:hover .home-vehicle-image {
+.home-vehicle-image-link:hover .home-vehicle-image,
+.home-vehicle-image-link:focus-visible .home-vehicle-image {
     transform: scale(1.04);
+}
+
+.home-vehicle-image-link:focus-visible {
+    outline: 3px solid var(--primary);
+    outline-offset: 3px;
+}
+
+.home-vehicle-title-link {
+    color: inherit;
+    transition: color 0.2s ease;
+}
+
+.home-vehicle-title-link:hover {
+    color: var(--primary);
 }
 
 .home-vehicle-body {

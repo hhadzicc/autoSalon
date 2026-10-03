@@ -13,8 +13,16 @@
     var slikaUrl = !string.IsNullOrEmpty(vehicle.Slika) ? Url.Content($"~/images/vozila/{vehicle.Slika}") : Url.Content("~/img/no-image.png");
     var isInCart = ViewData["IsInCart"] as bool? ?? false;
     var returnUrl = ViewData["ReturnUrl"] as string ?? string.Empty;
+    var returningToHome = string.Equals(returnUrl, "/", StringComparison.OrdinalIgnoreCase);
     var returningToCart = string.Equals(returnUrl, "/Korpa", StringComparison.OrdinalIgnoreCase);
     var returningToExperiences = returnUrl.Contains("section=Recenzije", StringComparison.OrdinalIgnoreCase);
+    var backLabel = returningToHome
+        ? L["BackToHome"]
+        : returningToCart
+            ? L["BackToCart"]
+            : returningToExperiences
+                ? L["BackToCustomerExperiences"]
+                : L["BackToVehicles"];
     var canManageVehicles = User.IsInRole(AppRoles.Administrator) || User.IsInRole(AppRoles.Seller);
     var isBuyer = User.IsInRole(AppRoles.Buyer);
     var isAvailableForPurchase = Model.IsAvailableForPurchase;
@@ -28,9 +36,9 @@
                     class="vehicle-back-button"
                     data-vehicle-back
                     data-return-url="@returnUrl"
-                    data-fallback-url="@Url.Action("Index", returningToCart ? "Korpa" : "Vozilo")">
+                    data-fallback-url="@(returningToHome ? Url.Action("Index", "Home") : Url.Action("Index", returningToCart ? "Korpa" : "Vozilo"))">
                 <i class="bi bi-arrow-left" aria-hidden="true"></i>
-                <span>@L[returningToCart ? "BackToCart" : returningToExperiences ? "BackToCustomerExperiences" : "BackToVehicles"]</span>
+                <span>@backLabel</span>
             </button>
         </div>
 
@@ -108,8 +116,9 @@
                             }
                             else if (!SignInManager.IsSignedIn(User))
                             {
-                                <a href="@Url.Action("Login", "Account", new { returnUrl = Context.Request.Path })" class="btn btn-primary rounded-4">
-                                    <i class="bi bi-person-check me-2"></i>@L["LoginToBuy"]
+                                <a href="@Url.Action("Login", "Account", new { returnUrl = Context.Request.Path })" class="btn btn-primary rounded-4 vehicle-login-button">
+                                    <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i>
+                                    <span>@L["LoginToBuy"]</span>
                                 </a>
                             }
                             </div>

@@ -150,6 +150,8 @@
         info: "bi-info-circle-fill",
         warning: "bi-exclamation-triangle-fill"
     };
+    const pendingToastKey = "app.pendingToast";
+    const pendingToastMaxAge = 60 * 1000;
 
     let activeToast = null;
     let closeTimer = null;
@@ -227,6 +229,26 @@
         closeTimer = window.setTimeout(removeToast, duration);
     };
 
+    window.queueAppToast = function (message, options = {}) {
+        if (!message) {
+            return;
+        }
+
+        if (typeof options === "string") {
+            options = { type: options };
+        }
+
+        try {
+            window.sessionStorage.setItem(pendingToastKey, JSON.stringify({
+                message,
+                type: options.type || "success",
+                createdAt: Date.now()
+            }));
+        } catch {
+            // A blocked sessionStorage should never prevent the requested navigation.
+        }
+    };
+
     window.dismissAppToast = removeToast;
 
     document.addEventListener("DOMContentLoaded", () => {
@@ -235,6 +257,21 @@
                 window.showAppToast(message, { type });
             }
         });
+
+        try {
+            const pendingToastJson = window.sessionStorage.getItem(pendingToastKey);
+            window.sessionStorage.removeItem(pendingToastKey);
+            if (!pendingToastJson) {
+                return;
+            }
+
+            const pendingToast = JSON.parse(pendingToastJson);
+            if (pendingToast.message && Date.now() - pendingToast.createdAt <= pendingToastMaxAge) {
+                window.showAppToast(pendingToast.message, { type: pendingToast.type });
+            }
+        } catch {
+            // Ignore malformed data or browsers that block sessionStorage access.
+        }
     });
 })();
 

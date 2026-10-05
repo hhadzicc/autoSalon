@@ -45,7 +45,7 @@
         </div>
 
         <div class="row g-4 align-items-start">
-            <div class="@(isAvailableForPurchase ? "col-lg-8" : "col-lg-10 mx-auto")">
+            <div class="vehicle-details-main @(isAvailableForPurchase ? "col-lg-8" : "col-lg-10 mx-auto")">
                 <article class="vehicle-details-card">
                     <div class="vehicle-gallery">
                         <button type="button"
@@ -89,7 +89,7 @@
 
                         @if (isAvailableForPurchase && !canManageVehicles)
                         {
-                            <div class="vehicle-actions">
+                            <div class="vehicle-actions @(isBuyer ? "vehicle-actions-two" : string.Empty)">
                             @if (isBuyer)
                             {
                                 <form class="add-to-cart-form"

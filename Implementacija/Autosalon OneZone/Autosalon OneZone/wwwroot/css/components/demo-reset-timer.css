@@ -156,8 +156,6 @@
     transform: rotate(45deg);
 }
 
-.demo-reset-nav:hover .demo-reset-tooltip,
-.demo-reset-nav:focus-within .demo-reset-tooltip,
 .demo-reset-nav.is-open .demo-reset-tooltip {
     opacity: 1;
     visibility: visible;
@@ -280,7 +278,7 @@
 
 @media (max-width: 575.98px) {
     .demo-reset-nav {
-        margin-left: 0.25rem;
+        margin-left: auto;
     }
 
     .demo-reset-button {
@@ -304,10 +302,42 @@
     .demo-reset-nav.is-acknowledged:hover #demo-reset-countdown,
     .demo-reset-nav.is-acknowledged:focus-within #demo-reset-countdown,
     .demo-reset-nav.is-acknowledged.is-open #demo-reset-countdown {
-        min-width: 3.7rem;
+        min-width: 2.45rem;
     }
 
-    .demo-reset-nav.is-acknowledged #demo-reset-countdown {
+    .demo-reset-nav.is-acknowledged #demo-reset-countdown,
+    .demo-reset-nav.is-reset-warning #demo-reset-countdown {
         min-width: 2.45rem;
+    }
+
+    .demo-reset-nav .demo-time-full,
+    .demo-reset-nav.is-acknowledged:hover .demo-time-full,
+    .demo-reset-nav.is-acknowledged:focus-within .demo-time-full,
+    .demo-reset-nav.is-acknowledged.is-open .demo-time-full,
+    .demo-reset-nav.is-reset-warning .demo-time-full {
+        opacity: 0;
+        transform: translateY(-7px) scale(0.96);
+    }
+
+    .demo-reset-nav .demo-time-compact,
+    .demo-reset-nav.is-acknowledged:hover .demo-time-compact,
+    .demo-reset-nav.is-acknowledged:focus-within .demo-time-compact,
+    .demo-reset-nav.is-acknowledged.is-open .demo-time-compact,
+    .demo-reset-nav.is-reset-warning .demo-time-compact {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+    .demo-reset-tooltip {
+        position: fixed;
+        top: 74px;
+        right: 14px;
+        left: 14px;
+        width: auto;
+        max-width: none;
+    }
+
+    .demo-reset-tooltip::before {
+        display: none;
     }
 }

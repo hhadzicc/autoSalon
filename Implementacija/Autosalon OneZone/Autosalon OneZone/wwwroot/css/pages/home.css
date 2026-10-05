@@ -609,6 +609,10 @@
     color: var(--primary-dark);
 }
 
+.home-mobile-all-vehicles {
+    display: none;
+}
+
 .empty-vehicles-state {
     max-width: 620px;
     margin: 0 auto;
@@ -661,6 +665,10 @@
 
 .home-contact-section {
     background: #f5f7fb;
+}
+
+.home-featured-mobile-dots {
+    display: none;
 }
 
 .home-contact-section .support-card {

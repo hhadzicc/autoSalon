@@ -77,7 +77,7 @@
                                             @Html.AntiForgeryToken()
                                             <input type="hidden" name="id" value="@vozilo.Id">
                                             <button type="submit" class="btn btn-outline-danger rounded-4 w-100">
-                                                <i class="bi bi-trash me-2"></i>@L["Remove"]
+                                                <i class="bi bi-trash me-2 cart-remove-desktop-icon"></i><i class="bi bi-trash3-fill cart-remove-mobile-icon" aria-hidden="true"></i><span class="cart-remove-label">@L["Remove"]</span>
                                             </button>
                                         </form>
                                     </div>
@@ -87,10 +87,32 @@
                     </div>
                 </div>
 
-                <div class="col-lg-4">
-                    <aside class="cart-sidebar">
+                <div class="col-lg-4 cart-sidebar-column">
+                    <aside class="cart-sidebar" data-cart-sidebar>
+                        <form asp-controller="Korpa" asp-action="OcistiKorpu" method="post"
+                              class="clear-cart-form mobile-clear-cart-form"
+                              data-clear-success="@L["CartClearedSuccess"]"
+                              data-clear-error="@L["CartClearError"]">
+                            @Html.AntiForgeryToken()
+                            <button type="submit"
+                                    class="btn btn-outline-danger rounded-4 w-100"
+                                    data-confirm-delete="true"
+                                    data-confirm-title="@L["ClearCartConfirmTitle"]"
+                                    data-confirm-message="@L["ClearCartConfirmMessage"]"
+                                    data-confirm-item="@L["ClearCartConfirmItem", Model.VozilaUKorpi.Count]"
+                                    data-confirm-action="@L["ClearCartConfirmAction"]"
+                                    data-confirm-event-only>
+                                <i class="bi bi-cart-x me-2"></i>@L["ClearCart"]
+                            </button>
+                        </form>
+
                         <div class="checkout-card">
-                            <h3>@L["PurchaseOverview"]</h3>
+                            <div class="checkout-card-title">
+                                <h3>@L["PurchaseOverview"]</h3>
+                                <button type="button" class="mobile-summary-close" data-mobile-cart-summary-close aria-label="@L["Close"]">
+                                    <i class="bi bi-x-lg" aria-hidden="true"></i>
+                                </button>
+                            </div>
 
                             <div class="summary-row">
                                 <span>@L["VehicleCount"]</span>
@@ -151,6 +173,22 @@
 
 @if (Model.VozilaUKorpi.Count > 0)
 {
+    <div class="mobile-cart-checkout" data-mobile-cart-checkout>
+        <div class="mobile-cart-checkout-inner">
+            <button type="button" class="mobile-cart-summary-toggle" data-mobile-cart-summary-toggle aria-expanded="false">
+                <span>
+                <small>@L["PaymentDue"]</small>
+                <strong data-cart-total>€@Model.UkupnaCijena.ToString("N0", culture)</strong>
+                </span>
+                <i class="bi bi-chevron-up" aria-hidden="true"></i>
+            </button>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#checkoutModal">
+                @L["ContinueToCheckout"]
+            </button>
+        </div>
+    </div>
+    <div class="mobile-cart-summary-backdrop" data-mobile-cart-summary-backdrop></div>
+
     <div class="modal fade" id="checkoutModal" tabindex="-1" aria-labelledby="checkoutModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content modern-modal">
@@ -275,6 +313,8 @@
             const updateCartSummary = (count) => {
                 $("[data-cart-vehicle-count]").text(count);
                 window.updateCartBadge(count);
+                $("[data-mobile-cart-checkout]").toggle(count > 0);
+                if (count < 1) setSummaryOpen(false);
 
                 let total = 0;
                 $("#stavkeKorpe .stavka-korpe").each(function() {
@@ -284,6 +324,68 @@
                 const locale = document.documentElement.lang === "en" ? "en-US" : "bs-BA";
                 $("[data-cart-total]").text("€" + total.toLocaleString(locale, { maximumFractionDigits: 0 }));
             };
+
+            const loanCard = document.querySelector("[data-cart-sidebar] .loan-card");
+            const loanHeader = loanCard?.querySelector(".loan-card-header");
+            const mobileQuery = window.matchMedia("(max-width: 575.98px)");
+            const summarySheet = document.querySelector(".cart-sidebar .checkout-card");
+            const summaryToggle = document.querySelector("[data-mobile-cart-summary-toggle]");
+            const summaryBackdrop = document.querySelector("[data-mobile-cart-summary-backdrop]");
+            const summaryClose = document.querySelector("[data-mobile-cart-summary-close]");
+            const mobileCheckout = document.querySelector("[data-mobile-cart-checkout]");
+
+            const setSummaryOpen = (open) => {
+                summarySheet?.classList.toggle("is-mobile-open", open);
+                summaryBackdrop?.classList.toggle("is-visible", open);
+                summaryToggle?.classList.toggle("is-open", open);
+                mobileCheckout?.classList.toggle("is-summary-open", open);
+                summaryToggle?.setAttribute("aria-expanded", String(open));
+            };
+
+            summaryToggle?.addEventListener("click", () => {
+                setSummaryOpen(!summarySheet?.classList.contains("is-mobile-open"));
+            });
+            summaryBackdrop?.addEventListener("click", () => setSummaryOpen(false));
+            summaryClose?.addEventListener("click", () => setSummaryOpen(false));
+            document.querySelectorAll('[data-bs-target="#checkoutModal"]').forEach(button => {
+                button.addEventListener("click", () => setSummaryOpen(false));
+            });
+
+            const setLoanExpanded = (expanded) => {
+                if (!loanCard || !loanHeader) return;
+                loanCard.classList.toggle("is-mobile-collapsed", !expanded);
+                loanHeader.setAttribute("aria-expanded", String(expanded));
+            };
+
+            const syncLoanCard = () => {
+                if (!loanCard || !loanHeader) return;
+                if (mobileQuery.matches) {
+                    loanHeader.setAttribute("role", "button");
+                    loanHeader.setAttribute("tabindex", "0");
+                    setLoanExpanded(false);
+                } else {
+                    loanHeader.removeAttribute("role");
+                    loanHeader.removeAttribute("tabindex");
+                    loanHeader.removeAttribute("aria-expanded");
+                    loanCard.classList.remove("is-mobile-collapsed");
+                }
+            };
+
+            loanHeader?.addEventListener("click", () => {
+                if (mobileQuery.matches) {
+                    setLoanExpanded(loanCard.classList.contains("is-mobile-collapsed"));
+                }
+            });
+
+            loanHeader?.addEventListener("keydown", event => {
+                if (mobileQuery.matches && (event.key === "Enter" || event.key === " ")) {
+                    event.preventDefault();
+                    loanHeader.click();
+                }
+            });
+
+            mobileQuery.addEventListener?.("change", syncLoanCard);
+            syncLoanCard();
 
             const showRemoveToast = (message, undo) => {
                 window.showAppToast(message, {

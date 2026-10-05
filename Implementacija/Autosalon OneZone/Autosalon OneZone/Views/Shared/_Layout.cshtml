@@ -32,6 +32,15 @@
     var cartItemCount = 0;
     var unreadSupportCount = 0;
     var isBuyer = User.IsInRole(AppRoles.Buyer);
+    var compactVehicleNav = ViewData["CompactVehicleNav"] as bool? == true;
+    var currentUser = SignInManager.IsSignedIn(User) ? await UserManager.GetUserAsync(User) : null;
+    var currentUserDisplayName = currentUser == null
+        ? string.Empty
+        : $"{currentUser.Ime} {currentUser.Prezime}".Trim();
+    if (string.IsNullOrWhiteSpace(currentUserDisplayName))
+    {
+        currentUserDisplayName = User.Identity?.Name ?? string.Empty;
+    }
     if (SignInManager.IsSignedIn(User) && isBuyer)
     {
         var currentUserId = UserManager.GetUserId(User);
@@ -93,6 +102,10 @@
         <link rel="stylesheet" type="text/css" href="~/css/pages/admin.css" asp-append-version="true">
     }
     <link rel="stylesheet" type="text/css" href="~/css/components/button-system.css" asp-append-version="true">
+    @if (isAdminArea)
+    {
+        <link rel="stylesheet" type="text/css" href="~/css/responsive/admin-mobile.css" asp-append-version="true">
+    }
     @if (demoOptions.Enabled && demoOptions.ResetEnabled)
     {
         <link rel="stylesheet" type="text/css" href="~/css/components/demo-reset-timer.css" asp-append-version="true">
@@ -100,12 +113,30 @@
     @await RenderSectionAsync("Head", required: false)
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark custom-navbar sticky-top">
+    <nav class="navbar navbar-expand-lg navbar-dark custom-navbar sticky-top @(compactVehicleNav ? "vehicle-catalog-navbar" : null)">
         <div class="container-xxl align-items-center">
             <a class="navbar-brand text-white d-flex align-items-center gap-2" href="/" aria-label="Autosalon OneZone">
                 <span class="brand-icon"><i class="bi bi-car-front-fill"></i></span>
                 <span class="brand-name">OneZone</span>
             </a>
+
+            @if (compactVehicleNav)
+            {
+                <form class="vehicle-navbar-search" method="get" action="@Url.Action("Index", "Vozilo")" role="search" autocomplete="off">
+                    <input type="search"
+                           name="searchTerm"
+                           value="@Context.Request.Query["searchTerm"]"
+                           placeholder=""
+                           aria-label="@L["VehicleSearchAria"]" />
+                    <span class="vehicle-navbar-search-placeholder"
+                          data-mobile-search-placeholder
+                          data-text="@L["VehiclesSearchPlaceholder"]"
+                          aria-hidden="true"></span>
+                    <button type="submit" aria-label="@L["CommonSearch"]">
+                        <i class="bi bi-search" aria-hidden="true"></i>
+                    </button>
+                </form>
+            }
 
             @if (demoOptions.Enabled && demoOptions.ResetEnabled && nextDemoResetUtc.HasValue)
             {
@@ -138,12 +169,12 @@
                 </div>
             }
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
-                    aria-controls="mainNavbar" aria-expanded="false" aria-label="@L["CommonShow"]">
+            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNavigation"
+                    aria-controls="mobileNavigation" aria-expanded="false" aria-label="@L["CommonShow"]">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <div class="collapse navbar-collapse" id="mainNavbar">
+            <div class="navbar-collapse d-none d-lg-flex" id="mainNavbar">
                 <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
                     @if (SignInManager.IsSignedIn(User) && (User.IsInRole("Administrator") || User.IsInRole("Prodavac")))
                     {
@@ -259,24 +290,145 @@
         </div>
     </nav>
 
+    <div class="offcanvas offcanvas-end mobile-nav-drawer d-lg-none" tabindex="-1" id="mobileNavigation" aria-labelledby="mobileNavigationLabel">
+                <div class="offcanvas-header mobile-nav-header">
+                    <div class="mobile-nav-brand" id="mobileNavigationLabel">
+                        <span class="brand-icon"><i class="bi bi-car-front-fill"></i></span>
+                        <strong>OneZone</strong>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="@L["Close"]"></button>
+                </div>
+
+                <div class="offcanvas-body mobile-nav-body">
+                    @if (SignInManager.IsSignedIn(User))
+                    {
+                        <div class="mobile-account-header">
+                            <span class="mobile-account-avatar"><i class="bi bi-person-fill"></i></span>
+                            <span>
+                                <strong>@currentUserDisplayName</strong>
+                                <small>@currentUser?.Email</small>
+                            </span>
+                        </div>
+                    }
+
+                    <nav class="mobile-nav-links">
+                        @if (SignInManager.IsSignedIn(User) && (User.IsInRole("Administrator") || User.IsInRole("Prodavac")))
+                        {
+                            <a class="mobile-nav-link @(isAdminArea ? "active" : "")" href="/AdminPanel/Index">
+                                <i class="bi bi-grid-fill" aria-hidden="true"></i>
+                                <span>@(User.IsInRole(AppRoles.Administrator) ? L["NavAdminPanel"] : L["NavSellerPanel"])</span>
+                            </a>
+                        }
+
+                        <a class="mobile-nav-link @(isVehiclesArea ? "active" : "")" href="/Vozilo">
+                            <i class="bi bi-car-front-fill" aria-hidden="true"></i>
+                            <span>@L["NavVehicles"]</span>
+                        </a>
+
+                        @if (SignInManager.IsSignedIn(User) && isBuyer)
+                        {
+                            <a class="mobile-nav-link @(isCartArea ? "active" : "")" href="/Korpa">
+                                <i class="bi bi-cart-fill" aria-hidden="true"></i>
+                                <span>@L["NavCart"]</span>
+                                <span class="mobile-nav-count cart-count-badge @(cartItemCount == 0 ? "d-none" : null)" data-cart-count>@cartItemCount</span>
+                            </a>
+                        }
+
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            <span class="mobile-nav-section-label">@L["NavMyProfile"]</span>
+
+                            <a class="mobile-nav-link @(currentPath == "/profil" ? "active" : "")" href="/Profil">
+                                <i class="bi bi-person-fill" aria-hidden="true"></i>
+                                <span>@L["NavProfile"]</span>
+                            </a>
+                            @if (isBuyer)
+                            {
+                                <a class="mobile-nav-link" href="/Profil/KupljeniArtikli">
+                                    <i class="bi bi-bag-check-fill" aria-hidden="true"></i>
+                                    <span>@L["NavPurchasedItems"]</span>
+                                </a>
+                            }
+                            <a class="mobile-nav-link" href="/Profil/Podrska">
+                                <i class="bi bi-chat-square-text-fill" aria-hidden="true"></i>
+                                <span>@L["MySupportTickets"]</span>
+                                @if (unreadSupportCount > 0)
+                                {
+                                    <span class="mobile-nav-count support-menu-count">@Math.Min(unreadSupportCount, 99)</span>
+                                }
+                            </a>
+                            <a class="mobile-nav-link" href="/Profil/Edit#password">
+                                <i class="bi bi-key-fill" aria-hidden="true"></i>
+                                <span>@L["NavChangePassword"]</span>
+                            </a>
+                        }
+                        else
+                        {
+                            <a class="mobile-nav-link @(isLoginArea ? "active" : "")" href="/Account/Login">
+                                <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i>
+                                <span>@L["NavLogin"]</span>
+                            </a>
+                            <a class="mobile-nav-link @(isRegisterArea ? "active" : "")" href="/Account/Register">
+                                <i class="bi bi-person-plus-fill" aria-hidden="true"></i>
+                                <span>@L["NavRegister"]</span>
+                            </a>
+                        }
+                    </nav>
+
+                    <div class="mobile-nav-footer">
+                        <span class="mobile-nav-section-label">@L["Language"]</span>
+                        <div class="mobile-language-options">
+                            <form class="language-switch-form" asp-controller="Language" asp-action="SetLanguage" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="culture" value="bs-Latn-BA" />
+                                <input type="hidden" name="returnUrl" value="@returnUrl" />
+                                <button type="submit" class="@(languageLabel == "BS" ? "active" : "")">BS</button>
+                            </form>
+                            <form class="language-switch-form" asp-controller="Language" asp-action="SetLanguage" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="culture" value="en-US" />
+                                <input type="hidden" name="returnUrl" value="@returnUrl" />
+                                <button type="submit" class="@(languageLabel == "EN" ? "active" : "")">EN</button>
+                            </form>
+                        </div>
+
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            <form class="mobile-logout-form" asp-controller="Account" asp-action="Logout" method="post">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="mobile-nav-link mobile-logout-button">
+                                    <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
+                                    <span>@L["NavLogout"]</span>
+                                </button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            </div>
+
     <main class="main-content-container">
         @RenderBody()
     </main>
 
     <footer class="footer">
         <div class="container-xxl">
-            <div class="row align-items-center g-4">
-                <div class="col-lg-7">
-                    <h5 class="text-white fw-bold mb-2">Autosalon OneZone</h5>
-                    <p class="mb-1">@L["FooterContact"]: +387 000 000 000 · Email: <a href="mailto:autosalon@autosalon.com">autosalon@autosalon.com</a></p>
-                    <p class="mb-0">&copy; @DateTime.Now.Year Autosalon OneZone. @L["FooterRights"]</p>
+            <div class="footer-content">
+                <h5 class="footer-title">Autosalon OneZone</h5>
+                <div class="footer-contact">
+                    <a href="tel:+387000000000">
+                        <span class="footer-contact-label">@L["FooterContact"]: </span>
+                        <span>+387 000 000 000</span>
+                    </a>
+                    <a href="mailto:autosalon@autosalon.com">
+                        <span class="footer-contact-label">Email: </span>
+                        <span>autosalon@autosalon.com</span>
+                    </a>
                 </div>
-                <div class="col-lg-5">
-                    <div class="d-flex justify-content-lg-end gap-3 flex-wrap">
-                        <a asp-controller="Home" asp-action="Privacy">@L["FooterPrivacy"]</a>
-                        <a asp-controller="Home" asp-action="Terms">@L["FooterTerms"]</a>
-                    </div>
+                <div class="footer-links">
+                    <a asp-controller="Home" asp-action="Privacy">@L["FooterPrivacy"]</a>
+                    <a asp-controller="Home" asp-action="Terms">@L["FooterTerms"]</a>
                 </div>
+                <p class="footer-copyright">&copy; @DateTime.Now.Year Autosalon OneZone<span class="footer-rights">. @L["FooterRights"]</span></p>
             </div>
         </div>
     </footer>
@@ -360,6 +512,7 @@
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/components/app-api.js" asp-append-version="true"></script>
+    <script src="~/js/components/mobile-navigation.js" asp-append-version="true"></script>
     <script src="~/js/components/vehicle-color-picker.js" asp-append-version="true"></script>
     @if (demoOptions.Enabled && demoOptions.ResetEnabled && nextDemoResetUtc.HasValue)
     {
@@ -437,34 +590,57 @@
                 }
 
                 if (shouldShowIntro) {
-                    wrapper.classList.add('is-first-visit', 'is-open');
-                    button.setAttribute('aria-expanded', 'true');
+                    wrapper.classList.add('is-first-visit');
                     window.setTimeout(() => wrapper.classList.remove('is-first-visit'), 1600);
-                    window.setTimeout(() => {
-                        wrapper.classList.remove('is-open');
-                        button.setAttribute('aria-expanded', 'false');
-                    }, 3600);
                     window.setTimeout(() => wrapper.classList.add('is-acknowledged'), 7000);
                 } else {
                     wrapper.classList.add('is-acknowledged');
                 }
 
-                button.addEventListener('click', event => {
-                    event.stopPropagation();
-                    const isOpen = wrapper.classList.toggle('is-open');
-                    button.setAttribute('aria-expanded', String(isOpen));
-                });
+                let tooltipTimer = null;
 
-                document.addEventListener('click', () => {
-                    if (!wrapper.classList.contains('is-open')) return;
+                const closeTooltip = () => {
+                    window.clearTimeout(tooltipTimer);
+                    tooltipTimer = null;
                     wrapper.classList.remove('is-open');
                     button.setAttribute('aria-expanded', 'false');
+                };
+
+                const openTooltip = () => {
+                    window.clearTimeout(tooltipTimer);
+                    wrapper.classList.add('is-open');
+                    button.setAttribute('aria-expanded', 'true');
+                    tooltipTimer = window.setTimeout(closeTooltip, 3000);
+                };
+
+                if (shouldShowIntro) {
+                    closeTooltip();
+                    openTooltip();
+                }
+
+                button.addEventListener('click', event => {
+                    event.stopPropagation();
+                    if (wrapper.classList.contains('is-open')) {
+                        closeTooltip();
+                    } else {
+                        openTooltip();
+                    }
                 });
+
+                if (window.matchMedia('(hover: hover)').matches) {
+                    wrapper.addEventListener('mouseenter', openTooltip);
+                    wrapper.addEventListener('mouseleave', closeTooltip);
+                }
+                button.addEventListener('focus', () => {
+                    if (button.matches(':focus-visible')) openTooltip();
+                });
+                button.addEventListener('blur', closeTooltip);
+
+                document.addEventListener('click', closeTooltip);
 
                 button.addEventListener('keydown', event => {
                     if (event.key !== 'Escape') return;
-                    wrapper.classList.remove('is-open');
-                    button.setAttribute('aria-expanded', 'false');
+                    closeTooltip();
                     button.blur();
                 });
             })();

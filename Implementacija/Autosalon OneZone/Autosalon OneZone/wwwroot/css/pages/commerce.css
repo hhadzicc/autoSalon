@@ -21,6 +21,25 @@
     margin-bottom: 22px;
 }
 
+.cart-page-eyebrow {
+    display: none;
+}
+
+.mobile-cart-checkout {
+    display: none;
+}
+
+.mobile-clear-cart-form,
+.mobile-cart-summary-backdrop,
+.mobile-summary-close,
+.cart-remove-mobile-icon {
+    display: none;
+}
+
+.checkout-card-title {
+    display: block;
+}
+
 .cart-page-intro h1 {
     margin: 0 0 8px;
     color: #111827;

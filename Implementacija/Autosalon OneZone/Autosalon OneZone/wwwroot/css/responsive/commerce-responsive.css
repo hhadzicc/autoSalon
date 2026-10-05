@@ -21,6 +21,484 @@
     }
 }
 
+@media (max-width: 575.98px) {
+    .cart-page-section {
+        padding: 18px 0 108px;
+        background: #f4f6f9;
+    }
+
+    .cart-page-section > .container {
+        width: 100%;
+        max-width: 430px;
+        padding-right: 14px;
+        padding-left: 14px;
+    }
+
+    .cart-page-intro {
+        margin-bottom: 16px;
+    }
+
+    .cart-page-intro h1 {
+        margin-bottom: 5px;
+        font-size: 1.75rem;
+        line-height: 1.05;
+        letter-spacing: 0;
+    }
+
+    .cart-page-intro p {
+        color: #70798b;
+        font-size: 0.84rem;
+        line-height: 1.4;
+    }
+
+    .cart-content-row {
+        --bs-gutter-x: 0;
+        --bs-gutter-y: 14px;
+        margin-inline: 0;
+    }
+
+    .cart-content-row > [class*="col"] {
+        padding-inline: 0;
+    }
+
+    .cart-items-list {
+        gap: 14px;
+    }
+
+    .cart-item-card {
+        display: grid;
+        grid-template-columns: 116px minmax(0, 1fr);
+        gap: 13px;
+        padding: 13px;
+        border-radius: 18px;
+        box-shadow: 0 7px 25px rgba(23, 32, 51, 0.05);
+    }
+
+    .cart-item-card:hover {
+        transform: none;
+        box-shadow: 0 7px 25px rgba(23, 32, 51, 0.05);
+    }
+
+    .cart-item-image img {
+        width: 116px;
+        height: 112px;
+        border-radius: 13px;
+    }
+
+    .cart-item-content {
+        display: contents;
+    }
+
+    .cart-item-content > div:first-child {
+        min-width: 0;
+    }
+
+    .cart-item-badge {
+        margin-bottom: 5px;
+        padding: 4px 7px;
+        font-size: 0.62rem;
+    }
+
+    .cart-item-content h3 {
+        margin-bottom: 4px;
+        overflow-wrap: anywhere;
+        font-size: 1.15rem;
+        line-height: 1.1;
+        letter-spacing: 0;
+    }
+
+    .cart-meta {
+        display: grid;
+        gap: 2px;
+        margin-bottom: 5px;
+        font-size: 0.7rem;
+        line-height: 1.35;
+    }
+
+    .cart-meta i {
+        display: none;
+    }
+
+    .cart-price {
+        margin-top: 4px;
+        font-size: 1.25rem;
+        line-height: 1.1;
+    }
+
+    .cart-actions {
+        grid-column: 1 / -1;
+        min-width: 0;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr) 44px;
+        align-items: center;
+        gap: 8px;
+        padding-top: 11px;
+        border-top: 1px solid #edf0f4;
+    }
+
+    .cart-actions .btn {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 10px !important;
+        font-size: 0.72rem;
+        line-height: 1.15;
+        white-space: normal;
+    }
+
+    .cart-actions > a {
+        border-color: #dce3ed !important;
+        background: #f8fafc;
+        color: #26354b;
+        font-weight: 800;
+    }
+
+    .cart-actions > a:hover,
+    .cart-actions > a:focus {
+        border-color: #cbd5e1 !important;
+        background: #f1f5f9;
+        color: #172033;
+    }
+
+    .cart-actions > a i,
+    .cart-actions .buy-now-btn i,
+    .cart-actions .remove-from-cart-form i {
+        margin-right: 0 !important;
+    }
+
+    .cart-actions .buy-now-btn {
+        width: 100%;
+    }
+
+    .cart-actions .remove-from-cart-form {
+        width: 44px;
+    }
+
+    .cart-actions .remove-from-cart-form .btn {
+        width: 44px;
+        height: 44px;
+        min-height: 44px;
+        display: grid;
+        place-items: center;
+        padding: 0;
+        font-size: 0;
+        line-height: 0;
+    }
+
+    .cart-actions .remove-from-cart-form i {
+        font-size: 0.9rem;
+    }
+
+    .cart-actions .cart-remove-desktop-icon {
+        display: none;
+    }
+
+    .cart-actions .cart-remove-mobile-icon {
+        width: 18px;
+        height: 18px;
+        display: grid;
+        place-items: center;
+        margin: 0 !important;
+        font-size: 1.05rem;
+        line-height: 1;
+    }
+
+    .cart-actions .cart-remove-mobile-icon::before {
+        display: block;
+        margin: 0;
+        line-height: 1;
+        transform: translateY(1px);
+    }
+
+    .cart-actions .cart-remove-label {
+        display: none;
+    }
+
+    .cart-sidebar-column {
+        margin-top: 8px;
+    }
+
+    .mobile-clear-cart-form {
+        display: block;
+        margin: 2px 0 20px;
+        text-align: right;
+    }
+
+    .mobile-clear-cart-form .btn {
+        width: auto !important;
+        min-height: 36px;
+        padding: 5px 3px;
+        border: 0;
+        background: transparent;
+        font-size: 0.8rem;
+        font-weight: 800;
+        box-shadow: none;
+    }
+
+    .mobile-clear-cart-form .btn:hover,
+    .mobile-clear-cart-form .btn:focus {
+        background: transparent;
+        color: #b4232d;
+        text-decoration: underline;
+    }
+
+    .cart-sidebar .checkout-card {
+        position: fixed;
+        z-index: 1042;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        max-width: 430px;
+        max-height: calc(100dvh - 60px);
+        margin: 0 auto;
+        padding: 16px 17px calc(17px + env(safe-area-inset-bottom));
+        overflow-y: auto;
+        border-radius: 20px 20px 0 0;
+        transform: translateY(calc(100% + 90px));
+        visibility: hidden;
+        opacity: 0;
+        transition: transform 0.24s ease, opacity 0.2s ease, visibility 0.24s;
+    }
+
+    .cart-sidebar .checkout-card.is-mobile-open {
+        transform: translateY(0);
+        visibility: visible;
+        opacity: 1;
+    }
+
+    .cart-sidebar .checkout-card .clear-cart-form {
+        display: none;
+    }
+
+    .checkout-card-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 8px;
+    }
+
+    .checkout-card-title h3 {
+        margin: 0;
+    }
+
+    .mobile-summary-close {
+        width: 32px;
+        height: 32px;
+        display: inline-grid;
+        flex: 0 0 32px;
+        place-items: center;
+        padding: 0;
+        border: 0;
+        border-radius: 9px;
+        background: #eef1f5;
+        color: #526174;
+    }
+
+    .cart-sidebar .checkout-card .summary-row {
+        padding: 8px 0;
+    }
+
+    .cart-sidebar .checkout-card .summary-total {
+        margin-top: 4px;
+        padding: 11px 13px;
+    }
+
+    .cart-sidebar .checkout-card .d-grid {
+        margin-top: 12px !important;
+    }
+
+    .mobile-cart-summary-backdrop {
+        position: fixed;
+        z-index: 1038;
+        inset: 0;
+        display: block;
+        background: rgba(12, 19, 32, 0.48);
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity 0.2s ease, visibility 0.2s;
+    }
+
+    .mobile-cart-summary-backdrop.is-visible {
+        visibility: visible;
+        opacity: 1;
+    }
+
+    .checkout-card {
+        padding: 17px;
+        border-radius: 18px;
+        box-shadow: 0 7px 25px rgba(23, 32, 51, 0.05);
+    }
+
+    .checkout-card h3 {
+        margin-bottom: 12px;
+        font-size: 1.08rem;
+        letter-spacing: 0;
+    }
+
+    .checkout-card .summary-row {
+        padding: 10px 0;
+        font-size: 0.88rem;
+    }
+
+    .checkout-card .summary-total {
+        align-items: center;
+        flex-direction: row;
+        margin-top: 5px;
+        padding: 13px;
+        border-radius: 12px;
+    }
+
+    .checkout-card .summary-total strong {
+        font-size: 1.25rem;
+    }
+
+    .checkout-card .d-grid {
+        margin-top: 14px !important;
+    }
+
+    .checkout-card .btn {
+        min-height: 45px;
+        padding: 8px 10px;
+        border-radius: 11px !important;
+        font-size: 0.82rem;
+    }
+
+    .cart-sidebar .loan-card {
+        padding: 0;
+        overflow: hidden;
+        border-radius: 18px;
+        box-shadow: 0 7px 25px rgba(23, 32, 51, 0.05);
+    }
+
+    .cart-sidebar .loan-card-header {
+        position: relative;
+        align-items: center;
+        margin: 0;
+        padding: 17px 48px 17px 17px;
+        cursor: pointer;
+    }
+
+    .cart-sidebar .loan-card-header h3 {
+        font-size: 1rem;
+    }
+
+    .cart-sidebar .loan-card-header::after {
+        position: absolute;
+        top: 50%;
+        right: 18px;
+        font-family: "bootstrap-icons";
+        font-size: 1rem;
+        content: "\f282";
+        transform: translateY(-50%) rotate(180deg);
+        transition: transform 0.2s ease;
+    }
+
+    .cart-sidebar .loan-card.is-mobile-collapsed .loan-card-header::after {
+        transform: translateY(-50%);
+    }
+
+    .cart-sidebar .loan-card.is-mobile-collapsed > :not(.loan-card-header) {
+        display: none;
+    }
+
+    .cart-sidebar .loan-card > .mb-3,
+    .cart-sidebar .loan-card > [data-loan-calculate],
+    .cart-sidebar .loan-card > .loan-result {
+        margin-right: 17px;
+        margin-left: 17px;
+    }
+
+    .cart-sidebar .loan-card > .loan-result {
+        margin-bottom: 17px;
+    }
+
+    .mobile-cart-checkout {
+        position: fixed;
+        z-index: 1040;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        display: block;
+        padding: 10px max(14px, env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-left));
+        border-top: 1px solid #dde2e9;
+        background: rgba(255, 255, 255, 0.97);
+        box-shadow: 0 -10px 28px rgba(23, 32, 51, 0.09);
+        transition: transform 0.2s ease, opacity 0.18s ease, visibility 0.2s;
+    }
+
+    .mobile-cart-checkout.is-summary-open {
+        transform: translateY(100%);
+        visibility: hidden;
+        opacity: 0;
+    }
+
+    .mobile-cart-checkout-inner {
+        width: 100%;
+        max-width: 402px;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(140px, 1.25fr);
+        align-items: center;
+        gap: 12px;
+        margin: 0 auto;
+    }
+
+    .mobile-cart-summary-toggle {
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        color: inherit;
+        text-align: left;
+    }
+
+    .mobile-cart-summary-toggle > span {
+        min-width: 0;
+    }
+
+    .mobile-cart-summary-toggle > i {
+        flex: 0 0 auto;
+        color: #526174;
+        font-size: 0.9rem;
+        transition: transform 0.2s ease;
+    }
+
+    .mobile-cart-summary-toggle.is-open > i {
+        transform: rotate(180deg);
+    }
+
+    .mobile-cart-checkout small {
+        display: block;
+        color: #7a8494;
+        font-size: 0.62rem;
+        font-weight: 750;
+        text-transform: uppercase;
+    }
+
+    .mobile-cart-checkout strong {
+        display: block;
+        color: #111827;
+        font-size: 1.18rem;
+        font-weight: 900;
+    }
+
+    .mobile-cart-checkout .btn {
+        min-height: 48px;
+        padding: 8px 10px;
+        border-radius: 12px;
+        font-size: 0.78rem;
+        line-height: 1.15;
+    }
+}
+
 @media (max-width: 767.98px) {
     .order-summary { grid-template-columns: 1fr; }
     .success-card { padding: 30px 22px; border-radius: 24px; }
@@ -32,8 +510,52 @@
 
 @media (max-width: 575.98px) {
     .cart-page-section,
-    .vehicle-details-section,
     .success-section { padding: 26px 0 52px; }
+
+    .vehicle-details-section {
+        padding: 0 0 40px;
+        background: #f4f7fb;
+    }
+
+    .vehicle-details-section > .container {
+        max-width: 560px;
+        padding: 0 14px;
+    }
+
+    .vehicle-details-section .row {
+        --bs-gutter-x: 0;
+        --bs-gutter-y: 18px;
+        margin-inline: 0;
+    }
+
+    .vehicle-details-section .row > [class*="col"] {
+        padding-inline: 0;
+    }
+
+    .vehicle-details-main {
+        display: contents;
+    }
+
+    .vehicle-details-card {
+        width: 100%;
+        order: 1;
+    }
+
+    .vehicle-details-section .row > .col-lg-4 {
+        width: 100%;
+        order: 2;
+    }
+
+    .customer-experiences-card {
+        width: 100%;
+        order: 3;
+    }
+
+    .vehicle-details-card {
+        border-radius: 20px;
+        box-shadow: 0 14px 40px rgba(15, 23, 42, 0.08);
+    }
+
     .checkout-card,
     .loan-card,
     .summary-card,
@@ -43,13 +565,253 @@
     .cart-price { font-size: 1.45rem; }
     .summary-total { flex-direction: column; align-items: flex-start; gap: 6px; }
     .loan-card-header { align-items: flex-start; }
-    .vehicle-gallery { padding: 16px 16px 0; }
+    .vehicle-gallery {
+        padding: 0;
+    }
+
     .vehicle-gallery-preview,
-    .vehicle-gallery img { border-radius: 20px; }
-    .vehicle-gallery img { height: 230px; }
-    .vehicle-details-body { padding: 22px; }
-    .vehicle-title-row h2 { font-size: 2rem; }
-    .vehicle-actions,
-    .spec-grid { grid-template-columns: 1fr; }
+    .vehicle-gallery img {
+        border-radius: 19px 19px 0 0;
+    }
+
+    .vehicle-gallery img {
+        height: auto;
+        aspect-ratio: 16 / 10;
+    }
+
+    .vehicle-gallery-preview-icon {
+        right: 13px;
+        bottom: 13px;
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        opacity: 1;
+        transform: none;
+    }
+
+    .vehicle-details-body {
+        padding: 19px 18px 20px;
+    }
+
+    .vehicle-title-row {
+        align-items: flex-start;
+        flex-direction: row;
+        gap: 12px;
+        margin-bottom: 18px;
+    }
+
+    .vehicle-title-row > div:first-child {
+        min-width: 0;
+    }
+
+    .vehicle-title-row h2 {
+        margin-bottom: 5px;
+        font-size: 1.7rem;
+        line-height: 1.06;
+        letter-spacing: -0.025em;
+    }
+
+    .vehicle-subtitle {
+        font-size: 0.8rem;
+        line-height: 1.4;
+    }
+
+    .vehicle-price-actions {
+        flex: 0 0 auto;
+        align-items: flex-end;
+        gap: 8px;
+    }
+
+    .vehicle-price {
+        font-size: 1.3rem;
+        line-height: 1.15;
+        white-space: nowrap;
+    }
+
+    .vehicle-edit-button {
+        min-height: 38px;
+        padding: 8px 10px;
+        font-size: 0.76rem;
+    }
+
+    .vehicle-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 9px;
+        margin-bottom: 20px;
+    }
+
+    .vehicle-actions .btn,
+    .vehicle-actions form {
+        min-width: 0;
+        min-height: 49px;
+    }
+
+    .vehicle-actions .btn {
+        width: 100%;
+        padding: 9px 10px;
+        line-height: 1.15;
+        white-space: normal;
+    }
+
+    .vehicle-actions > .vehicle-login-button:only-child {
+        grid-column: 1 / -1;
+    }
+
+    .vehicle-actions-two,
+    .vehicle-actions-two form,
+    .vehicle-actions-two .btn {
+        min-height: 42px;
+    }
+
+    .vehicle-actions-two .btn {
+        padding-top: 6px;
+        padding-bottom: 6px;
+    }
+
+    .details-block {
+        margin-top: 21px;
+        padding-top: 21px;
+        border-top: 1px solid #e8edf3;
+    }
+
+    .details-block h3 {
+        margin-bottom: 13px;
+        font-size: 1.05rem;
+        letter-spacing: 0;
+    }
+
+    .details-block p {
+        color: #4d5a70;
+        font-size: 0.88rem;
+        line-height: 1.58;
+    }
+
+    .spec-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 9px;
+    }
+
+    .spec-item {
+        min-width: 0;
+        padding: 12px;
+        border-radius: 12px;
+        background: #f6f8fb;
+        border-color: #e4e9f0;
+    }
+
+    .spec-item span {
+        margin-bottom: 4px;
+        font-size: 0.65rem;
+        letter-spacing: 0;
+        text-transform: uppercase;
+    }
+
+    .spec-item strong {
+        display: block;
+        overflow-wrap: anywhere;
+        font-size: 0.88rem;
+    }
+
+    .reviews-card {
+        margin-top: 18px;
+        padding: 19px 18px;
+        border-radius: 20px;
+        box-shadow: 0 14px 40px rgba(15, 23, 42, 0.07);
+    }
+
+    .reviews-header {
+        flex-direction: row;
+        gap: 12px;
+    }
+
+    .reviews-header h2 {
+        margin-bottom: 5px;
+        font-size: 1.18rem;
+        letter-spacing: 0;
+        line-height: 1.15;
+    }
+
+    .reviews-header p {
+        font-size: 0.76rem;
+        line-height: 1.45;
+    }
+
+    .experience-summary {
+        padding: 7px 9px;
+        background: #fff8df;
+        border: 1px solid #f6df90;
+        border-radius: 12px;
+    }
+
+    .experience-summary strong {
+        font-size: 1rem;
+    }
+
+    .experience-summary span {
+        font-size: 0.6rem;
+    }
+
     .empty-reviews { padding: 26px 18px; }
+}
+
+@media (max-width: 575.98px) {
+    .cart-page-section {
+        padding: 18px 0 108px;
+    }
+
+    .cart-item-card {
+        padding: 13px;
+    }
+
+    .cart-item-image img {
+        height: 112px;
+    }
+
+    .cart-price {
+        font-size: 1.25rem;
+    }
+
+    .checkout-card {
+        padding: 17px;
+        border-radius: 18px;
+    }
+
+    .vehicle-details-back-row {
+        margin: 0 0 20px;
+        padding: 12px 4px 0;
+    }
+
+    .vehicle-back-button {
+        min-height: 34px;
+        padding: 4px 0;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+        color: #334155;
+        font-size: 0.8rem;
+    }
+
+    .vehicle-back-button:hover,
+    .vehicle-back-button:focus-visible {
+        border: 0;
+        background: transparent;
+        box-shadow: none;
+        color: var(--primary);
+        transform: translateX(-2px);
+    }
+
+    .payment-compact-row {
+        --bs-gutter-x: 10px;
+    }
+
+    .payment-compact-row > [class*="col"] {
+        width: 50%;
+        flex: 0 0 50%;
+    }
+
+    .payment-compact-row .form-label {
+        font-size: 0.82rem;
+    }
 }

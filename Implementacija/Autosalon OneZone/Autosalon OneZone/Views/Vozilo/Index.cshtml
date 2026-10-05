@@ -4,6 +4,7 @@
 @model VehicleListingViewModel
 @{
     ViewData["Title"] = L["VehiclesTitle"];
+    ViewData["CompactVehicleNav"] = true;
     var currentYear = VehicleYearPolicy.MaximumYear;
     var searchTerm = Model.SearchTerm;
     var clearSearchParameters = Context.Request.Query
@@ -30,6 +31,21 @@
     var selectedFuel = Enum.TryParse<TipGoriva>(ViewData["Gorivo"]?.ToString(), out var parsedFuel)
         ? parsedFuel
         : (TipGoriva?)null;
+
+    string FormatRange(object? from, object? to, string prefix = "", string suffix = "")
+    {
+        var fromText = Convert.ToString(from);
+        var toText = Convert.ToString(to);
+
+        if (!string.IsNullOrWhiteSpace(fromText) && !string.IsNullOrWhiteSpace(toText))
+        {
+            return $"{prefix}{fromText}–{prefix}{toText}{suffix}";
+        }
+
+        return !string.IsNullOrWhiteSpace(fromText)
+            ? $"{prefix}{fromText}+{suffix}"
+            : $"≤{prefix}{toText}{suffix}";
+    }
 }
 
 <section class="vehicles-hero">
@@ -68,24 +84,22 @@
 
 <section class="vehicles-listing-section">
     <div class="container">
-        <button type="button"
-                class="vehicles-mobile-filter-button"
-                data-bs-toggle="collapse"
-                data-bs-target="#vehicleFilters"
-                aria-expanded="@(hasActiveFilters.ToString().ToLowerInvariant())"
-                aria-controls="vehicleFilters">
-            <i class="bi bi-funnel"></i>
-            @L["ShowHideFilters"]
-        </button>
-
         <div class="vehicles-market-grid">
-            <aside class="vehicles-filter-panel collapse @(hasActiveFilters ? "show" : "")" id="vehicleFilters">
+            <aside class="vehicles-filter-panel collapse @(hasActiveFilters ? "show" : "")"
+                   id="vehicleFilters"
+                   data-mobile-filter-sheet
+                   aria-label="@L["Filters"]">
                 <div class="vehicles-filter-header">
                     <h2><i class="bi bi-sliders"></i> @L["Filters"]</h2>
-                    @if (hasActiveFilters)
-                    {
-                        <button type="button" class="vehicles-clear-button" data-clear-filters>@L["ClearAllFilters"]</button>
-                    }
+                    <div class="vehicles-filter-header-actions">
+                        @if (hasActiveFilters)
+                        {
+                            <button type="button" class="vehicles-clear-button" data-clear-filters>@L["ClearAllFilters"]</button>
+                        }
+                        <button type="button" class="vehicles-mobile-sheet-close" data-mobile-sheet-close aria-label="@L["Close"]">
+                            <i class="bi bi-x-lg" aria-hidden="true"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <form id="filterForm"
@@ -135,11 +149,11 @@
                         <div class="vehicles-range-fields">
                             <div>
                                 <label for="cijenaOd">@L["From"]</label>
-                                <input type="number" min="0" class="form-control" placeholder="@L["From"]" id="cijenaOd" name="cijenaOd" value="@ViewData["CijenaOd"]">
+                                <input type="number" min="0" step="1" inputmode="numeric" class="form-control" placeholder="@L["From"]" id="cijenaOd" name="cijenaOd" value="@ViewData["CijenaOd"]">
                             </div>
                             <div>
                                 <label for="cijenaDo">@L["To"]</label>
-                                <input type="number" min="0" class="form-control" placeholder="@L["To"]" id="cijenaDo" name="cijenaDo" value="@ViewData["CijenaDo"]">
+                                <input type="number" min="0" step="1" inputmode="numeric" class="form-control" placeholder="@L["To"]" id="cijenaDo" name="cijenaDo" value="@ViewData["CijenaDo"]">
                             </div>
                         </div>
                         <p class="vehicles-filter-error" data-filter-error>@ViewData["PriceFilterError"]</p>
@@ -151,11 +165,11 @@
                         <div class="vehicles-range-fields">
                             <div>
                                 <label for="kilometrazaOd">@L["From"]</label>
-                                <input type="number" min="0" class="form-control" placeholder="@L["From"]" id="kilometrazaOd" name="kilometrazaOd" value="@ViewData["KilometrazaOd"]">
+                                <input type="number" min="0" step="1" inputmode="numeric" class="form-control" placeholder="@L["From"]" id="kilometrazaOd" name="kilometrazaOd" value="@ViewData["KilometrazaOd"]">
                             </div>
                             <div>
                                 <label for="kilometrazaDo">@L["To"]</label>
-                                <input type="number" min="0" class="form-control" placeholder="@L["To"]" id="kilometrazaDo" name="kilometrazaDo" value="@ViewData["KilometrazaDo"]">
+                                <input type="number" min="0" step="1" inputmode="numeric" class="form-control" placeholder="@L["To"]" id="kilometrazaDo" name="kilometrazaDo" value="@ViewData["KilometrazaDo"]">
                             </div>
                         </div>
                         <p class="vehicles-filter-error" data-filter-error>@ViewData["MileageFilterError"]</p>
@@ -210,6 +224,10 @@
                         </fieldset>
                     </div>
 
+                    <div class="vehicles-mobile-filter-footer">
+                        <button type="submit" class="btn btn-primary">@L["ApplyFilters"]</button>
+                    </div>
+
                 </form>
             </aside>
 
@@ -253,6 +271,7 @@
                 @if (hasActiveFilters)
                 {
                     <div class="vehicles-active-filters" aria-label="@L["ActiveFilters"]">
+                        <div class="vehicles-active-filter-chips">
                         @if (selectedFuel.HasValue)
                         {
                             <span class="vehicles-filter-chip">
@@ -274,7 +293,7 @@
                         @if (ViewData["GodisteOd"] != null || ViewData["GodisteDo"] != null)
                         {
                             <span class="vehicles-filter-chip">
-                                <span class="vehicles-filter-chip-label">@(ViewData["GodisteOd"] ?? "…")–@(ViewData["GodisteDo"] ?? "…")</span>
+                                <span class="vehicles-filter-chip-label">@FormatRange(ViewData["GodisteOd"], ViewData["GodisteDo"])</span>
                                 <button type="button" class="vehicles-filter-chip-remove" data-clear-filter="godisteOd,godisteDo" aria-label="@L["ClearFiltersShort"]">
                                     <i class="bi bi-x" aria-hidden="true"></i>
                                 </button>
@@ -283,7 +302,7 @@
                         @if (ViewData["CijenaOd"] != null || ViewData["CijenaDo"] != null)
                         {
                             <span class="vehicles-filter-chip">
-                                <span class="vehicles-filter-chip-label">€@(ViewData["CijenaOd"] ?? "…")–€@(ViewData["CijenaDo"] ?? "…")</span>
+                                <span class="vehicles-filter-chip-label">@FormatRange(ViewData["CijenaOd"], ViewData["CijenaDo"], "€")</span>
                                 <button type="button" class="vehicles-filter-chip-remove" data-clear-filter="cijenaOd,cijenaDo" aria-label="@L["ClearFiltersShort"]">
                                     <i class="bi bi-x" aria-hidden="true"></i>
                                 </button>
@@ -292,7 +311,7 @@
                         @if (ViewData["KilometrazaOd"] != null || ViewData["KilometrazaDo"] != null)
                         {
                             <span class="vehicles-filter-chip">
-                                <span class="vehicles-filter-chip-label">@(ViewData["KilometrazaOd"] ?? "…")–@(ViewData["KilometrazaDo"] ?? "…") km</span>
+                                <span class="vehicles-filter-chip-label">@FormatRange(ViewData["KilometrazaOd"], ViewData["KilometrazaDo"], suffix: " km")</span>
                                 <button type="button" class="vehicles-filter-chip-remove" data-clear-filter="kilometrazaOd,kilometrazaDo" aria-label="@L["ClearFiltersShort"]">
                                     <i class="bi bi-x" aria-hidden="true"></i>
                                 </button>
@@ -301,12 +320,13 @@
                         @if (ViewData["KubikazaOd"] != null || ViewData["KubikazaDo"] != null)
                         {
                             <span class="vehicles-filter-chip">
-                                <span class="vehicles-filter-chip-label">@(ViewData["KubikazaOd"] ?? "…")–@(ViewData["KubikazaDo"] ?? "…")</span>
+                                <span class="vehicles-filter-chip-label">@FormatRange(ViewData["KubikazaOd"], ViewData["KubikazaDo"])</span>
                                 <button type="button" class="vehicles-filter-chip-remove" data-clear-filter="kubikazaOd,kubikazaDo" aria-label="@L["ClearFiltersShort"]">
                                     <i class="bi bi-x" aria-hidden="true"></i>
                                 </button>
                             </span>
                         }
+                        </div>
                         <button type="button" class="vehicles-clear-all-chips" data-clear-filters>@L["ClearFiltersShort"]</button>
                     </div>
                 }
@@ -344,6 +364,55 @@
     </div>
 </section>
 
+<div class="vehicles-mobile-backdrop" data-mobile-catalog-backdrop hidden></div>
+
+<section class="vehicles-mobile-sort-sheet" data-mobile-sort-sheet aria-label="@L["Sorting"]">
+    <div class="vehicles-mobile-sheet-handle" aria-hidden="true"></div>
+    <div class="vehicles-mobile-sheet-heading">
+        <h2>@L["Sorting"]</h2>
+        <button type="button" class="vehicles-mobile-sheet-close" data-mobile-sheet-close aria-label="@L["Close"]">
+            <i class="bi bi-x-lg" aria-hidden="true"></i>
+        </button>
+    </div>
+    <div class="vehicles-mobile-sort-options">
+        <div class="vehicles-mobile-sort-group">
+            <h3>@L["SortNameGroup"]</h3>
+            <button type="button" data-mobile-sort-value="" class="@(ViewData["CurrentSort"] == null ? "is-selected" : null)"><i class="bi bi-arrow-down" aria-hidden="true"></i><span>@L["SortNameAsc"]</span></button>
+            <button type="button" data-mobile-sort-value="name_desc" class="@(ViewData["CurrentSort"]?.ToString() == "name_desc" ? "is-selected" : null)"><i class="bi bi-arrow-up" aria-hidden="true"></i><span>@L["SortNameDesc"]</span></button>
+        </div>
+        <div class="vehicles-mobile-sort-group">
+            <h3>@L["VehiclePrice"]</h3>
+            <button type="button" data-mobile-sort-value="price" class="@(ViewData["CurrentSort"]?.ToString() == "price" ? "is-selected" : null)"><i class="bi bi-arrow-down" aria-hidden="true"></i><span>@L["SortPriceAsc"]</span></button>
+            <button type="button" data-mobile-sort-value="price_desc" class="@(ViewData["CurrentSort"]?.ToString() == "price_desc" ? "is-selected" : null)"><i class="bi bi-arrow-up" aria-hidden="true"></i><span>@L["SortPriceDesc"]</span></button>
+        </div>
+        <div class="vehicles-mobile-sort-group">
+            <h3>@L["VehicleYear"]</h3>
+            <button type="button" data-mobile-sort-value="year" class="@(ViewData["CurrentSort"]?.ToString() == "year" ? "is-selected" : null)"><i class="bi bi-arrow-down" aria-hidden="true"></i><span>@L["SortYearAsc"]</span></button>
+            <button type="button" data-mobile-sort-value="year_desc" class="@(ViewData["CurrentSort"]?.ToString() == "year_desc" ? "is-selected" : null)"><i class="bi bi-arrow-up" aria-hidden="true"></i><span>@L["SortYearDesc"]</span></button>
+        </div>
+    </div>
+</section>
+
+<div class="vehicles-mobile-actions" data-mobile-catalog-actions>
+    <button type="button" data-mobile-sort-open>
+        <i class="bi bi-sort-down" aria-hidden="true"></i>
+        <span>@L["Sorting"]</span>
+    </button>
+    <span aria-hidden="true"></span>
+    <button type="button" data-mobile-filter-open>
+        <i class="bi bi-funnel" aria-hidden="true"></i>
+        <span>@L["Filters"]</span>
+        @if (hasActiveFilters)
+        {
+            <strong>@((selectedFuel.HasValue ? 1 : 0) + selectedColors.Count +
+                       (ViewData["GodisteOd"] != null || ViewData["GodisteDo"] != null ? 1 : 0) +
+                       (ViewData["CijenaOd"] != null || ViewData["CijenaDo"] != null ? 1 : 0) +
+                       (ViewData["KilometrazaOd"] != null || ViewData["KilometrazaDo"] != null ? 1 : 0) +
+                       (ViewData["KubikazaOd"] != null || ViewData["KubikazaDo"] != null ? 1 : 0))</strong>
+        }
+    </button>
+</div>
+
 @section Scripts {
     <script src="~/js/components/animated-search-placeholder.js" asp-append-version="true"></script>
     @if (User.IsInRole(AppRoles.Buyer))
@@ -351,6 +420,7 @@
         <script src="~/js/components/cart-actions.js" asp-append-version="true"></script>
     }
     <script src="~/js/components/vehicle-infinite-scroll.js" asp-append-version="true"></script>
+    <script src="~/js/components/mobile-vehicle-catalog.js" asp-append-version="true"></script>
     <script>
         $(document).ready(function() {
             $('[data-clear-filters]').click(function() {
@@ -399,11 +469,15 @@
             });
 
             $('#gorivo').change(function() {
-                $('#filterForm').submit();
+                if (!window.matchMedia('(max-width: 720px)').matches) {
+                    $('#filterForm').submit();
+                }
             });
 
             $('.vehicles-color-option input').change(function() {
-                $('#filterForm').submit();
+                if (!window.matchMedia('(max-width: 720px)').matches) {
+                    $('#filterForm').submit();
+                }
             });
 
             $('[data-color-toggle]').click(function() {

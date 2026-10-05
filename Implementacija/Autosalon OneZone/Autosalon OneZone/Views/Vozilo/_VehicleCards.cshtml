@@ -39,23 +39,26 @@
                 <span class="fuel-chip @FuelPresentation.GetChipClass(vehicle.Gorivo)">@L[FuelPresentation.GetResourceKey(vehicle.Gorivo)]</span>
             </div>
 
-            <dl class="vehicles-spec-grid">
-                <div>
-                    <dt>@L["VehicleYear"]</dt>
-                    <dd>@vehicle.Godiste</dd>
-                </div>
-                <div>
-                    <dt>@L["VehicleMileage"]</dt>
-                    <dd>@mileageText</dd>
-                </div>
-                <div>
-                    <dt>@L["VehicleColor"]</dt>
-                    <dd>@L[VehicleColorPresentation.GetResourceKey(vehicle.Boja)]</dd>
-                </div>
-            </dl>
+            <div class="vehicles-card-meta-row">
+                <dl class="vehicles-spec-grid">
+                    <div>
+                        <dt>@L["VehicleYear"]</dt>
+                        <dd>@vehicle.Godiste</dd>
+                    </div>
+                    <div>
+                        <dt>@L["VehicleMileage"]</dt>
+                        <dd>@mileageText</dd>
+                    </div>
+                    <div>
+                        <dt>@L["VehicleColor"]</dt>
+                        <dd>@L[VehicleColorPresentation.GetResourceKey(vehicle.Boja)]</dd>
+                    </div>
+                </dl>
+                <span class="vehicles-card-price vehicles-card-price-mobile">@priceText</span>
+            </div>
 
             <div class="vehicles-card-footer">
-                <span class="vehicles-card-price">@priceText</span>
+                <span class="vehicles-card-price vehicles-card-price-desktop">@priceText</span>
                 <div class="vehicles-card-actions">
                     <a href="@Url.Action("Details", "Vozilo", new { id = vehicle.VoziloID })" class="vehicles-details-button" data-vehicle-details-link>
                         <span>@L["Details"]</span>

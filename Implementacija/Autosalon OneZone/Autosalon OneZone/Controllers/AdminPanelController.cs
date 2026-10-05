@@ -113,6 +113,11 @@ namespace Autosalon_OneZone.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SaveVozilo(AddVoziloViewModel viewModel)
         {
+            ReplaceNumericBindingError(nameof(viewModel.Godiste), viewModel.Godiste is null, "Validation.VehicleYearDigits");
+            ReplaceNumericBindingError(nameof(viewModel.Kubikaza), viewModel.Kubikaza is null, "Validation.VehicleDisplacementNumber");
+            ReplaceNumericBindingError(nameof(viewModel.Kilometraza), viewModel.Kilometraza is null, "Validation.VehicleMileageDigits");
+            ReplaceNumericBindingError(nameof(viewModel.Cijena), viewModel.Cijena is null, "Validation.VehiclePriceDigits");
+
             if (viewModel.Godiste.HasValue && !VehicleYearPolicy.IsValid(viewModel.Godiste.Value))
             {
                 ModelState.Remove(nameof(viewModel.Godiste));
@@ -192,6 +197,19 @@ namespace Autosalon_OneZone.Controllers
                 voziloId = result.VehicleId,
                 successMessage = viewModel.VoziloID > 0 ? _localizer["VehicleUpdateSuccess"].Value : _localizer["VehicleCreateSuccess"].Value
             });
+        }
+
+        private void ReplaceNumericBindingError(string fieldName, bool bindingFailed, string resourceKey)
+        {
+            if (!bindingFailed ||
+                !ModelState.TryGetValue(fieldName, out var entry) ||
+                string.IsNullOrWhiteSpace(entry.AttemptedValue))
+            {
+                return;
+            }
+
+            entry.Errors.Clear();
+            entry.Errors.Add(_localizer[resourceKey].Value);
         }
 
         [HttpPost]

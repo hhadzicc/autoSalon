@@ -1778,6 +1778,10 @@ a.vehicle-name-cell.admin-entity-link {
 }
 
 .admin-support-message.is-customer {
+    margin-right: auto;
+}
+
+.admin-support-message.is-staff {
     margin-left: auto;
     background: #edf4ff;
     border-color: #cfe0ff;

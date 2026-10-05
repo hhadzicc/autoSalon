@@ -24,11 +24,44 @@
          data-url-podrska="@Url.Action("GetPodrskaSection", "AdminPanel")"
          data-text-not-found="@L["AdminSectionNotFound"]"
          data-text-loading="@L["AdminSectionLoading"]"
-         data-text-load-error="@L["AdminSectionLoadError"]">
+         data-text-load-error="@L["AdminSectionLoadError"]"
+         data-text-filters="@L["Filters"]"
+         data-text-sort="@L["AdminSortBy"]"
+         data-text-status="@L["Status"]"
+         data-text-fuel="@L["VehicleFuel"]"
+         data-text-color="@L["VehicleColor"]"
+         data-text-back="@L["CommonBack"]"
+         data-text-remove="@L["Remove"]"
+         data-text-close="@L["Close"]">
     <div class="admin-container">
         <div class="admin-layout">
             <aside class="admin-sidebar">
-                <nav class="admin-menu" aria-label="@L[menuTitleKey]">
+                <button type="button"
+                        class="admin-mobile-section-toggle"
+                        aria-expanded="false"
+                        aria-controls="admin-section-menu">
+                    <span class="admin-mobile-section-current">
+                        <i class="bi bi-grid-1x2-fill" aria-hidden="true"></i>
+                        <span>@L[panelTitleKey]</span>
+                    </span>
+                    <i class="bi bi-chevron-down admin-mobile-section-chevron" aria-hidden="true"></i>
+                </button>
+
+                <button type="button"
+                        class="admin-mobile-menu-backdrop"
+                        aria-label="@L["Close"]"
+                        tabindex="-1"></button>
+
+                <nav class="admin-menu" id="admin-section-menu" aria-label="@L[menuTitleKey]">
+                    <div class="admin-mobile-menu-header">
+                        <div>
+                            <span>@L[panelTitleKey]</span>
+                            <strong>@L[menuTitleKey]</strong>
+                        </div>
+                        <button type="button" class="admin-mobile-menu-close" aria-label="@L["Close"]">
+                            <i class="bi bi-x-lg" aria-hidden="true"></i>
+                        </button>
+                    </div>
                     <a href="#" class="admin-menu-link" data-section="Dashboard">
                         <i class="bi bi-grid-1x2-fill"></i>
                         @L["Dashboard"]
@@ -83,4 +116,5 @@
     <script src="~/js/admin/admin-support.js" asp-append-version="true"></script>
     <script src="~/js/admin/admin-users.js" asp-append-version="true"></script>
     <script src="~/js/admin/admin-vehicles.js" asp-append-version="true"></script>
+    <script src="~/js/admin/admin-mobile.js" asp-append-version="true"></script>
 }

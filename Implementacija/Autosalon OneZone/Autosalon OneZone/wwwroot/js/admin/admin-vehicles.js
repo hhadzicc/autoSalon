@@ -53,6 +53,7 @@
             mediaLayout?.classList.add("has-image");
         };
 
+        $form.removeData("validator").removeData("unobtrusiveValidation");
         $form.validate({
             ignore: ":hidden:not(#Boja):not(#Gorivo)",
             errorElement: "span",
@@ -85,10 +86,10 @@
                 Model: { required: true, maxlength: 100 },
                 Godiste: { required: true, min: minimumVehicleYear, max: maximumVehicleYear, digits: true },
                 Gorivo: "required",
-                Kubikaza: { min: 0, number: true },
+                Kubikaza: { min: 0.1, number: true },
                 Boja: "required",
-                Kilometraza: { required: true, min: 0, number: true },
-                Cijena: { required: true, min: 0.01, number: true },
+                Kilometraza: { required: true, min: 0, step: 1, digits: true },
+                Cijena: { required: true, min: 1, step: 1, digits: true },
                 Slika: { required: form.dataset.isEdit !== "true" },
                 Opis: { required: true, maxlength: 2000 }
             },
@@ -99,8 +100,8 @@
                 Gorivo: text.fuelRequired,
                 Kubikaza: { min: text.displacementPositive, number: text.displacementNumber },
                 Boja: text.colorRequired,
-                Kilometraza: { required: text.mileageRequired, min: text.mileagePositive, number: text.mileageNumber },
-                Cijena: { required: text.priceRequired, min: text.pricePositive, number: text.priceNumber },
+                Kilometraza: { required: text.mileageRequired, min: text.mileagePositive, step: text.mileageDigits, digits: text.mileageDigits },
+                Cijena: { required: text.priceRequired, min: text.pricePositive, step: text.priceDigits, digits: text.priceDigits },
                 Slika: { required: text.imageRequired },
                 Opis: { required: text.descriptionRequired, maxlength: text.descriptionMax }
             }

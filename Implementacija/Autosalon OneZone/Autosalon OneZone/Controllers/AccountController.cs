@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Autosalon_OneZone.Controllers
 {
@@ -17,19 +18,25 @@ namespace Autosalon_OneZone.Controllers
         private readonly IPasswordRecoveryService _passwordRecoveryService;
         private readonly ILogger<AccountController> _logger;
         private readonly IStringLocalizer<SharedResource> _localizer;
+        private readonly IConfiguration? _configuration;
+        private readonly DemoOptions _demoOptions;
 
         public AccountController(
             IAccountAuthenticationService authenticationService,
             IAccountRegistrationService registrationService,
             IPasswordRecoveryService passwordRecoveryService,
             ILogger<AccountController> logger,
-            IStringLocalizer<SharedResource>? localizer = null)
+            IStringLocalizer<SharedResource>? localizer = null,
+            IConfiguration? configuration = null,
+            IOptions<DemoOptions>? demoOptions = null)
         {
             _authenticationService = authenticationService;
             _registrationService = registrationService;
             _passwordRecoveryService = passwordRecoveryService;
             _logger = logger;
             _localizer = localizer ?? new FallbackStringLocalizer<SharedResource>();
+            _configuration = configuration;
+            _demoOptions = demoOptions?.Value ?? new DemoOptions();
         }
 
         [HttpGet]
@@ -85,7 +92,7 @@ namespace Autosalon_OneZone.Controllers
         public IActionResult Login(string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
-            return View(new LoginViewModel());
+            return View(PrepareLoginModel(new LoginViewModel()));
         }
 
         [HttpPost]
@@ -132,7 +139,7 @@ namespace Autosalon_OneZone.Controllers
             }
 
             ViewData["ReturnUrl"] = returnUrl;
-            return View(model);
+            return View(PrepareLoginModel(model));
         }
 
         [HttpGet]
@@ -282,6 +289,66 @@ namespace Autosalon_OneZone.Controllers
             }
 
             return error;
+        }
+
+        private LoginViewModel PrepareLoginModel(LoginViewModel model)
+        {
+            if (!_demoOptions.Enabled ||
+                _configuration is null ||
+                !_configuration.GetValue("Database:SeedDemoData", false))
+            {
+                return model;
+            }
+
+            var accounts = new List<DemoLoginAccountViewModel>();
+            AddDemoAccount(
+                accounts,
+                "RoleBuyer",
+                "bi-person-fill",
+                _configuration["DemoUsers:BuyerEmail"] ?? "kupac@autosalon.local",
+                _configuration["DemoUsers:BuyerPassword"] ?? "Kupac123!");
+            AddDemoAccount(
+                accounts,
+                "RoleSeller",
+                "bi-briefcase-fill",
+                _configuration["DemoUsers:SellerEmail"] ?? "prodavac@autosalon.local",
+                _configuration["DemoUsers:SellerPassword"] ?? "Prodavac123!");
+            AddDemoAccount(
+                accounts,
+                "RoleAdministrator",
+                "bi-shield-lock-fill",
+                _configuration["AdminUserSecrets:Email"] ?? string.Empty,
+                _configuration["AdminUserSecrets:Password"] ?? string.Empty);
+
+            model.DemoAccounts = accounts;
+            if (string.IsNullOrWhiteSpace(model.LoginIdentifier) &&
+                string.IsNullOrWhiteSpace(model.Password) &&
+                accounts.Count > 0)
+            {
+                model.LoginIdentifier = accounts[0].LoginIdentifier;
+                model.Password = accounts[0].Password;
+            }
+
+            return model;
+        }
+
+        private static void AddDemoAccount(
+            ICollection<DemoLoginAccountViewModel> accounts,
+            string roleResourceKey,
+            string iconClass,
+            string loginIdentifier,
+            string password)
+        {
+            if (string.IsNullOrWhiteSpace(loginIdentifier) || string.IsNullOrWhiteSpace(password))
+            {
+                return;
+            }
+
+            accounts.Add(new DemoLoginAccountViewModel(
+                roleResourceKey,
+                iconClass,
+                loginIdentifier,
+                password));
         }
     }
 }

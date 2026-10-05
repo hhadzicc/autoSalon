@@ -21,6 +21,7 @@
                           data-account-validation="login"
                           data-check-fields-message="@L["Validation.CheckMarkedFields"]">
                         <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
+
                         <div class="login-field">
                             <label asp-for="LoginIdentifier" class="form-label">@L["AuthLoginIdentifier"]</label>
                             <input asp-for="LoginIdentifier" type="text" class="form-control" placeholder="@L["AuthLoginIdentifierPlaceholder"]" autocomplete="username" required maxlength="256"
@@ -54,16 +55,36 @@
 
                         <button type="submit" class="btn btn-primary login-submit">@L["AuthLoginSubmit"]</button>
 
+                        @if (Model.DemoAccounts.Count > 0)
+                        {
+                            <div class="demo-login-picker" aria-labelledby="demoLoginTitle">
+                                <div class="demo-login-divider">
+                                    <span id="demoLoginTitle">@L["DemoLoginDivider"]</span>
+                                </div>
+                                <div class="demo-login-options">
+                                    @foreach (var account in Model.DemoAccounts)
+                                    {
+                                        <button type="button"
+                                                class="demo-login-option"
+                                                data-demo-login
+                                                data-login-identifier="@account.LoginIdentifier"
+                                                data-login-password="@account.Password"
+                                                aria-pressed="false">
+                                            <i class="bi @account.IconClass" aria-hidden="true"></i>
+                                            <span>@L[account.RoleResourceKey]</span>
+                                            <i class="bi bi-check-circle-fill demo-login-option-check" aria-hidden="true"></i>
+                                        </button>
+                                    }
+                                </div>
+                            </div>
+                        }
+
                         <div class="login-card-bottom">
                             @L["AuthNoAccount"]
                             <a asp-controller="Account" asp-action="Register" asp-route-returnUrl="@ViewData["ReturnUrl"]">@L["AuthRegisterLink"]</a>
                         </div>
                     </form>
 
-                    <div class="login-security-note">
-                        <i class="bi bi-lock-fill" aria-hidden="true"></i>
-                        <span>@L["AuthSecureLogin"]</span>
-                    </div>
                 </div>
             </div>
         </div>
@@ -72,4 +93,8 @@
 
 @section Scripts {
     <script src="~/js/components/account-validation.js" asp-append-version="true"></script>
+    @if (Model.DemoAccounts.Count > 0)
+    {
+        <script src="~/js/components/demo-login.js" asp-append-version="true"></script>
+    }
 }

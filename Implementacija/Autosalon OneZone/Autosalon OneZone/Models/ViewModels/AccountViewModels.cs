@@ -57,7 +57,15 @@ namespace Autosalon_OneZone.Models.ViewModels
 
         [Display(Name = "AuthRememberMe")]
         public bool RememberMe { get; set; }
+
+        public IReadOnlyList<DemoLoginAccountViewModel> DemoAccounts { get; set; } = [];
     }
+
+    public sealed record DemoLoginAccountViewModel(
+        string RoleResourceKey,
+        string IconClass,
+        string LoginIdentifier,
+        string Password);
 
     public class ForgotPasswordViewModel
     {

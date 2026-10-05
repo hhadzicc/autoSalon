@@ -242,7 +242,7 @@
     <value>Enter the email address connected to your account and we will send you a secure password reset link.</value>
   </data>
   <data name="ForgotPasswordHeading" xml:space="preserve">
-    <value>Password reset</value>
+    <value>Forgot your password?</value>
   </data>
   <data name="ForgotPasswordText" xml:space="preserve">
     <value>If the account exists, we will send instructions for setting a new password.</value>
@@ -608,7 +608,7 @@
     <value>Fuel type is required.</value>
   </data>
   <data name="Validation.VehicleDisplacementPositive" xml:space="preserve">
-    <value>Engine displacement cannot be negative.</value>
+    <value>Engine displacement must be greater than 0.</value>
   </data>
   <data name="Validation.VehicleColorRequired" xml:space="preserve">
     <value>Color is required.</value>
@@ -665,7 +665,7 @@
     <value>Find a vehicle that looks good, drives better and</value>
   </data>
   <data name="HomeHeroTitleAccent" xml:space="preserve">
-    <value>fits your budget.</value>
+    <value>fits your budget</value>
   </data>
   <data name="HomeHeroText" xml:space="preserve">
     <value>Browse the latest inventory, compare prices and key specifications, and find the vehicle that suits you.</value>
@@ -704,7 +704,7 @@
     <value>Why OneZone?</value>
   </data>
   <data name="HomeWhyTitle" xml:space="preserve">
-    <value>Buying a car, without the unnecessary complexity.</value>
+    <value>Buying a car, without the unnecessary complexity</value>
   </data>
   <data name="HomeWhyText" xml:space="preserve">
     <value>Everything you need to make a decision in one place — clear vehicle information, pricing, offer details and a straightforward path to purchase.</value>
@@ -737,7 +737,7 @@
     <value>Featured vehicles</value>
   </data>
   <data name="HomeFeaturedVehiclesTitle" xml:space="preserve">
-    <value>Vehicles worth a closer look.</value>
+    <value>Vehicles worth a closer look</value>
   </data>
   <data name="HomeCarouselPrevious" xml:space="preserve">
     <value>Previous vehicle</value>
@@ -761,7 +761,7 @@
     <value>Current inventory</value>
   </data>
   <data name="HomeCurrentOfferTitle" xml:space="preserve">
-    <value>Your next car may already be here.</value>
+    <value>Your next car may already be here</value>
   </data>
   <data name="HomeCurrentOfferText" xml:space="preserve">
     <value>Explore the full inventory and narrow your search by make, price, year, mileage and the details that matter to you.</value>
@@ -773,7 +773,7 @@
     <value>NEED SOME HELP?</value>
   </data>
   <data name="HomeSupportTitle" xml:space="preserve">
-    <value>Have a question? We're here to help.</value>
+    <value>Have a question? We're here to help</value>
   </data>
   <data name="HomeSupportText" xml:space="preserve">
     <value>Get in touch for more information about a vehicle, availability, purchasing or an order. We'll get back to you as soon as possible.</value>
@@ -866,13 +866,13 @@
     <value>Vehicle overview</value>
   </data>
   <data name="VehiclesHeroTitle" xml:space="preserve">
-    <value>Find your next car.</value>
+    <value>Find your next car</value>
   </data>
   <data name="VehiclesHeroText" xml:space="preserve">
     <value>Browse by make, model, price, fuel, mileage and year.</value>
   </data>
   <data name="VehiclesSearchPlaceholder" xml:space="preserve">
-    <value>Search make or model...</value>
+    <value>Search make or model</value>
   </data>
   <data name="FiltersAndSorting" xml:space="preserve">
     <value>Filters and sorting</value>
@@ -898,6 +898,9 @@
   <data name="SortBy" xml:space="preserve">
     <value>Sort by:</value>
   </data>
+  <data name="SortNameGroup" xml:space="preserve">
+    <value>Name</value>
+  </data>
   <data name="SortNameAsc" xml:space="preserve">
     <value>Name (A-Z)</value>
   </data>
@@ -905,16 +908,16 @@
     <value>Name (Z-A)</value>
   </data>
   <data name="SortPriceAsc" xml:space="preserve">
-    <value>Price (ascending)</value>
+    <value>Lowest</value>
   </data>
   <data name="SortPriceDesc" xml:space="preserve">
-    <value>Price (descending)</value>
+    <value>Highest</value>
   </data>
   <data name="SortYearAsc" xml:space="preserve">
-    <value>Year (oldest first)</value>
+    <value>Oldest</value>
   </data>
   <data name="SortYearDesc" xml:space="preserve">
-    <value>Year (newest first)</value>
+    <value>Newest</value>
   </data>
   <data name="AllFuelTypes" xml:space="preserve">
     <value>All fuel types</value>
@@ -2062,8 +2065,14 @@
   <data name="Validation.VehicleMileageNumber" xml:space="preserve">
     <value>Mileage must be a number.</value>
   </data>
+  <data name="Validation.VehicleMileageDigits" xml:space="preserve">
+    <value>Mileage must be a whole number.</value>
+  </data>
   <data name="Validation.VehiclePriceNumber" xml:space="preserve">
     <value>Price must be a number.</value>
+  </data>
+  <data name="Validation.VehiclePriceDigits" xml:space="preserve">
+    <value>Price must be a whole number.</value>
   </data>
   <data name="Validation.VehicleImageRequiredClient" xml:space="preserve">
     <value>Image is required for a new vehicle.</value>
@@ -2358,4 +2367,5 @@
   <data name="TermsAvailabilityText" xml:space="preserve"><value>The application is provided as is, without a guarantee of continuous availability or data persistence. The service may restart, change, or reset without notice. Do not rely on it for real purchases or storage of important information.</value></data>
   <data name="TermsChangesTitle" xml:space="preserve"><value>Changes and questions</value></data>
   <data name="TermsChangesText" xml:space="preserve"><value>These terms may be updated when application features or hosting arrangements change. The date at the top shows the latest version. Contact support with questions about use.</value></data>
+  <data name="DemoLoginDivider" xml:space="preserve"><value>Or choose a demo account</value></data>
 </root>

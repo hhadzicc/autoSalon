@@ -156,10 +156,6 @@ namespace Autosalon_OneZone.Data
                 .IsRequired(false)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Vozilo>()
-                .Property(v => v.Cijena)
-                .HasColumnType("decimal(18,2)");
-
             modelBuilder.Entity<Korpa>()
                 .Property(k => k.UkupnaCijena)
                 .HasColumnType("decimal(18,2)");

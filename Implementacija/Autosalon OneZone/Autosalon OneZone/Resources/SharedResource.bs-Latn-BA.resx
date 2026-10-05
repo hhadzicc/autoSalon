@@ -242,7 +242,7 @@
     <value>Unesite email adresu povezanu sa vašim nalogom i poslat ćemo vam siguran link za resetovanje lozinke.</value>
   </data>
   <data name="ForgotPasswordHeading" xml:space="preserve">
-    <value>Resetovanje lozinke</value>
+    <value>Zaboravili ste lozinku?</value>
   </data>
   <data name="ForgotPasswordText" xml:space="preserve">
     <value>Ako nalog postoji, poslat ćemo upute za postavljanje nove lozinke.</value>
@@ -608,7 +608,7 @@
     <value>Gorivo je obavezno.</value>
   </data>
   <data name="Validation.VehicleDisplacementPositive" xml:space="preserve">
-    <value>Kubikaža ne može biti negativna.</value>
+    <value>Kubikaža mora biti veća od 0.</value>
   </data>
   <data name="Validation.VehicleColorRequired" xml:space="preserve">
     <value>Boja je obavezna.</value>
@@ -665,7 +665,7 @@
     <value>Pronađite vozilo koje izgleda dobro, vozi bolje i</value>
   </data>
   <data name="HomeHeroTitleAccent" xml:space="preserve">
-    <value>odgovara vašem budžetu.</value>
+    <value>odgovara vašem budžetu</value>
   </data>
   <data name="HomeHeroText" xml:space="preserve">
     <value>Pregledajte aktuelnu ponudu, uporedite cijene i ključne specifikacije i pronađite vozilo koje vam odgovara.</value>
@@ -704,7 +704,7 @@
     <value>Zašto OneZone?</value>
   </data>
   <data name="HomeWhyTitle" xml:space="preserve">
-    <value>Kupovina automobila bez nepotrebnih komplikacija.</value>
+    <value>Kupovina automobila bez nepotrebnih komplikacija</value>
   </data>
   <data name="HomeWhyText" xml:space="preserve">
     <value>Sve što vam treba za odluku na jednom mjestu — jasne informacije o vozilu, cijena, detalji ponude i jednostavan put do kupovine.</value>
@@ -737,7 +737,7 @@
     <value>Izdvojena vozila</value>
   </data>
   <data name="HomeFeaturedVehiclesTitle" xml:space="preserve">
-    <value>Vozila koja vrijedi pogledati.</value>
+    <value>Vozila koja vrijedi pogledati</value>
   </data>
   <data name="HomeCarouselPrevious" xml:space="preserve">
     <value>Prethodno vozilo</value>
@@ -761,7 +761,7 @@
     <value>Aktuelna ponuda</value>
   </data>
   <data name="HomeCurrentOfferTitle" xml:space="preserve">
-    <value>Vaš sljedeći automobil možda je već ovdje.</value>
+    <value>Vaš sljedeći automobil možda je već ovdje</value>
   </data>
   <data name="HomeCurrentOfferText" xml:space="preserve">
     <value>Istražite kompletnu ponudu i pronađite vozilo prema marki, cijeni, godištu, kilometraži i drugim kriterijima koji su vam važni.</value>
@@ -773,7 +773,7 @@
     <value>TREBATE POMOĆ?</value>
   </data>
   <data name="HomeSupportTitle" xml:space="preserve">
-    <value>Imate pitanje? Tu smo da pomognemo.</value>
+    <value>Imate pitanje? Tu smo da pomognemo</value>
   </data>
   <data name="HomeSupportText" xml:space="preserve">
     <value>Javite nam se za dodatne informacije o vozilu, dostupnosti, kupovini ili narudžbi. Odgovorit ćemo u najkraćem mogućem roku.</value>
@@ -866,13 +866,13 @@
     <value>Pregled vozila</value>
   </data>
   <data name="VehiclesHeroTitle" xml:space="preserve">
-    <value>Pronađite svoje sljedeće vozilo.</value>
+    <value>Pronađite svoje sljedeće vozilo</value>
   </data>
   <data name="VehiclesHeroText" xml:space="preserve">
     <value>Pregledajte ponudu po marki, modelu, cijeni, gorivu, kilometraži i godištu.</value>
   </data>
   <data name="VehiclesSearchPlaceholder" xml:space="preserve">
-    <value>Pretraži marku ili model...</value>
+    <value>Pretraži marku ili model</value>
   </data>
   <data name="FiltersAndSorting" xml:space="preserve">
     <value>Filteri i sortiranje</value>
@@ -898,6 +898,9 @@
   <data name="SortBy" xml:space="preserve">
     <value>Sortiraj po:</value>
   </data>
+  <data name="SortNameGroup" xml:space="preserve">
+    <value>Naziv</value>
+  </data>
   <data name="SortNameAsc" xml:space="preserve">
     <value>Naziv (A-Z)</value>
   </data>
@@ -905,16 +908,16 @@
     <value>Naziv (Z-A)</value>
   </data>
   <data name="SortPriceAsc" xml:space="preserve">
-    <value>Cijena (rastuće)</value>
+    <value>Najniža</value>
   </data>
   <data name="SortPriceDesc" xml:space="preserve">
-    <value>Cijena (opadajuće)</value>
+    <value>Najviša</value>
   </data>
   <data name="SortYearAsc" xml:space="preserve">
-    <value>Godište (starije prvo)</value>
+    <value>Starije</value>
   </data>
   <data name="SortYearDesc" xml:space="preserve">
-    <value>Godište (novije prvo)</value>
+    <value>Novije</value>
   </data>
   <data name="AllFuelTypes" xml:space="preserve">
     <value>Sva goriva</value>
@@ -2062,8 +2065,14 @@
   <data name="Validation.VehicleMileageNumber" xml:space="preserve">
     <value>Kilometraža mora biti broj.</value>
   </data>
+  <data name="Validation.VehicleMileageDigits" xml:space="preserve">
+    <value>Kilometraža mora biti cijeli broj.</value>
+  </data>
   <data name="Validation.VehiclePriceNumber" xml:space="preserve">
     <value>Cijena mora biti broj.</value>
+  </data>
+  <data name="Validation.VehiclePriceDigits" xml:space="preserve">
+    <value>Cijena mora biti cijeli broj.</value>
   </data>
   <data name="Validation.VehicleImageRequiredClient" xml:space="preserve">
     <value>Slika je obavezna za novo vozilo.</value>
@@ -2358,4 +2367,5 @@
   <data name="TermsAvailabilityText" xml:space="preserve"><value>Aplikacija se pruža u postojećem stanju, bez garancije stalne dostupnosti ili trajnosti podataka. Servis se može ponovo pokrenuti, izmijeniti ili resetovati bez prethodne najave. Ne oslanjajte se na njega za stvarne kupovine ili čuvanje važnih podataka.</value></data>
   <data name="TermsChangesTitle" xml:space="preserve"><value>Izmjene i pitanja</value></data>
   <data name="TermsChangesText" xml:space="preserve"><value>Uslovi se mogu ažurirati kada se promijene funkcije aplikacije ili način hostovanja. Datum na vrhu stranice pokazuje posljednju verziju. Za pitanja o korišćenju obratite se podršci.</value></data>
+  <data name="DemoLoginDivider" xml:space="preserve"><value>Ili odaberite demo nalog</value></data>
 </root>

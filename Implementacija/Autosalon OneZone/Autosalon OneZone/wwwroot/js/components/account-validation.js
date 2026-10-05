@@ -175,7 +175,9 @@
 
     const simpleKeys = form.dataset.accountValidation === "login"
         ? ["loginIdentifier", "password"]
-        : ["firstName", "lastName", "username", "email"];
+        : form.dataset.accountValidation === "forgot"
+            ? ["email"]
+            : ["firstName", "lastName", "username", "email"];
 
     Object.entries(fields).forEach(([key, input]) => {
         if (messageFor(input)?.classList.contains("field-validation-error")) {

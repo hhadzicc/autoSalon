@@ -67,8 +67,8 @@ namespace Autosalon_OneZone.Controllers
         public async Task<IActionResult> Index(string searchTerm, string sortOrder,
             int? godisteOd, int? godisteDo, string gorivo, string[]? boja,
             decimal? kubikazaOd, decimal? kubikazaDo,
-            double? kilometrazaOd, double? kilometrazaDo,
-            decimal? cijenaOd, decimal? cijenaDo)
+            int? kilometrazaOd, int? kilometrazaDo,
+            int? cijenaOd, int? cijenaDo)
         {
             searchTerm = searchTerm?.Trim();
             var colors = ParseColors(boja);
@@ -106,8 +106,8 @@ namespace Autosalon_OneZone.Controllers
         public async Task<IActionResult> LoadMore(int page, string searchTerm, string sortOrder,
             int? godisteOd, int? godisteDo, string gorivo, string[]? boja,
             decimal? kubikazaOd, decimal? kubikazaDo,
-            double? kilometrazaOd, double? kilometrazaDo,
-            decimal? cijenaOd, decimal? cijenaDo)
+            int? kilometrazaOd, int? kilometrazaDo,
+            int? cijenaOd, int? cijenaDo)
         {
             var criteria = CreateValidatedCriteria(
                 searchTerm?.Trim(), sortOrder, godisteOd, godisteDo, gorivo, ParseColors(boja),
@@ -143,8 +143,8 @@ namespace Autosalon_OneZone.Controllers
             string? searchTerm, string? sortOrder,
             int? yearFrom, int? yearTo, string? fuel, IReadOnlyCollection<TipBoje> colors,
             decimal? displacementFrom, decimal? displacementTo,
-            double? mileageFrom, double? mileageTo,
-            decimal? priceFrom, decimal? priceTo)
+            int? mileageFrom, int? mileageTo,
+            int? priceFrom, int? priceTo)
         {
             ViewData["SearchTerm"] = searchTerm;
             ViewData["CurrentSort"] = sortOrder;
@@ -164,8 +164,8 @@ namespace Autosalon_OneZone.Controllers
             string? searchTerm, string? sortOrder,
             int? yearFrom, int? yearTo, string? fuel, IReadOnlyCollection<TipBoje> colors,
             decimal? displacementFrom, decimal? displacementTo,
-            double? mileageFrom, double? mileageTo,
-            decimal? priceFrom, decimal? priceTo,
+            int? mileageFrom, int? mileageTo,
+            int? priceFrom, int? priceTo,
             bool includeValidationMessages)
         {
             var currentYear = VehicleYearPolicy.MaximumYear;
@@ -185,8 +185,8 @@ namespace Autosalon_OneZone.Controllers
                 yearTo = null;
             }
 
-            NormalizeDecimalRange(ref priceFrom, ref priceTo, "PriceFilterError", includeValidationMessages);
-            NormalizeDoubleRange(ref mileageFrom, ref mileageTo, "MileageFilterError", includeValidationMessages);
+            NormalizeIntegerRange(ref priceFrom, ref priceTo, "PriceFilterError", includeValidationMessages);
+            NormalizeIntegerRange(ref mileageFrom, ref mileageTo, "MileageFilterError", includeValidationMessages);
             NormalizeDecimalRange(
                 ref displacementFrom,
                 ref displacementTo,
@@ -239,9 +239,9 @@ namespace Autosalon_OneZone.Controllers
             }
         }
 
-        private void NormalizeDoubleRange(
-            ref double? from,
-            ref double? to,
+        private void NormalizeIntegerRange(
+            ref int? from,
+            ref int? to,
             string errorKey,
             bool includeValidationMessages)
         {

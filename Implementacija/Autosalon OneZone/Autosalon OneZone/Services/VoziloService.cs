@@ -11,7 +11,7 @@ namespace Autosalon_OneZone.Services
         Task<Vozilo> AddVoziloAsync(Vozilo vozilo);
         Task<Vozilo> UpdateVoziloAsync(Vozilo vozilo);
         Task<bool> DeleteVoziloAsync(int id);
-        Task<IEnumerable<Vozilo>> FilterVozilaAsync(string marka, string model, int? godisteOd, int? godisteDo, TipGoriva? gorivo, decimal? cijenaOd, decimal? cijenaDo);
+        Task<IEnumerable<Vozilo>> FilterVozilaAsync(string marka, string model, int? godisteOd, int? godisteDo, TipGoriva? gorivo, int? cijenaOd, int? cijenaDo);
         Task<IEnumerable<Vozilo>> SearchVozilaAsync(string searchTerm);
         Task<Vozilo?> GetVehicleDetailsAsync(int id, bool includeUnavailable = false);
         Task<bool> IsAvailableForPurchaseAsync(int id);
@@ -84,7 +84,7 @@ namespace Autosalon_OneZone.Services
             return true;
         }
 
-        public async Task<IEnumerable<Vozilo>> FilterVozilaAsync(string marka, string model, int? godisteOd, int? godisteDo, TipGoriva? gorivo, decimal? cijenaOd, decimal? cijenaDo)
+        public async Task<IEnumerable<Vozilo>> FilterVozilaAsync(string marka, string model, int? godisteOd, int? godisteDo, TipGoriva? gorivo, int? cijenaOd, int? cijenaDo)
         {
             var query = _context.Vozila
                 .AsNoTracking()
@@ -287,10 +287,10 @@ namespace Autosalon_OneZone.Services
         IReadOnlyCollection<TipBoje> Colors,
         decimal? EngineDisplacementFrom,
         decimal? EngineDisplacementTo,
-        double? MileageFrom,
-        double? MileageTo,
-        decimal? PriceFrom,
-        decimal? PriceTo);
+        int? MileageFrom,
+        int? MileageTo,
+        int? PriceFrom,
+        int? PriceTo);
 
     public sealed record VehicleSearchResult(
         IReadOnlyList<Vozilo> Vehicles,

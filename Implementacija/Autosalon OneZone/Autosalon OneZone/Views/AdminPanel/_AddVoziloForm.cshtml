@@ -34,9 +34,11 @@
         ["mileageRequired"] = L["Validation.VehicleMileageRequired"].Value,
         ["mileagePositive"] = L["Validation.VehicleMileagePositive"].Value,
         ["mileageNumber"] = L["Validation.VehicleMileageNumber"].Value,
+        ["mileageDigits"] = L["Validation.VehicleMileageDigits"].Value,
         ["priceRequired"] = L["Validation.VehiclePriceRequired"].Value,
         ["pricePositive"] = L["Validation.VehiclePricePositive"].Value,
         ["priceNumber"] = L["Validation.VehiclePriceNumber"].Value,
+        ["priceDigits"] = L["Validation.VehiclePriceDigits"].Value,
         ["imageRequired"] = L["Validation.VehicleImageRequiredClient"].Value,
         ["descriptionRequired"] = L["Validation.VehicleDescriptionRequired"].Value,
         ["descriptionMax"] = L["Validation.VehicleDescriptionMaxLength"].Value,
@@ -50,6 +52,7 @@
       asp-action="SaveVozilo"
       method="post"
       enctype="multipart/form-data"
+      novalidate
       data-validation-texts="@JsonSerializer.Serialize(vehicleFormTexts)"
       data-is-edit="@isEdit.ToString().ToLowerInvariant()">
     <input type="hidden" asp-for="VoziloID" />
@@ -114,7 +117,7 @@
 
         <div id="vehicle-displacement-field" class="col-md-6">
             <label asp-for="Kubikaza" class="form-label">@L["VehicleDisplacement"]</label>
-            <input asp-for="Kubikaza" class="form-control" type="number" min="0" step="0.1" />
+            <input asp-for="Kubikaza" class="form-control" type="number" min="0.1" step="0.1" />
             <span asp-validation-for="Kubikaza" class="text-danger"></span>
         </div>
 
@@ -164,13 +167,13 @@
 
         <div class="col-md-6">
             <label asp-for="Kilometraza" class="form-label">@L["VehicleMileage"]</label>
-            <input asp-for="Kilometraza" class="form-control" type="number" min="0" step="1" required />
+            <input asp-for="Kilometraza" class="form-control" type="number" min="0" step="1" inputmode="numeric" required />
             <span asp-validation-for="Kilometraza" class="text-danger"></span>
         </div>
 
         <div class="col-md-6">
             <label asp-for="Cijena" class="form-label">@L["VehiclePrice"]</label>
-            <input asp-for="Cijena" class="form-control" type="number" min="0.01" step="0.01" required />
+            <input asp-for="Cijena" class="form-control" type="number" min="1" step="1" inputmode="numeric" required />
             <span asp-validation-for="Cijena" class="text-danger"></span>
         </div>
 
@@ -197,9 +200,9 @@
                             id="current-vehicle-image-preview"
                             class="admin-image-preview-button"
                             data-image-preview
-                            data-image-src="@Url.Content($"~/images/vozila/{editVehicle!.PostojecaSlikaPath}")"
+                            data-image-src="@Url.Action("Image", "Vozilo", new { id = Model.VoziloID })"
                             aria-label="@L["CurrentImage"]">
-                        <img src="~/images/vozila/@editVehicle!.PostojecaSlikaPath" alt="@L["CurrentImage"]" class="admin-current-image" />
+                        <img src="@Url.Action("Image", "Vozilo", new { id = Model.VoziloID })" alt="@L["CurrentImage"]" class="admin-current-image" />
                         <span class="admin-image-preview-icon" aria-hidden="true"><i class="bi bi-zoom-in"></i></span>
                     </button>
                     <input type="hidden" name="PostojecaSlikaPath" value="@editVehicle!.PostojecaSlikaPath" />

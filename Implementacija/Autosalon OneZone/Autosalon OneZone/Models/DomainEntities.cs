@@ -120,8 +120,8 @@ namespace Autosalon_OneZone.Models
 
         public TipBoje Boja { get; set; }
 
-        public double? Kilometraza { get; set; }
-        public decimal? Cijena { get; set; }
+        public int? Kilometraza { get; set; }
+        public int? Cijena { get; set; }
         public string? Slika { get; set; }
         public string? Opis { get; set; }
 

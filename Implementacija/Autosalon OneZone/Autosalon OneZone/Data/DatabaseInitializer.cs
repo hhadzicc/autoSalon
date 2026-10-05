@@ -420,7 +420,7 @@ namespace Autosalon_OneZone.Data
                     Kubikaza = 1.5m,
                     Boja = TipBoje.Siva,
                     Kilometraza = 48500,
-                    Cijena = 37500m,
+                    Cijena = 37500,
                     Slika = "seed-volkswagen-golf8-2021-showroom.webp",
                     Opis = "Demo vozilo spremno za lokalno pokretanje aplikacije."
                 },
@@ -433,7 +433,7 @@ namespace Autosalon_OneZone.Data
                     Kubikaza = 2.9m,
                     Boja = TipBoje.Crna,
                     Kilometraza = 9200,
-                    Cijena = 149900m,
+                    Cijena = 149900,
                     Slika = "seed-porsche-panamera-2024-showroom.webp",
                     Opis = "Premium demo model za prikaz detalja i procesa narudžbe."
                 },
@@ -446,7 +446,7 @@ namespace Autosalon_OneZone.Data
                     Kubikaza = 2.0m,
                     Boja = TipBoje.Bijela,
                     Kilometraza = 76000,
-                    Cijena = 43900m,
+                    Cijena = 43900,
                     Slika = "seed-audi-a4-2020-showroom.webp",
                     Opis = "Pouzdana limuzina za svakodnevnu vožnju."
                 },
@@ -459,7 +459,7 @@ namespace Autosalon_OneZone.Data
                     Kubikaza = 3.0m,
                     Boja = TipBoje.Plava,
                     Kilometraza = 38500,
-                    Cijena = 89500m,
+                    Cijena = 89500,
                     Slika = "seed-bmw-x5-2022-showroom.webp",
                     Opis = "SUV demo vozilo sa bogatom opremom."
                 },
@@ -472,7 +472,7 @@ namespace Autosalon_OneZone.Data
                     Kubikaza = null,
                     Boja = TipBoje.Crvena,
                     Kilometraza = 21400,
-                    Cijena = 72800m,
+                    Cijena = 72800,
                     Slika = "seed-tesla-model3-2023-showroom.webp",
                     Opis = "Električno demo vozilo za prikaz različitih tipova pogona."
                 },
@@ -485,7 +485,7 @@ namespace Autosalon_OneZone.Data
                     Kubikaza = 2.0m,
                     Boja = TipBoje.Srebrna,
                     Kilometraza = 93000,
-                    Cijena = 41500m,
+                    Cijena = 41500,
                     Slika = "seed-mercedes-c220-2019-showroom.webp",
                     Opis = "Demo sedan za testiranje pretrage i korpe."
                 },
@@ -498,7 +498,7 @@ namespace Autosalon_OneZone.Data
                     Kubikaza = null,
                     Boja = TipBoje.Bijela,
                     Kilometraza = 28400,
-                    Cijena = 129500m,
+                    Cijena = 129500,
                     Slika = "seed-audi-etron-gt-2022-showroom.webp",
                     Opis = "Električni gran turismo sa naprednom opremom i sportskim karakterom."
                 },
@@ -511,7 +511,7 @@ namespace Autosalon_OneZone.Data
                     Kubikaza = 3.0m,
                     Boja = TipBoje.Zuta,
                     Kilometraza = 18500,
-                    Cijena = 118900m,
+                    Cijena = 118900,
                     Slika = "seed-bmw-m4-competition-2022-showroom.webp",
                     Opis = "Sportski coupe sa visokim performansama i upečatljivim izgledom."
                 },
@@ -524,7 +524,7 @@ namespace Autosalon_OneZone.Data
                     Kubikaza = 2.0m,
                     Boja = TipBoje.Bijela,
                     Kilometraza = 66400,
-                    Cijena = 56900m,
+                    Cijena = 56900,
                     Slika = "seed-mercedes-glc300-2020-showroom.webp",
                     Opis = "Premium SUV za porodičnu i poslovnu vožnju."
                 },
@@ -537,7 +537,7 @@ namespace Autosalon_OneZone.Data
                     Kubikaza = 1.3m,
                     Boja = TipBoje.Crvena,
                     Kilometraza = 112000,
-                    Cijena = 16900m,
+                    Cijena = 16900,
                     Slika = "seed-toyota-yaris-2017-showroom.webp",
                     Opis = "Pristupačno gradsko vozilo sa niskom potrošnjom."
                 },
@@ -550,7 +550,7 @@ namespace Autosalon_OneZone.Data
                     Kubikaza = 1.5m,
                     Boja = TipBoje.Bijela,
                     Kilometraza = 98500,
-                    Cijena = 14500m,
+                    Cijena = 14500,
                     Slika = "seed-renault-clio-2018-showroom.webp",
                     Opis = "Ekonomično vozilo za svakodnevnu gradsku vožnju."
                 },
@@ -563,7 +563,7 @@ namespace Autosalon_OneZone.Data
                     Kubikaza = 1.4m,
                     Boja = TipBoje.Siva,
                     Kilometraza = 124000,
-                    Cijena = 13500m,
+                    Cijena = 13500,
                     Slika = "seed-opel-astra-2016-showroom.webp",
                     Opis = "Pouzdan hatchback za kupce koji traže niži budžet."
                 },
@@ -576,7 +576,7 @@ namespace Autosalon_OneZone.Data
                     Kubikaza = 1.25m,
                     Boja = TipBoje.Plava,
                     Kilometraza = 108000,
-                    Cijena = 11900m,
+                    Cijena = 11900,
                     Slika = "seed-ford-fiesta-2017-showroom.webp",
                     Opis = "Kompaktno vozilo za gradsku vožnju i početnike."
                 },
@@ -589,7 +589,7 @@ namespace Autosalon_OneZone.Data
                     Kubikaza = 1.2m,
                     Boja = TipBoje.Srebrna,
                     Kilometraza = 72000,
-                    Cijena = 15500m,
+                    Cijena = 15500,
                     Slika = "seed-hyundai-i20-2019-showroom.webp",
                     Opis = "Dobro očuvano vozilo sa jednostavnim održavanjem."
                 },
@@ -602,7 +602,7 @@ namespace Autosalon_OneZone.Data
                     Kubikaza = 1.0m,
                     Boja = TipBoje.Bijela,
                     Kilometraza = 68000,
-                    Cijena = 12900m,
+                    Cijena = 12900,
                     Slika = "seed-dacia-sandero-2020-showroom.webp",
                     Opis = "Povoljan demo model sa plinskim pogonom."
                 },
@@ -615,7 +615,7 @@ namespace Autosalon_OneZone.Data
                     Kubikaza = 5.0m,
                     Boja = TipBoje.Bijela,
                     Kilometraza = 18500,
-                    Cijena = 109900m,
+                    Cijena = 109900,
                     Slika = "seed-lexus-lc500-2021-showroom.webp",
                     Opis = "Luksuzni grand tourer sa atmosferskim V8 motorom i prepoznatljivim dizajnom."
                 },
@@ -628,7 +628,7 @@ namespace Autosalon_OneZone.Data
                     Kubikaza = 5.0m,
                     Boja = TipBoje.Crvena,
                     Kilometraza = 22800,
-                    Cijena = 114500m,
+                    Cijena = 114500,
                     Slika = "seed-jaguar-ftype-r-2021-showroom.webp",
                     Opis = "Sportski coupe sa snažnim V8 motorom i elegantnim britanskim karakterom."
                 },
@@ -641,7 +641,7 @@ namespace Autosalon_OneZone.Data
                     Kubikaza = null,
                     Boja = TipBoje.Plava,
                     Kilometraza = 31000,
-                    Cijena = 103900m,
+                    Cijena = 103900,
                     Slika = "seed-porsche-taycan-4s-2021-showroom.webp",
                     Opis = "Električna sportska limuzina sa pogonom na sve točkove i odličnim voznim osobinama."
                 },
@@ -654,7 +654,7 @@ namespace Autosalon_OneZone.Data
                     Kubikaza = 3.0m,
                     Boja = TipBoje.Zelena,
                     Kilometraza = 42000,
-                    Cijena = 92900m,
+                    Cijena = 92900,
                     Slika = "seed-land-rover-defender-p400-2021-showroom.webp",
                     Opis = "Premium terensko vozilo sa blagim hibridnim pogonom i prostranom kabinom."
                 },
@@ -667,7 +667,7 @@ namespace Autosalon_OneZone.Data
                     Kubikaza = 2.0m,
                     Boja = TipBoje.Crna,
                     Kilometraza = 36000,
-                    Cijena = 104900m,
+                    Cijena = 104900,
                     Slika = "seed-range-rover-sport-p400e-2022-showroom.webp",
                     Opis = "Luksuzni plug-in hibridni SUV koji spaja udobnost, performanse i svakodnevnu praktičnost."
                 },
@@ -680,7 +680,7 @@ namespace Autosalon_OneZone.Data
                     Kubikaza = 2.0m,
                     Boja = TipBoje.Bijela,
                     Kilometraza = 45500,
-                    Cijena = 84900m,
+                    Cijena = 84900,
                     Slika = "seed-volvo-xc90-recharge-2022-showroom.webp",
                     Opis = "Prostrani plug-in hibridni SUV sa bogatom sigurnosnom opremom i sedam sjedišta."
                 },
@@ -693,7 +693,7 @@ namespace Autosalon_OneZone.Data
                     Kubikaza = 3.5m,
                     Boja = TipBoje.Plava,
                     Kilometraza = 29000,
-                    Cijena = 69900m,
+                    Cijena = 69900,
                     Slika = "seed-genesis-g80-2022-showroom.webp",
                     Opis = "Elegantna premium limuzina sa pogonom na sve točkove i visokim nivoom udobnosti."
                 },
@@ -706,7 +706,7 @@ namespace Autosalon_OneZone.Data
                     Kubikaza = 3.8m,
                     Boja = TipBoje.Crna,
                     Kilometraza = 33500,
-                    Cijena = 98900m,
+                    Cijena = 98900,
                     Slika = "seed-maserati-ghibli-trofeo-2021-showroom.webp",
                     Opis = "Sportska luksuzna limuzina sa V8 motorom i izraženim italijanskim karakterom."
                 },
@@ -719,7 +719,7 @@ namespace Autosalon_OneZone.Data
                     Kubikaza = 4.0m,
                     Boja = TipBoje.Siva,
                     Kilometraza = 27500,
-                    Cijena = 139900m,
+                    Cijena = 139900,
                     Slika = "seed-audi-rs6-avant-2021-showroom.webp",
                     Opis = "Karavan visokih performansi koji kombinuje prostranost, luksuz i sportski pogon."
                 },
@@ -732,7 +732,7 @@ namespace Autosalon_OneZone.Data
                     Kubikaza = 3.0m,
                     Boja = TipBoje.Crna,
                     Kilometraza = 24000,
-                    Cijena = 124900m,
+                    Cijena = 124900,
                     Slika = "seed-mercedes-amg-gt53-2022-showroom.webp",
                     Opis = "Četverovratni sportski coupe sa blagim hibridnim sistemom i pogonom na sve točkove."
                 }
@@ -904,20 +904,20 @@ namespace Autosalon_OneZone.Data
                         KorisnikId = purchaseUser.Id,
                         DatumNarudzbe = purchaseDate,
                         Status = StatusNarudzbe.Placena,
-                        UkupnaCijena = vehicle.Cijena ?? 0m,
+                        UkupnaCijena = vehicle.Cijena ?? 0,
                         StavkeKorpe = new List<StavkaKorpe>
                         {
                             new StavkaKorpe
                             {
                                 VoziloID = vehicle.VoziloID,
                                 Kolicina = 1,
-                                CijenaStavke = vehicle.Cijena ?? 0m
+                                CijenaStavke = vehicle.Cijena ?? 0
                             }
                         },
                         Placanje = new Placanje
                         {
                             DatumPlacanja = purchaseDate,
-                            Iznos = vehicle.Cijena ?? 0m,
+                            Iznos = vehicle.Cijena ?? 0,
                             Status = StatusPlacanja.Uspjesno
                         }
                     };
@@ -928,10 +928,10 @@ namespace Autosalon_OneZone.Data
                 else
                 {
                     purchasedItem.Kolicina = 1;
-                    purchasedItem.CijenaStavke = vehicle.Cijena ?? 0m;
+                    purchasedItem.CijenaStavke = vehicle.Cijena ?? 0;
                     purchasedItem.Narudzba.DatumNarudzbe = purchaseDate;
                     purchasedItem.Narudzba.Status = StatusNarudzbe.Placena;
-                    purchasedItem.Narudzba.UkupnaCijena = vehicle.Cijena ?? 0m;
+                    purchasedItem.Narudzba.UkupnaCijena = vehicle.Cijena ?? 0;
 
                     var payment = await dbContext.Placanja.FindAsync(purchasedItem.NarudzbaID!.Value);
                     if (payment == null)
@@ -940,14 +940,14 @@ namespace Autosalon_OneZone.Data
                         {
                             NarudzbaID = purchasedItem.NarudzbaID.Value,
                             DatumPlacanja = purchaseDate,
-                            Iznos = vehicle.Cijena ?? 0m,
+                            Iznos = vehicle.Cijena ?? 0,
                             Status = StatusPlacanja.Uspjesno
                         });
                     }
                     else
                     {
                         payment.DatumPlacanja = purchaseDate;
-                        payment.Iznos = vehicle.Cijena ?? 0m;
+                        payment.Iznos = vehicle.Cijena ?? 0;
                         payment.Status = StatusPlacanja.Uspjesno;
                     }
                 }

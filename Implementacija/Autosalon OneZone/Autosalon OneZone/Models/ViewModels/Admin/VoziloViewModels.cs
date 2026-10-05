@@ -38,7 +38,7 @@ namespace Autosalon_OneZone.ViewModels.Admin
         public string Gorivo { get; set; } = "";
 
         [Display(Name = "VehicleDisplacement")]
-        [Range(0, double.MaxValue, ErrorMessage = "Validation.VehicleDisplacementPositive")]
+        [Range(0.1, double.MaxValue, ErrorMessage = "Validation.VehicleDisplacementPositive")]
         public decimal? Kubikaza { get; set; }
 
         [Required(ErrorMessage = "Validation.VehicleColorRequired")]
@@ -46,14 +46,14 @@ namespace Autosalon_OneZone.ViewModels.Admin
         public TipBoje? Boja { get; set; }
 
         [Required(ErrorMessage = "Validation.VehicleMileageRequired")]
-        [Range(0, double.MaxValue, ErrorMessage = "Validation.VehicleMileagePositive")]
+        [Range(0, int.MaxValue, ErrorMessage = "Validation.VehicleMileagePositive")]
         [Display(Name = "VehicleMileage")]
-        public double? Kilometraza { get; set; }
+        public int? Kilometraza { get; set; }
 
         [Required(ErrorMessage = "Validation.VehiclePriceRequired")]
-        [Range(0.01, double.MaxValue, ErrorMessage = "Validation.VehiclePricePositive")]
+        [Range(1, int.MaxValue, ErrorMessage = "Validation.VehiclePricePositive")]
         [Display(Name = "VehiclePrice")]
-        public decimal? Cijena { get; set; }
+        public int? Cijena { get; set; }
 
         [Display(Name = "VehicleImage")]
         public IFormFile? Slika { get; set; }

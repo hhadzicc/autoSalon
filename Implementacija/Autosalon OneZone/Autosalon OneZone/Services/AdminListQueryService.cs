@@ -626,8 +626,8 @@ public sealed record VehicleListItem(
     [property: JsonPropertyName("naziv")] string Name,
     [property: JsonPropertyName("godiste")] int? Year,
     [property: JsonPropertyName("gorivo")] string Fuel,
-    [property: JsonPropertyName("kilometraza")] double? Mileage,
-    [property: JsonPropertyName("cijena")] decimal? Price,
+    [property: JsonPropertyName("kilometraza")] int? Mileage,
+    [property: JsonPropertyName("cijena")] int? Price,
     [property: JsonPropertyName("boja")] string Color,
     [property: JsonPropertyName("kubikaza")] decimal? EngineDisplacement,
     [property: JsonPropertyName("dostupnoZaKupovinu")] bool IsAvailableForPurchase);

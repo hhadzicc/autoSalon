@@ -65,7 +65,7 @@ public sealed class ProfileActivityService : IProfileActivityService
                     VoziloID = item.VoziloID,
                     Naziv = $"{item.Vozilo.Marka} {item.Vozilo.Model}",
                     Slika = !string.IsNullOrEmpty(item.Vozilo.Slika)
-                        ? $"/images/vozila/{item.Vozilo.Slika}"
+                        ? $"/vehicle-images/{item.VoziloID}"
                         : "/img/no-image.png",
                     Cijena = item.CijenaStavke,
                     DatumKupovine = order.DatumNarudzbe,

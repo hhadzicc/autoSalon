@@ -46,6 +46,12 @@ coverage.opencover.xml
 *.tmp
 *.temp
 
+# Runtime vehicle uploads (only seeded demo images belong in Git)
+Implementacija/Autosalon OneZone/Autosalon OneZone/wwwroot/images/vozila/*
+!Implementacija/Autosalon OneZone/Autosalon OneZone/wwwroot/images/vozila/seed-*.webp
+**/App_Data/VehicleUploads/**
+runtime/vehicle-uploads/**
+
 # OS files
 .DS_Store
 Thumbs.db

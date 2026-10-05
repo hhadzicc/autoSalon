@@ -17,6 +17,8 @@ using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
+builder.Services.Configure<VehicleImageStorageOptions>(
+    builder.Configuration.GetSection("VehicleImageStorage"));
 builder.Services.AddOptions<ResendEmailOptions>()
     .Bind(builder.Configuration.GetSection("Resend"))
     .Validate(
@@ -131,6 +133,7 @@ builder.Services.AddScoped<IAdminDashboardService, AdminDashboardService>();
 builder.Services.AddScoped<IAdminListQueryService, AdminListQueryService>();
 builder.Services.AddScoped<IAdminModerationService, AdminModerationService>();
 builder.Services.AddScoped<IAdminVehicleService, AdminVehicleService>();
+builder.Services.AddSingleton<IVehicleImageStorage, VehicleImageStorage>();
 builder.Services.AddScoped<IAdminProfileService, AdminProfileService>();
 builder.Services.AddScoped<IHomeService, HomeService>();
 builder.Services.AddScoped<ISupportService, SupportService>();

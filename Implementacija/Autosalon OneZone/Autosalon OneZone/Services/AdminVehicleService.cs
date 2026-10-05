@@ -15,12 +15,14 @@ public interface IAdminVehicleService
 public sealed class AdminVehicleService : IAdminVehicleService
 {
     private readonly ApplicationDbContext _context;
-    private readonly IWebHostEnvironment _environment;
+    private readonly IVehicleImageStorage _imageStorage;
 
-    public AdminVehicleService(ApplicationDbContext context, IWebHostEnvironment environment)
+    public AdminVehicleService(
+        ApplicationDbContext context,
+        IVehicleImageStorage imageStorage)
     {
         _context = context;
-        _environment = environment;
+        _imageStorage = imageStorage;
     }
 
     public async Task<EditVoziloViewModel?> GetForEditAsync(int id)
@@ -61,20 +63,13 @@ public sealed class AdminVehicleService : IAdminVehicleService
         }
 
         string? newImageName = null;
-        string? newImagePath = null;
         var oldImageName = vehicle.Slika;
 
         try
         {
             if (model.Slika != null)
             {
-                var uploadsFolder = VehicleImagesFolder();
-                Directory.CreateDirectory(uploadsFolder);
-                newImageName = $"{Guid.NewGuid():N}_{Path.GetFileName(model.Slika.FileName)}";
-                newImagePath = Path.Combine(uploadsFolder, newImageName);
-
-                await using var stream = new FileStream(newImagePath, FileMode.CreateNew);
-                await model.Slika.CopyToAsync(stream);
+                newImageName = await _imageStorage.SaveAsync(model.Slika);
             }
 
             vehicle.Marka = model.Marka;
@@ -101,13 +96,13 @@ public sealed class AdminVehicleService : IAdminVehicleService
         }
         catch
         {
-            DeleteImage(newImagePath);
+            await _imageStorage.DeleteAsync(newImageName);
             throw;
         }
 
         if (newImageName != null && !string.IsNullOrEmpty(oldImageName))
         {
-            DeleteImage(Path.Combine(VehicleImagesFolder(), oldImageName));
+            await _imageStorage.DeleteAsync(oldImageName);
         }
 
         return VehicleSaveResult.Saved(vehicle.VoziloID, isNew);
@@ -143,25 +138,12 @@ public sealed class AdminVehicleService : IAdminVehicleService
             }
         }
 
-        var imagePath = string.IsNullOrEmpty(vehicle.Slika)
-            ? null
-            : Path.Combine(VehicleImagesFolder(), vehicle.Slika);
+        var imageName = vehicle.Slika;
 
         _context.Vozila.Remove(vehicle);
         await _context.SaveChangesAsync();
-        DeleteImage(imagePath);
+        await _imageStorage.DeleteAsync(imageName);
         return true;
-    }
-
-    private string VehicleImagesFolder() =>
-        Path.Combine(_environment.WebRootPath, "images", "vozila");
-
-    private static void DeleteImage(string? path)
-    {
-        if (!string.IsNullOrEmpty(path) && File.Exists(path))
-        {
-            File.Delete(path);
-        }
     }
 }
 

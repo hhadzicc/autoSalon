@@ -19,17 +19,39 @@ namespace Autosalon_OneZone.Controllers
         private readonly ICartService _cartService;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IStringLocalizer<SharedResource> _localizer;
+        private readonly IVehicleImageStorage _imageStorage;
 
         public VoziloController(
             IVoziloService voziloService,
             ICartService cartService,
             UserManager<ApplicationUser> userManager,
-            IStringLocalizer<SharedResource> localizer)
+            IStringLocalizer<SharedResource> localizer,
+            IVehicleImageStorage imageStorage)
         {
             _voziloService = voziloService;
             _cartService = cartService;
             _userManager = userManager;
             _localizer = localizer;
+            _imageStorage = imageStorage;
+        }
+
+        [HttpGet("/vehicle-images/{id:int}")]
+        public async Task<IActionResult> Image(int id, CancellationToken cancellationToken)
+        {
+            var vehicle = await _voziloService.GetVehicleDetailsAsync(id, includeUnavailable: true);
+            if (vehicle == null || string.IsNullOrWhiteSpace(vehicle.Slika))
+            {
+                return NotFound();
+            }
+
+            var image = await _imageStorage.OpenReadAsync(vehicle.Slika, cancellationToken);
+            if (image == null)
+            {
+                return NotFound();
+            }
+
+            Response.Headers.CacheControl = "no-store";
+            return File(image.Stream, image.ContentType, enableRangeProcessing: true);
         }
 
         [HttpGet]

@@ -50,6 +50,7 @@ services:
       Resend__ApiKey: ${RESEND_API_KEY:-}
       Resend__FromEmail: ${FROM_EMAIL:-}
       ReverseProxy__KnownProxy: ${STANDALONE_PROXY_IP:-172.30.251.10}
+      VehicleImageStorage__UploadsPath: /app/App_Data/VehicleUploads
       Stripe__UseMockPayments: ${STRIPE_USE_MOCK_PAYMENTS:-true}
       Stripe__SecretKey: ${STRIPE_SECRET_KEY:-}
       Stripe__PublishableKey: ${STRIPE_PUBLISHABLE_KEY:-}
@@ -57,6 +58,7 @@ services:
       - "8080"
     volumes:
       - autosalon-keys:/app/Keys
+      - ./runtime/vehicle-uploads:/app/App_Data/VehicleUploads
     networks:
       - app_internal
     restart: unless-stopped

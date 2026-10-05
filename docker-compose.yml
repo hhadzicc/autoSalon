@@ -46,6 +46,7 @@ services:
       Resend__Enabled: ${EMAIL_SENDING_ENABLED:-false}
       Resend__ApiKey: ${RESEND_API_KEY:-}
       Resend__FromEmail: ${FROM_EMAIL:-}
+      VehicleImageStorage__UploadsPath: /app/App_Data/VehicleUploads
       Stripe__UseMockPayments: ${STRIPE_USE_MOCK_PAYMENTS:-true}
       Stripe__SecretKey: ${STRIPE_SECRET_KEY:-}
       Stripe__PublishableKey: ${STRIPE_PUBLISHABLE_KEY:-}
@@ -53,6 +54,7 @@ services:
       - "127.0.0.1:${APP_HTTP_PORT:-8080}:8080"
     volumes:
       - autosalon-keys:/app/Keys
+      - ./runtime/vehicle-uploads:/app/App_Data/VehicleUploads
     restart: unless-stopped
 
 volumes:

@@ -8,6 +8,8 @@
 **/obj/
 **/TestResults/
 **/coverage/
+runtime/
+**/App_Data/VehicleUploads/
 
 .env
 .env.*

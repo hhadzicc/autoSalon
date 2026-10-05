@@ -58,6 +58,11 @@ namespace Autosalon_OneZone.Data
                     cancellationToken);
                 await dbContext.Vozila.ExecuteDeleteAsync(cancellationToken);
 
+                var deletedUsers = await dbContext.Users.ExecuteDeleteAsync(cancellationToken);
+                logger.LogInformation(
+                    "Deleted {UserCount} users before recreating demo accounts.",
+                    deletedUsers);
+
                 await EnsureRolesAsync(roleManager, logger);
 
                 ApplicationUser? adminUser = null;

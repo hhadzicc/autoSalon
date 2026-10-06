@@ -11,6 +11,7 @@ Autosalon OneZone is an ASP.NET Core MVC application for managing a car dealersh
 - Secure password reset flow with optional Resend email delivery.
 - English and Bosnian UI localization.
 - SQL Server persistence through Entity Framework Core.
+- Structured Serilog audit logs with a private Seq viewer and rolling JSON backup.
 - Docker Compose demo environment.
 - Unit and integration tests for core application behavior.
 
@@ -42,7 +43,7 @@ The application will be available at:
 http://localhost:8080
 ```
 
-Docker Compose starts SQL Server and the ASP.NET Core application. The app is
+Docker Compose starts SQL Server, Seq, and the ASP.NET Core application. The app is
 bound only to `127.0.0.1:8080`, while the database remains private inside the
 Docker network. No `.env` file or domain is required for this local demo.
 
@@ -91,8 +92,8 @@ The application supports a complete forgot-password flow using ASP.NET Core Iden
 Email delivery is disabled by default. Set `EMAIL_SENDING_ENABLED=true` together
 with `RESEND_API_KEY` and `FROM_EMAIL` to send reset links through Resend. The
 forgot-password endpoint is limited to five submissions per IP address every 15
-minutes. In Development mode, a disabled email provider writes the reset link to
-the application log for local testing.
+minutes. Password reset links and tokens are never written to application or
+audit logs.
 
 ## Optional Periodic Demo Reset
 
@@ -100,6 +101,25 @@ Persistent demo data can be restored on startup and every 60 minutes by setting
 `DEMO_MODE=true` and `DEMO_RESET_ENABLED=true`. The interval is configurable
 through `DEMO_RESET_INTERVAL_MINUTES`. The application rejects unsafe reset
 configuration unless demo seeding and mock payments are also enabled.
+
+## Private Activity Logs
+
+Serilog writes compact rolling JSON files to `runtime/logs`. Seq stores its own
+searchable event database under `runtime/seq-data`. Both directories are ignored
+by Git and survive application database resets and container replacement.
+
+The Seq UI is bound only to the host loopback interface at
+`http://127.0.0.1:5341`; it is not exposed through Caddy. On a remote server,
+open an SSH tunnel and then use that local address:
+
+```powershell
+ssh -L 5341:127.0.0.1:5341 user@server
+```
+
+The local zero-configuration demo uses the documented password `SeqDemo124!`.
+For deployment, generate a unique password hash as described in
+[Dokumentacija/DEPLOYMENT.md](Dokumentacija/DEPLOYMENT.md) and keep the original
+password outside the repository.
 
 ## Screenshots
 

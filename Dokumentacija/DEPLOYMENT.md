@@ -31,6 +31,9 @@ Request flow:
 browser
   -> ASP.NET Core on 127.0.0.1:8080
   -> SQL Server on the private Docker network
+
+browser on 127.0.0.1:5341
+  -> private Seq log viewer
 ```
 
 Only the ASP.NET Core container publishes a host port, and it is restricted to
@@ -69,6 +72,15 @@ DEMO_SELLER_PASSWORD=replace-with-a-strong-password
 DEMO_MODE=true
 DEMO_RESET_ENABLED=true
 DEMO_RESET_INTERVAL_MINUTES=60
+SEQ_ADMIN_PASSWORD_HASH=replace-with-a-generated-seq-password-hash
+```
+
+Generate the Seq hash locally before deployment and store only the resulting
+hash in the server's private `.env`. Keep the original password in a password
+manager:
+
+```powershell
+'a-long-unique-password' | docker run --rm -i datalust/seq:latest config hash
 ```
 
 Replace the example domain with a domain controlled by the deployer. The
@@ -88,6 +100,19 @@ Only Caddy publishes public ports. The ASP.NET Core and SQL Server containers
 remain private. Caddy obtains and renews the TLS certificate automatically.
 Certificate state, database data, and ASP.NET Core Data Protection keys are
 stored in named Docker volumes and are not committed to Git.
+
+Seq publishes its UI only on the server's `127.0.0.1` interface and is not part
+of the Caddy routing configuration. Reach it from an administrator workstation
+through an SSH tunnel:
+
+```powershell
+ssh -L 5341:127.0.0.1:5341 user@server
+```
+
+While that session is open, browse to `http://127.0.0.1:5341`. Seq data is
+stored in `runtime/seq-data`, and the independent rolling JSON backup is stored
+in `runtime/logs`. Both paths are excluded from Git and persist across database
+resets and container replacement.
 
 ASP.NET Core accepts `X-Forwarded-For` and `X-Forwarded-Proto` only from the
 fixed private address assigned to the standalone Caddy container. HTTPS
@@ -125,11 +150,13 @@ The forgot-password POST endpoint permits five requests per client IP in a
 15-minute window. Keep provider keys only in the private `.env` file.
 
 Periodic cleanup is also opt-in. It removes runtime orders, payments, cart
-items, reviews, support inquiries, and vehicle changes, then restores the seed
-catalog and demo account state. Registered Identity accounts are not deleted.
-The application performs one reset at startup and then repeats it at the
-configured interval. A visible demo notice shows that payments are simulated
-and, when cleanup is enabled, the approximate time until the next reset.
+items, reviews, support inquiries, vehicle changes, non-seeded accounts, and
+all active authentication sessions, then restores the seed catalog and demo
+account state. The application performs one reset at startup and then repeats
+it at the configured interval. Uploaded non-demo vehicle images and private
+activity logs remain on disk. A visible demo notice shows that payments are
+simulated and, when cleanup is enabled, the approximate time until the next
+reset.
 
 `DEMO_RESET_ENABLED=true` is accepted only when all of these are true:
 

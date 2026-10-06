@@ -147,14 +147,14 @@ public class ServiceTests
         yield return [null, null, 2021, null, null, null, null, 4];
         yield return [null, null, null, 2021, null, null, null, 2];
         yield return [null, null, null, null, TipGoriva.Elektro, null, null, 2];
-        yield return [null, null, null, null, null, 40000m, null, 4];
-        yield return [null, null, null, null, null, null, 60000m, 2];
-        yield return ["Audi", null, 2021, null, null, 100000m, null, 1];
+        yield return [null, null, null, null, null, 40000, null, 4];
+        yield return [null, null, null, null, null, null, 60000, 2];
+        yield return ["Audi", null, 2021, null, null, 100000, null, 1];
     }
 
     [Theory]
     [MemberData(nameof(FilterCases))]
-    public async Task VoziloService_filters_vehicles(string marka, string model, int? yearFrom, int? yearTo, TipGoriva? fuel, decimal? priceFrom, decimal? priceTo, int expected)
+    public async Task VoziloService_filters_vehicles(string marka, string model, int? yearFrom, int? yearTo, TipGoriva? fuel, int? priceFrom, int? priceTo, int expected)
     {
         await using var db = CreateContext();
         await SeedVehicles(db);
@@ -278,9 +278,9 @@ public class ServiceTests
         string brand,
         string model,
         int year,
-        decimal price,
+        int price,
         TipGoriva fuel = TipGoriva.Benzin,
-        double mileage = 1000,
+        int mileage = 1000,
         TipBoje color = TipBoje.Crna)
     {
         return new Vozilo

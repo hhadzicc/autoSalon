@@ -523,8 +523,7 @@ public class AdminLifecycleTests
         Assert.IsType<OkObjectResult>(await admin.OdgovoriNaPodrsku(ticket.UpitID, new SupportStaffReplyViewModel
         {
             Message = "Poštovani, provjerili smo Vaš upit.",
-            RowVersion = "",
-            Resolve = false
+            RowVersion = ""
         }));
 
         var updated = await app.Db.PodrskaUpiti
@@ -598,7 +597,7 @@ public class AdminLifecycleTests
     }
 
     [Fact]
-    public async Task Customer_follow_up_returns_ticket_to_support_and_closed_ticket_can_be_reopened()
+    public async Task Customer_follow_up_keeps_assigned_ticket_in_progress_and_closed_ticket_can_be_reopened()
     {
         await using var app = await TestApp.CreateAsync();
         var customer = await CreateUserAsync(app, "flowbuyer", "flowbuyer@example.com", "Kupac");
@@ -626,13 +625,13 @@ public class AdminLifecycleTests
             customer.Id,
             "Najviše bi mi odgovarao period od pet godina.");
         Assert.Equal(SupportOperationStatus.Success, followUp.Status);
-        Assert.Equal(StatusUpita.CekaPodrsku, followUp.Conversation?.Status);
+        Assert.Equal(StatusUpita.UObradi, followUp.Conversation?.Status);
         Assert.Equal(agent.Id, followUp.Conversation?.AssignedAgentId);
 
         Assert.Equal(SupportOperationStatus.Success, (await support.CloseAsync(ticketId, agent.Id, "", false)).Status);
         var reopen = await support.ReopenAsync(ticketId, customer.Id);
         Assert.Equal(SupportOperationStatus.Success, reopen.Status);
-        Assert.Equal(StatusUpita.CekaPodrsku, reopen.Conversation?.Status);
+        Assert.Equal(StatusUpita.UObradi, reopen.Conversation?.Status);
         Assert.Contains(reopen.Conversation!.Messages, message =>
             message.SenderType == TipAutoraPorukePodrske.Sistem &&
             message.Content == "SupportSystemReopened");
@@ -870,7 +869,14 @@ public class AdminLifecycleTests
             new AdminDashboardService(app.Db),
             new AdminListQueryService(app.Db),
             new AdminModerationService(app.Db),
-            new AdminVehicleService(app.Db, app.Environment),
+            new AdminVehicleService(
+                app.Db,
+                new VehicleImageStorage(
+                    app.Environment,
+                    Options.Create(new VehicleImageStorageOptions
+                    {
+                        UploadsPath = Path.Combine(app.Environment.WebRootPath, "vehicle-uploads")
+                    }))),
             new AdminProfileService(app.Db, app.UserManager, app.RoleManager),
             CreateSupportService(app));
 
@@ -1009,7 +1015,7 @@ public class AdminLifecycleTests
         return user;
     }
 
-    private static async Task<Vozilo> AddVehicleAsync(ApplicationDbContext db, string brand, string model, decimal price)
+    private static async Task<Vozilo> AddVehicleAsync(ApplicationDbContext db, string brand, string model, int price)
     {
         var vehicle = await AddVehicleWithDetailsAsync(db, brand, model, 2022, 25000, price, TipGoriva.Benzin);
         return vehicle;
@@ -1021,7 +1027,7 @@ public class AdminLifecycleTests
         string model,
         int year,
         int mileage,
-        decimal price,
+        int price,
         TipGoriva fuel)
     {
         var vehicle = new Vozilo
@@ -1041,7 +1047,7 @@ public class AdminLifecycleTests
         return vehicle;
     }
 
-    private static AddVoziloViewModel CreateVehicleForm(string brand, string model, int year, decimal price, string fuel)
+    private static AddVoziloViewModel CreateVehicleForm(string brand, string model, int year, int price, string fuel)
     {
         return new AddVoziloViewModel
         {

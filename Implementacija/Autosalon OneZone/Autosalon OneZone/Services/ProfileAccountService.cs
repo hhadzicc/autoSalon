@@ -1,4 +1,5 @@
 using Autosalon_OneZone.Models;
+using Autosalon_OneZone.Logging;
 using Autosalon_OneZone.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
 
@@ -18,13 +19,16 @@ public sealed class ProfileAccountService : IProfileAccountService
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly IAuditLogger _audit;
 
     public ProfileAccountService(
         UserManager<ApplicationUser> userManager,
-        SignInManager<ApplicationUser> signInManager)
+        SignInManager<ApplicationUser> signInManager,
+        IAuditLogger? audit = null)
     {
         _userManager = userManager;
         _signInManager = signInManager;
+        _audit = audit ?? NullAuditLogger.Instance;
     }
 
     public EditProfileViewModel GetEditModel(ApplicationUser user) => new()
@@ -37,6 +41,13 @@ public sealed class ProfileAccountService : IProfileAccountService
 
     public async Task<ProfileUpdateResult> UpdateAsync(ApplicationUser user, EditProfileViewModel model)
     {
+        var previous = new
+        {
+            user.Ime,
+            user.Prezime,
+            user.Email,
+            user.UserName
+        };
         var firstNameChanged = user.Ime != model.Ime;
         var lastNameChanged = user.Prezime != model.Prezime;
         var emailChanged = user.Email != model.Email;
@@ -82,6 +93,15 @@ public sealed class ProfileAccountService : IProfileAccountService
         }
 
         await _signInManager.RefreshSignInAsync(user);
+        _audit.Success(
+            "ProfileUpdated",
+            "User",
+            user.Id,
+            new
+            {
+                Before = previous,
+                After = new { user.Ime, user.Prezime, user.Email, user.UserName }
+            });
         return ProfileUpdateResult.Updated();
     }
 
@@ -97,6 +117,11 @@ public sealed class ProfileAccountService : IProfileAccountService
         }
 
         await _signInManager.RefreshSignInAsync(user);
+        _audit.Success(
+            "PasswordChanged",
+            "User",
+            user.Id,
+            new { user.UserName, user.Email });
         return IdentityOperationResult.Success();
     }
 }

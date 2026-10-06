@@ -217,7 +217,6 @@ namespace Autosalon_OneZone.Controllers
             try
             {
                 _logger.LogInformation("Početak obrade grupnog plaćanja");
-                _logger.LogInformation("Primljeni JSON: {OdabranaVozilaJSON}", OdabranaVozilaJSON);
 
                 var options = new JsonSerializerOptions
                 {
@@ -265,7 +264,6 @@ namespace Autosalon_OneZone.Controllers
                 }
 
                 var odabraniVozilaIds = odabranaVozila.Select(v => v.id).ToHashSet();
-                _logger.LogInformation("Odabrana vozila IDs: {IDs}", string.Join(", ", odabraniVozilaIds));
 
                 var checkout = await _checkoutService.PurchaseCartItemsAsync(
                     user,

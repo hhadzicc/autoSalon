@@ -1,4 +1,5 @@
 using Autosalon_OneZone.Data;
+using Autosalon_OneZone.Logging;
 using Autosalon_OneZone.Models;
 using Autosalon_OneZone.ViewModels.Admin;
 using Microsoft.EntityFrameworkCore;
@@ -16,13 +17,16 @@ public sealed class AdminVehicleService : IAdminVehicleService
 {
     private readonly ApplicationDbContext _context;
     private readonly IVehicleImageStorage _imageStorage;
+    private readonly IAuditLogger _audit;
 
     public AdminVehicleService(
         ApplicationDbContext context,
-        IVehicleImageStorage imageStorage)
+        IVehicleImageStorage imageStorage,
+        IAuditLogger? audit = null)
     {
         _context = context;
         _imageStorage = imageStorage;
+        _audit = audit ?? NullAuditLogger.Instance;
     }
 
     public async Task<EditVoziloViewModel?> GetForEditAsync(int id)
@@ -64,6 +68,21 @@ public sealed class AdminVehicleService : IAdminVehicleService
 
         string? newImageName = null;
         var oldImageName = vehicle.Slika;
+        var previous = isNew
+            ? null
+            : new
+            {
+                vehicle.Marka,
+                vehicle.Model,
+                vehicle.Godiste,
+                Gorivo = vehicle.Gorivo.ToString(),
+                vehicle.Kubikaza,
+                Boja = vehicle.Boja.ToString(),
+                vehicle.Kilometraza,
+                vehicle.Cijena,
+                vehicle.Opis,
+                Image = vehicle.Slika
+            };
 
         try
         {
@@ -105,6 +124,37 @@ public sealed class AdminVehicleService : IAdminVehicleService
             await _imageStorage.DeleteAsync(oldImageName);
         }
 
+        _audit.Success(
+            isNew ? "VehicleCreated" : "VehicleUpdated",
+            "Vehicle",
+            vehicle.VoziloID.ToString(),
+            new
+            {
+                Before = previous,
+                After = new
+                {
+                    vehicle.Marka,
+                    vehicle.Model,
+                    vehicle.Godiste,
+                    Gorivo = vehicle.Gorivo.ToString(),
+                    vehicle.Kubikaza,
+                    Boja = vehicle.Boja.ToString(),
+                    vehicle.Kilometraza,
+                    vehicle.Cijena,
+                    vehicle.Opis,
+                    Image = vehicle.Slika
+                },
+                UploadedImage = model.Slika == null
+                    ? null
+                    : new
+                    {
+                        OriginalFileName = Path.GetFileName(model.Slika.FileName),
+                        StoredFileName = newImageName,
+                        model.Slika.Length,
+                        model.Slika.ContentType
+                    }
+            });
+
         return VehicleSaveResult.Saved(vehicle.VoziloID, isNew);
     }
 
@@ -139,10 +189,22 @@ public sealed class AdminVehicleService : IAdminVehicleService
         }
 
         var imageName = vehicle.Slika;
+        var deletedVehicle = new
+        {
+            vehicle.Marka,
+            vehicle.Model,
+            vehicle.Godiste,
+            Gorivo = vehicle.Gorivo.ToString(),
+            Boja = vehicle.Boja.ToString(),
+            vehicle.Kilometraza,
+            vehicle.Cijena,
+            Image = imageName
+        };
 
         _context.Vozila.Remove(vehicle);
         await _context.SaveChangesAsync();
         await _imageStorage.DeleteAsync(imageName);
+        _audit.Success("VehicleDeleted", "Vehicle", id.ToString(), deletedVehicle);
         return true;
     }
 }

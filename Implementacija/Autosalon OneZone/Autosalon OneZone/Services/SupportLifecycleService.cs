@@ -1,4 +1,5 @@
 using Autosalon_OneZone.Data;
+using Autosalon_OneZone.Logging;
 using Autosalon_OneZone.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -52,6 +53,7 @@ public sealed class SupportLifecycleBackgroundService : BackgroundService
     {
         using var scope = _scopeFactory.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var audit = scope.ServiceProvider.GetRequiredService<IAuditLogger>();
         var now = DateTime.UtcNow;
         var answeredCloseBefore = now.AddDays(-_options.CloseAnsweredAfterDays);
         var reminderBefore = now.AddDays(-_options.ReminderAfterDays);
@@ -92,6 +94,24 @@ public sealed class SupportLifecycleBackgroundService : BackgroundService
                 "Support lifecycle closed {ClosedCount} and reminded {ReminderCount} inquiries.",
                 ticketsToClose.Count,
                 ticketsToRemind.Count);
+
+            foreach (var ticket in ticketsToClose)
+            {
+                audit.Success(
+                    "SupportTicketAutoClosed",
+                    "SupportTicket",
+                    ticket.UpitID.ToString(),
+                    new { ticket.Naslov, ticket.KorisnikId });
+            }
+
+            foreach (var ticket in ticketsToRemind)
+            {
+                audit.Success(
+                    "SupportReminderCreated",
+                    "SupportTicket",
+                    ticket.UpitID.ToString(),
+                    new { ticket.Naslov, ticket.KorisnikId });
+            }
         }
     }
 

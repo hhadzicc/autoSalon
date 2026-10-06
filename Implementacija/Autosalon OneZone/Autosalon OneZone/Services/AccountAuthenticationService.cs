@@ -1,4 +1,5 @@
 using Autosalon_OneZone.Models;
+using Autosalon_OneZone.Logging;
 using Microsoft.AspNetCore.Identity;
 
 namespace Autosalon_OneZone.Services;
@@ -17,13 +18,16 @@ public sealed class AccountAuthenticationService : IAccountAuthenticationService
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly IAuditLogger _audit;
 
     public AccountAuthenticationService(
         UserManager<ApplicationUser> userManager,
-        SignInManager<ApplicationUser> signInManager)
+        SignInManager<ApplicationUser> signInManager,
+        IAuditLogger? audit = null)
     {
         _userManager = userManager;
         _signInManager = signInManager;
+        _audit = audit ?? NullAuditLogger.Instance;
     }
 
     public async Task<AccountSignInStatus> SignInAsync(
@@ -37,6 +41,11 @@ public sealed class AccountAuthenticationService : IAccountAuthenticationService
 
         if (user == null)
         {
+            _audit.Failure(
+                "UserLogin",
+                "InvalidCredentials",
+                "User",
+                details: new { LoginIdentifier = identifier });
             return AccountSignInStatus.InvalidCredentials;
         }
 
@@ -48,25 +57,39 @@ public sealed class AccountAuthenticationService : IAccountAuthenticationService
 
         if (result.Succeeded)
         {
+            var roles = await _userManager.GetRolesAsync(user);
+            _audit.Success(
+                "UserLogin",
+                "User",
+                user.Id,
+                new { user.UserName, user.Email, RememberMe = rememberMe },
+                new AuditActor(user.Id, user.UserName, user.Email, roles.ToArray()));
             return AccountSignInStatus.Succeeded;
         }
 
-        if (result.RequiresTwoFactor)
-        {
-            return AccountSignInStatus.RequiresTwoFactor;
-        }
+        var status = result.RequiresTwoFactor
+            ? AccountSignInStatus.RequiresTwoFactor
+            : result.IsLockedOut
+                ? AccountSignInStatus.LockedOut
+                : result.IsNotAllowed
+                    ? AccountSignInStatus.NotAllowed
+                    : AccountSignInStatus.InvalidCredentials;
+        _audit.Failure(
+            "UserLogin",
+            status.ToString(),
+            "User",
+            user.Id,
+            new { user.UserName, user.Email },
+            new AuditActor(user.Id, user.UserName, user.Email));
 
-        if (result.IsLockedOut)
-        {
-            return AccountSignInStatus.LockedOut;
-        }
-
-        return result.IsNotAllowed
-            ? AccountSignInStatus.NotAllowed
-            : AccountSignInStatus.InvalidCredentials;
+        return status;
     }
 
-    public Task SignOutAsync() => _signInManager.SignOutAsync();
+    public async Task SignOutAsync()
+    {
+        _audit.Success("UserLogout", "User");
+        await _signInManager.SignOutAsync();
+    }
 }
 
 public enum AccountSignInStatus

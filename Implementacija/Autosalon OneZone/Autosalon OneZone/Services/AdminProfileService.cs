@@ -1,5 +1,6 @@
 using Autosalon_OneZone.Authorization;
 using Autosalon_OneZone.Data;
+using Autosalon_OneZone.Logging;
 using Autosalon_OneZone.Models;
 using Autosalon_OneZone.ViewModels.Admin;
 using Microsoft.AspNetCore.Identity;
@@ -21,15 +22,18 @@ public sealed class AdminProfileService : IAdminProfileService
     private readonly ApplicationDbContext _context;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
+    private readonly IAuditLogger _audit;
 
     public AdminProfileService(
         ApplicationDbContext context,
         UserManager<ApplicationUser> userManager,
-        RoleManager<IdentityRole> roleManager)
+        RoleManager<IdentityRole> roleManager,
+        IAuditLogger? audit = null)
     {
         _context = context;
         _userManager = userManager;
         _roleManager = roleManager;
+        _audit = audit ?? NullAuditLogger.Instance;
     }
 
     public async Task<AddProfilViewModel> GetCreateModelAsync() => new()
@@ -137,6 +141,16 @@ public sealed class AdminProfileService : IAdminProfileService
         var currentRoles = isNew
             ? Array.Empty<string>()
             : await _userManager.GetRolesAsync(user);
+        var previous = isNew
+            ? null
+            : new
+            {
+                user.UserName,
+                user.Email,
+                user.Ime,
+                user.Prezime,
+                Roles = currentRoles.ToArray()
+            };
         var requestedRoles = model.OdabraneRole ?? new List<string>();
         var removesAdministrator = HasRole(currentRoles, AppRoles.Administrator) &&
                                    !HasRole(requestedRoles, AppRoles.Administrator);
@@ -198,6 +212,26 @@ public sealed class AdminProfileService : IAdminProfileService
             return ProfileSaveResult.IdentityFailure(roleResult.Errors);
         }
 
+        var savedRoles = await _userManager.GetRolesAsync(user);
+
+        _audit.Success(
+            isNew ? "UserCreatedByStaff" : "UserUpdatedByStaff",
+            "User",
+            user.Id,
+            new
+            {
+                Before = previous,
+                After = new
+                {
+                    user.UserName,
+                    user.Email,
+                    user.Ime,
+                    user.Prezime,
+                    Roles = savedRoles.ToArray(),
+                    PasswordChanged = !isNew && !string.IsNullOrEmpty(model.Password)
+                }
+            });
+
         return ProfileSaveResult.Saved(user.Id);
     }
 
@@ -213,6 +247,15 @@ public sealed class AdminProfileService : IAdminProfileService
         {
             return ProfileDeleteResult.Failure(ProfileDeleteStatus.CannotDeleteOwnAdministratorAccount);
         }
+
+        var deletedUser = new
+        {
+            user.UserName,
+            user.Email,
+            user.Ime,
+            user.Prezime,
+            Roles = (await _userManager.GetRolesAsync(user)).ToArray()
+        };
 
         var orderIds = await _context.Narudzbe
             .Where(order => order.KorisnikId == id)
@@ -260,6 +303,10 @@ public sealed class AdminProfileService : IAdminProfileService
         }
 
         var deleteResult = await _userManager.DeleteAsync(user);
+        if (deleteResult.Succeeded)
+        {
+            _audit.Success("UserDeletedByStaff", "User", id, deletedUser);
+        }
         return deleteResult.Succeeded
             ? ProfileDeleteResult.Deleted()
             : ProfileDeleteResult.IdentityFailure(deleteResult.Errors);

@@ -1,4 +1,5 @@
 using Autosalon_OneZone.Authorization;
+using Autosalon_OneZone.Logging;
 using Autosalon_OneZone.Models;
 using Autosalon_OneZone.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
@@ -16,26 +17,39 @@ public sealed class AccountRegistrationService : IAccountRegistrationService
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly ILogger<AccountRegistrationService> _logger;
+    private readonly IAuditLogger _audit;
 
     public AccountRegistrationService(
         UserManager<ApplicationUser> userManager,
         RoleManager<IdentityRole> roleManager,
-        ILogger<AccountRegistrationService> logger)
+        ILogger<AccountRegistrationService> logger,
+        IAuditLogger? audit = null)
     {
         _userManager = userManager;
         _roleManager = roleManager;
         _logger = logger;
+        _audit = audit ?? NullAuditLogger.Instance;
     }
 
     public async Task<AccountRegistrationResult> RegisterAsync(RegisterViewModel model)
     {
         if (await _userManager.FindByNameAsync(model.UserName) != null)
         {
+            _audit.Failure("UserRegistration", "UsernameTaken", "User", details: new
+            {
+                model.UserName,
+                model.Email
+            });
             return AccountRegistrationResult.UsernameTaken();
         }
 
         if (await _userManager.FindByEmailAsync(model.Email) != null)
         {
+            _audit.Failure("UserRegistration", "EmailTaken", "User", details: new
+            {
+                model.UserName,
+                model.Email
+            });
             return AccountRegistrationResult.EmailTaken();
         }
 
@@ -75,6 +89,19 @@ public sealed class AccountRegistrationService : IAccountRegistrationService
         }
 
         _logger.LogInformation("User '{UserName}' added to role '{Role}'.", user.UserName, AppRoles.Buyer);
+        _audit.Success(
+            "UserRegistered",
+            "User",
+            user.Id,
+            new
+            {
+                user.UserName,
+                user.Email,
+                user.Ime,
+                user.Prezime,
+                Role = AppRoles.Buyer
+            },
+            new AuditActor(user.Id, user.UserName, user.Email, new[] { AppRoles.Buyer }));
 
         return AccountRegistrationResult.Success();
     }

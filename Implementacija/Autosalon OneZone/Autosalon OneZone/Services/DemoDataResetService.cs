@@ -1,4 +1,5 @@
 using Autosalon_OneZone.Data;
+using Autosalon_OneZone.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Autosalon_OneZone.Services;
@@ -40,19 +41,22 @@ public sealed class DemoDataResetService : IDemoDataResetService
     private readonly DemoResetSchedule _schedule;
     private readonly DemoOptions _options;
     private readonly ILogger<DemoDataResetService> _logger;
+    private readonly IAuditLogger _audit;
 
     public DemoDataResetService(
         IServiceProvider services,
         IConfiguration configuration,
         DemoResetSchedule schedule,
         IOptions<DemoOptions> options,
-        ILogger<DemoDataResetService> logger)
+        ILogger<DemoDataResetService> logger,
+        IAuditLogger? audit = null)
     {
         _services = services;
         _configuration = configuration;
         _schedule = schedule;
         _options = options.Value;
         _logger = logger;
+        _audit = audit ?? NullAuditLogger.Instance;
     }
 
     public async Task ResetAsync(CancellationToken cancellationToken = default)
@@ -60,6 +64,7 @@ public sealed class DemoDataResetService : IDemoDataResetService
         await ResetLock.WaitAsync(cancellationToken);
         try
         {
+            _audit.Success("DemoResetStarted", "DemoEnvironment");
             await DatabaseInitializer.ResetDemoDataAsync(
                 _services,
                 _configuration,
@@ -67,6 +72,18 @@ public sealed class DemoDataResetService : IDemoDataResetService
                 cancellationToken);
 
             _schedule.ScheduleAfter(TimeSpan.FromMinutes(_options.ResetIntervalMinutes));
+            _audit.Success(
+                "DemoResetCompleted",
+                "DemoEnvironment",
+                details: new { _options.ResetIntervalMinutes, _schedule.NextResetUtc });
+        }
+        catch (Exception exception)
+        {
+            _audit.Failure(
+                "DemoResetFailed",
+                exception.GetType().Name,
+                "DemoEnvironment");
+            throw;
         }
         finally
         {

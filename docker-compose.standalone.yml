@@ -54,13 +54,31 @@ services:
       Stripe__UseMockPayments: ${STRIPE_USE_MOCK_PAYMENTS:-true}
       Stripe__SecretKey: ${STRIPE_SECRET_KEY:-}
       Stripe__PublishableKey: ${STRIPE_PUBLISHABLE_KEY:-}
+      ActivityLogging__Enabled: "true"
+      ActivityLogging__LogPath: /app/App_Data/Logs
+      ActivityLogging__SeqUrl: http://seq
     expose:
       - "8080"
     volumes:
       - autosalon-keys:/app/Keys
       - ./runtime/vehicle-uploads:/app/App_Data/VehicleUploads
+      - ./runtime/logs:/app/App_Data/Logs
     networks:
       - app_internal
+      - observability_internal
+    restart: unless-stopped
+
+  seq:
+    image: datalust/seq:latest
+    environment:
+      ACCEPT_EULA: "Y"
+      SEQ_FIRSTRUN_ADMINPASSWORDHASH: ${SEQ_ADMIN_PASSWORD_HASH:?Set SEQ_ADMIN_PASSWORD_HASH for standalone deployment}
+    ports:
+      - "127.0.0.1:${SEQ_HTTP_PORT:-5341}:80"
+    volumes:
+      - ./runtime/seq-data:/data
+    networks:
+      - observability_internal
     restart: unless-stopped
 
   proxy:
@@ -93,3 +111,4 @@ networks:
     ipam:
       config:
         - subnet: ${STANDALONE_NETWORK_SUBNET:-172.30.251.0/24}
+  observability_internal:

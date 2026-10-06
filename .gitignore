@@ -50,7 +50,10 @@ coverage.opencover.xml
 Implementacija/Autosalon OneZone/Autosalon OneZone/wwwroot/images/vozila/*
 !Implementacija/Autosalon OneZone/Autosalon OneZone/wwwroot/images/vozila/seed-*.webp
 **/App_Data/VehicleUploads/**
+**/App_Data/Logs/**
 runtime/vehicle-uploads/**
+runtime/logs/**
+runtime/seq-data/**
 
 # OS files
 .DS_Store

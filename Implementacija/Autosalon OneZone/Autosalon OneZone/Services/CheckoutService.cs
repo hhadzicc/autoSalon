@@ -1,4 +1,5 @@
 using Autosalon_OneZone.Data;
+using Autosalon_OneZone.Logging;
 using Autosalon_OneZone.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -33,15 +34,18 @@ public sealed class CheckoutService : ICheckoutService
     private readonly ApplicationDbContext _context;
     private readonly IPaymentService _paymentService;
     private readonly ILogger<CheckoutService> _logger;
+    private readonly IAuditLogger _audit;
 
     public CheckoutService(
         ApplicationDbContext context,
         IPaymentService paymentService,
-        ILogger<CheckoutService> logger)
+        ILogger<CheckoutService> logger,
+        IAuditLogger? audit = null)
     {
         _context = context;
         _paymentService = paymentService;
         _logger = logger;
+        _audit = audit ?? NullAuditLogger.Instance;
     }
 
     public async Task<CheckoutResult> PurchaseVehicleAsync(
@@ -135,6 +139,21 @@ public sealed class CheckoutService : ICheckoutService
             vehicleId,
             price,
             user.Id);
+        _audit.Success(
+            "VehiclePurchased",
+            "Order",
+            order.NarudzbaID.ToString(),
+            new
+            {
+                UserId = user.Id,
+                user.UserName,
+                user.Email,
+                VehicleId = vehicleId,
+                Vehicle = $"{vehicle.Marka} {vehicle.Model}",
+                Amount = price,
+                PaymentTransactionId = paymentResult.TransactionId
+            },
+            new AuditActor(user.Id, user.UserName, user.Email));
 
         return CheckoutResult.Success(order.NarudzbaID, price, 1);
     }
@@ -249,6 +268,21 @@ public sealed class CheckoutService : ICheckoutService
             selectedItems.Count,
             totalPrice,
             user.Id);
+        _audit.Success(
+            "CartPurchased",
+            "Order",
+            order.NarudzbaID.ToString(),
+            new
+            {
+                UserId = user.Id,
+                user.UserName,
+                user.Email,
+                VehicleIds = selectedItems.Select(item => item.VoziloID).ToArray(),
+                VehicleCount = selectedItems.Count,
+                Amount = totalPrice,
+                PaymentTransactionId = paymentResult.TransactionId
+            },
+            new AuditActor(user.Id, user.UserName, user.Email));
 
         return CheckoutResult.Success(order.NarudzbaID, totalPrice, selectedItems.Count);
     }

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Autosalon_OneZone.Data;
 using Autosalon_OneZone.Authorization;
+using Autosalon_OneZone.Logging;
 using Microsoft.AspNetCore.HttpOverrides;
 using System.IO;
 using Microsoft.AspNetCore.DataProtection;
@@ -14,8 +15,64 @@ using System.Globalization;
 using System.Net;
 using System.Security.Claims;
 using System.Threading.RateLimiting;
+using Serilog;
+using Serilog.Events;
+using Serilog.Formatting.Compact;
 
 var builder = WebApplication.CreateBuilder(args);
+var activityLoggingOptions = builder.Configuration
+    .GetSection("ActivityLogging")
+    .Get<ActivityLoggingOptions>() ?? new ActivityLoggingOptions();
+
+if (activityLoggingOptions.Enabled)
+{
+    var configuredLogPath = string.IsNullOrWhiteSpace(activityLoggingOptions.LogPath)
+        ? "App_Data/Logs"
+        : activityLoggingOptions.LogPath;
+    var logPath = Path.IsPathRooted(configuredLogPath)
+        ? configuredLogPath
+        : Path.Combine(builder.Environment.ContentRootPath, configuredLogPath);
+    Directory.CreateDirectory(logPath);
+
+    builder.Host.UseSerilog((_, _, loggerConfiguration) =>
+    {
+        loggerConfiguration
+            .MinimumLevel.Information()
+            .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
+            .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Warning)
+            .Enrich.FromLogContext()
+            .Enrich.WithProperty("Application", "AutosalonOneZone")
+            .WriteTo.Console(new RenderedCompactJsonFormatter())
+            .WriteTo.File(
+                new RenderedCompactJsonFormatter(),
+                Path.Combine(logPath, "app-.jsonl"),
+                rollingInterval: RollingInterval.Day,
+                fileSizeLimitBytes: activityLoggingOptions.FileSizeLimitBytes,
+                rollOnFileSizeLimit: true,
+                retainedFileCountLimit: null,
+                shared: true)
+            .WriteTo.Logger(auditConfiguration => auditConfiguration
+                .Filter.ByIncludingOnly(logEvent => logEvent.Properties.ContainsKey("AuditAction"))
+                .WriteTo.File(
+                    new RenderedCompactJsonFormatter(),
+                    Path.Combine(logPath, "audit-.jsonl"),
+                    rollingInterval: RollingInterval.Day,
+                    fileSizeLimitBytes: activityLoggingOptions.FileSizeLimitBytes,
+                    rollOnFileSizeLimit: true,
+                    retainedFileCountLimit: null,
+                    shared: true));
+
+        if (!string.IsNullOrWhiteSpace(activityLoggingOptions.SeqUrl))
+        {
+            loggerConfiguration.WriteTo.Seq(
+                activityLoggingOptions.SeqUrl,
+                apiKey: string.IsNullOrWhiteSpace(activityLoggingOptions.SeqApiKey)
+                    ? null
+                    : activityLoggingOptions.SeqApiKey);
+        }
+    });
+}
+
 builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
 builder.Services.Configure<VehicleImageStorageOptions>(
     builder.Configuration.GetSection("VehicleImageStorage"));
@@ -150,6 +207,8 @@ builder.Services.AddScoped<IProfileAccountService, ProfileAccountService>();
 builder.Services.AddScoped<IAccountRegistrationService, AccountRegistrationService>();
 builder.Services.AddScoped<IPasswordRecoveryService, PasswordRecoveryService>();
 builder.Services.AddScoped<IAccountAuthenticationService, AccountAuthenticationService>();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddSingleton<IAuditLogger, AuditLogger>();
 builder.Services.AddSingleton<DemoResetSchedule>();
 builder.Services.AddScoped<IDemoDataResetService, DemoDataResetService>();
 builder.Services.AddHostedService<DemoDataResetBackgroundService>();
@@ -256,6 +315,7 @@ app.UseRequestLocalization(new RequestLocalizationOptions
 });
 
 app.UseAuthentication();
+app.UseMiddleware<ActivityTrackingMiddleware>();
 app.UseRateLimiter();
 app.UseAuthorization();
 

@@ -9,6 +9,7 @@ using Microsoft.Extensions.Localization;
 using Autosalon_OneZone.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Autosalon_OneZone.Authorization;
+using Autosalon_OneZone.Logging;
 
 namespace Autosalon_OneZone.Controllers
 {
@@ -20,19 +21,22 @@ namespace Autosalon_OneZone.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IStringLocalizer<SharedResource> _localizer;
         private readonly IVehicleImageStorage _imageStorage;
+        private readonly IAuditLogger _audit;
 
         public VoziloController(
             IVoziloService voziloService,
             ICartService cartService,
             UserManager<ApplicationUser> userManager,
             IStringLocalizer<SharedResource> localizer,
-            IVehicleImageStorage imageStorage)
+            IVehicleImageStorage imageStorage,
+            IAuditLogger? audit = null)
         {
             _voziloService = voziloService;
             _cartService = cartService;
             _userManager = userManager;
             _localizer = localizer;
             _imageStorage = imageStorage;
+            _audit = audit ?? NullAuditLogger.Instance;
         }
 
         [HttpGet("/vehicle-images/{id:int}")]
@@ -75,6 +79,19 @@ namespace Autosalon_OneZone.Controllers
                 ? returnUrl
                 : null;
 
+            _audit.Success(
+                "VehicleDetailsViewed",
+                "Vehicle",
+                id.ToString(),
+                new
+                {
+                    vozilo.Marka,
+                    vozilo.Model,
+                    vozilo.Godiste,
+                    vozilo.Cijena,
+                    AvailableForPurchase = isAvailableForPurchase
+                });
+
             return View(new VehicleDetailsViewModel
             {
                 Vehicle = vozilo,
@@ -113,6 +130,35 @@ namespace Autosalon_OneZone.Controllers
                 includeValidationMessages: true);
             var result = await _voziloService.GetVehiclesPageAsync(criteria, 1, PageSize);
             var cards = await CreateCardModelsAsync(result.Vehicles);
+
+            if (!string.IsNullOrWhiteSpace(searchTerm) ||
+                !string.IsNullOrWhiteSpace(sortOrder) ||
+                godisteOd.HasValue || godisteDo.HasValue ||
+                !string.IsNullOrWhiteSpace(gorivo) || colors.Count > 0 ||
+                kubikazaOd.HasValue || kubikazaDo.HasValue ||
+                kilometrazaOd.HasValue || kilometrazaDo.HasValue ||
+                cijenaOd.HasValue || cijenaDo.HasValue)
+            {
+                _audit.Success(
+                    "VehicleSearchPerformed",
+                    "VehicleCatalog",
+                    details: new
+                    {
+                        SearchTerm = searchTerm,
+                        SortOrder = sortOrder,
+                        YearFrom = godisteOd,
+                        YearTo = godisteDo,
+                        Fuel = gorivo,
+                        Colors = colors.Select(color => color.ToString()).ToArray(),
+                        DisplacementFrom = kubikazaOd,
+                        DisplacementTo = kubikazaDo,
+                        MileageFrom = kilometrazaOd,
+                        MileageTo = kilometrazaDo,
+                        PriceFrom = cijenaOd,
+                        PriceTo = cijenaDo,
+                        ResultCount = result.TotalCount
+                    });
+            }
 
             return View(new VehicleListingViewModel
             {

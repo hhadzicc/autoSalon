@@ -1,4 +1,5 @@
 using Autosalon_OneZone.Data;
+using Autosalon_OneZone.Logging;
 using Microsoft.EntityFrameworkCore;
 
 namespace Autosalon_OneZone.Services;
@@ -42,6 +43,7 @@ public sealed class SupportEmailOutboxBackgroundService : BackgroundService
         using var scope = _scopeFactory.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var emailSender = scope.ServiceProvider.GetRequiredService<IEmailSender>();
+        var audit = scope.ServiceProvider.GetRequiredService<IAuditLogger>();
         var now = DateTime.UtcNow;
         var messages = await context.EmailPodrskeOutbox
             .Include(entry => entry.Poruka)
@@ -68,6 +70,16 @@ public sealed class SupportEmailOutboxBackgroundService : BackgroundService
                     entry.Jezik);
                 entry.PoslanoUtc = DateTime.UtcNow;
                 entry.ZadnjaGreska = null;
+                audit.Success(
+                    "SupportReplyEmailSent",
+                    "SupportEmailOutbox",
+                    entry.EmailPodrskeOutboxID.ToString(),
+                    new
+                    {
+                        SupportTicketId = entry.Poruka.UpitID,
+                        Recipient = entry.Primalac,
+                        entry.BrojPokusaja
+                    });
             }
             catch (Exception exception)
             {
@@ -77,6 +89,17 @@ public sealed class SupportEmailOutboxBackgroundService : BackgroundService
                     : exception.Message;
                 entry.SljedeciPokusajUtc = DateTime.UtcNow.AddMinutes(Math.Pow(2, entry.BrojPokusaja));
                 _logger.LogWarning(exception, "Support email attempt {Attempt} failed for outbox item {OutboxId}.", entry.BrojPokusaja, entry.EmailPodrskeOutboxID);
+                audit.Failure(
+                    "SupportReplyEmailSent",
+                    exception.GetType().Name,
+                    "SupportEmailOutbox",
+                    entry.EmailPodrskeOutboxID.ToString(),
+                    new
+                    {
+                        SupportTicketId = entry.Poruka.UpitID,
+                        Recipient = entry.Primalac,
+                        entry.BrojPokusaja
+                    });
             }
 
             await context.SaveChangesAsync(cancellationToken);

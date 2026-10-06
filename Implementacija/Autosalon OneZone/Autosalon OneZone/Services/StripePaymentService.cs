@@ -77,7 +77,7 @@ namespace Autosalon_OneZone.Services
                         break;
                 }
 
-                _logger.LogInformation("Procesiranje plaćanja sa tokenom {Token} za iznos: {Amount}", stripeToken, paymentRequest.Amount);
+                _logger.LogInformation("Procesiranje placanja za iznos {Amount}.", paymentRequest.Amount);
 
                 string maskedCardNumber = "xxxx-xxxx-xxxx-" +
                     (cleanCardNumber.Length >= 4 ? cleanCardNumber.Substring(cleanCardNumber.Length - 4) : "????");

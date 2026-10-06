@@ -1,4 +1,5 @@
 using Autosalon_OneZone.Data;
+using Autosalon_OneZone.Logging;
 using Autosalon_OneZone.Models;
 using Autosalon_OneZone.Models.ViewModels;
 using Microsoft.EntityFrameworkCore;
@@ -18,10 +19,12 @@ public interface ICartService
 public sealed class CartService : ICartService
 {
     private readonly ApplicationDbContext _context;
+    private readonly IAuditLogger _audit;
 
-    public CartService(ApplicationDbContext context)
+    public CartService(ApplicationDbContext context, IAuditLogger? audit = null)
     {
         _context = context;
+        _audit = audit ?? NullAuditLogger.Instance;
     }
 
     public async Task<CartAddResult> AddVehicleAsync(string userId, int vehicleId)
@@ -68,6 +71,17 @@ public sealed class CartService : ICartService
         cart.UkupnaCijena += price;
 
         await _context.SaveChangesAsync();
+        _audit.Success(
+            "VehicleAddedToCart",
+            "Vehicle",
+            vehicleId.ToString(),
+            new
+            {
+                UserId = userId,
+                Vehicle = $"{vehicle.Marka} {vehicle.Model}",
+                Price = price,
+                CartTotal = cart.UkupnaCijena
+            });
         return CartAddResult.Added;
     }
 
@@ -170,6 +184,11 @@ public sealed class CartService : ICartService
         cart.UkupnaCijena = Math.Max(0, cart.UkupnaCijena - item.CijenaStavke * item.Kolicina);
         _context.StavkeKorpe.Remove(item);
         await _context.SaveChangesAsync();
+        _audit.Success(
+            "VehicleRemovedFromCart",
+            "Vehicle",
+            vehicleId.ToString(),
+            new { UserId = userId, RemovedPrice = item.CijenaStavke, CartTotal = cart.UkupnaCijena });
 
         return CartRemoveResult.Removed;
     }
@@ -185,9 +204,15 @@ public sealed class CartService : ICartService
             return;
         }
 
+        var removedVehicleIds = cart.StavkeKorpe.Select(item => item.VoziloID).ToArray();
         _context.StavkeKorpe.RemoveRange(cart.StavkeKorpe);
         cart.UkupnaCijena = 0;
         await _context.SaveChangesAsync();
+        _audit.Success(
+            "CartCleared",
+            "Cart",
+            cart.KorpaID.ToString(),
+            new { UserId = userId, VehicleIds = removedVehicleIds });
     }
 }
 

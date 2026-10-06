@@ -1,4 +1,5 @@
 using Autosalon_OneZone.Data;
+using Autosalon_OneZone.Logging;
 using Autosalon_OneZone.Models;
 using Autosalon_OneZone.Models.ViewModels;
 using Microsoft.EntityFrameworkCore;
@@ -17,10 +18,12 @@ public interface IProfileActivityService
 public sealed class ProfileActivityService : IProfileActivityService
 {
     private readonly ApplicationDbContext _context;
+    private readonly IAuditLogger _audit;
 
-    public ProfileActivityService(ApplicationDbContext context)
+    public ProfileActivityService(ApplicationDbContext context, IAuditLogger? audit = null)
     {
         _context = context;
+        _audit = audit ?? NullAuditLogger.Instance;
     }
 
     public Task<ProfileViewModel> GetProfileAsync(ApplicationUser user, string role)
@@ -119,6 +122,11 @@ public sealed class ProfileActivityService : IProfileActivityService
                 DatumRecenzije = DateTime.UtcNow
             });
             await _context.SaveChangesAsync();
+            _audit.Success(
+                "ReviewCreated",
+                "Vehicle",
+                vehicleId.ToString(),
+                new { UserId = userId, Rating = rating, Comment = comment });
             return ReviewSaveResult.Added;
         }
 
@@ -126,6 +134,11 @@ public sealed class ProfileActivityService : IProfileActivityService
         review.Komentar = comment;
         review.DatumRecenzije = DateTime.UtcNow;
         await _context.SaveChangesAsync();
+        _audit.Success(
+            "ReviewUpdated",
+            "Review",
+            review.RecenzijaID.ToString(),
+            new { UserId = userId, VehicleId = vehicleId, Rating = rating, Comment = comment });
         return ReviewSaveResult.Updated;
     }
 
@@ -148,6 +161,17 @@ public sealed class ProfileActivityService : IProfileActivityService
 
         _context.Recenzije.Remove(review);
         await _context.SaveChangesAsync();
+        _audit.Success(
+            "ReviewDeleted",
+            "Review",
+            reviewId.ToString(),
+            new
+            {
+                UserId = userId,
+                review.VoziloID,
+                Rating = review.Ocjena,
+                Comment = review.Komentar
+            });
         return true;
     }
 }

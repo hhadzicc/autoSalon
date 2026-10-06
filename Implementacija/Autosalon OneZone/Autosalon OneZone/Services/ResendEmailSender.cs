@@ -45,7 +45,7 @@ namespace Autosalon_OneZone.Services
             {
                 if (_environment.IsDevelopment())
                 {
-                    _logger.LogWarning("Email delivery is disabled. Development password reset link for {Email}: {ResetLink}", toEmail, resetLink);
+                    _logger.LogWarning("Email delivery is disabled. Password reset email for {Email} was not sent.", toEmail);
                 }
                 else
                 {
@@ -78,12 +78,10 @@ namespace Autosalon_OneZone.Services
                 return;
             }
 
-            var responseBody = await response.Content.ReadAsStringAsync();
             _logger.LogError(
-                "Resend failed to queue password reset email for {Email}. Status: {StatusCode}. Body: {Body}",
+                "Resend failed to queue password reset email for {Email}. Status: {StatusCode}.",
                 toEmail,
-                response.StatusCode,
-                responseBody);
+                response.StatusCode);
 
             throw new InvalidOperationException("Password reset email could not be sent.");
         }
@@ -135,12 +133,10 @@ namespace Autosalon_OneZone.Services
                     return;
                 }
 
-                var responseBody = await response.Content.ReadAsStringAsync();
                 _logger.LogError(
-                    "Resend failed to queue support reply email for {Email}. Status: {StatusCode}. Body: {Body}",
+                    "Resend failed to queue support reply email for {Email}. Status: {StatusCode}.",
                     toEmail,
-                    response.StatusCode,
-                    responseBody);
+                    response.StatusCode);
                 throw new InvalidOperationException("Support reply email could not be sent.");
             }
             finally

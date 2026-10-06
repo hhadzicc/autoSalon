@@ -1,4 +1,5 @@
 using Autosalon_OneZone.Data;
+using Autosalon_OneZone.Logging;
 using Autosalon_OneZone.Models;
 using Autosalon_OneZone.Models.ViewModels;
 using Microsoft.EntityFrameworkCore;
@@ -30,15 +31,18 @@ public sealed class SupportService : ISupportService
     private readonly ApplicationDbContext _context;
     private readonly DemoOptions _demoOptions;
     private readonly ResendEmailOptions _emailOptions;
+    private readonly IAuditLogger _audit;
 
     public SupportService(
         ApplicationDbContext context,
         IOptions<DemoOptions> demoOptions,
-        IOptions<ResendEmailOptions> emailOptions)
+        IOptions<ResendEmailOptions> emailOptions,
+        IAuditLogger? audit = null)
     {
         _context = context;
         _demoOptions = demoOptions.Value;
         _emailOptions = emailOptions.Value;
+        _audit = audit ?? NullAuditLogger.Instance;
     }
 
     public async Task<int> CreateTicketAsync(string userId, string title, string content, string culture)
@@ -66,6 +70,17 @@ public sealed class SupportService : ISupportService
 
         _context.PodrskaUpiti.Add(ticket);
         await _context.SaveChangesAsync();
+        _audit.Success(
+            "SupportTicketCreated",
+            "SupportTicket",
+            ticket.UpitID.ToString(),
+            new
+            {
+                ticket.Naslov,
+                Message = ticket.Poruke.First().Sadrzaj,
+                ticket.Jezik,
+                ticket.KorisnikId
+            });
         return ticket.UpitID;
     }
 
@@ -143,6 +158,17 @@ public sealed class SupportService : ISupportService
         ticket.DatumZatvaranja = null;
         ticket.DatumPodsjetnika = null;
         await _context.SaveChangesAsync();
+        _audit.Success(
+            "SupportUserMessageSent",
+            "SupportTicket",
+            ticket.UpitID.ToString(),
+            new
+            {
+                ticket.Naslov,
+                Message = content.Trim(),
+                SenderUserId = userId,
+                Status = ticket.Status.ToString()
+            });
         return new(SupportOperationStatus.Success, MapConversation(ticket));
     }
 
@@ -169,6 +195,11 @@ public sealed class SupportService : ISupportService
         ticket.DatumZadnjeAktivnosti = now;
         ticket.Poruke.Add(SystemMessage(ticket.UpitID, "SupportSystemReopened", now));
         await _context.SaveChangesAsync();
+        _audit.Success(
+            "SupportTicketReopened",
+            "SupportTicket",
+            ticket.UpitID.ToString(),
+            new { ticket.Naslov, UserId = userId, Status = ticket.Status.ToString() });
         return new(SupportOperationStatus.Success, MapConversation(ticket));
     }
 
@@ -242,7 +273,22 @@ public sealed class SupportService : ISupportService
         ticket.DatumDodjele = now;
         ticket.Status = StatusUpita.UObradi;
         ticket.DatumZadnjeAktivnosti = now;
-        return await SaveWithConcurrencyAsync(ticket);
+        var result = await SaveWithConcurrencyAsync(ticket);
+        if (result.Status == SupportOperationStatus.Success)
+        {
+            _audit.Success(
+                "SupportTicketAssigned",
+                "SupportTicket",
+                ticket.UpitID.ToString(),
+                new
+                {
+                    ticket.Naslov,
+                    AgentUserId = agentId,
+                    AgentName = AgentName(agent),
+                    Takeover = allowTakeover
+                });
+        }
+        return result;
     }
 
     public async Task<SupportOperationResult> ReleaseAsync(int id, string agentId, string rowVersion, bool allowTakeover)
@@ -266,7 +312,16 @@ public sealed class SupportService : ISupportService
             ticket.Status = StatusUpita.CekaPodrsku;
         }
         ticket.DatumZadnjeAktivnosti = DateTime.UtcNow;
-        return await SaveWithConcurrencyAsync(ticket);
+        var result = await SaveWithConcurrencyAsync(ticket);
+        if (result.Status == SupportOperationStatus.Success)
+        {
+            _audit.Success(
+                "SupportTicketReleased",
+                "SupportTicket",
+                ticket.UpitID.ToString(),
+                new { ticket.Naslov, AgentUserId = agentId, Takeover = allowTakeover });
+        }
+        return result;
     }
 
     public async Task<SupportOperationResult> ReplyAsync(int id, string agentId, SupportStaffReplyViewModel input, string detailsUrl)
@@ -312,7 +367,24 @@ public sealed class SupportService : ISupportService
             };
         }
 
-        return await SaveWithConcurrencyAsync(ticket);
+        var result = await SaveWithConcurrencyAsync(ticket);
+        if (result.Status == SupportOperationStatus.Success)
+        {
+            _audit.Success(
+                "SupportStaffReplySent",
+                "SupportTicket",
+                ticket.UpitID.ToString(),
+                new
+                {
+                    ticket.Naslov,
+                    Message = input.Message.Trim(),
+                    AgentUserId = agentId,
+                    CustomerUserId = ticket.KorisnikId,
+                    CustomerEmail = ticket.Korisnik.Email,
+                    Status = ticket.Status.ToString()
+                });
+        }
+        return result;
     }
 
     public async Task<SupportOperationResult> CloseAsync(int id, string agentId, string rowVersion, bool allowTakeover)
@@ -333,7 +405,16 @@ public sealed class SupportService : ISupportService
         ticket.DatumZatvaranja = now;
         ticket.DatumZadnjeAktivnosti = now;
         ticket.Poruke.Add(SystemMessage(ticket.UpitID, "SupportSystemClosed", now));
-        return await SaveWithConcurrencyAsync(ticket);
+        var result = await SaveWithConcurrencyAsync(ticket);
+        if (result.Status == SupportOperationStatus.Success)
+        {
+            _audit.Success(
+                "SupportTicketClosed",
+                "SupportTicket",
+                ticket.UpitID.ToString(),
+                new { ticket.Naslov, AgentUserId = agentId, Takeover = allowTakeover });
+        }
+        return result;
     }
 
     private IQueryable<Podrska> ConversationQuery() =>

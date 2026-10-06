@@ -50,13 +50,38 @@ services:
       Stripe__UseMockPayments: ${STRIPE_USE_MOCK_PAYMENTS:-true}
       Stripe__SecretKey: ${STRIPE_SECRET_KEY:-}
       Stripe__PublishableKey: ${STRIPE_PUBLISHABLE_KEY:-}
+      ActivityLogging__Enabled: "true"
+      ActivityLogging__LogPath: /app/App_Data/Logs
+      ActivityLogging__SeqUrl: http://seq
     ports:
       - "127.0.0.1:${APP_HTTP_PORT:-8080}:8080"
     volumes:
       - autosalon-keys:/app/Keys
       - ./runtime/vehicle-uploads:/app/App_Data/VehicleUploads
+      - ./runtime/logs:/app/App_Data/Logs
+    networks:
+      - default
+      - observability_internal
+    restart: unless-stopped
+
+  seq:
+    image: datalust/seq:latest
+    environment:
+      ACCEPT_EULA: "Y"
+      # The local fallback matches the documented demo password without storing
+      # that password in the container environment or forcing a first-login reset.
+      SEQ_FIRSTRUN_ADMINPASSWORDHASH: ${SEQ_ADMIN_PASSWORD_HASH:-QF7iBypTmsDKvWL5qlPpv28shVYsgb3iKwdP/NU8hF1N+9kQvmpyh7Pcl05L7owwmcffl9DMkzWF4Y2Cv3Nemg/9P5rvmTYiaz654ALmd4ka}
+    ports:
+      - "127.0.0.1:${SEQ_HTTP_PORT:-5341}:80"
+    volumes:
+      - ./runtime/seq-data:/data
+    networks:
+      - observability_internal
     restart: unless-stopped
 
 volumes:
   autosalon-sql-data:
   autosalon-keys:
+
+networks:
+  observability_internal:

@@ -1,74 +1,34 @@
 # Testing
 
-This document describes testing for Autosalon OneZone.
+## Automated Tests
 
-## Running Tests
-
-From the repository root:
+Run the test project from the repository root:
 
 ```powershell
 dotnet test "Implementacija/Autosalon OneZone/AutosalonOneZone.Tests/AutosalonOneZone.Tests.csproj"
 ```
 
-## Test Types
+The suite contains unit and integration tests for validation, authentication,
+authorization, administrative actions and common data-management flows.
 
-### Unit Tests
+CI runs the tests inside the Dockerfile's .NET 8 SDK stage before publishing an
+application image.
 
-Unit tests verify isolated validation and business rules:
+## Manual Verification
 
-- registration validation
-- password validation
-- profile validation
-- vehicle validation
-- view model business rules
+The following flows should be verified after significant UI or authentication
+changes:
 
-### Integration Tests
+- English/Bosnian language switching;
+- login, registration and password reset;
+- vehicle search, filters and details;
+- cart, checkout and purchase history;
+- administrator and seller dashboards;
+- desktop and mobile layouts.
 
-Integration tests verify application flows and database state after actions:
-
-- authentication and authorization
-- admin-only access
-- CRUD scenarios
-- support inquiry status updates
-- user management and related data cleanup
-
-## Expected Guarantees
-
-The tests should help verify that:
-
-- unauthenticated users cannot access protected actions
-- regular users cannot access admin actions
-- administrators can manage vehicles, users, reviews and support inquiries
-- validation messages and business rules remain consistent
-- deleting related entities does not leave inconsistent data
-- core smoke flows remain functional
-
-## Manual Smoke Test Checklist
-
-After larger UI, localization or authentication changes, manually verify:
-
-- home page
-- EN/BS language switcher
-- login and registration
-- forgot-password and reset-password flow
-- vehicle catalog
-- vehicle details
-- cart and checkout
-- profile and purchased items
-- admin dashboard
-- admin vehicles
-- admin users
-- admin reviews
-- admin support inquiries
-
-## Docker Check
+A complete local smoke test can be performed by starting the Docker environment
+and opening `http://localhost:8080`:
 
 ```powershell
 docker compose up --build
-```
-
-Then open:
-
-```text
-http://localhost:8080
 ```

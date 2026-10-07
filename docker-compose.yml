@@ -19,6 +19,7 @@ services:
     restart: unless-stopped
 
   web:
+    image: ${WEB_IMAGE:-autosalon-onezone:local}
     build:
       context: .
       dockerfile: Dockerfile
@@ -29,6 +30,7 @@ services:
       ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Development}
       ASPNETCORE_URLS: http://+:8080
       HttpsRedirection__Enabled: "false"
+      ReverseProxy__KnownProxy: ${REVERSE_PROXY_KNOWN_PROXY:-}
       ConnectionStrings__DefaultConnection: Server=db,1433;Database=AutoSalonDb;User Id=sa;Password=${MSSQL_SA_PASSWORD:-AutoSalon_Demo123!};TrustServerCertificate=True;MultipleActiveResultSets=true
       Database__ApplyMigrations: "true"
       Database__SeedDemoData: "true"
@@ -84,4 +86,8 @@ volumes:
   autosalon-keys:
 
 networks:
+  default:
+    ipam:
+      config:
+        - subnet: ${APP_NETWORK_SUBNET:-172.30.250.0/24}
   observability_internal:

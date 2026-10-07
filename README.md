@@ -51,10 +51,12 @@ On startup, the application applies EF Core migrations and seeds demo data.
 
 ## Deployment Modes
 
-The repository provides two deployment modes:
+The repository provides three deployment modes:
 
 - **Default local:** zero-configuration ASP.NET HTTP entry point on
   `127.0.0.1:8080`, without an additional reverse proxy.
+- **Cloudflare Tunnel VPS:** the same default Compose file keeps ASP.NET on
+  `127.0.0.1:8080`, while host `cloudflared` provides the public TLS endpoint.
 - **Standalone VPS:** Caddy owns host ports 80 and 443, obtains TLS certificates,
   and requires a domain plus private deployment credentials.
 
@@ -109,8 +111,8 @@ searchable event database under `runtime/seq-data`. Both directories are ignored
 by Git and survive application database resets and container replacement.
 
 The Seq UI is bound only to the host loopback interface at
-`http://127.0.0.1:5341`; it is not exposed through Caddy. On a remote server,
-open an SSH tunnel and then use that local address:
+`http://127.0.0.1:5341`; it is not exposed through either public reverse proxy.
+On a remote server, open an SSH tunnel and then use that local address:
 
 ```powershell
 ssh -L 5341:127.0.0.1:5341 user@server
@@ -132,6 +134,13 @@ Run the test suite:
 ```powershell
 dotnet test "Implementacija/Autosalon OneZone/AutosalonOneZone.Tests/AutosalonOneZone.Tests.csproj"
 ```
+
+CI runs the same suite inside the .NET 8 SDK Docker stage, so neither GitHub
+Actions nor the production server requires a host .NET installation. Successful
+builds on `main` publish the application image to GitHub Container Registry.
+Production deployment is a separate manually approved workflow step over the
+private Tailscale network; see
+[Dokumentacija/DEPLOYMENT.md](Dokumentacija/DEPLOYMENT.md#github-cicd).
 
 ## Documentation
 

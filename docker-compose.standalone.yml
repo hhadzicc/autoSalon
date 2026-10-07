@@ -1,7 +1,7 @@
 # STANDALONE VPS VARIANT
 # Prerequisites: APP_DOMAIN and production passwords in .env, DNS pointed to
 # the VPS, and host ports 80/443 open.
-# Start: docker compose -f docker-compose.standalone.yml up -d --build
+# Start: docker compose -f docker-compose.standalone.yml up -d
 
 services:
   db:
@@ -22,9 +22,7 @@ services:
     restart: unless-stopped
 
   web:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ${WEB_IMAGE:?Set WEB_IMAGE to the published application image}
     depends_on:
       db:
         condition: service_healthy

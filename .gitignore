@@ -54,6 +54,7 @@ Implementacija/Autosalon OneZone/Autosalon OneZone/wwwroot/images/vozila/*
 runtime/vehicle-uploads/**
 runtime/logs/**
 runtime/seq-data/**
+runtime/deploy/**
 
 # OS files
 .DS_Store

@@ -97,6 +97,7 @@ jobs:
       cancel-in-progress: false
     permissions:
       contents: read
+      id-token: write
       packages: read
     steps:
       - name: Validate deployment configuration
@@ -116,8 +117,9 @@ jobs:
         uses: tailscale/github-action@v4.1.0
         with:
           oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
-          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          audience: ${{ secrets.TS_AUDIENCE }}
           tags: tag:ci
+          ping: ${{ vars.DEPLOY_HOST }}
 
       - name: Configure SSH identity
         env:

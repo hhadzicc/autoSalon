@@ -1553,7 +1553,7 @@
     <value>An error occurred while deleting the vehicle.</value>
   </data>
   <data name="FileExtensionsAllowed" xml:space="preserve">
-    <value>Allowed formats: jpg, jpeg, png, gif, bmp, webp</value>
+    <value>Allowed formats: jpg, jpeg, png, webp. Maximum source image size: 10MB.</value>
   </data>
   <data name="CurrentImage" xml:space="preserve">
     <value>Current image</value>
@@ -1562,13 +1562,19 @@
     <value>Add vehicle</value>
   </data>
   <data name="AllowedImageExtensionsError" xml:space="preserve">
-    <value>Only these file extensions are allowed: .jpg, .jpeg, .png, .gif, .bmp, .webp</value>
+    <value>Only these file extensions are allowed: .jpg, .jpeg, .png, .webp</value>
   </data>
   <data name="InvalidImageContentError" xml:space="preserve">
     <value>The uploaded file must be a valid image.</value>
   </data>
   <data name="ImageSizeLimitError" xml:space="preserve">
-    <value>Image size must not exceed 5MB.</value>
+    <value>The optimized image must not exceed 2MB.</value>
+  </data>
+  <data name="ImageSourceSizeLimitError" xml:space="preserve">
+    <value>Image size must not exceed 10MB.</value>
+  </data>
+  <data name="ImageProcessingError" xml:space="preserve">
+    <value>The image could not be processed. Choose a valid JPG, PNG or WebP image.</value>
   </data>
   <data name="AdminUsersTitle" xml:space="preserve">
     <value>Users</value>

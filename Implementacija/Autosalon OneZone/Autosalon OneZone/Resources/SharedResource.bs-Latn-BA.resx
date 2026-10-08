@@ -1553,7 +1553,7 @@
     <value>Došlo je do greške prilikom brisanja vozila.</value>
   </data>
   <data name="FileExtensionsAllowed" xml:space="preserve">
-    <value>Dozvoljeni formati: jpg, jpeg, png, gif, bmp, webp</value>
+    <value>Dozvoljeni formati: jpg, jpeg, png, webp. Maksimalna veličina izvorne slike: 10MB.</value>
   </data>
   <data name="CurrentImage" xml:space="preserve">
     <value>Trenutna slika</value>
@@ -1562,13 +1562,19 @@
     <value>Dodaj vozilo</value>
   </data>
   <data name="AllowedImageExtensionsError" xml:space="preserve">
-    <value>Dozvoljena su samo sljedeća proširenja fajlova: .jpg, .jpeg, .png, .gif, .bmp, .webp</value>
+    <value>Dozvoljena su samo sljedeća proširenja fajlova: .jpg, .jpeg, .png, .webp</value>
   </data>
   <data name="InvalidImageContentError" xml:space="preserve">
     <value>Uploadovani fajl mora biti validna slika.</value>
   </data>
   <data name="ImageSizeLimitError" xml:space="preserve">
-    <value>Veličina slike ne smije prelaziti 5MB.</value>
+    <value>Optimizovana slika ne smije prelaziti 2MB.</value>
+  </data>
+  <data name="ImageSourceSizeLimitError" xml:space="preserve">
+    <value>Veličina slike ne smije prelaziti 10MB.</value>
+  </data>
+  <data name="ImageProcessingError" xml:space="preserve">
+    <value>Sliku nije moguće obraditi. Odaberite validnu JPG, PNG ili WebP sliku.</value>
   </data>
   <data name="AdminUsersTitle" xml:space="preserve">
     <value>Korisnici</value>

@@ -73,7 +73,7 @@
                                 var heroVehicle = heroVehicles[index];
                                 var heroVehicleName = $"{heroVehicle.Marka} {heroVehicle.Model}";
                                 var heroVehicleImage = !string.IsNullOrWhiteSpace(heroVehicle.Slika)
-                                    ? Url.Action("Image", "Vozilo", new { id = heroVehicle.VoziloID })
+                                    ? VehicleImageUrl.Detail(heroVehicle.VoziloID, heroVehicle.Slika)
                                     : null;
                                 var heroVehiclePrice = heroVehicle.Cijena.HasValue
                                     ? $"€{heroVehicle.Cijena.Value.ToString("N0", culture)}"
@@ -251,7 +251,7 @@
                 @foreach (var vehicle in featuredVehicles)
                 {
                     var cardImage = !string.IsNullOrWhiteSpace(vehicle.Slika)
-                        ? Url.Action("Image", "Vozilo", new { id = vehicle.VoziloID })
+                        ? VehicleImageUrl.Thumbnail(vehicle.VoziloID, vehicle.Slika)
                         : Url.Content("~/img/no-image.png");
                     var cardPrice = vehicle.Cijena.HasValue
                         ? $"€{vehicle.Cijena.Value.ToString("N0", culture)}"

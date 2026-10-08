@@ -39,8 +39,12 @@ namespace Autosalon_OneZone.Controllers
             _audit = audit ?? NullAuditLogger.Instance;
         }
 
-        [HttpGet("/vehicle-images/{id:int}")]
-        public async Task<IActionResult> Image(int id, CancellationToken cancellationToken)
+        [HttpGet("/vehicle-images/{id:int}/{variant?}")]
+        public async Task<IActionResult> Image(
+            int id,
+            string? variant,
+            string? v,
+            CancellationToken cancellationToken)
         {
             var vehicle = await _voziloService.GetVehicleDetailsAsync(id, includeUnavailable: true);
             if (vehicle == null || string.IsNullOrWhiteSpace(vehicle.Slika))
@@ -48,13 +52,35 @@ namespace Autosalon_OneZone.Controllers
                 return NotFound();
             }
 
-            var image = await _imageStorage.OpenReadAsync(vehicle.Slika, cancellationToken);
+            var isThumbnail = string.Equals(variant, "thumbnail", StringComparison.OrdinalIgnoreCase);
+            var isDetail = string.IsNullOrWhiteSpace(variant) ||
+                           string.Equals(variant, "detail", StringComparison.OrdinalIgnoreCase);
+            if (!isThumbnail && !isDetail)
+            {
+                return NotFound();
+            }
+
+            var requestedFileName = isThumbnail
+                ? VehicleImageNames.ThumbnailFor(vehicle.Slika)
+                : vehicle.Slika;
+            var image = await _imageStorage.OpenReadAsync(requestedFileName, cancellationToken);
+            var isVersionedFile = image != null &&
+                                  string.Equals(v, requestedFileName, StringComparison.Ordinal);
+
+            if (image == null && isThumbnail)
+            {
+                image = await _imageStorage.OpenReadAsync(vehicle.Slika, cancellationToken);
+                isVersionedFile = false;
+            }
+
             if (image == null)
             {
                 return NotFound();
             }
 
-            Response.Headers.CacheControl = "no-store";
+            Response.Headers.CacheControl = isVersionedFile
+                ? "public,max-age=31536000,immutable"
+                : "no-store";
             return File(image.Stream, image.ContentType, enableRangeProcessing: true);
         }
 

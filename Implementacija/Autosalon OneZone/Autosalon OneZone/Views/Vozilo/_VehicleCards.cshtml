@@ -13,7 +13,7 @@
 {
     var vehicle = item.Vehicle;
     var imageUrl = !string.IsNullOrWhiteSpace(vehicle.Slika)
-        ? Url.Action("Image", "Vozilo", new { id = vehicle.VoziloID })
+        ? VehicleImageUrl.Thumbnail(vehicle.VoziloID, vehicle.Slika)
         : Url.Content("~/img/no-image.png");
     var priceText = vehicle.Cijena.HasValue
         ? $"€{vehicle.Cijena.Value.ToString("N0", culture)}"

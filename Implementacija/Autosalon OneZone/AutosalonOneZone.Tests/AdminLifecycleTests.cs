@@ -184,6 +184,10 @@ public class AdminLifecycleTests
         Assert.Equal("A8", vehicle.Model);
         Assert.Equal(TipBoje.Crna, vehicle.Boja);
         Assert.False(string.IsNullOrWhiteSpace(vehicle.Slika));
+        Assert.EndsWith(".webp", vehicle.Slika, StringComparison.Ordinal);
+        var uploadFolder = Path.Combine(app.Environment.WebRootPath, "vehicle-uploads");
+        Assert.True(File.Exists(Path.Combine(uploadFolder, vehicle.Slika)));
+        Assert.True(File.Exists(Path.Combine(uploadFolder, VehicleImageNames.ThumbnailFor(vehicle.Slika))));
 
         var listJson = ToJson(await admin.GetVozilaJson(searchQuery: "Audi"));
         Assert.Contains(listJson.GetProperty("vozila").EnumerateArray(), item => item.GetProperty("voziloID").GetInt32() == vehicleId);
@@ -237,6 +241,41 @@ public class AdminLifecycleTests
         var badRequest = Assert.IsType<BadRequestObjectResult>(result);
         Assert.Contains("validna slika", JsonSerializer.Serialize(badRequest.Value));
         Assert.False(await app.Db.Vozila.AnyAsync(v => v.Marka == "BMW" && v.Model == "M5"));
+    }
+
+    [Fact]
+    public async Task Admin_vehicle_save_rejects_corrupt_image_with_valid_signature()
+    {
+        await using var app = await TestApp.CreateAsync();
+        var admin = CreateAdminController(app);
+        var model = CreateVehicleForm("BMW", "M6", 2024, 155000, "Benzin");
+        model.Slika = CreateFile(
+            "corrupt.png",
+            "image/png",
+            [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A]);
+
+        var result = await admin.SaveVozilo(model);
+
+        var badRequest = Assert.IsType<BadRequestObjectResult>(result);
+        Assert.Contains("ImageProcessingError", JsonSerializer.Serialize(badRequest.Value));
+        Assert.False(await app.Db.Vozila.AnyAsync(v => v.Marka == "BMW" && v.Model == "M6"));
+    }
+
+    [Fact]
+    public async Task Admin_vehicle_save_rejects_optimized_image_larger_than_two_megabytes()
+    {
+        await using var app = await TestApp.CreateAsync();
+        var admin = CreateAdminController(app);
+        var model = CreateVehicleForm("BMW", "M7", 2024, 165000, "Benzin");
+        var content = new byte[(2 * 1024 * 1024) + 1];
+        new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A }.CopyTo(content, 0);
+        model.Slika = CreateFile("oversized.png", "image/png", content);
+
+        var result = await admin.SaveVozilo(model);
+
+        var badRequest = Assert.IsType<BadRequestObjectResult>(result);
+        Assert.Contains("ImageSizeLimitError", JsonSerializer.Serialize(badRequest.Value));
+        Assert.False(await app.Db.Vozila.AnyAsync(v => v.Marka == "BMW" && v.Model == "M7"));
     }
 
     [Fact]
@@ -1065,7 +1104,8 @@ public class AdminLifecycleTests
 
     private static IFormFile CreateImageFile(string fileName, string contentType)
     {
-        var content = new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
+        var content = Convert.FromBase64String(
+            "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=");
         return CreateFile(fileName, contentType, content);
     }
 

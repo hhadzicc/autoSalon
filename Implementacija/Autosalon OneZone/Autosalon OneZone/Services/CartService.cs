@@ -120,7 +120,7 @@ public sealed class CartService : ICartService
                 StavkaId = item.StavkaID,
                 Naziv = $"{item.Vozilo.Marka} {item.Vozilo.Model}",
                 SlikaUrl = !string.IsNullOrEmpty(item.Vozilo.Slika)
-                    ? $"/vehicle-images/{item.VoziloID}"
+                    ? VehicleImageUrl.Thumbnail(item.VoziloID, item.Vozilo.Slika)
                     : "/img/no-image.png",
                 Godiste = item.Vozilo.Godiste ?? 0,
                 Gorivo = item.Vozilo.Gorivo,

@@ -43,7 +43,8 @@
         ["descriptionRequired"] = L["Validation.VehicleDescriptionRequired"].Value,
         ["descriptionMax"] = L["Validation.VehicleDescriptionMaxLength"].Value,
         ["allowedExtensions"] = L["AllowedImageExtensionsError"].Value,
-        ["imageSizeLimit"] = L["ImageSizeLimitError"].Value
+        ["imageSourceSizeLimit"] = L["ImageSourceSizeLimitError"].Value,
+        ["imageProcessingError"] = L["ImageProcessingError"].Value
     };
 }
 
@@ -181,11 +182,11 @@
             <label asp-for="Slika" class="form-label">@L["VehicleImage"]</label>
             @if (isEdit)
             {
-                <input asp-for="Slika" class="form-control" type="file" accept=".jpg,.jpeg,.png,.gif,.bmp,.webp" />
+                <input asp-for="Slika" class="form-control" type="file" accept=".jpg,.jpeg,.png,.webp" />
             }
             else
             {
-                <input asp-for="Slika" class="form-control" type="file" accept=".jpg,.jpeg,.png,.gif,.bmp,.webp" required />
+                <input asp-for="Slika" class="form-control" type="file" accept=".jpg,.jpeg,.png,.webp" required />
             }
             <small class="form-text text-muted">@(isEdit ? L["VehicleImageOptional"] : L["VehicleImageRequired"]) · @L["FileExtensionsAllowed"]</small>
             <span asp-validation-for="Slika" class="text-danger"></span>
@@ -200,9 +201,9 @@
                             id="current-vehicle-image-preview"
                             class="admin-image-preview-button"
                             data-image-preview
-                            data-image-src="@Url.Action("Image", "Vozilo", new { id = Model.VoziloID })"
+                            data-image-src="@VehicleImageUrl.Detail(Model.VoziloID, editVehicle!.PostojecaSlikaPath!)"
                             aria-label="@L["CurrentImage"]">
-                        <img src="@Url.Action("Image", "Vozilo", new { id = Model.VoziloID })" alt="@L["CurrentImage"]" class="admin-current-image" />
+                        <img src="@VehicleImageUrl.Detail(Model.VoziloID, editVehicle!.PostojecaSlikaPath!)" alt="@L["CurrentImage"]" class="admin-current-image" />
                         <span class="admin-image-preview-icon" aria-hidden="true"><i class="bi bi-zoom-in"></i></span>
                     </button>
                     <input type="hidden" name="PostojecaSlikaPath" value="@editVehicle!.PostojecaSlikaPath" />

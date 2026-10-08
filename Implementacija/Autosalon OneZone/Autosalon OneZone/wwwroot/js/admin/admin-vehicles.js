@@ -19,7 +19,14 @@
         const colorPicker = form.querySelector("[data-color-picker]");
         const displacementField = document.getElementById("vehicle-displacement-field");
         const displacementInput = form.elements.Kubikaza;
+        const submitButton = form.querySelector('button[type="submit"]');
+        const maximumSourceBytes = 10 * 1024 * 1024;
+        const maximumProcessedBytes = 2 * 1024 * 1024;
+        const maximumDetailWidth = 1600;
+        const maximumDetailHeight = 1000;
+        const webpQuality = 0.83;
         let selectedImageUrl = "";
+        let imageSelectionVersion = 0;
 
         const resetSelectedImagePreview = () => {
             if (selectedImageUrl) {
@@ -36,6 +43,93 @@
             } else {
                 imageColumn?.classList.add("d-none");
                 mediaLayout?.classList.remove("has-image");
+            }
+        };
+
+        const setImageProcessingState = (isProcessing) => {
+            form.setAttribute("aria-busy", isProcessing ? "true" : "false");
+            if (submitButton) submitButton.disabled = isProcessing;
+        };
+
+        const decodeImage = async (file) => {
+            if (typeof window.createImageBitmap === "function") {
+                try {
+                    const bitmap = await window.createImageBitmap(file, { imageOrientation: "from-image" });
+                    return {
+                        source: bitmap,
+                        width: bitmap.width,
+                        height: bitmap.height,
+                        dispose: () => bitmap.close()
+                    };
+                } catch {
+                    // The image element fallback covers browsers with partial createImageBitmap support.
+                }
+            }
+
+            const sourceUrl = URL.createObjectURL(file);
+            try {
+                const image = new Image();
+                image.decoding = "async";
+                image.src = sourceUrl;
+                await image.decode();
+                return {
+                    source: image,
+                    width: image.naturalWidth,
+                    height: image.naturalHeight,
+                    dispose: () => URL.revokeObjectURL(sourceUrl)
+                };
+            } catch (error) {
+                URL.revokeObjectURL(sourceUrl);
+                throw error;
+            }
+        };
+
+        const canvasToWebp = (canvas) => new Promise((resolve, reject) => {
+            canvas.toBlob((blob) => {
+                if (!blob || blob.type !== "image/webp") {
+                    reject(new Error("WebP encoding is not supported."));
+                    return;
+                }
+                resolve(blob);
+            }, "image/webp", webpQuality);
+        });
+
+        const optimizeImage = async (file) => {
+            const decoded = await decodeImage(file);
+            try {
+                if (!decoded.width || !decoded.height) {
+                    throw new Error("The image has invalid dimensions.");
+                }
+
+                const scale = Math.min(
+                    1,
+                    maximumDetailWidth / decoded.width,
+                    maximumDetailHeight / decoded.height);
+                const width = Math.max(1, Math.round(decoded.width * scale));
+                const height = Math.max(1, Math.round(decoded.height * scale));
+                const canvas = document.createElement("canvas");
+                canvas.width = width;
+                canvas.height = height;
+                const context = canvas.getContext("2d", { alpha: false });
+                if (!context) throw new Error("Canvas is unavailable.");
+
+                context.imageSmoothingEnabled = true;
+                context.imageSmoothingQuality = "high";
+                context.fillStyle = "#ffffff";
+                context.fillRect(0, 0, width, height);
+                context.drawImage(decoded.source, 0, 0, width, height);
+                const blob = await canvasToWebp(canvas);
+                if (blob.size > maximumProcessedBytes) {
+                    throw new Error("The optimized image is too large.");
+                }
+
+                const baseName = file.name.replace(/\.[^.]+$/, "") || "vehicle";
+                return new File([blob], `${baseName}.webp`, {
+                    type: "image/webp",
+                    lastModified: Date.now()
+                });
+            } finally {
+                decoded.dispose();
             }
         };
 
@@ -129,29 +223,55 @@
         });
         syncDisplacement();
 
-        $form.find('input[type="file"]').off("change.adminVehicleForm").on("change.adminVehicleForm", function () {
+        $form.find('input[type="file"]').off("change.adminVehicleForm").on("change.adminVehicleForm", async function () {
+            const selectionVersion = ++imageSelectionVersion;
             const file = this.files?.[0];
+            form.vehicleProcessedImage = null;
             if (!file) {
                 resetSelectedImagePreview();
                 return;
             }
             window.adminCore.clearFieldValidationError(form, this.name);
-            if (!/(\.jpg|\.jpeg|\.png|\.gif|\.bmp|\.webp)$/i.test(file.name)) {
+            if (!/(\.jpg|\.jpeg|\.png|\.webp)$/i.test(file.name)) {
                 window.adminCore.applyValidationErrors(form, { [this.name]: [text.allowedExtensions] });
                 $(this).val("");
                 resetSelectedImagePreview();
                 return;
             }
-            if (file.size > 5 * 1024 * 1024) {
-                window.adminCore.applyValidationErrors(form, { [this.name]: [text.imageSizeLimit] });
+            if (file.size > maximumSourceBytes) {
+                window.adminCore.applyValidationErrors(form, { [this.name]: [text.imageSourceSizeLimit] });
                 $(this).val("");
                 resetSelectedImagePreview();
                 return;
             }
-            showSelectedImagePreview(file);
+
+            setImageProcessingState(true);
+            const processingPromise = optimizeImage(file);
+            form.vehicleImageProcessingPromise = processingPromise;
+            try {
+                const processedImage = await processingPromise;
+                if (selectionVersion !== imageSelectionVersion) return;
+                form.vehicleProcessedImage = processedImage;
+                showSelectedImagePreview(processedImage);
+            } catch {
+                if (selectionVersion !== imageSelectionVersion) return;
+                window.adminCore.applyValidationErrors(form, { [this.name]: [text.imageProcessingError] });
+                $(this).val("");
+                resetSelectedImagePreview();
+            } finally {
+                if (selectionVersion === imageSelectionVersion) {
+                    setImageProcessingState(false);
+                }
+            }
         });
 
-        form.addEventListener("reset", resetSelectedImagePreview, { once: true });
+        form.addEventListener("reset", () => {
+            imageSelectionVersion++;
+            form.vehicleProcessedImage = null;
+            form.vehicleImageProcessingPromise = null;
+            setImageProcessingState(false);
+            resetSelectedImagePreview();
+        }, { once: true });
     };
 
     const initialize = () => {
@@ -426,13 +546,33 @@
 
             showListView();
         });
-        $(document).off("submit.adminVehiclesSave", "#add-edit-vozilo-form").on("submit.adminVehiclesSave", "#add-edit-vozilo-form", function (event) {
+        $(document).off("submit.adminVehiclesSave", "#add-edit-vozilo-form").on("submit.adminVehiclesSave", "#add-edit-vozilo-form", async function (event) {
             event.preventDefault();
             const form = this;
             const $form = $(this);
             window.adminCore.clearValidationErrors(form);
+
+            const imageInput = form.elements.Slika;
+            if (imageInput?.files?.length) {
+                try {
+                    await form.vehicleImageProcessingPromise;
+                } catch {
+                    window.adminCore.applyValidationErrors(form, { [imageInput.name]: [text.imageProcessingError] });
+                    return;
+                }
+
+                if (!form.vehicleProcessedImage) {
+                    window.adminCore.applyValidationErrors(form, { [imageInput.name]: [text.imageProcessingError] });
+                    return;
+                }
+            }
+
             if (!$form.valid()) return;
-            window.appApi.request({ url: $form.attr("action"), type: $form.attr("method"), data: new FormData(this), processData: false, contentType: false })
+            const formData = new FormData(form);
+            if (form.vehicleProcessedImage) {
+                formData.set(imageInput.name, form.vehicleProcessedImage, form.vehicleProcessedImage.name);
+            }
+            window.appApi.request({ url: $form.attr("action"), type: $form.attr("method"), data: formData, processData: false, contentType: false })
                 .done((response) => {
                     const successMessage = response.successMessage || text.saveSuccess;
                     if (externalReturnUrl) {

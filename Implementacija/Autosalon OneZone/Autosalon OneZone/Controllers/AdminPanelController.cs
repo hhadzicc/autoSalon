@@ -111,6 +111,8 @@ namespace Autosalon_OneZone.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [RequestSizeLimit(3 * 1024 * 1024)]
+        [RequestFormLimits(MultipartBodyLengthLimit = 3 * 1024 * 1024)]
         public async Task<IActionResult> SaveVozilo(AddVoziloViewModel viewModel)
         {
             ReplaceNumericBindingError(nameof(viewModel.Godiste), viewModel.Godiste is null, "Validation.VehicleYearDigits");
@@ -186,7 +188,22 @@ namespace Autosalon_OneZone.Controllers
                     )
                 });
             }
-            var result = await _vehicleService.SaveAsync(viewModel, gorivo);
+            VehicleSaveResult result;
+            try
+            {
+                result = await _vehicleService.SaveAsync(viewModel, gorivo);
+            }
+            catch (VehicleImageProcessingException)
+            {
+                return BadRequest(new
+                {
+                    errors = new Dictionary<string, string[]>
+                    {
+                        [nameof(viewModel.Slika)] = [_localizer["ImageProcessingError"].Value]
+                    }
+                });
+            }
+
             if (!result.Found)
             {
                 return NotFound();

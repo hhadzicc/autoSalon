@@ -11,7 +11,7 @@
     var voziloNaziv = $"{vehicle.Marka} {vehicle.Model}".Trim();
     var cijena = vehicle.Cijena ?? 0;
     var slikaUrl = !string.IsNullOrEmpty(vehicle.Slika)
-        ? Url.Action("Image", "Vozilo", new { id = vehicle.VoziloID })
+        ? VehicleImageUrl.Detail(vehicle.VoziloID, vehicle.Slika)
         : Url.Content("~/img/no-image.png");
     var isInCart = ViewData["IsInCart"] as bool? ?? false;
     var returnUrl = ViewData["ReturnUrl"] as string ?? string.Empty;

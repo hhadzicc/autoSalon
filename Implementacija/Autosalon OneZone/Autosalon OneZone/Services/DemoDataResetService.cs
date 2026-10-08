@@ -14,6 +14,7 @@ public sealed class DemoOptions
 public sealed class DemoResetSchedule
 {
     private long _nextResetUtcTicks;
+    private int _isResetting;
 
     public DateTime? NextResetUtc
     {
@@ -24,8 +25,14 @@ public sealed class DemoResetSchedule
         }
     }
 
+    public bool IsResetting => Volatile.Read(ref _isResetting) == 1;
+
     public void ScheduleAfter(TimeSpan interval) =>
         Interlocked.Exchange(ref _nextResetUtcTicks, DateTime.UtcNow.Add(interval).Ticks);
+
+    public void MarkResetStarted() => Interlocked.Exchange(ref _isResetting, 1);
+
+    public void MarkResetCompleted() => Interlocked.Exchange(ref _isResetting, 0);
 }
 
 public interface IDemoDataResetService
@@ -62,6 +69,7 @@ public sealed class DemoDataResetService : IDemoDataResetService
     public async Task ResetAsync(CancellationToken cancellationToken = default)
     {
         await ResetLock.WaitAsync(cancellationToken);
+        _schedule.MarkResetStarted();
         try
         {
             _audit.Success("DemoResetStarted", "DemoEnvironment");
@@ -87,6 +95,7 @@ public sealed class DemoDataResetService : IDemoDataResetService
         }
         finally
         {
+            _schedule.MarkResetCompleted();
             ResetLock.Release();
         }
     }

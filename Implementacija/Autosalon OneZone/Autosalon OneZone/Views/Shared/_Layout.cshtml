@@ -113,6 +113,30 @@
     @await RenderSectionAsync("Head", required: false)
 </head>
 <body>
+    @if (demoOptions.Enabled && demoOptions.ResetEnabled && nextDemoResetUtc.HasValue)
+    {
+        <div class="demo-reset-overlay @(DemoResetSchedule.IsResetting ? "is-visible" : null)"
+             id="demo-reset-overlay"
+             data-status-url="@Url.Action("DemoResetStatus", "Home")"
+             data-is-resetting="@DemoResetSchedule.IsResetting.ToString().ToLowerInvariant()"
+             aria-hidden="@(!DemoResetSchedule.IsResetting).ToString().ToLowerInvariant()">
+            <div class="demo-reset-overlay-panel"
+                 role="alertdialog"
+                 aria-modal="true"
+                 aria-live="assertive"
+                 aria-atomic="true"
+                 aria-labelledby="demo-reset-overlay-title"
+                 aria-describedby="demo-reset-overlay-text"
+                 tabindex="-1">
+                <span class="demo-reset-overlay-icon" aria-hidden="true">
+                    <i class="bi bi-hourglass-split"></i>
+                </span>
+                <h2 id="demo-reset-overlay-title">@L["DemoResetOverlayTitle"]</h2>
+                <p id="demo-reset-overlay-text">@L["DemoResetOverlayText"]</p>
+                <span class="demo-reset-overlay-progress" aria-hidden="true"></span>
+            </div>
+        </div>
+    }
     <nav class="navbar navbar-expand-lg navbar-dark custom-navbar sticky-top @(compactVehicleNav ? "vehicle-catalog-navbar" : null)">
         <div class="container-xxl align-items-center">
             <a class="navbar-brand text-white d-flex align-items-center gap-2" href="/" aria-label="Autosalon OneZone">
@@ -524,17 +548,41 @@
                 const tooltipText = document.querySelector('#demo-reset-tooltip .demo-reset-tooltip-text');
                 const fullTime = countdown?.querySelector('.demo-time-full');
                 const compactTime = countdown?.querySelector('.demo-time-compact');
+                const resetOverlay = document.getElementById('demo-reset-overlay');
+                const resetOverlayPanel = resetOverlay?.querySelector('.demo-reset-overlay-panel');
 
-                if (!countdown || !wrapper || !button || !fullTime || !compactTime) return;
+                if (!countdown || !wrapper || !button || !fullTime || !compactTime || !resetOverlay) return;
 
-                let resetAt = Date.parse(countdown.dataset.resetAt);
-                const intervalMs = Number(countdown.dataset.resetIntervalSeconds) * 1000;
+                const resetAt = Date.parse(countdown.dataset.resetAt);
+                const resetStatusUrl = resetOverlay.dataset.statusUrl;
+                if (!Number.isFinite(resetAt) || !resetStatusUrl) return;
+
                 const seenAtKey = 'autosalon-demo-indicator-seen-at-v1';
                 const repeatIntroAfterMs = 5 * 60 * 60 * 1000;
                 const defaultTooltip = @Json.Serialize(L["DemoModeTooltip", demoOptions.ResetIntervalMinutes].Value);
                 const warningTooltip = @Json.Serialize(L["DemoModeWarningTooltip"].Value);
                 let previousMinute = null;
                 let wasInLastMinute = false;
+                let countdownTimer = null;
+                let resetFlowStarted = false;
+                let resetFlowStartedAt = null;
+                let reloadScheduled = false;
+                let tooltipTimer = null;
+                const minimumOverlayDurationMs = 2000;
+
+                const closeTooltip = () => {
+                    window.clearTimeout(tooltipTimer);
+                    tooltipTimer = null;
+                    wrapper.classList.remove('is-open');
+                    button.setAttribute('aria-expanded', 'false');
+                };
+
+                const openTooltip = () => {
+                    window.clearTimeout(tooltipTimer);
+                    wrapper.classList.add('is-open');
+                    button.setAttribute('aria-expanded', 'true');
+                    tooltipTimer = window.setTimeout(closeTooltip, 3000);
+                };
 
                 const restartAnimation = (className, duration) => {
                     wrapper.classList.remove(className);
@@ -543,10 +591,64 @@
                     window.setTimeout(() => wrapper.classList.remove(className), duration);
                 };
 
+                const reloadAfterReset = () => window.location.reload();
+
+                const scheduleReloadAfterReset = () => {
+                    if (reloadScheduled) return;
+                    reloadScheduled = true;
+
+                    const visibleForMs = Date.now() - resetFlowStartedAt;
+                    const remainingDelay = Math.max(0, minimumOverlayDurationMs - visibleForMs);
+                    window.setTimeout(reloadAfterReset, remainingDelay);
+                };
+
+                const pollResetStatus = async () => {
+                    try {
+                        const response = await fetch(resetStatusUrl, {
+                            cache: 'no-store',
+                            headers: { Accept: 'application/json' }
+                        });
+
+                        if (response.ok) {
+                            const status = await response.json();
+                            const nextResetUtc = Date.parse(status.nextResetUtc);
+                            if (!status.isResetting && Number.isFinite(nextResetUtc) && nextResetUtc > resetAt) {
+                                scheduleReloadAfterReset();
+                                return;
+                            }
+                        }
+                    } catch {
+                        // The next poll will retry if the app is briefly unavailable during reset.
+                    }
+
+                    window.setTimeout(pollResetStatus, 1000);
+                };
+
+                const beginResetFlow = () => {
+                    if (resetFlowStarted) return;
+                    resetFlowStarted = true;
+                    resetFlowStartedAt = Date.now();
+                    window.clearInterval(countdownTimer);
+                    closeTooltip();
+
+                    wrapper.classList.add('is-reset-warning', 'is-reset-critical');
+                    fullTime.textContent = '0:00';
+                    compactTime.textContent = '0m';
+                    resetOverlay.classList.add('is-visible');
+                    resetOverlay.setAttribute('aria-hidden', 'false');
+                    document.body.classList.add('demo-reset-in-progress');
+
+                    document.querySelectorAll('body > :not(#demo-reset-overlay):not(script)').forEach(element => {
+                        element.inert = true;
+                    });
+
+                    resetOverlayPanel?.focus({ preventScroll: true });
+                    pollResetStatus();
+                    window.setTimeout(reloadAfterReset, 45000);
+                };
+
                 const updateCountdown = () => {
                     const now = Date.now();
-                    while (resetAt <= now && intervalMs > 0) resetAt += intervalMs;
-
                     const remainingSeconds = Math.max(0, Math.ceil((resetAt - now) / 1000));
                     const minutes = Math.floor(remainingSeconds / 60);
                     const seconds = remainingSeconds % 60;
@@ -570,10 +672,11 @@
 
                     wasInLastMinute = isLastMinute;
                     previousMinute = minutes;
-                };
 
-                updateCountdown();
-                window.setInterval(updateCountdown, 1000);
+                    if (resetAt <= now) {
+                        beginResetFlow();
+                    }
+                };
 
                 let shouldShowIntro = true;
                 try {
@@ -597,23 +700,7 @@
                     wrapper.classList.add('is-acknowledged');
                 }
 
-                let tooltipTimer = null;
-
-                const closeTooltip = () => {
-                    window.clearTimeout(tooltipTimer);
-                    tooltipTimer = null;
-                    wrapper.classList.remove('is-open');
-                    button.setAttribute('aria-expanded', 'false');
-                };
-
-                const openTooltip = () => {
-                    window.clearTimeout(tooltipTimer);
-                    wrapper.classList.add('is-open');
-                    button.setAttribute('aria-expanded', 'true');
-                    tooltipTimer = window.setTimeout(closeTooltip, 3000);
-                };
-
-                if (shouldShowIntro) {
+                if (shouldShowIntro && resetOverlay.dataset.isResetting !== 'true') {
                     closeTooltip();
                     openTooltip();
                 }
@@ -643,6 +730,13 @@
                     closeTooltip();
                     button.blur();
                 });
+
+                if (resetOverlay.dataset.isResetting === 'true' || resetAt <= Date.now()) {
+                    beginResetFlow();
+                } else {
+                    updateCountdown();
+                    countdownTimer = window.setInterval(updateCountdown, 1000);
+                }
             })();
         </script>
     }

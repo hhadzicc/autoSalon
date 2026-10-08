@@ -22,19 +22,22 @@ namespace Autosalon_OneZone.Controllers
         private readonly IStringLocalizer<SharedResource> _localizer;
         private readonly IHomeService _homeService;
         private readonly ISupportService _supportService;
+        private readonly DemoResetSchedule _demoResetSchedule;
 
         public HomeController(
             ILogger<HomeController> logger,
             UserManager<ApplicationUser> userManager,
             IHomeService homeService,
             ISupportService supportService,
-            IStringLocalizer<SharedResource>? localizer = null)
+            IStringLocalizer<SharedResource>? localizer = null,
+            DemoResetSchedule? demoResetSchedule = null)
         {
             _logger = logger;
             _userManager = userManager;
             _homeService = homeService;
             _supportService = supportService;
             _localizer = localizer ?? new FallbackStringLocalizer<SharedResource>();
+            _demoResetSchedule = demoResetSchedule ?? new DemoResetSchedule();
         }
 
         [HttpGet]
@@ -97,6 +100,18 @@ namespace Autosalon_OneZone.Controllers
         public IActionResult Terms()
         {
             return View();
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult DemoResetStatus()
+        {
+            return Json(new
+            {
+                isResetting = _demoResetSchedule.IsResetting,
+                nextResetUtc = _demoResetSchedule.NextResetUtc
+            });
         }
 
         [HttpGet]

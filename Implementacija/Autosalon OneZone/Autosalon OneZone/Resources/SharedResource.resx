@@ -2188,6 +2188,12 @@
   <data name="DemoModeWarningTooltip" xml:space="preserve">
     <value>Reset in less than a minute. Wait for it to finish before starting a new action.</value>
   </data>
+  <data name="DemoResetOverlayTitle" xml:space="preserve">
+    <value>Resetting the demo environment</value>
+  </data>
+  <data name="DemoResetOverlayText" xml:space="preserve">
+    <value>Data is being restored to its initial state. This page will refresh automatically.</value>
+  </data>
   <data name="Validation.CheckMarkedFields" xml:space="preserve">
     <value>Please check the highlighted fields.</value>
   </data>

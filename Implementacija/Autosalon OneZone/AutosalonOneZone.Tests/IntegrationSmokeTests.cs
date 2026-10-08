@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging.Abstractions;
+using System.Text.Json;
 
 namespace AutosalonOneZone.Tests;
 
@@ -66,6 +67,17 @@ public class IntegrationSmokeTests : IClassFixture<AutosalonFactory>
         var html = await _client.GetStringAsync(path);
 
         Assert.Contains(expected, html, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task Demo_reset_status_is_public_and_not_cached()
+    {
+        var response = await _client.GetAsync("/Home/DemoResetStatus");
+        using var payload = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+
+        response.EnsureSuccessStatusCode();
+        Assert.False(payload.RootElement.GetProperty("isResetting").GetBoolean());
+        Assert.True(response.Headers.CacheControl?.NoStore);
     }
 }
 

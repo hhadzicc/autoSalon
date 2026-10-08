@@ -254,6 +254,23 @@ public class ServiceTests
         Assert.Equal(ReviewSaveResult.Added, await service.SaveReviewAsync(buyer.Id, vehicle.VoziloID, 5, "Odlično iskustvo kupovine."));
     }
 
+    [Fact]
+    public void Demo_reset_schedule_tracks_reset_state_and_next_run()
+    {
+        var schedule = new DemoResetSchedule();
+
+        schedule.MarkResetStarted();
+        schedule.ScheduleAfter(TimeSpan.FromMinutes(60));
+
+        Assert.True(schedule.IsResetting);
+        Assert.NotNull(schedule.NextResetUtc);
+        Assert.True(schedule.NextResetUtc > DateTime.UtcNow.AddMinutes(59));
+
+        schedule.MarkResetCompleted();
+
+        Assert.False(schedule.IsResetting);
+    }
+
     private static ApplicationDbContext CreateContext()
     {
         var options = new DbContextOptionsBuilder<ApplicationDbContext>()

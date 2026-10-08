@@ -2188,6 +2188,12 @@
   <data name="DemoModeWarningTooltip" xml:space="preserve">
     <value>Reset za manje od minute. Sačekajte da se završi prije pokretanja nove akcije.</value>
   </data>
+  <data name="DemoResetOverlayTitle" xml:space="preserve">
+    <value>Demo okruženje se resetuje</value>
+  </data>
+  <data name="DemoResetOverlayText" xml:space="preserve">
+    <value>Podaci se vraćaju na početno stanje. Stranica će se automatski osvježiti.</value>
+  </data>
   <data name="Validation.CheckMarkedFields" xml:space="preserve">
     <value>Provjerite označena polja.</value>
   </data>

@@ -29,17 +29,14 @@ rolling logs and Seq data are stored under the ignored `runtime/` directory.
 
 ## CI/CD
 
-GitHub Actions runs the following flow:
+The `CI` workflow validates both Compose files, runs the tests in a .NET 8 SDK
+Docker stage and publishes an immutable `sha-<commit>` application image to
+GHCR after a push to `main`.
 
-1. Validate both Compose files.
-2. Run tests in the .NET 8 SDK Docker stage.
-3. Build and publish the application image to GHCR.
-4. Deploy manually when the workflow is started with `deploy=true`.
-
-The deployment job connects to the server through Tailscale using short-lived
-OIDC authentication, then deploys the exact image created for that commit.
-Regular pushes test and publish the image but intentionally skip production
-deployment.
+Production deployment is started separately from the `Deploy production`
+workflow. It verifies that the image for the selected `main` commit exists,
+connects to the server through Tailscale using short-lived OIDC authentication
+and deploys that already tested image without rebuilding it.
 
 Production configuration is split between:
 

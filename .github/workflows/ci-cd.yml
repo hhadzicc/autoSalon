@@ -1,18 +1,10 @@
-name: CI/CD
+name: CI
 
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
-  workflow_dispatch:
-    inputs:
-      deploy:
-        description: Deploy the verified image to the production server
-        required: true
-        default: false
-        type: boolean
-
 env:
   IMAGE_NAME: ghcr.io/hhadzicc/autosalon
 
@@ -50,7 +42,7 @@ jobs:
   publish:
     name: Publish application image
     needs: verify
-    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
@@ -84,101 +76,3 @@ jobs:
             org.opencontainers.image.revision=${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
-  deploy:
-    name: Deploy through Tailscale
-    needs: publish
-    if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch' && inputs.deploy
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    environment: production
-    concurrency:
-      group: production
-      cancel-in-progress: false
-    permissions:
-      contents: read
-      id-token: write
-      packages: read
-    steps:
-      - name: Validate deployment configuration
-        env:
-          DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
-          DEPLOY_USER: ${{ vars.DEPLOY_USER }}
-          DEPLOY_PATH: ${{ vars.DEPLOY_PATH }}
-        run: |
-          test -n "$DEPLOY_HOST" || { echo "::error::Missing production variable DEPLOY_HOST"; exit 1; }
-          test -n "$DEPLOY_USER" || { echo "::error::Missing production variable DEPLOY_USER"; exit 1; }
-          test -n "$DEPLOY_PATH" || { echo "::error::Missing production variable DEPLOY_PATH"; exit 1; }
-
-      - name: Check out repository
-        uses: actions/checkout@v7.0.1
-
-      - name: Connect runner to the tailnet
-        uses: tailscale/github-action@v4.1.0
-        with:
-          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
-          audience: ${{ secrets.TS_AUDIENCE }}
-          tags: tag:ci
-          ping: ${{ vars.DEPLOY_HOST }}
-
-      - name: Configure SSH identity
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
-          SSH_HOST_KEY: ${{ secrets.DEPLOY_SSH_HOST_KEY }}
-        run: |
-          install -m 700 -d ~/.ssh
-          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-          printf '%s\n' "$SSH_HOST_KEY" > ~/.ssh/known_hosts
-          chmod 600 ~/.ssh/known_hosts
-          cat > ~/.ssh/config <<'EOF'
-          Host *
-            BatchMode yes
-            ConnectTimeout 15
-            IdentitiesOnly yes
-            StrictHostKeyChecking yes
-            ServerAliveInterval 15
-            ServerAliveCountMax 2
-          EOF
-          chmod 600 ~/.ssh/config
-
-      - name: Upload exact deployment configuration
-        env:
-          DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
-          DEPLOY_USER: ${{ vars.DEPLOY_USER }}
-          DEPLOY_PATH: ${{ vars.DEPLOY_PATH }}
-        run: |
-          # DEPLOY_PATH is a trusted protected-environment variable.
-          # shellcheck disable=SC2029
-          tar -czf - .env.example docker-compose.yml deploy/deploy.sh | \
-            ssh "$DEPLOY_USER@$DEPLOY_HOST" \
-              "install -d -m 755 '$DEPLOY_PATH' && tar -xzf - -C '$DEPLOY_PATH'"
-
-      - name: Sign server in to container registry
-        env:
-          DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
-          DEPLOY_USER: ${{ vars.DEPLOY_USER }}
-          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GHCR_USERNAME: ${{ github.actor }}
-        run: |
-          printf '%s' "$GHCR_TOKEN" | ssh "$DEPLOY_USER@$DEPLOY_HOST" \
-            docker login ghcr.io -u "$GHCR_USERNAME" --password-stdin
-
-      - name: Deploy exact verified image
-        env:
-          DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
-          DEPLOY_USER: ${{ vars.DEPLOY_USER }}
-          DEPLOY_PATH: ${{ vars.DEPLOY_PATH }}
-          IMAGE: ${{ env.IMAGE_NAME }}:sha-${{ github.sha }}
-        run: |
-          # Trusted deployment settings are intentionally expanded by this runner.
-          # shellcheck disable=SC2029
-          ssh "$DEPLOY_USER@$DEPLOY_HOST" \
-            "cd '$DEPLOY_PATH' && sh deploy/deploy.sh '$IMAGE'"
-
-      - name: Remove temporary registry credentials
-        if: always()
-        env:
-          DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
-          DEPLOY_USER: ${{ vars.DEPLOY_USER }}
-        run: ssh "$DEPLOY_USER@$DEPLOY_HOST" 'docker logout ghcr.io' || true

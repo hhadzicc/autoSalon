@@ -62,32 +62,14 @@ The default setup does not require an `.env` file. Copy `.env.example` to
 ## Demo Payment
 
 The demo uses a local mock payment provider and never processes a real card.
+Any 16-digit card number is accepted except the decline example below.
 
 ```text
-Successful payment: 4242 4242 4242 4242
-Declined payment:   4000 0000 0000 0002
-Expiry: any future date
-CVV: any three digits
+Accepted example: 4242 4242 4242 4242
+Declined example: 4000 0000 0000 0002
+Expiry: current or future date in MM/YY format
+CVV: any three or four digits
 ```
-
-## Screenshots
-
-### Public Experience
-
-![OneZone home page](Dokumentacija/assets/screenshots/desktop-home.jpg)
-
-![Vehicle catalog](Dokumentacija/assets/screenshots/desktop-vehicles.jpg)
-
-![Vehicle details and loan calculator](Dokumentacija/assets/screenshots/desktop-details.jpg)
-
-### Admin and Mobile
-
-![Administrator dashboard](Dokumentacija/assets/screenshots/desktop-admin.jpg)
-
-<p align="center">
-  <img src="Dokumentacija/assets/screenshots/mobile-vehicles.jpg" width="320" alt="Mobile vehicle catalog">
-  <img src="Dokumentacija/assets/screenshots/mobile-admin.jpg" width="320" alt="Mobile administrator dashboard">
-</p>
 
 ## Tests
 
@@ -100,6 +82,7 @@ application image is published.
 
 ## Documentation
 
+- [Screenshots](Dokumentacija/SCREENSHOTS.md)
 - [Architecture](Dokumentacija/ARCHITECTURE.md)
 - [Deployment](Dokumentacija/DEPLOYMENT.md)
 - [Testing](Dokumentacija/TESTING.md)

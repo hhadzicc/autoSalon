@@ -41,12 +41,13 @@ activity logs.
 
 ## Docker Runtime
 
-The default Docker Compose setup starts:
+Docker Compose runs three services:
 
 - the ASP.NET Core application;
 - SQL Server;
 - Seq for private log inspection.
 
-Only the application and Seq bind to localhost ports. SQL Server remains inside
-the Docker network. Production uses the same application image published by the
-CI workflow.
+SQL Server is accessible only within the Docker network. The application and
+Seq listen only on localhost; the hosted application is exposed through a
+Cloudflare Tunnel, while Seq has no public endpoint and is accessed only through
+an SSH tunnel.

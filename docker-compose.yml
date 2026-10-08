@@ -33,7 +33,7 @@ services:
       ReverseProxy__KnownProxy: ${REVERSE_PROXY_KNOWN_PROXY:-}
       ConnectionStrings__DefaultConnection: Server=db,1433;Database=AutoSalonDb;User Id=sa;Password=${MSSQL_SA_PASSWORD:-AutoSalon_Demo123!};TrustServerCertificate=True;MultipleActiveResultSets=true
       Database__ApplyMigrations: "true"
-      Database__SeedDemoData: "true"
+      Database__SeedDemoData: ${DATABASE_SEED_DEMO_DATA:-true}
       Demo__Enabled: ${DEMO_MODE:-false}
       Demo__ResetEnabled: ${DEMO_RESET_ENABLED:-false}
       Demo__ResetIntervalMinutes: ${DEMO_RESET_INTERVAL_MINUTES:-60}
